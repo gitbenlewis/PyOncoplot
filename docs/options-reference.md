@@ -22,6 +22,7 @@ result = oncoplot(
 | --- | --- | --- |
 | `width` | `1200` | intended output width in pixels |
 | `height` | `650` | intended output height in pixels |
+| `selection_type` | `"none"` | Plotly selection mode: `"none"`, `"multiple"`, or `"single"` |
 | `tmb_height_ratio` | `0.14` | relative height of the TMB bar area |
 | `gene_bar_width_ratio` | `0.18` | relative width of the right gene bar |
 | `metadata_height_ratio` | `0.18` | relative height of metadata tracks |
@@ -64,6 +65,8 @@ result = oncoplot(
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `background_color` | `"#E5E5E5"` | empty tile background |
+| `tile_height` | `1.0` | mutated and empty tile height |
+| `tile_width` | `1.0` | mutated and empty tile width |
 | `tile_linewidth` | `0.25` | tile border width |
 | `row_separator_linewidth` | `0.8` | row separator width |
 | `unspecified_mutation_color` | `"#1A1A1A"` | fallback mutation color |
@@ -73,6 +76,8 @@ result = oncoplot(
 
 | Option | Default | Meaning |
 | --- | --- | --- |
+| `font_size_x_label` | `26` | x-axis label size |
+| `font_size_y_label` | `26` | y-axis label size |
 | `font_size_genes` | `12` | gene label size |
 | `font_size_samples` | `9` | sample label size |
 | `font_size_metadata` | `10` | metadata row label size |
@@ -116,6 +121,14 @@ result = oncoplot(
 | `metadata_numeric_plot_type` | `"heatmap"` | `"heatmap"` or `"bar"` |
 | `metadata_legend_orientation_heatmap` | `"vertical"` | orientation hint for numeric heatmap legends |
 | `metadata_default_colors` | color sequence | fallback metadata colors |
+
+## Text Prettification
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `prettify_legend_titles` | `True` | prettify legend titles |
+| `prettify_legend_values` | `True` | prettify legend values |
+| `prettify_function` | `prettify` | function used for display labels |
 
 ## Common Bundles
 

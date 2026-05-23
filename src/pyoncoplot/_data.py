@@ -48,6 +48,7 @@ class PreparedOncoplotData:
     metadata_cols: Optional[List[str]] = None
     pathway: Optional[pd.DataFrame] = None
     tmb: Optional[pd.DataFrame] = None
+    tmb_sample_col: Optional[str] = None
     tmb_value_col: Optional[str] = None
     tmb_type_col: Optional[str] = None
     tmb_render_stacked: bool = False
@@ -418,7 +419,7 @@ def _prepare_tmb_data(
     sample_col: str,
     mutation_type_col: Optional[str],
     tmb_data: Optional[pd.DataFrame],
-) -> tuple[Optional[pd.DataFrame], Optional[str], Optional[str], bool]:
+) -> tuple[Optional[pd.DataFrame], Optional[str], Optional[str], Optional[str], bool]:
     if tmb_data is not None:
         if not _is_dataframe(tmb_data):
             raise TypeError("tmb_data must be a pandas DataFrame.")
@@ -466,7 +467,7 @@ def _prepare_tmb_data(
     out[sample_col] = pd.Categorical(out[sample_col].astype(str), categories=list(samples_to_show), ordered=True)
     out = out.sort_values(sample_col, kind="mergesort")
     render_stacked = not out[type_col].isna().all()
-    return out, value_col, type_col, render_stacked
+    return out, sample_col, value_col, type_col, render_stacked
 
 
 def _summarise_mutation_counts(tiles: pd.DataFrame) -> pd.DataFrame:
@@ -484,13 +485,13 @@ def _summarise_mutation_counts(tiles: pd.DataFrame) -> pd.DataFrame:
 
 def _summarise_tmb(
     tmb: Optional[pd.DataFrame],
+    sample_col: Optional[str],
     value_col: Optional[str],
     type_col: Optional[str],
     samples: Sequence[str],
 ) -> tuple[Optional[pd.Series], Optional[pd.DataFrame]]:
-    if tmb is None or value_col is None:
+    if tmb is None or sample_col is None or value_col is None:
         return None, None
-    sample_col = tmb.columns[0]
     totals = (
         tmb.groupby(sample_col, observed=False)[value_col]
         .sum()
@@ -690,16 +691,16 @@ def prepare_oncoplot_data(
     else:
         n_total_samples = len(pd.unique(tiles["Sample"].astype(str))) if not tiles.empty else 0
 
-    tmb, tmb_value_col, tmb_type_col, tmb_render_stacked = (None, None, None, False)
+    tmb, tmb_sample_col, tmb_value_col, tmb_type_col, tmb_render_stacked = (None, None, None, None, False)
     if prepare_tmb:
-        tmb, tmb_value_col, tmb_type_col, tmb_render_stacked = _prepare_tmb_data(
+        tmb, tmb_sample_col, tmb_value_col, tmb_type_col, tmb_render_stacked = _prepare_tmb_data(
             data=data,
             samples_to_show=samples_to_show,
             sample_col=sample_col,
             mutation_type_col=mutation_type_col,
             tmb_data=tmb_data,
         )
-    tmb_totals, tmb_type_counts = _summarise_tmb(tmb, tmb_value_col, tmb_type_col, samples_to_show)
+    tmb_totals, tmb_type_counts = _summarise_tmb(tmb, tmb_sample_col, tmb_value_col, tmb_type_col, samples_to_show)
 
     return PreparedOncoplotData(
         tiles=tiles.reset_index(drop=True),
@@ -711,6 +712,7 @@ def prepare_oncoplot_data(
         metadata_cols=metadata_cols_out,
         pathway=pathway_df,
         tmb=tmb,
+        tmb_sample_col=tmb_sample_col,
         tmb_value_col=tmb_value_col,
         tmb_type_col=tmb_type_col,
         tmb_render_stacked=tmb_render_stacked,

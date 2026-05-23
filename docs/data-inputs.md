@@ -22,7 +22,7 @@ Required mutation table fields:
 | sample identifier | `sample_col` | yes | cannot be missing or empty |
 | gene identifier | `gene_col` | yes | cannot be missing or empty |
 | mutation type | `mutation_type_col` | no | required for mutation-specific colors |
-| tooltip text | `tooltip_col` | no | defaults to the mutation type column when omitted |
+| tooltip text | `tooltip_col` | no | defaults to `sample_col` when omitted |
 
 ## Example Mutation Table
 
@@ -120,4 +120,3 @@ The data preparation layer checks:
 - metadata sample identifiers must be unique.
 - pathway input must have exactly two columns and no duplicate genes.
 - palette coverage must include all displayed mutation types.
-

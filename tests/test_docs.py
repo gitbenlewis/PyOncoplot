@@ -91,5 +91,26 @@ def test_options_reference_mentions_parity_options():
         "font_style_metadata",
         "font_size_metadata_bar_numbers",
         "metadata_legend_orientation_heatmap",
+        "selection_type",
+        "tile_height",
+        "tile_width",
+        "font_size_x_label",
+        "font_size_y_label",
+        "prettify_legend_titles",
+        "prettify_legend_values",
+        "prettify_function",
     ]:
         assert option in text
+
+
+def test_docs_describe_tooltip_default_and_precise_parity_status():
+    data_inputs = (DOCS / "data-inputs.md").read_text(encoding="utf-8")
+    assert "defaults to `sample_col`" in data_inputs
+    assert "defaults to the mutation type column" not in data_inputs
+
+    migration = (DOCS / "migration-from-ggoncoplot.md").read_text(encoding="utf-8")
+    assert "supported with renderer differences" in migration
+    assert "custom TMB sample columns may appear in any position" in migration
+
+    installation = (DOCS / "installation.md").read_text(encoding="utf-8")
+    assert "Installing only `pytest` is not enough" in installation

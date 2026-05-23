@@ -101,9 +101,15 @@ def _add_tmb_bar(
 ):
     go, _make_subplots = _require_plotly()
     tmb = prepared.tmb
-    if tmb is None or prepared.tmb_value_col is None or prepared.tmb_type_col is None:
+    if (
+        tmb is None
+        or prepared.tmb_sample_col is None
+        or prepared.tmb_value_col is None
+        or prepared.tmb_type_col is None
+    ):
         return
 
+    sample_col = prepared.tmb_sample_col
     value_col = prepared.tmb_value_col
     type_col = prepared.tmb_type_col
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb
@@ -116,7 +122,7 @@ def _add_tmb_bar(
     if render_stacked:
         for tmb_type, group in tmb.groupby(type_col, dropna=False, sort=False):
             color = palette.get(str(tmb_type), options.unspecified_mutation_color)
-            sample_values = group[prepared.tmb.columns[0]].astype(str).tolist()
+            sample_values = group[sample_col].astype(str).tolist()
             values = group[value_col].astype(float).tolist()
             fig.add_trace(
                 go.Bar(
@@ -145,7 +151,6 @@ def _add_tmb_bar(
             )
         fig.update_layout(barmode="stack")
     else:
-        sample_col = prepared.tmb.columns[0]
         totals = tmb.groupby(sample_col, observed=False)[value_col].sum().reindex(prepared.samples, fill_value=0)
         y_values = totals.astype(float)
         axis_title = value_col
@@ -410,6 +415,8 @@ def _add_main_tiles(
     fig.update_xaxes(categoryorder="array", categoryarray=prepared.samples, row=row, col=col)
     if not options.show_sample_ids:
         fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)
+    else:
+        fig.update_xaxes(side=options.sample_id_position, tickangle=options.sample_id_angle, row=row, col=col)
     if options.show_x_label:
         fig.update_xaxes(title_text=options.x_label, row=row, col=col)
     if options.show_y_label:
@@ -451,12 +458,17 @@ def _add_gene_bar(
     if tiles.empty:
         return
 
+    total_counts = tiles.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0)
+    denominator = max(prepared.total_samples, 1)
     for mutation_type, group in tiles.groupby("MutationType", dropna=False, sort=False):
         counts = group.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0)
-        total_counts = tiles.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0)
+        mutation_label = _legend_label(mutation_type, options)
         hover = [
             "Total Samples Mutated: "
             f"{int(total_counts[gene])} ({as_percent(total_counts[gene] / max(prepared.total_samples, 1), options.gene_bar_label_round)} of all samples)"
+            "<br>"
+            f"{mutation_label}: {int(counts[gene])} "
+            f"({as_percent(counts[gene] / max(total_counts[gene], 1), options.gene_bar_label_round)} of all mutations in this gene)"
             for gene in prepared.genes
         ]
         color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
@@ -466,12 +478,17 @@ def _add_gene_bar(
                 y=prepared.genes,
                 orientation="h",
                 marker_color=color,
-                text=hover if options.show_gene_bar_labels else None,
+                hovertext=hover,
                 customdata=[
-                    _custom_payload(role="gene_bar", gene=str(gene), count=int(total_counts[gene]))
+                    _custom_payload(
+                        role="gene_bar",
+                        gene=str(gene),
+                        count=int(total_counts[gene]),
+                        mutation_type_count=int(counts[gene]),
+                    )
                     for gene in prepared.genes
                 ],
-                hovertemplate="%{text}<extra></extra>",
+                hovertemplate="%{hovertext}<extra></extra>",
                 showlegend=False,
                 name=_legend_label(mutation_type, options),
                 selected=dict(marker=dict(opacity=1.0)),
@@ -480,6 +497,32 @@ def _add_gene_bar(
             row=row,
             col=col,
         )
+    fig.update_layout(barmode="stack")
+    if options.show_gene_bar_labels:
+        max_total = max(float(total_counts.max()), 1.0)
+        label_x = (
+            total_counts.astype(float)
+            + max_total * options.gene_bar_label_padding
+            + options.gene_bar_label_nudge
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=label_x.values,
+                y=prepared.genes,
+                mode="text",
+                text=[
+                    as_percent(total_counts[gene] / denominator, options.gene_bar_label_round)
+                    for gene in prepared.genes
+                ],
+                textposition="middle right",
+                hoverinfo="skip",
+                showlegend=False,
+                cliponaxis=False,
+            ),
+            row=row,
+            col=col,
+        )
+        fig.update_xaxes(range=[0, max(label_x.max(), max_total) * 1.08], row=row, col=col)
     fig.update_yaxes(categoryorder="array", categoryarray=list(reversed(prepared.genes)), showticklabels=False, row=row, col=col)
     if not options.show_gene_bar_axis:
         fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)

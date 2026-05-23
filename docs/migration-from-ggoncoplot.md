@@ -79,9 +79,9 @@ result = oncoplot(
 | Area | Status | Notes |
 | --- | --- | --- |
 | mutation validation, top genes, ties, multi-hit collapse | supported | behavior follows ggoncoplot semantics with Python errors |
-| sample sorting, metadata sorting, pathways, TMB inference | supported | prepared data exposes shared summaries for both renderers |
-| Matplotlib pathway strips, gene bars, metadata tracks, legends | supported | static output is feature-complete but not pixel-identical to ggplot |
-| Plotly hover, click-to-copy, and linked selection | supported | exported HTML includes clipboard and selection hooks |
+| sample sorting, metadata sorting, pathways, TMB inference | supported | custom TMB sample columns may appear in any position |
+| Matplotlib pathway strips, gene bars, metadata tracks, legends | supported with renderer differences | static output targets equivalent information, not ggplot pixel parity |
+| Plotly hover, click-to-copy, and linked selection | supported with HTML hooks | hover and clipboard behavior are provided in exported HTML; linked selection uses Plotly selection events |
 | R argument names and ggplot/ggiraph return objects | intentionally different | use Pythonic names and Plotly/Matplotlib objects |
 
 ## Recommended Migration Path

@@ -166,6 +166,28 @@ def test_metadata_sorting_and_tmb_preparation():
     assert prepared.metadata_tracks[0].levels == ["A", "B", "C"]
 
 
+def test_custom_tmb_sample_column_does_not_need_to_be_first():
+    tmb = pd.DataFrame(
+        {
+            "mutations": [5, 7],
+            "sample": ["S1", "S2"],
+        }
+    )
+    prepared = prepare_oncoplot_data(
+        mutation_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        tmb_data=tmb,
+        prepare_tmb=True,
+    )
+    assert prepared.tmb_sample_col == "sample"
+    assert prepared.tmb_value_col == "mutations"
+    assert prepared.tmb_totals is not None
+    assert prepared.tmb_totals.loc["S1"] == 5.0
+    assert prepared.tmb_totals.loc["S2"] == 7.0
+
+
 def test_gbm_fixture_top_gene_order_matches_ggoncoplot_snapshot():
     fixture = (
         Path(__file__).resolve().parents[1]

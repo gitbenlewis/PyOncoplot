@@ -140,6 +140,118 @@ def test_plotly_tmb_hover_uses_real_totals_and_metadata_palette_legend():
     assert any(getattr(trace, "name", "") == "group: A" for trace in result.figure.data)
 
 
+def test_custom_tmb_sample_column_order_renders_in_both_backends():
+    tmb = pd.DataFrame(
+        {
+            "mutations": [5, 7, 11],
+            "sample": ["S1", "S2", "S3"],
+        }
+    )
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        backend="plotly",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+    expected = {row["sample"]: float(row["mutations"]) for _index, row in tmb.iterrows()}
+    tmb_traces = [
+        trace for trace in plotly_result.figure.data if getattr(trace, "type", "") == "bar" and trace.orientation is None
+    ]
+    assert tmb_traces
+    assert list(tmb_traces[0].x) == plotly_result.prepared_data.samples
+    assert list(tmb_traces[0].y) == [expected[sample] for sample in plotly_result.prepared_data.samples]
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        backend="matplotlib",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+    tmb_axis = matplotlib_result.figure.axes[0]
+    heights = [patch.get_height() for patch in tmb_axis.patches]
+    assert heights == [expected[sample] for sample in matplotlib_result.prepared_data.samples]
+
+
+def test_sample_id_position_and_axis_label_fonts_are_applied():
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="matplotlib",
+        options=OncoplotOptions(
+            show_sample_ids=True,
+            sample_id_position="top",
+            show_x_label=True,
+            show_y_label=True,
+            font_size_x_label=31,
+            font_size_y_label=29,
+        ),
+    )
+    main_axis = matplotlib_result.figure.axes[0]
+    assert main_axis.xaxis.get_ticks_position() == "top"
+    assert main_axis.xaxis.get_label_position() == "top"
+    assert main_axis.xaxis.label.get_size() == 31
+    assert main_axis.yaxis.label.get_size() == 29
+
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="plotly",
+        options=OncoplotOptions(show_sample_ids=True, sample_id_position="top", sample_id_angle=45),
+    )
+    assert plotly_result.figure.layout.xaxis.side == "top"
+    assert plotly_result.figure.layout.xaxis.tickangle == 45
+
+
+def test_plotly_gene_bar_hover_and_visible_labels_are_separate():
+    result_without_labels = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_gene_bar=True,
+        backend="plotly",
+    )
+    bar_traces = [
+        trace
+        for trace in result_without_labels.figure.data
+        if getattr(trace, "type", "") == "bar" and trace.orientation == "h"
+    ]
+    assert bar_traces
+    assert bar_traces[0].text is None
+    assert "Total Samples Mutated" in bar_traces[0].hovertext[0]
+    assert "of all mutations in this gene" in bar_traces[0].hovertext[0]
+
+    result_with_labels = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_gene_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(show_gene_bar_labels=True),
+    )
+    label_traces = [
+        trace
+        for trace in result_with_labels.figure.data
+        if getattr(trace, "type", "") == "scatter" and getattr(trace, "mode", "") == "text"
+    ]
+    assert label_traces
+    assert all("%" in text for text in label_traces[0].text)
+    assert all("Total Samples Mutated" not in text for text in label_traces[0].text)
+
+
 def test_metadata_max_levels_validation_applies_to_renderers():
     metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "C"]})
     with pytest.raises(ValueError, match="metadata_max_levels"):

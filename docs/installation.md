@@ -25,6 +25,11 @@ The `export` extra installs `kaleido`, which is needed when writing Plotly
 figures directly to image formats such as PNG. Plotly HTML export does not need
 Kaleido.
 
+Installing only `pytest` is not enough to run the local suite: the test modules
+also import the runtime dependencies above. Use the development install command
+so `pandas`, `numpy`, Plotly, Matplotlib, and the test tools are available in the
+same environment.
+
 ## Verify The Install
 
 ```bash
@@ -43,4 +48,3 @@ Run the test suite:
 ## Next Step
 
 Continue with the [Quickstart](quickstart.md).
-

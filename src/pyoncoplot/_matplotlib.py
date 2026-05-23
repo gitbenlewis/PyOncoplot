@@ -148,12 +148,18 @@ def _draw_main(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str], o
     if options.show_sample_ids:
         ax.set_xticks(np.arange(n_samples) + 0.5)
         ax.set_xticklabels(prepared.samples, rotation=options.sample_id_angle, fontsize=options.font_size_samples)
+        if options.sample_id_position == "top":
+            ax.xaxis.tick_top()
+            ax.xaxis.set_label_position("top")
+        else:
+            ax.xaxis.tick_bottom()
+            ax.xaxis.set_label_position("bottom")
         for label in ax.get_xticklabels():
             label.update(_font_kwargs(options.sample_font_style))
     else:
         ax.set_xticks([])
-    ax.set_xlabel(options.x_label if options.show_x_label else "")
-    ax.set_ylabel(options.y_label if options.show_y_label else "")
+    ax.set_xlabel(options.x_label if options.show_x_label else "", fontsize=options.font_size_x_label)
+    ax.set_ylabel(options.y_label if options.show_y_label else "", fontsize=options.font_size_y_label)
 
 
 def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str], options: OncoplotOptions):
@@ -205,9 +211,9 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
 
 
 def _draw_tmb(ax, prepared: PreparedOncoplotData, options: OncoplotOptions):
-    if prepared.tmb is None or prepared.tmb_value_col is None:
+    if prepared.tmb is None or prepared.tmb_sample_col is None or prepared.tmb_value_col is None:
         return
-    sample_col = prepared.tmb.columns[0]
+    sample_col = prepared.tmb_sample_col
     x_positions = np.arange(len(prepared.samples))
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb and prepared.tmb_type_col is not None
     if render_stacked:
