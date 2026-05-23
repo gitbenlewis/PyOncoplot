@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyoncoplot"
+version = "0.1.0"
+description = "Pythonic oncoplots inspired by ggoncoplot."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "Ben Lewis"}]
+dependencies = [
+  "numpy>=1.23",
+  "pandas>=1.5",
+  "plotly>=5.18",
+  "matplotlib>=3.6",
+  "PyYAML>=6",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=7",
+]
+export = [
+  "kaleido>=0.2.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

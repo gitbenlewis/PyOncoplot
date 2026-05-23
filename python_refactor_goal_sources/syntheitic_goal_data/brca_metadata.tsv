@@ -1,0 +1,421 @@
+sample	Subtype	ER_status	PR_status	HER2_status	Age	Age_years	Menopause	LN_stage	Grade	TNM_stage	Histological_type	Classification
+BRCA-0001	HR-/HER2+	Negative	Negative	Positive	>50	83	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0002	HR-/HER2-	Negative	Negative	Negative	>50	28	Postmenopausal	Negative	II	III	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0003	HR+/HER2+	Positive	Negative	Positive	>50	46	Postmenopausal	Negative	III	III	Others	Ambiguous
+BRCA-0004	HR+/HER2+	Positive	Positive	Positive	>50	68	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0005	HR+/HER2-	Positive	Positive	Negative	>50	57	Postmenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0006	HR+/HER2-	Positive	Negative	Negative	<=50	58	Premenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0007	HR+/HER2-	Positive	Positive	Negative	>50	77	Postmenopausal	Negative	II	II	Others	Not Triple Negative
+BRCA-0008	HR-/HER2-	Negative	Negative	Negative	<=50	42	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0009	HR-/HER2+	Negative	Negative	Positive	>50	39	Postmenopausal	Positive	Unknown	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0010	HR+/HER2-	Positive	Positive	Negative	<=50	85	Premenopausal	Negative	III	IV	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0011	HR-/HER2+	Negative	Negative	Positive	>50	39	Postmenopausal	Negative	II	III	Others	Ambiguous
+BRCA-0012	HR-/HER2+	Negative	Negative	Positive	<=50	53	Postmenopausal	Negative	III	II	Others	Ambiguous
+BRCA-0013	HR-/HER2+	Negative	Negative	Positive	<=50	77	Premenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0014	HR+/HER2-	Positive	Positive	Negative	>50	64	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0015	HR+/HER2-	Positive	Positive	Negative	>50	34	Postmenopausal	Negative	II	II	Others	Not Triple Negative
+BRCA-0016	HR+/HER2-	Positive	Positive	Negative	>50	36	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0017	HR-/HER2+	Negative	Negative	Positive	<=50	35	Postmenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0018	HR+/HER2+	Positive	Positive	Positive	<=50	66	Premenopausal	Positive	Unknown	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0019	HR-/HER2-	Negative	Negative	Negative	>50	51	Postmenopausal	Negative	II	IV	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0020	HR+/HER2+	Positive	Positive	Positive	>50	80	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0021	HR-/HER2+	Negative	Negative	Positive	>50	34	Postmenopausal	Negative	II	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0022	HR-/HER2-	Negative	Negative	Negative	>50	67	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0023	HR+/HER2-	Positive	Negative	Negative	>50	31	Postmenopausal	Positive	II	III	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0024	HR-/HER2-	Negative	Negative	Negative	>50	47	Postmenopausal	Positive	III	IV	Others	Triple Negative
+BRCA-0025	HR-/HER2+	Negative	Negative	Positive	<=50	35	Premenopausal	Negative	III	II	Others	Ambiguous
+BRCA-0026	HR+/HER2-	Positive	Positive	Negative	>50	65	Postmenopausal	Positive	Unknown	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0027	HR-/HER2+	Negative	Negative	Positive	>50	65	Postmenopausal	Negative	II	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0028	HR-/HER2+	Negative	Negative	Positive	>50	66	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0029	HR-/HER2-	Negative	Negative	Negative	>50	63	Postmenopausal	Positive	Unknown	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0030	HR-/HER2-	Negative	Negative	Negative	<=50	51	Postmenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0031	HR+/HER2-	Positive	Positive	Negative	<=50	45	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0032	HR-/HER2-	Negative	Negative	Negative	>50	60	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0033	HR+/HER2+	Positive	Positive	Positive	<=50	28	Premenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0034	HR-/HER2-	Negative	Negative	Negative	<=50	74	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0035	HR-/HER2+	Negative	Negative	Positive	<=50	75	Premenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0036	HR-/HER2-	Negative	Negative	Negative	<=50	87	Premenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0037	HR-/HER2-	Negative	Negative	Negative	>50	60	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0038	HR+/HER2-	Positive	Positive	Negative	>50	70	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0039	HR+/HER2-	Positive	Positive	Negative	>50	70	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0040	HR-/HER2-	Negative	Negative	Negative	>50	54	Postmenopausal	Positive	I	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0041	HR+/HER2-	Positive	Negative	Negative	>50	31	Postmenopausal	Positive	Unknown	II	Others	Not Triple Negative
+BRCA-0042	HR+/HER2-	Positive	Negative	Negative	<=50	88	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0043	HR+/HER2-	Positive	Positive	Negative	<=50	74	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0044	HR+/HER2-	Positive	Negative	Negative	<=50	52	Postmenopausal	Positive	III	II	Others	Not Triple Negative
+BRCA-0045	HR+/HER2+	Positive	Negative	Positive	<=50	43	Postmenopausal	Negative	II	I	Others	Ambiguous
+BRCA-0046	HR-/HER2+	Negative	Negative	Positive	>50	40	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0047	HR+/HER2-	Positive	Negative	Negative	<=50	66	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0048	HR-/HER2+	Negative	Negative	Positive	>50	43	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0049	HR+/HER2+	Positive	Positive	Positive	>50	62	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0050	HR+/HER2+	Positive	Negative	Positive	>50	57	Postmenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0051	HR-/HER2+	Negative	Negative	Positive	>50	31	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0052	HR-/HER2+	Negative	Negative	Positive	<=50	86	Postmenopausal	Negative	I	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0053	HR-/HER2-	Negative	Negative	Negative	>50	69	Postmenopausal	Negative	III	I	Others	Triple Negative
+BRCA-0054	HR+/HER2-	Positive	Negative	Negative	<=50	57	Premenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0055	HR+/HER2-	Positive	Positive	Negative	>50	86	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0056	HR+/HER2-	Positive	Positive	Negative	>50	84	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0057	HR+/HER2-	Positive	Positive	Negative	<=50	50	Premenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0058	HR+/HER2-	Positive	Positive	Negative	<=50	29	Premenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0059	HR+/HER2+	Positive	Positive	Positive	>50	90	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0060	HR+/HER2-	Positive	Negative	Negative	>50	82	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0061	HR+/HER2-	Positive	Positive	Negative	<=50	51	Premenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0062	HR-/HER2+	Negative	Negative	Positive	<=50	40	Postmenopausal	Positive	II	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0063	HR+/HER2-	Positive	Positive	Negative	>50	32	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0064	HR+/HER2-	Positive	Positive	Negative	<=50	32	Premenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0065	HR-/HER2+	Negative	Negative	Positive	>50	30	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0066	HR+/HER2-	Positive	Positive	Negative	<=50	77	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0067	HR-/HER2+	Negative	Negative	Positive	<=50	56	Premenopausal	Negative	II	I	Others	Ambiguous
+BRCA-0068	HR+/HER2+	Positive	Positive	Positive	<=50	63	Postmenopausal	Negative	III	III	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0069	HR-/HER2-	Negative	Negative	Negative	>50	49	Postmenopausal	Positive	I	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0070	HR+/HER2+	Positive	Positive	Positive	<=50	53	Premenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0071	HR-/HER2-	Negative	Negative	Negative	>50	82	Postmenopausal	Negative	III	II	Others	Triple Negative
+BRCA-0072	HR+/HER2+	Positive	Positive	Positive	<=50	54	Premenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0073	HR+/HER2-	Positive	Positive	Negative	<=50	89	Premenopausal	Negative	II	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0074	HR+/HER2-	Positive	Positive	Negative	>50	86	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0075	HR-/HER2+	Negative	Negative	Positive	>50	59	Postmenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0076	HR+/HER2-	Positive	Positive	Negative	>50	58	Postmenopausal	Negative	Unknown	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0077	HR+/HER2-	Positive	Negative	Negative	<=50	33	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0078	HR-/HER2+	Negative	Negative	Positive	<=50	77	Premenopausal	Positive	III	III	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0079	HR-/HER2-	Negative	Negative	Negative	>50	66	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0080	HR+/HER2-	Positive	Positive	Negative	>50	64	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0081	HR+/HER2-	Positive	Positive	Negative	<=50	36	Postmenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0082	HR+/HER2-	Positive	Negative	Negative	>50	68	Postmenopausal	Negative	II	III	Others	Not Triple Negative
+BRCA-0083	HR+/HER2+	Positive	Positive	Positive	>50	63	Postmenopausal	Negative	III	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0084	HR+/HER2-	Positive	Positive	Negative	<=50	78	Premenopausal	Negative	II	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0085	HR-/HER2-	Negative	Negative	Negative	>50	43	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0086	HR-/HER2+	Negative	Negative	Positive	<=50	77	Premenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0087	HR-/HER2-	Negative	Negative	Negative	>50	53	Postmenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0088	HR-/HER2-	Negative	Negative	Negative	<=50	67	Premenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0089	HR+/HER2-	Positive	Negative	Negative	<=50	46	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0090	HR+/HER2-	Positive	Positive	Negative	>50	72	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0091	HR+/HER2-	Positive	Positive	Negative	>50	63	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0092	HR+/HER2-	Positive	Positive	Negative	>50	57	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0093	HR+/HER2+	Positive	Positive	Positive	>50	76	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0094	HR+/HER2-	Positive	Positive	Negative	>50	62	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0095	HR+/HER2-	Positive	Positive	Negative	<=50	42	Premenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0096	HR+/HER2-	Positive	Positive	Negative	<=50	40	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0097	HR-/HER2-	Negative	Negative	Negative	<=50	71	Postmenopausal	Positive	I	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0098	HR+/HER2+	Positive	Positive	Positive	<=50	43	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0099	HR-/HER2+	Negative	Negative	Positive	>50	47	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0100	HR-/HER2+	Negative	Negative	Positive	>50	70	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0101	HR+/HER2-	Positive	Positive	Negative	<=50	44	Premenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0102	HR-/HER2-	Negative	Negative	Negative	<=50	74	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0103	HR-/HER2-	Negative	Negative	Negative	>50	58	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0104	HR-/HER2+	Negative	Negative	Positive	<=50	49	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0105	HR+/HER2+	Positive	Positive	Positive	>50	57	Postmenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0106	HR+/HER2-	Positive	Positive	Negative	>50	44	Postmenopausal	Negative	Unknown	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0107	HR-/HER2-	Negative	Negative	Negative	<=50	36	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0108	HR-/HER2-	Negative	Negative	Negative	<=50	48	Premenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0109	HR+/HER2+	Positive	Positive	Positive	<=50	45	Premenopausal	Positive	Unknown	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0110	HR+/HER2-	Positive	Positive	Negative	>50	56	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0111	HR-/HER2-	Negative	Negative	Negative	>50	31	Postmenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0112	HR+/HER2-	Positive	Negative	Negative	>50	78	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0113	HR-/HER2+	Negative	Negative	Positive	<=50	41	Premenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0114	HR+/HER2+	Positive	Positive	Positive	>50	61	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0115	HR-/HER2-	Negative	Negative	Negative	<=50	49	Premenopausal	Positive	I	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0116	HR+/HER2-	Positive	Positive	Negative	>50	85	Postmenopausal	Positive	II	IV	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0117	HR+/HER2+	Positive	Positive	Positive	>50	28	Postmenopausal	Positive	I	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0118	HR+/HER2-	Positive	Positive	Negative	>50	77	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0119	HR+/HER2-	Positive	Positive	Negative	<=50	85	Postmenopausal	Positive	I	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0120	HR+/HER2-	Positive	Positive	Negative	<=50	85	Premenopausal	Negative	I	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0121	HR+/HER2-	Positive	Positive	Negative	<=50	33	Premenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0122	HR-/HER2-	Negative	Negative	Negative	<=50	39	Postmenopausal	Negative	III	IV	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0123	HR+/HER2-	Positive	Negative	Negative	<=50	56	Premenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0124	HR+/HER2-	Positive	Positive	Negative	>50	34	Postmenopausal	Positive	III	IV	Others	Not Triple Negative
+BRCA-0125	HR+/HER2-	Positive	Positive	Negative	>50	42	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0126	HR-/HER2-	Negative	Negative	Negative	>50	72	Postmenopausal	Negative	III	III	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0127	HR-/HER2-	Negative	Negative	Negative	>50	84	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0128	HR+/HER2-	Positive	Positive	Negative	<=50	85	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0129	HR-/HER2+	Negative	Negative	Positive	<=50	76	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0130	HR+/HER2+	Positive	Positive	Positive	>50	44	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0131	HR-/HER2-	Negative	Negative	Negative	>50	60	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0132	HR+/HER2-	Positive	Positive	Negative	<=50	50	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0133	HR+/HER2+	Positive	Negative	Positive	<=50	46	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0134	HR+/HER2+	Positive	Positive	Positive	<=50	46	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0135	HR-/HER2-	Negative	Negative	Negative	>50	41	Postmenopausal	Positive	III	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0136	HR-/HER2-	Negative	Negative	Negative	>50	82	Postmenopausal	Negative	III	I	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0137	HR+/HER2-	Positive	Negative	Negative	>50	81	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0138	HR-/HER2-	Negative	Negative	Negative	>50	65	Postmenopausal	Positive	III	IV	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0139	HR+/HER2-	Positive	Positive	Negative	<=50	58	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0140	HR+/HER2-	Positive	Positive	Negative	>50	77	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0141	HR-/HER2+	Negative	Negative	Positive	>50	80	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0142	HR+/HER2-	Positive	Positive	Negative	>50	82	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0143	HR-/HER2+	Negative	Negative	Positive	<=50	31	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0144	HR-/HER2+	Negative	Negative	Positive	>50	65	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0145	HR+/HER2+	Positive	Positive	Positive	<=50	67	Premenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0146	HR-/HER2-	Negative	Negative	Negative	>50	41	Postmenopausal	Negative	III	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0147	HR+/HER2+	Positive	Negative	Positive	<=50	42	Premenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0148	HR+/HER2-	Positive	Positive	Negative	>50	62	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0149	HR+/HER2+	Positive	Negative	Positive	>50	80	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0150	HR-/HER2+	Negative	Negative	Positive	<=50	86	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0151	HR-/HER2+	Negative	Negative	Positive	>50	81	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0152	HR+/HER2+	Positive	Positive	Positive	<=50	52	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0153	HR+/HER2+	Positive	Positive	Positive	<=50	74	Premenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0154	HR+/HER2-	Positive	Positive	Negative	>50	55	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0155	HR-/HER2-	Negative	Negative	Negative	>50	82	Postmenopausal	Negative	II	II	Others	Triple Negative
+BRCA-0156	HR-/HER2-	Negative	Negative	Negative	<=50	44	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0157	HR-/HER2+	Negative	Negative	Positive	>50	64	Postmenopausal	Positive	Unknown	III	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0158	HR+/HER2-	Positive	Negative	Negative	>50	51	Postmenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0159	HR+/HER2-	Positive	Positive	Negative	>50	30	Postmenopausal	Positive	Unknown	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0160	HR-/HER2+	Negative	Negative	Positive	<=50	39	Premenopausal	Negative	III	II	Others	Ambiguous
+BRCA-0161	HR+/HER2-	Positive	Positive	Negative	<=50	44	Premenopausal	Positive	II	III	Others	Not Triple Negative
+BRCA-0162	HR-/HER2-	Negative	Negative	Negative	<=50	42	Premenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0163	HR-/HER2-	Negative	Negative	Negative	>50	50	Postmenopausal	Positive	Unknown	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0164	HR+/HER2-	Positive	Negative	Negative	<=50	69	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0165	HR+/HER2+	Positive	Positive	Positive	<=50	70	Premenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0166	HR-/HER2-	Negative	Negative	Negative	>50	73	Postmenopausal	Negative	III	III	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0167	HR+/HER2-	Positive	Negative	Negative	>50	34	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0168	HR-/HER2+	Negative	Negative	Positive	>50	69	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0169	HR+/HER2-	Positive	Positive	Negative	<=50	53	Premenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0170	HR-/HER2-	Negative	Negative	Negative	<=50	75	Premenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0171	HR-/HER2-	Negative	Negative	Negative	>50	35	Postmenopausal	Negative	I	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0172	HR-/HER2-	Negative	Negative	Negative	>50	90	Postmenopausal	Negative	II	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0173	HR+/HER2-	Positive	Positive	Negative	>50	70	Postmenopausal	Negative	III	IV	Others	Not Triple Negative
+BRCA-0174	HR-/HER2+	Negative	Negative	Positive	>50	77	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0175	HR+/HER2-	Positive	Negative	Negative	<=50	80	Premenopausal	Negative	II	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0176	HR-/HER2-	Negative	Negative	Negative	>50	67	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0177	HR+/HER2-	Positive	Positive	Negative	>50	76	Postmenopausal	Negative	III	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0178	HR-/HER2-	Negative	Negative	Negative	<=50	48	Postmenopausal	Negative	I	IV	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0179	HR+/HER2+	Positive	Positive	Positive	<=50	64	Premenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0180	HR+/HER2-	Positive	Positive	Negative	<=50	78	Premenopausal	Negative	Unknown	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0181	HR+/HER2-	Positive	Positive	Negative	<=50	70	Premenopausal	Negative	II	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0182	HR+/HER2-	Positive	Positive	Negative	<=50	58	Premenopausal	Negative	II	IV	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0183	HR+/HER2-	Positive	Positive	Negative	<=50	81	Postmenopausal	Negative	I	I	Others	Not Triple Negative
+BRCA-0184	HR+/HER2+	Positive	Negative	Positive	>50	51	Postmenopausal	Negative	II	III	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0185	HR-/HER2-	Negative	Negative	Negative	>50	70	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0186	HR+/HER2+	Positive	Positive	Positive	<=50	63	Premenopausal	Negative	II	II	Others	Ambiguous
+BRCA-0187	HR-/HER2-	Negative	Negative	Negative	>50	82	Postmenopausal	Positive	Unknown	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0188	HR+/HER2+	Positive	Positive	Positive	>50	47	Postmenopausal	Negative	I	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0189	HR+/HER2-	Positive	Negative	Negative	<=50	68	Premenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0190	HR+/HER2-	Positive	Positive	Negative	<=50	82	Premenopausal	Negative	III	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0191	HR+/HER2-	Positive	Positive	Negative	>50	80	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0192	HR+/HER2-	Positive	Positive	Negative	<=50	32	Premenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0193	HR-/HER2-	Negative	Negative	Negative	<=50	68	Postmenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0194	HR+/HER2-	Positive	Positive	Negative	>50	54	Postmenopausal	Negative	II	II	Others	Not Triple Negative
+BRCA-0195	HR-/HER2-	Negative	Negative	Negative	>50	65	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0196	HR-/HER2-	Negative	Negative	Negative	<=50	88	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0197	HR+/HER2+	Positive	Positive	Positive	<=50	67	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0198	HR-/HER2-	Negative	Negative	Negative	>50	47	Postmenopausal	Positive	I	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0199	HR-/HER2-	Negative	Negative	Negative	<=50	87	Premenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0200	HR+/HER2-	Positive	Negative	Negative	>50	57	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0201	HR+/HER2+	Positive	Positive	Positive	<=50	38	Premenopausal	Positive	Unknown	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0202	HR+/HER2-	Positive	Negative	Negative	>50	46	Postmenopausal	Negative	I	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0203	HR-/HER2-	Negative	Negative	Negative	<=50	66	Premenopausal	Negative	III	I	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0204	HR-/HER2-	Negative	Negative	Negative	<=50	55	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0205	HR+/HER2+	Positive	Positive	Positive	<=50	49	Postmenopausal	Positive	I	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0206	HR+/HER2-	Positive	Positive	Negative	>50	76	Postmenopausal	Negative	III	III	Others	Not Triple Negative
+BRCA-0207	HR+/HER2+	Positive	Negative	Positive	<=50	41	Premenopausal	Negative	I	I	Others	Ambiguous
+BRCA-0208	HR+/HER2-	Positive	Negative	Negative	<=50	79	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0209	HR-/HER2-	Negative	Negative	Negative	>50	87	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0210	HR-/HER2+	Negative	Negative	Positive	>50	76	Postmenopausal	Positive	II	III	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0211	HR+/HER2-	Positive	Negative	Negative	<=50	45	Premenopausal	Positive	III	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0212	HR+/HER2-	Positive	Positive	Negative	>50	42	Postmenopausal	Negative	III	IV	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0213	HR+/HER2-	Positive	Positive	Negative	<=50	68	Premenopausal	Negative	II	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0214	HR+/HER2+	Positive	Positive	Positive	>50	55	Postmenopausal	Positive	III	II	Others	Ambiguous
+BRCA-0215	HR-/HER2+	Negative	Negative	Positive	<=50	46	Postmenopausal	Negative	Unknown	I	Others	Ambiguous
+BRCA-0216	HR-/HER2-	Negative	Negative	Negative	<=50	34	Premenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0217	HR-/HER2-	Negative	Negative	Negative	>50	86	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0218	HR-/HER2+	Negative	Negative	Positive	>50	88	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0219	HR+/HER2+	Positive	Negative	Positive	<=50	49	Premenopausal	Positive	II	IV	Others	Ambiguous
+BRCA-0220	HR-/HER2-	Negative	Negative	Negative	>50	57	Postmenopausal	Negative	I	I	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0221	HR+/HER2-	Positive	Positive	Negative	>50	56	Postmenopausal	Negative	I	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0222	HR-/HER2+	Negative	Negative	Positive	>50	49	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0223	HR+/HER2-	Positive	Positive	Negative	<=50	60	Premenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0224	HR+/HER2-	Positive	Positive	Negative	>50	49	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0225	HR+/HER2+	Positive	Positive	Positive	<=50	29	Premenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0226	HR-/HER2-	Negative	Negative	Negative	>50	38	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0227	HR-/HER2-	Negative	Negative	Negative	>50	45	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0228	HR+/HER2-	Positive	Positive	Negative	>50	65	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0229	HR+/HER2-	Positive	Positive	Negative	<=50	82	Premenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0230	HR+/HER2-	Positive	Positive	Negative	>50	41	Postmenopausal	Negative	Unknown	I	Others	Not Triple Negative
+BRCA-0231	HR+/HER2-	Positive	Negative	Negative	<=50	32	Premenopausal	Positive	II	II	Others	Not Triple Negative
+BRCA-0232	HR+/HER2-	Positive	Negative	Negative	>50	39	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0233	HR-/HER2+	Negative	Negative	Positive	<=50	53	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0234	HR-/HER2-	Negative	Negative	Negative	>50	68	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0235	HR+/HER2-	Positive	Positive	Negative	<=50	62	Postmenopausal	Positive	I	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0236	HR+/HER2-	Positive	Negative	Negative	>50	36	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0237	HR+/HER2-	Positive	Positive	Negative	<=50	32	Premenopausal	Positive	I	II	Others	Not Triple Negative
+BRCA-0238	HR-/HER2-	Negative	Negative	Negative	>50	59	Postmenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0239	HR+/HER2-	Positive	Negative	Negative	<=50	49	Premenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0240	HR+/HER2-	Positive	Negative	Negative	<=50	63	Premenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0241	HR+/HER2-	Positive	Positive	Negative	>50	57	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0242	HR-/HER2-	Negative	Negative	Negative	>50	57	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0243	HR+/HER2-	Positive	Positive	Negative	>50	35	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0244	HR-/HER2+	Negative	Negative	Positive	>50	30	Postmenopausal	Negative	Unknown	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0245	HR-/HER2-	Negative	Negative	Negative	>50	82	Postmenopausal	Positive	II	II	Others	Triple Negative
+BRCA-0246	HR+/HER2-	Positive	Positive	Negative	>50	88	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0247	HR-/HER2-	Negative	Negative	Negative	<=50	88	Premenopausal	Negative	II	I	Others	Triple Negative
+BRCA-0248	HR+/HER2-	Positive	Positive	Negative	<=50	89	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0249	HR+/HER2-	Positive	Positive	Negative	>50	70	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0250	HR+/HER2+	Positive	Positive	Positive	<=50	84	Premenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0251	HR-/HER2-	Negative	Negative	Negative	>50	83	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0252	HR-/HER2-	Negative	Negative	Negative	>50	39	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0253	HR+/HER2-	Positive	Positive	Negative	>50	76	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0254	HR-/HER2+	Negative	Negative	Positive	<=50	69	Premenopausal	Negative	I	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0255	HR+/HER2+	Positive	Positive	Positive	<=50	46	Premenopausal	Positive	I	I	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0256	HR+/HER2-	Positive	Negative	Negative	>50	31	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0257	HR+/HER2-	Positive	Positive	Negative	>50	31	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0258	HR+/HER2-	Positive	Negative	Negative	<=50	39	Premenopausal	Positive	III	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0259	HR-/HER2-	Negative	Negative	Negative	>50	87	Postmenopausal	Negative	II	III	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0260	HR+/HER2+	Positive	Negative	Positive	>50	28	Postmenopausal	Positive	II	I	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0261	HR+/HER2-	Positive	Positive	Negative	>50	86	Postmenopausal	Positive	II	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0262	HR-/HER2-	Negative	Negative	Negative	<=50	68	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0263	HR-/HER2+	Negative	Negative	Positive	>50	42	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0264	HR-/HER2-	Negative	Negative	Negative	<=50	48	Premenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0265	HR+/HER2-	Positive	Positive	Negative	>50	71	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0266	HR-/HER2+	Negative	Negative	Positive	<=50	90	Premenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0267	HR-/HER2+	Negative	Negative	Positive	>50	68	Postmenopausal	Negative	II	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0268	HR+/HER2-	Positive	Positive	Negative	>50	87	Postmenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0269	HR-/HER2-	Negative	Negative	Negative	>50	74	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0270	HR+/HER2-	Positive	Positive	Negative	<=50	82	Premenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0271	HR+/HER2-	Positive	Positive	Negative	>50	71	Postmenopausal	Positive	III	I	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0272	HR-/HER2-	Negative	Negative	Negative	>50	30	Postmenopausal	Negative	Unknown	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0273	HR-/HER2+	Negative	Negative	Positive	<=50	67	Postmenopausal	Positive	Unknown	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0274	HR+/HER2-	Positive	Positive	Negative	>50	74	Postmenopausal	Positive	I	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0275	HR+/HER2-	Positive	Positive	Negative	>50	35	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0276	HR+/HER2-	Positive	Positive	Negative	>50	81	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0277	HR+/HER2-	Positive	Positive	Negative	>50	45	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0278	HR+/HER2-	Positive	Positive	Negative	>50	85	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0279	HR-/HER2-	Negative	Negative	Negative	<=50	43	Premenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0280	HR+/HER2+	Positive	Negative	Positive	>50	59	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0281	HR+/HER2-	Positive	Positive	Negative	>50	78	Postmenopausal	Negative	II	III	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0282	HR+/HER2-	Positive	Negative	Negative	>50	41	Postmenopausal	Negative	III	III	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0283	HR+/HER2-	Positive	Positive	Negative	>50	40	Postmenopausal	Positive	I	III	Others	Not Triple Negative
+BRCA-0284	HR-/HER2-	Negative	Negative	Negative	<=50	37	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0285	HR-/HER2-	Negative	Negative	Negative	>50	46	Postmenopausal	Positive	I	I	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0286	HR+/HER2-	Positive	Positive	Negative	<=50	88	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0287	HR+/HER2-	Positive	Negative	Negative	>50	46	Postmenopausal	Negative	II	II	Others	Not Triple Negative
+BRCA-0288	HR+/HER2-	Positive	Positive	Negative	>50	78	Postmenopausal	Positive	II	III	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0289	HR-/HER2-	Negative	Negative	Negative	<=50	56	Postmenopausal	Negative	I	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0290	HR-/HER2-	Negative	Negative	Negative	>50	56	Postmenopausal	Positive	I	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0291	HR+/HER2-	Positive	Positive	Negative	<=50	60	Premenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0292	HR-/HER2-	Negative	Negative	Negative	>50	70	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0293	HR+/HER2-	Positive	Positive	Negative	>50	74	Postmenopausal	Positive	II	III	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0294	HR+/HER2-	Positive	Negative	Negative	>50	29	Postmenopausal	Negative	I	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0295	HR+/HER2+	Positive	Positive	Positive	>50	34	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0296	HR+/HER2-	Positive	Positive	Negative	>50	87	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0297	HR+/HER2+	Positive	Positive	Positive	>50	35	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0298	HR+/HER2+	Positive	Negative	Positive	>50	75	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0299	HR+/HER2-	Positive	Positive	Negative	>50	89	Postmenopausal	Negative	II	IV	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0300	HR-/HER2+	Negative	Negative	Positive	>50	80	Postmenopausal	Positive	III	I	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0301	HR-/HER2-	Negative	Negative	Negative	>50	41	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0302	HR+/HER2-	Positive	Positive	Negative	>50	40	Postmenopausal	Positive	I	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0303	HR+/HER2-	Positive	Positive	Negative	>50	56	Postmenopausal	Negative	Unknown	III	Others	Not Triple Negative
+BRCA-0304	HR-/HER2+	Negative	Negative	Positive	>50	79	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0305	HR+/HER2-	Positive	Negative	Negative	<=50	81	Premenopausal	Negative	Unknown	III	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0306	HR+/HER2-	Positive	Negative	Negative	>50	41	Postmenopausal	Positive	III	III	Others	Not Triple Negative
+BRCA-0307	HR+/HER2-	Positive	Positive	Negative	>50	67	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0308	HR-/HER2-	Negative	Negative	Negative	<=50	37	Premenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0309	HR+/HER2-	Positive	Negative	Negative	<=50	59	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0310	HR+/HER2-	Positive	Negative	Negative	<=50	56	Premenopausal	Positive	II	II	Others	Not Triple Negative
+BRCA-0311	HR+/HER2-	Positive	Negative	Negative	>50	37	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0312	HR+/HER2-	Positive	Positive	Negative	<=50	82	Premenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0313	HR+/HER2-	Positive	Positive	Negative	<=50	36	Premenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0314	HR-/HER2-	Negative	Negative	Negative	>50	83	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0315	HR+/HER2+	Positive	Negative	Positive	>50	81	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0316	HR+/HER2+	Positive	Positive	Positive	<=50	53	Premenopausal	Negative	III	I	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0317	HR+/HER2-	Positive	Positive	Negative	>50	68	Postmenopausal	Positive	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0318	HR+/HER2-	Positive	Positive	Negative	>50	86	Postmenopausal	Negative	Unknown	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0319	HR+/HER2-	Positive	Positive	Negative	>50	70	Postmenopausal	Positive	Unknown	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0320	HR-/HER2-	Negative	Negative	Negative	>50	53	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0321	HR-/HER2-	Negative	Negative	Negative	>50	70	Postmenopausal	Negative	III	I	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0322	HR+/HER2-	Positive	Negative	Negative	>50	84	Postmenopausal	Positive	II	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0323	HR-/HER2+	Negative	Negative	Positive	<=50	53	Premenopausal	Positive	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0324	HR-/HER2+	Negative	Negative	Positive	<=50	45	Premenopausal	Positive	Unknown	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0325	HR-/HER2-	Negative	Negative	Negative	<=50	55	Postmenopausal	Negative	III	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0326	HR-/HER2-	Negative	Negative	Negative	>50	79	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0327	HR+/HER2-	Positive	Positive	Negative	>50	68	Postmenopausal	Negative	Unknown	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0328	HR-/HER2-	Negative	Negative	Negative	<=50	29	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0329	HR+/HER2-	Positive	Negative	Negative	<=50	85	Postmenopausal	Positive	I	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0330	HR+/HER2-	Positive	Positive	Negative	>50	87	Postmenopausal	Negative	I	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0331	HR+/HER2-	Positive	Negative	Negative	>50	40	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0332	HR-/HER2+	Negative	Negative	Positive	>50	66	Postmenopausal	Negative	III	I	Others	Ambiguous
+BRCA-0333	HR+/HER2-	Positive	Positive	Negative	>50	68	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0334	HR+/HER2-	Positive	Negative	Negative	<=50	48	Premenopausal	Negative	I	II	Others	Not Triple Negative
+BRCA-0335	HR-/HER2-	Negative	Negative	Negative	>50	88	Postmenopausal	Negative	II	III	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0336	HR+/HER2-	Positive	Positive	Negative	<=50	58	Premenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0337	HR-/HER2+	Negative	Negative	Positive	>50	67	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0338	HR-/HER2-	Negative	Negative	Negative	>50	44	Postmenopausal	Positive	Unknown	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0339	HR+/HER2-	Positive	Negative	Negative	>50	65	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0340	HR+/HER2+	Positive	Positive	Positive	>50	46	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0341	HR-/HER2+	Negative	Negative	Positive	<=50	29	Premenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0342	HR+/HER2-	Positive	Negative	Negative	<=50	85	Postmenopausal	Negative	III	IV	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0343	HR+/HER2-	Positive	Positive	Negative	<=50	46	Premenopausal	Positive	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0344	HR-/HER2-	Negative	Negative	Negative	>50	80	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0345	HR+/HER2-	Positive	Positive	Negative	>50	77	Postmenopausal	Negative	I	II	Others	Not Triple Negative
+BRCA-0346	HR+/HER2-	Positive	Positive	Negative	<=50	71	Postmenopausal	Positive	II	II	Others	Not Triple Negative
+BRCA-0347	HR+/HER2-	Positive	Positive	Negative	<=50	42	Premenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0348	HR+/HER2-	Positive	Positive	Negative	>50	85	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0349	HR-/HER2+	Negative	Negative	Positive	<=50	42	Premenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0350	HR+/HER2-	Positive	Positive	Negative	>50	71	Postmenopausal	Positive	II	II	Others	Not Triple Negative
+BRCA-0351	HR+/HER2-	Positive	Negative	Negative	<=50	44	Premenopausal	Positive	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0352	HR-/HER2-	Negative	Negative	Negative	>50	42	Postmenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0353	HR-/HER2-	Negative	Negative	Negative	>50	67	Postmenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0354	HR-/HER2+	Negative	Negative	Positive	>50	47	Postmenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0355	HR-/HER2-	Negative	Negative	Negative	<=50	49	Premenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0356	HR-/HER2-	Negative	Negative	Negative	>50	64	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0357	HR-/HER2-	Negative	Negative	Negative	>50	63	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0358	HR-/HER2-	Negative	Negative	Negative	>50	43	Postmenopausal	Negative	I	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0359	HR-/HER2-	Negative	Negative	Negative	>50	43	Postmenopausal	Negative	Unknown	III	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0360	HR-/HER2+	Negative	Negative	Positive	>50	29	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0361	HR-/HER2+	Negative	Negative	Positive	<=50	44	Postmenopausal	Positive	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0362	HR+/HER2+	Positive	Positive	Positive	<=50	39	Premenopausal	Negative	III	IV	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0363	HR-/HER2+	Negative	Negative	Positive	<=50	81	Premenopausal	Positive	Unknown	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0364	HR+/HER2+	Positive	Positive	Positive	>50	74	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0365	HR-/HER2+	Negative	Negative	Positive	>50	68	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0366	HR-/HER2-	Negative	Negative	Negative	<=50	87	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0367	HR+/HER2-	Positive	Positive	Negative	<=50	49	Premenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0368	HR+/HER2-	Positive	Negative	Negative	<=50	80	Premenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0369	HR-/HER2-	Negative	Negative	Negative	<=50	34	Premenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0370	HR+/HER2-	Positive	Positive	Negative	>50	67	Postmenopausal	Negative	I	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0371	HR+/HER2-	Positive	Negative	Negative	<=50	84	Premenopausal	Negative	II	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0372	HR+/HER2+	Positive	Positive	Positive	>50	49	Postmenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0373	HR-/HER2+	Negative	Negative	Positive	>50	75	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0374	HR+/HER2-	Positive	Negative	Negative	>50	89	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0375	HR-/HER2+	Negative	Negative	Positive	<=50	67	Premenopausal	Negative	III	IV	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0376	HR-/HER2-	Negative	Negative	Negative	>50	34	Postmenopausal	Positive	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0377	HR+/HER2-	Positive	Negative	Negative	>50	55	Postmenopausal	Negative	Unknown	III	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0378	HR-/HER2+	Negative	Negative	Positive	>50	60	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0379	HR+/HER2-	Positive	Positive	Negative	<=50	63	Premenopausal	Negative	II	II	Others	Not Triple Negative
+BRCA-0380	HR+/HER2-	Positive	Positive	Negative	<=50	80	Premenopausal	Positive	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0381	HR+/HER2+	Positive	Positive	Positive	>50	57	Postmenopausal	Negative	I	II	Others	Ambiguous
+BRCA-0382	HR-/HER2-	Negative	Negative	Negative	>50	90	Postmenopausal	Positive	I	II	Infiltrating Lobular Carcinoma	Triple Negative
+BRCA-0383	HR-/HER2-	Negative	Negative	Negative	>50	87	Postmenopausal	Positive	I	II	Others	Triple Negative
+BRCA-0384	HR-/HER2+	Negative	Negative	Positive	>50	54	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0385	HR-/HER2-	Negative	Negative	Negative	<=50	53	Premenopausal	Negative	III	I	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0386	HR-/HER2+	Negative	Negative	Positive	>50	76	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0387	HR+/HER2-	Positive	Positive	Negative	>50	66	Postmenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0388	HR+/HER2-	Positive	Positive	Negative	<=50	28	Premenopausal	Negative	I	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0389	HR+/HER2-	Positive	Positive	Negative	>50	28	Postmenopausal	Positive	II	I	Others	Not Triple Negative
+BRCA-0390	HR+/HER2-	Positive	Negative	Negative	>50	45	Postmenopausal	Negative	II	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0391	HR+/HER2-	Positive	Positive	Negative	>50	75	Postmenopausal	Positive	I	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0392	HR-/HER2-	Negative	Negative	Negative	>50	89	Postmenopausal	Negative	II	II	Others	Triple Negative
+BRCA-0393	HR+/HER2-	Positive	Negative	Negative	<=50	85	Premenopausal	Positive	II	III	Others	Not Triple Negative
+BRCA-0394	HR+/HER2-	Positive	Positive	Negative	>50	56	Postmenopausal	Positive	II	III	Others	Not Triple Negative
+BRCA-0395	HR+/HER2-	Positive	Positive	Negative	>50	41	Postmenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0396	HR+/HER2-	Positive	Positive	Negative	<=50	40	Premenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0397	HR+/HER2-	Positive	Positive	Negative	<=50	56	Premenopausal	Positive	I	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0398	HR+/HER2-	Positive	Positive	Negative	>50	29	Postmenopausal	Positive	III	I	Others	Not Triple Negative
+BRCA-0399	HR+/HER2+	Positive	Negative	Positive	<=50	36	Premenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0400	HR-/HER2-	Negative	Negative	Negative	>50	64	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Triple Negative
+BRCA-0401	HR-/HER2+	Negative	Negative	Positive	>50	55	Postmenopausal	Positive	III	I	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0402	HR+/HER2-	Positive	Positive	Negative	<=50	63	Premenopausal	Negative	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0403	HR+/HER2-	Positive	Positive	Negative	>50	76	Postmenopausal	Negative	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0404	HR-/HER2-	Negative	Negative	Negative	<=50	59	Premenopausal	Negative	II	III	Others	Triple Negative
+BRCA-0405	HR+/HER2-	Positive	Positive	Negative	<=50	29	Premenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0406	HR+/HER2-	Positive	Positive	Negative	<=50	74	Premenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0407	HR+/HER2-	Positive	Positive	Negative	>50	36	Postmenopausal	Negative	Unknown	I	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0408	HR-/HER2+	Negative	Negative	Positive	>50	61	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0409	HR+/HER2-	Positive	Positive	Negative	>50	90	Postmenopausal	Positive	Unknown	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0410	HR+/HER2-	Positive	Negative	Negative	<=50	69	Premenopausal	Negative	Unknown	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0411	HR+/HER2-	Positive	Positive	Negative	>50	44	Postmenopausal	Negative	II	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0412	HR-/HER2+	Negative	Negative	Positive	>50	72	Postmenopausal	Negative	I	II	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0413	HR-/HER2+	Negative	Negative	Positive	>50	85	Postmenopausal	Negative	III	II	Others	Ambiguous
+BRCA-0414	HR+/HER2-	Positive	Negative	Negative	>50	84	Postmenopausal	Negative	Unknown	III	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0415	HR+/HER2+	Positive	Positive	Positive	>50	84	Postmenopausal	Negative	I	II	Infiltrating Lobular Carcinoma	Ambiguous
+BRCA-0416	HR+/HER2-	Positive	Positive	Negative	<=50	73	Postmenopausal	Negative	II	II	Infiltrating Lobular Carcinoma	Not Triple Negative
+BRCA-0417	HR-/HER2+	Negative	Negative	Positive	>50	37	Postmenopausal	Negative	III	III	Infiltrating Ductal Carcinoma	Ambiguous
+BRCA-0418	HR-/HER2-	Negative	Negative	Negative	>50	66	Postmenopausal	Negative	II	II	Others	Triple Negative
+BRCA-0419	HR+/HER2-	Positive	Negative	Negative	>50	82	Postmenopausal	Positive	III	II	Infiltrating Ductal Carcinoma	Not Triple Negative
+BRCA-0420	HR-/HER2+	Negative	Negative	Positive	>50	71	Postmenopausal	Positive	II	I	Infiltrating Ductal Carcinoma	Ambiguous

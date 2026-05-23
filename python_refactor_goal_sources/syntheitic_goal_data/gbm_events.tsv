@@ -1,0 +1,590 @@
+sample	gene	alteration	tooltip
+G-SAM-001	PDGFRA	Lost / decreased / male	G-SAM-001 PDGFRA Lost / decreased / male
+G-SAM-001	ARID2	Mutation	G-SAM-001 ARID2 Mutation
+G-SAM-001	MSH2	Mutation	G-SAM-001 MSH2 Mutation
+G-SAM-001	HM	Mutation	G-SAM-001 HM Mutation
+G-SAM-002	TERT	Lost / decreased / male	G-SAM-002 TERT Lost / decreased / male
+G-SAM-002	PDGFRA	Mutation	G-SAM-002 PDGFRA Mutation
+G-SAM-002	HM	Mutation	G-SAM-002 HM Mutation
+G-SAM-003	TERT	Mutation	G-SAM-003 TERT Mutation
+G-SAM-003	EGFR	Mutation	G-SAM-003 EGFR Mutation
+G-SAM-003	PTEN	Mutation	G-SAM-003 PTEN Mutation
+G-SAM-004	TERT	Gained / increased / female	G-SAM-004 TERT Gained / increased / female
+G-SAM-004	PIK3CA	Mutation	G-SAM-004 PIK3CA Mutation
+G-SAM-004	PIK3R1	Gained / increased / female	G-SAM-004 PIK3R1 Gained / increased / female
+G-SAM-004	PIK3R1	Mutation	G-SAM-004 PIK3R1 Mutation secondary
+G-SAM-004	TP53	Mutation	G-SAM-004 TP53 Mutation
+G-SAM-005	TERT	Gained / increased / female	G-SAM-005 TERT Gained / increased / female
+G-SAM-005	PIK3CA	Mutation	G-SAM-005 PIK3CA Mutation
+G-SAM-005	PIK3R1	Mutation	G-SAM-005 PIK3R1 Mutation
+G-SAM-005	EGFR	Mutation	G-SAM-005 EGFR Mutation
+G-SAM-005	PTEN	Mutation	G-SAM-005 PTEN Mutation
+G-SAM-005	RB1	Mutation	G-SAM-005 RB1 Mutation
+G-SAM-006	TERT	Mutation	G-SAM-006 TERT Mutation
+G-SAM-006	PIK3R1	Mutation	G-SAM-006 PIK3R1 Mutation
+G-SAM-006	PIK3R1	Gained / increased / female	G-SAM-006 PIK3R1 Gained / increased / female secondary
+G-SAM-006	NF1	Mutation	G-SAM-006 NF1 Mutation
+G-SAM-006	SETD2	Lost / decreased / male	G-SAM-006 SETD2 Lost / decreased / male
+G-SAM-006	SETD2	Gained / increased / female	G-SAM-006 SETD2 Gained / increased / female secondary
+G-SAM-007	TERT	Mutation	G-SAM-007 TERT Mutation
+G-SAM-007	PTEN	Mutation	G-SAM-007 PTEN Mutation
+G-SAM-007	APC	Mutation	G-SAM-007 APC Mutation
+G-SAM-008	PDGFRA	Gained / increased / female	G-SAM-008 PDGFRA Gained / increased / female
+G-SAM-008	EGFR	Mutation	G-SAM-008 EGFR Mutation
+G-SAM-008	ERBB3	Mutation	G-SAM-008 ERBB3 Mutation
+G-SAM-008	KMT2C	Mutation	G-SAM-008 KMT2C Mutation
+G-SAM-009	HM	Mutation	G-SAM-009 HM Mutation
+G-SAM-010	TERT	Mutation	G-SAM-010 TERT Mutation
+G-SAM-010	PIK3CA	Mutation	G-SAM-010 PIK3CA Mutation
+G-SAM-010	BRCA2	Gained / increased / female	G-SAM-010 BRCA2 Gained / increased / female
+G-SAM-011	TERT	Lost / decreased / male	G-SAM-011 TERT Lost / decreased / male
+G-SAM-011	NF1	Mutation	G-SAM-011 NF1 Mutation
+G-SAM-011	ARID2	Mutation	G-SAM-011 ARID2 Mutation
+G-SAM-011	MGMT meth	Mutation	G-SAM-011 MGMT meth Mutation
+G-SAM-012	TERT	Mutation	G-SAM-012 TERT Mutation
+G-SAM-012	EGFR	Lost / decreased / male	G-SAM-012 EGFR Lost / decreased / male
+G-SAM-012	EGFR	Gained / increased / female	G-SAM-012 EGFR Gained / increased / female secondary
+G-SAM-012	KMT2C	Mutation	G-SAM-012 KMT2C Mutation
+G-SAM-012	MTOR	Mutation	G-SAM-012 MTOR Mutation
+G-SAM-013	TERT	Mutation	G-SAM-013 TERT Mutation
+G-SAM-013	PIK3R1	Mutation	G-SAM-013 PIK3R1 Mutation
+G-SAM-013	PTEN	Mutation	G-SAM-013 PTEN Mutation
+G-SAM-013	SETD2	Mutation	G-SAM-013 SETD2 Mutation
+G-SAM-013	ATM	Lost / decreased / male	G-SAM-013 ATM Lost / decreased / male
+G-SAM-013	MGMT meth	Mutation	G-SAM-013 MGMT meth Mutation
+G-SAM-014	TERT	Mutation	G-SAM-014 TERT Mutation
+G-SAM-014	PDGFRA	Mutation	G-SAM-014 PDGFRA Mutation
+G-SAM-014	TSC2	Mutation	G-SAM-014 TSC2 Mutation
+G-SAM-014	TSC2	Gained / increased / female	G-SAM-014 TSC2 Gained / increased / female secondary
+G-SAM-014	TP53	Mutation	G-SAM-014 TP53 Mutation
+G-SAM-014	TP53BP1	Mutation	G-SAM-014 TP53BP1 Mutation
+G-SAM-014	TP53BP1	Gained / increased / female	G-SAM-014 TP53BP1 Gained / increased / female secondary
+G-SAM-014	EGFR	Mutation	G-SAM-014 EGFR Mutation
+G-SAM-014	APC	Lost / decreased / male	G-SAM-014 APC Lost / decreased / male
+G-SAM-014	APC	Gained / increased / female	G-SAM-014 APC Gained / increased / female secondary
+G-SAM-014	HM	Mutation	G-SAM-014 HM Mutation
+G-SAM-015	TERT	Mutation	G-SAM-015 TERT Mutation
+G-SAM-015	PDGFRA	Mutation	G-SAM-015 PDGFRA Mutation
+G-SAM-015	PIK3CA	Mutation	G-SAM-015 PIK3CA Mutation
+G-SAM-015	EGFR	Mutation	G-SAM-015 EGFR Mutation
+G-SAM-015	PTEN	Gained / increased / female	G-SAM-015 PTEN Gained / increased / female
+G-SAM-015	MTOR	Mutation	G-SAM-015 MTOR Mutation
+G-SAM-015	ATM	Gained / increased / female	G-SAM-015 ATM Gained / increased / female
+G-SAM-015	JAK2	Gained / increased / female	G-SAM-015 JAK2 Gained / increased / female
+G-SAM-015	JAK2	Mutation	G-SAM-015 JAK2 Mutation secondary
+G-SAM-016	TSC2	Gained / increased / female	G-SAM-016 TSC2 Gained / increased / female
+G-SAM-017	TERT	Gained / increased / female	G-SAM-017 TERT Gained / increased / female
+G-SAM-017	EGFR	Mutation	G-SAM-017 EGFR Mutation
+G-SAM-017	KMT2C	Mutation	G-SAM-017 KMT2C Mutation
+G-SAM-017	MGMT meth	Lost / decreased / male	G-SAM-017 MGMT meth Lost / decreased / male
+G-SAM-018	PIK3CA	Mutation	G-SAM-018 PIK3CA Mutation
+G-SAM-018	PIK3R1	Mutation	G-SAM-018 PIK3R1 Mutation
+G-SAM-018	BRCA2	Mutation	G-SAM-018 BRCA2 Mutation
+G-SAM-019	TERT	Gained / increased / female	G-SAM-019 TERT Gained / increased / female
+G-SAM-019	TP53	Mutation	G-SAM-019 TP53 Mutation
+G-SAM-019	ERBB3	Mutation	G-SAM-019 ERBB3 Mutation
+G-SAM-020	TP53	Mutation	G-SAM-020 TP53 Mutation
+G-SAM-021	TERT	Mutation	G-SAM-021 TERT Mutation
+G-SAM-021	PDGFRA	Gained / increased / female	G-SAM-021 PDGFRA Gained / increased / female
+G-SAM-021	PTEN	Gained / increased / female	G-SAM-021 PTEN Gained / increased / female
+G-SAM-021	HM	Mutation	G-SAM-021 HM Mutation
+G-SAM-021	MGMT meth	Mutation	G-SAM-021 MGMT meth Mutation
+G-SAM-022	TERT	Gained / increased / female	G-SAM-022 TERT Gained / increased / female
+G-SAM-022	EGFR	Mutation	G-SAM-022 EGFR Mutation
+G-SAM-023	PDGFRA	Lost / decreased / male	G-SAM-023 PDGFRA Lost / decreased / male
+G-SAM-023	TSC2	Mutation	G-SAM-023 TSC2 Mutation
+G-SAM-023	PIK3R1	Gained / increased / female	G-SAM-023 PIK3R1 Gained / increased / female
+G-SAM-023	RB1	Mutation	G-SAM-023 RB1 Mutation
+G-SAM-024	TERT	Mutation	G-SAM-024 TERT Mutation
+G-SAM-024	PIK3CA	Mutation	G-SAM-024 PIK3CA Mutation
+G-SAM-024	TP53	Mutation	G-SAM-024 TP53 Mutation
+G-SAM-024	EGFR	Gained / increased / female	G-SAM-024 EGFR Gained / increased / female
+G-SAM-025	TERT	Mutation	G-SAM-025 TERT Mutation
+G-SAM-025	KMT2C	Gained / increased / female	G-SAM-025 KMT2C Gained / increased / female
+G-SAM-026	TERT	Mutation	G-SAM-026 TERT Mutation
+G-SAM-026	TSC2	Mutation	G-SAM-026 TSC2 Mutation
+G-SAM-026	TP53	Lost / decreased / male	G-SAM-026 TP53 Lost / decreased / male
+G-SAM-027	PIK3CA	Gained / increased / female	G-SAM-027 PIK3CA Gained / increased / female
+G-SAM-027	TP53	Lost / decreased / male	G-SAM-027 TP53 Lost / decreased / male
+G-SAM-027	EGFR	Mutation	G-SAM-027 EGFR Mutation
+G-SAM-027	EGFR	Gained / increased / female	G-SAM-027 EGFR Gained / increased / female secondary
+G-SAM-027	HM	Mutation	G-SAM-027 HM Mutation
+G-SAM-028	TERT	Lost / decreased / male	G-SAM-028 TERT Lost / decreased / male
+G-SAM-028	PIK3CA	Mutation	G-SAM-028 PIK3CA Mutation
+G-SAM-028	EGFR	Gained / increased / female	G-SAM-028 EGFR Gained / increased / female
+G-SAM-028	ERBB3	Mutation	G-SAM-028 ERBB3 Mutation
+G-SAM-028	JAK2	Mutation	G-SAM-028 JAK2 Mutation
+G-SAM-029	TERT	Mutation	G-SAM-029 TERT Mutation
+G-SAM-029	PIK3CA	Mutation	G-SAM-029 PIK3CA Mutation
+G-SAM-029	PIK3CA	Gained / increased / female	G-SAM-029 PIK3CA Gained / increased / female secondary
+G-SAM-029	TP53BP1	Mutation	G-SAM-029 TP53BP1 Mutation
+G-SAM-029	TP53BP1	Gained / increased / female	G-SAM-029 TP53BP1 Gained / increased / female secondary
+G-SAM-029	BRCA1	Mutation	G-SAM-029 BRCA1 Mutation
+G-SAM-030	TERT	Lost / decreased / male	G-SAM-030 TERT Lost / decreased / male
+G-SAM-030	PDGFRA	Lost / decreased / male	G-SAM-030 PDGFRA Lost / decreased / male
+G-SAM-030	EGFR	Mutation	G-SAM-030 EGFR Mutation
+G-SAM-031	TERT	Mutation	G-SAM-031 TERT Mutation
+G-SAM-031	PDGFRA	Mutation	G-SAM-031 PDGFRA Mutation
+G-SAM-031	TSC2	Mutation	G-SAM-031 TSC2 Mutation
+G-SAM-031	EGFR	Lost / decreased / male	G-SAM-031 EGFR Lost / decreased / male
+G-SAM-031	MGMT meth	Mutation	G-SAM-031 MGMT meth Mutation
+G-SAM-032	TERT	Mutation	G-SAM-032 TERT Mutation
+G-SAM-032	TP53BP1	Mutation	G-SAM-032 TP53BP1 Mutation
+G-SAM-032	MTOR	Mutation	G-SAM-032 MTOR Mutation
+G-SAM-032	HM	Mutation	G-SAM-032 HM Mutation
+G-SAM-033	TERT	Mutation	G-SAM-033 TERT Mutation
+G-SAM-033	PIK3CA	Mutation	G-SAM-033 PIK3CA Mutation
+G-SAM-033	EGFR	Mutation	G-SAM-033 EGFR Mutation
+G-SAM-033	PTEN	Mutation	G-SAM-033 PTEN Mutation
+G-SAM-033	MGMT meth	Gained / increased / female	G-SAM-033 MGMT meth Gained / increased / female
+G-SAM-034	TERT	Gained / increased / female	G-SAM-034 TERT Gained / increased / female
+G-SAM-034	TSC2	Mutation	G-SAM-034 TSC2 Mutation
+G-SAM-034	TP53	Mutation	G-SAM-034 TP53 Mutation
+G-SAM-034	AXIN2	Gained / increased / female	G-SAM-034 AXIN2 Gained / increased / female
+G-SAM-035	TERT	Mutation	G-SAM-035 TERT Mutation
+G-SAM-035	EGFR	Mutation	G-SAM-035 EGFR Mutation
+G-SAM-035	NF1	Gained / increased / female	G-SAM-035 NF1 Gained / increased / female
+G-SAM-036	TERT	Mutation	G-SAM-036 TERT Mutation
+G-SAM-036	TERT	Gained / increased / female	G-SAM-036 TERT Gained / increased / female secondary
+G-SAM-036	PDGFRA	Mutation	G-SAM-036 PDGFRA Mutation
+G-SAM-036	TP53	Mutation	G-SAM-036 TP53 Mutation
+G-SAM-036	RB1	Mutation	G-SAM-036 RB1 Mutation
+G-SAM-036	AXIN2	Gained / increased / female	G-SAM-036 AXIN2 Gained / increased / female
+G-SAM-037	TP53	Mutation	G-SAM-037 TP53 Mutation
+G-SAM-037	EGFR	Mutation	G-SAM-037 EGFR Mutation
+G-SAM-037	NF1	Gained / increased / female	G-SAM-037 NF1 Gained / increased / female
+G-SAM-037	PTEN	Mutation	G-SAM-037 PTEN Mutation
+G-SAM-037	MTOR	Gained / increased / female	G-SAM-037 MTOR Gained / increased / female
+G-SAM-037	MTOR	Mutation	G-SAM-037 MTOR Mutation secondary
+G-SAM-038	TERT	Mutation	G-SAM-038 TERT Mutation
+G-SAM-038	PDGFRA	Mutation	G-SAM-038 PDGFRA Mutation
+G-SAM-038	PIK3CA	Gained / increased / female	G-SAM-038 PIK3CA Gained / increased / female
+G-SAM-038	PIK3R1	Mutation	G-SAM-038 PIK3R1 Mutation
+G-SAM-038	NF1	Mutation	G-SAM-038 NF1 Mutation
+G-SAM-038	PTEN	Lost / decreased / male	G-SAM-038 PTEN Lost / decreased / male
+G-SAM-038	PTEN	Gained / increased / female	G-SAM-038 PTEN Gained / increased / female secondary
+G-SAM-038	KMT2C	Mutation	G-SAM-038 KMT2C Mutation
+G-SAM-038	MTOR	Mutation	G-SAM-038 MTOR Mutation
+G-SAM-038	MGMT meth	Lost / decreased / male	G-SAM-038 MGMT meth Lost / decreased / male
+G-SAM-039	TSC2	Mutation	G-SAM-039 TSC2 Mutation
+G-SAM-039	TP53	Mutation	G-SAM-039 TP53 Mutation
+G-SAM-039	TP53	Gained / increased / female	G-SAM-039 TP53 Gained / increased / female secondary
+G-SAM-039	MGMT meth	Mutation	G-SAM-039 MGMT meth Mutation
+G-SAM-040	TERT	Mutation	G-SAM-040 TERT Mutation
+G-SAM-040	KMT2C	Mutation	G-SAM-040 KMT2C Mutation
+G-SAM-040	SETD2	Mutation	G-SAM-040 SETD2 Mutation
+G-SAM-041	TERT	Lost / decreased / male	G-SAM-041 TERT Lost / decreased / male
+G-SAM-041	PDGFRA	Mutation	G-SAM-041 PDGFRA Mutation
+G-SAM-041	NF1	Mutation	G-SAM-041 NF1 Mutation
+G-SAM-041	KMT2C	Mutation	G-SAM-041 KMT2C Mutation
+G-SAM-041	RB1	Mutation	G-SAM-041 RB1 Mutation
+G-SAM-041	AXIN2	Mutation	G-SAM-041 AXIN2 Mutation
+G-SAM-042	PDGFRA	Mutation	G-SAM-042 PDGFRA Mutation
+G-SAM-042	PIK3CA	Mutation	G-SAM-042 PIK3CA Mutation
+G-SAM-043	TERT	Mutation	G-SAM-043 TERT Mutation
+G-SAM-043	PDGFRA	Mutation	G-SAM-043 PDGFRA Mutation
+G-SAM-043	PIK3R1	Mutation	G-SAM-043 PIK3R1 Mutation
+G-SAM-043	PTEN	Lost / decreased / male	G-SAM-043 PTEN Lost / decreased / male
+G-SAM-044	TERT	Mutation	G-SAM-044 TERT Mutation
+G-SAM-044	PIK3R1	Mutation	G-SAM-044 PIK3R1 Mutation
+G-SAM-044	SETD2	Mutation	G-SAM-044 SETD2 Mutation
+G-SAM-045	PDGFRA	Gained / increased / female	G-SAM-045 PDGFRA Gained / increased / female
+G-SAM-045	HM	Lost / decreased / male	G-SAM-045 HM Lost / decreased / male
+G-SAM-046	PDGFRA	Gained / increased / female	G-SAM-046 PDGFRA Gained / increased / female
+G-SAM-046	PDGFRA	Mutation	G-SAM-046 PDGFRA Mutation secondary
+G-SAM-046	PIK3CA	Mutation	G-SAM-046 PIK3CA Mutation
+G-SAM-046	NF1	Mutation	G-SAM-046 NF1 Mutation
+G-SAM-046	JAK2	Gained / increased / female	G-SAM-046 JAK2 Gained / increased / female
+G-SAM-048	TERT	Mutation	G-SAM-048 TERT Mutation
+G-SAM-048	TP53	Mutation	G-SAM-048 TP53 Mutation
+G-SAM-048	PTEN	Mutation	G-SAM-048 PTEN Mutation
+G-SAM-048	MTOR	Gained / increased / female	G-SAM-048 MTOR Gained / increased / female
+G-SAM-049	PDGFRA	Mutation	G-SAM-049 PDGFRA Mutation
+G-SAM-049	TSC2	Mutation	G-SAM-049 TSC2 Mutation
+G-SAM-049	EGFR	Mutation	G-SAM-049 EGFR Mutation
+G-SAM-049	ATM	Mutation	G-SAM-049 ATM Mutation
+G-SAM-050	PDGFRA	Gained / increased / female	G-SAM-050 PDGFRA Gained / increased / female
+G-SAM-050	EGFR	Mutation	G-SAM-050 EGFR Mutation
+G-SAM-050	ATM	Mutation	G-SAM-050 ATM Mutation
+G-SAM-050	MSH2	Gained / increased / female	G-SAM-050 MSH2 Gained / increased / female
+G-SAM-051	TERT	Mutation	G-SAM-051 TERT Mutation
+G-SAM-051	TSC2	Mutation	G-SAM-051 TSC2 Mutation
+G-SAM-051	PIK3CA	Gained / increased / female	G-SAM-051 PIK3CA Gained / increased / female
+G-SAM-051	PIK3R1	Mutation	G-SAM-051 PIK3R1 Mutation
+G-SAM-051	PIK3R1	Gained / increased / female	G-SAM-051 PIK3R1 Gained / increased / female secondary
+G-SAM-051	NF1	Lost / decreased / male	G-SAM-051 NF1 Lost / decreased / male
+G-SAM-051	KMT2C	Mutation	G-SAM-051 KMT2C Mutation
+G-SAM-052	PIK3R1	Mutation	G-SAM-052 PIK3R1 Mutation
+G-SAM-052	PIK3R1	Gained / increased / female	G-SAM-052 PIK3R1 Gained / increased / female secondary
+G-SAM-052	TP53BP1	Mutation	G-SAM-052 TP53BP1 Mutation
+G-SAM-052	EGFR	Mutation	G-SAM-052 EGFR Mutation
+G-SAM-052	MGMT meth	Mutation	G-SAM-052 MGMT meth Mutation
+G-SAM-053	TERT	Mutation	G-SAM-053 TERT Mutation
+G-SAM-053	PIK3R1	Mutation	G-SAM-053 PIK3R1 Mutation
+G-SAM-053	TP53	Lost / decreased / male	G-SAM-053 TP53 Lost / decreased / male
+G-SAM-053	MGMT meth	Mutation	G-SAM-053 MGMT meth Mutation
+G-SAM-054	PIK3CA	Mutation	G-SAM-054 PIK3CA Mutation
+G-SAM-055	TERT	Mutation	G-SAM-055 TERT Mutation
+G-SAM-055	PTEN	Mutation	G-SAM-055 PTEN Mutation
+G-SAM-055	MSH2	Gained / increased / female	G-SAM-055 MSH2 Gained / increased / female
+G-SAM-055	HM	Mutation	G-SAM-055 HM Mutation
+G-SAM-056	PIK3CA	Mutation	G-SAM-056 PIK3CA Mutation
+G-SAM-056	PIK3R1	Mutation	G-SAM-056 PIK3R1 Mutation
+G-SAM-056	BRCA1	Mutation	G-SAM-056 BRCA1 Mutation
+G-SAM-056	MGMT meth	Mutation	G-SAM-056 MGMT meth Mutation
+G-SAM-057	TERT	Gained / increased / female	G-SAM-057 TERT Gained / increased / female
+G-SAM-057	TERT	Mutation	G-SAM-057 TERT Mutation secondary
+G-SAM-057	TP53	Lost / decreased / male	G-SAM-057 TP53 Lost / decreased / male
+G-SAM-057	ERBB3	Gained / increased / female	G-SAM-057 ERBB3 Gained / increased / female
+G-SAM-057	MGMT meth	Mutation	G-SAM-057 MGMT meth Mutation
+G-SAM-058	TERT	Mutation	G-SAM-058 TERT Mutation
+G-SAM-058	EGFR	Mutation	G-SAM-058 EGFR Mutation
+G-SAM-058	HM	Mutation	G-SAM-058 HM Mutation
+G-SAM-058	MGMT meth	Lost / decreased / male	G-SAM-058 MGMT meth Lost / decreased / male
+G-SAM-059	PTEN	Mutation	G-SAM-059 PTEN Mutation
+G-SAM-060	TERT	Lost / decreased / male	G-SAM-060 TERT Lost / decreased / male
+G-SAM-060	PDGFRA	Mutation	G-SAM-060 PDGFRA Mutation
+G-SAM-060	TP53	Lost / decreased / male	G-SAM-060 TP53 Lost / decreased / male
+G-SAM-060	EGFR	Gained / increased / female	G-SAM-060 EGFR Gained / increased / female
+G-SAM-060	EGFR	Mutation	G-SAM-060 EGFR Mutation secondary
+G-SAM-060	PTEN	Mutation	G-SAM-060 PTEN Mutation
+G-SAM-060	AXIN2	Gained / increased / female	G-SAM-060 AXIN2 Gained / increased / female
+G-SAM-061	TERT	Gained / increased / female	G-SAM-061 TERT Gained / increased / female
+G-SAM-061	PDGFRA	Mutation	G-SAM-061 PDGFRA Mutation
+G-SAM-061	TSC2	Mutation	G-SAM-061 TSC2 Mutation
+G-SAM-061	EGFR	Gained / increased / female	G-SAM-061 EGFR Gained / increased / female
+G-SAM-061	MGMT meth	Gained / increased / female	G-SAM-061 MGMT meth Gained / increased / female
+G-SAM-062	TERT	Mutation	G-SAM-062 TERT Mutation
+G-SAM-062	KMT2C	Mutation	G-SAM-062 KMT2C Mutation
+G-SAM-063	TERT	Lost / decreased / male	G-SAM-063 TERT Lost / decreased / male
+G-SAM-063	EGFR	Mutation	G-SAM-063 EGFR Mutation
+G-SAM-063	JAK2	Lost / decreased / male	G-SAM-063 JAK2 Lost / decreased / male
+G-SAM-063	JAK2	Gained / increased / female	G-SAM-063 JAK2 Gained / increased / female secondary
+G-SAM-064	TERT	Mutation	G-SAM-064 TERT Mutation
+G-SAM-064	TERT	Gained / increased / female	G-SAM-064 TERT Gained / increased / female secondary
+G-SAM-064	PDGFRA	Gained / increased / female	G-SAM-064 PDGFRA Gained / increased / female
+G-SAM-064	EGFR	Mutation	G-SAM-064 EGFR Mutation
+G-SAM-065	TERT	Mutation	G-SAM-065 TERT Mutation
+G-SAM-065	TSC2	Gained / increased / female	G-SAM-065 TSC2 Gained / increased / female
+G-SAM-065	EGFR	Mutation	G-SAM-065 EGFR Mutation
+G-SAM-066	TERT	Mutation	G-SAM-066 TERT Mutation
+G-SAM-066	TP53	Gained / increased / female	G-SAM-066 TP53 Gained / increased / female
+G-SAM-066	PTEN	Mutation	G-SAM-066 PTEN Mutation
+G-SAM-067	TERT	Mutation	G-SAM-067 TERT Mutation
+G-SAM-067	PIK3CA	Mutation	G-SAM-067 PIK3CA Mutation
+G-SAM-067	EGFR	Mutation	G-SAM-067 EGFR Mutation
+G-SAM-067	PTEN	Mutation	G-SAM-067 PTEN Mutation
+G-SAM-067	MSH2	Mutation	G-SAM-067 MSH2 Mutation
+G-SAM-069	TERT	Lost / decreased / male	G-SAM-069 TERT Lost / decreased / male
+G-SAM-069	TSC2	Gained / increased / female	G-SAM-069 TSC2 Gained / increased / female
+G-SAM-069	PIK3R1	Lost / decreased / male	G-SAM-069 PIK3R1 Lost / decreased / male
+G-SAM-069	NF1	Mutation	G-SAM-069 NF1 Mutation
+G-SAM-069	MGMT meth	Gained / increased / female	G-SAM-069 MGMT meth Gained / increased / female
+G-SAM-070	PIK3CA	Mutation	G-SAM-070 PIK3CA Mutation
+G-SAM-070	TP53	Mutation	G-SAM-070 TP53 Mutation
+G-SAM-070	TP53BP1	Gained / increased / female	G-SAM-070 TP53BP1 Gained / increased / female
+G-SAM-070	ERBB3	Gained / increased / female	G-SAM-070 ERBB3 Gained / increased / female
+G-SAM-070	MSH2	Mutation	G-SAM-070 MSH2 Mutation
+G-SAM-071	TERT	Gained / increased / female	G-SAM-071 TERT Gained / increased / female
+G-SAM-071	TSC2	Mutation	G-SAM-071 TSC2 Mutation
+G-SAM-071	ERBB3	Mutation	G-SAM-071 ERBB3 Mutation
+G-SAM-071	RB1	Mutation	G-SAM-071 RB1 Mutation
+G-SAM-071	MGMT meth	Mutation	G-SAM-071 MGMT meth Mutation
+G-SAM-072	TERT	Lost / decreased / male	G-SAM-072 TERT Lost / decreased / male
+G-SAM-072	PIK3CA	Lost / decreased / male	G-SAM-072 PIK3CA Lost / decreased / male
+G-SAM-072	TP53	Mutation	G-SAM-072 TP53 Mutation
+G-SAM-072	EGFR	Mutation	G-SAM-072 EGFR Mutation
+G-SAM-072	NF1	Lost / decreased / male	G-SAM-072 NF1 Lost / decreased / male
+G-SAM-072	MTOR	Mutation	G-SAM-072 MTOR Mutation
+G-SAM-073	TERT	Gained / increased / female	G-SAM-073 TERT Gained / increased / female
+G-SAM-073	EGFR	Mutation	G-SAM-073 EGFR Mutation
+G-SAM-074	TERT	Mutation	G-SAM-074 TERT Mutation
+G-SAM-074	TSC2	Lost / decreased / male	G-SAM-074 TSC2 Lost / decreased / male
+G-SAM-074	TSC2	Gained / increased / female	G-SAM-074 TSC2 Gained / increased / female secondary
+G-SAM-074	NF1	Lost / decreased / male	G-SAM-074 NF1 Lost / decreased / male
+G-SAM-074	MTOR	Mutation	G-SAM-074 MTOR Mutation
+G-SAM-075	TERT	Mutation	G-SAM-075 TERT Mutation
+G-SAM-075	TP53	Mutation	G-SAM-075 TP53 Mutation
+G-SAM-075	NF1	Mutation	G-SAM-075 NF1 Mutation
+G-SAM-075	JAK2	Gained / increased / female	G-SAM-075 JAK2 Gained / increased / female
+G-SAM-075	HM	Lost / decreased / male	G-SAM-075 HM Lost / decreased / male
+G-SAM-075	HM	Gained / increased / female	G-SAM-075 HM Gained / increased / female secondary
+G-SAM-076	TERT	Gained / increased / female	G-SAM-076 TERT Gained / increased / female
+G-SAM-076	PIK3CA	Mutation	G-SAM-076 PIK3CA Mutation
+G-SAM-076	NF1	Mutation	G-SAM-076 NF1 Mutation
+G-SAM-076	KMT2C	Mutation	G-SAM-076 KMT2C Mutation
+G-SAM-076	BRCA1	Gained / increased / female	G-SAM-076 BRCA1 Gained / increased / female
+G-SAM-077	PDGFRA	Gained / increased / female	G-SAM-077 PDGFRA Gained / increased / female
+G-SAM-077	PIK3CA	Mutation	G-SAM-077 PIK3CA Mutation
+G-SAM-077	PIK3R1	Mutation	G-SAM-077 PIK3R1 Mutation
+G-SAM-077	TP53BP1	Lost / decreased / male	G-SAM-077 TP53BP1 Lost / decreased / male
+G-SAM-077	EGFR	Mutation	G-SAM-077 EGFR Mutation
+G-SAM-077	ARID2	Mutation	G-SAM-077 ARID2 Mutation
+G-SAM-078	PDGFRA	Mutation	G-SAM-078 PDGFRA Mutation
+G-SAM-078	PIK3R1	Gained / increased / female	G-SAM-078 PIK3R1 Gained / increased / female
+G-SAM-079	PIK3CA	Mutation	G-SAM-079 PIK3CA Mutation
+G-SAM-079	PIK3R1	Lost / decreased / male	G-SAM-079 PIK3R1 Lost / decreased / male
+G-SAM-079	EGFR	Lost / decreased / male	G-SAM-079 EGFR Lost / decreased / male
+G-SAM-079	NF1	Mutation	G-SAM-079 NF1 Mutation
+G-SAM-079	KMT2C	Mutation	G-SAM-079 KMT2C Mutation
+G-SAM-079	ARID2	Mutation	G-SAM-079 ARID2 Mutation
+G-SAM-079	BRCA1	Mutation	G-SAM-079 BRCA1 Mutation
+G-SAM-080	PDGFRA	Mutation	G-SAM-080 PDGFRA Mutation
+G-SAM-080	TP53	Mutation	G-SAM-080 TP53 Mutation
+G-SAM-080	TP53	Gained / increased / female	G-SAM-080 TP53 Gained / increased / female secondary
+G-SAM-080	PTEN	Lost / decreased / male	G-SAM-080 PTEN Lost / decreased / male
+G-SAM-080	APC	Mutation	G-SAM-080 APC Mutation
+G-SAM-081	TERT	Lost / decreased / male	G-SAM-081 TERT Lost / decreased / male
+G-SAM-081	TERT	Gained / increased / female	G-SAM-081 TERT Gained / increased / female secondary
+G-SAM-081	PDGFRA	Mutation	G-SAM-081 PDGFRA Mutation
+G-SAM-081	TP53	Lost / decreased / male	G-SAM-081 TP53 Lost / decreased / male
+G-SAM-081	PTEN	Mutation	G-SAM-081 PTEN Mutation
+G-SAM-081	MTOR	Mutation	G-SAM-081 MTOR Mutation
+G-SAM-081	BRCA1	Mutation	G-SAM-081 BRCA1 Mutation
+G-SAM-081	JAK2	Mutation	G-SAM-081 JAK2 Mutation
+G-SAM-082	TERT	Mutation	G-SAM-082 TERT Mutation
+G-SAM-082	TERT	Gained / increased / female	G-SAM-082 TERT Gained / increased / female secondary
+G-SAM-082	MTOR	Mutation	G-SAM-082 MTOR Mutation
+G-SAM-082	ATM	Mutation	G-SAM-082 ATM Mutation
+G-SAM-082	ATM	Gained / increased / female	G-SAM-082 ATM Gained / increased / female secondary
+G-SAM-083	TERT	Gained / increased / female	G-SAM-083 TERT Gained / increased / female
+G-SAM-083	PTEN	Mutation	G-SAM-083 PTEN Mutation
+G-SAM-083	APC	Mutation	G-SAM-083 APC Mutation
+G-SAM-084	NF1	Gained / increased / female	G-SAM-084 NF1 Gained / increased / female
+G-SAM-084	KMT2C	Mutation	G-SAM-084 KMT2C Mutation
+G-SAM-085	PIK3R1	Mutation	G-SAM-085 PIK3R1 Mutation
+G-SAM-085	EGFR	Mutation	G-SAM-085 EGFR Mutation
+G-SAM-086	TERT	Gained / increased / female	G-SAM-086 TERT Gained / increased / female
+G-SAM-086	PIK3R1	Mutation	G-SAM-086 PIK3R1 Mutation
+G-SAM-086	PTEN	Gained / increased / female	G-SAM-086 PTEN Gained / increased / female
+G-SAM-087	TERT	Mutation	G-SAM-087 TERT Mutation
+G-SAM-087	TSC2	Mutation	G-SAM-087 TSC2 Mutation
+G-SAM-087	TSC2	Gained / increased / female	G-SAM-087 TSC2 Gained / increased / female secondary
+G-SAM-087	EGFR	Mutation	G-SAM-087 EGFR Mutation
+G-SAM-088	MTOR	Gained / increased / female	G-SAM-088 MTOR Gained / increased / female
+G-SAM-089	TP53BP1	Mutation	G-SAM-089 TP53BP1 Mutation
+G-SAM-090	TERT	Mutation	G-SAM-090 TERT Mutation
+G-SAM-090	PDGFRA	Mutation	G-SAM-090 PDGFRA Mutation
+G-SAM-090	PIK3CA	Mutation	G-SAM-090 PIK3CA Mutation
+G-SAM-090	PIK3R1	Mutation	G-SAM-090 PIK3R1 Mutation
+G-SAM-090	EGFR	Mutation	G-SAM-090 EGFR Mutation
+G-SAM-091	TERT	Mutation	G-SAM-091 TERT Mutation
+G-SAM-091	PIK3CA	Mutation	G-SAM-091 PIK3CA Mutation
+G-SAM-091	EGFR	Lost / decreased / male	G-SAM-091 EGFR Lost / decreased / male
+G-SAM-091	ATM	Gained / increased / female	G-SAM-091 ATM Gained / increased / female
+G-SAM-092	TSC2	Mutation	G-SAM-092 TSC2 Mutation
+G-SAM-092	TP53	Lost / decreased / male	G-SAM-092 TP53 Lost / decreased / male
+G-SAM-092	EGFR	Mutation	G-SAM-092 EGFR Mutation
+G-SAM-092	EGFR	Gained / increased / female	G-SAM-092 EGFR Gained / increased / female secondary
+G-SAM-093	TERT	Mutation	G-SAM-093 TERT Mutation
+G-SAM-093	NF1	Mutation	G-SAM-093 NF1 Mutation
+G-SAM-093	PTEN	Mutation	G-SAM-093 PTEN Mutation
+G-SAM-093	KMT2C	Mutation	G-SAM-093 KMT2C Mutation
+G-SAM-093	BRCA1	Lost / decreased / male	G-SAM-093 BRCA1 Lost / decreased / male
+G-SAM-093	RB1	Lost / decreased / male	G-SAM-093 RB1 Lost / decreased / male
+G-SAM-094	TERT	Mutation	G-SAM-094 TERT Mutation
+G-SAM-094	EGFR	Mutation	G-SAM-094 EGFR Mutation
+G-SAM-094	EGFR	Gained / increased / female	G-SAM-094 EGFR Gained / increased / female secondary
+G-SAM-095	KMT2C	Gained / increased / female	G-SAM-095 KMT2C Gained / increased / female
+G-SAM-096	TERT	Mutation	G-SAM-096 TERT Mutation
+G-SAM-096	PDGFRA	Mutation	G-SAM-096 PDGFRA Mutation
+G-SAM-096	EGFR	Mutation	G-SAM-096 EGFR Mutation
+G-SAM-096	NF1	Mutation	G-SAM-096 NF1 Mutation
+G-SAM-096	PTEN	Mutation	G-SAM-096 PTEN Mutation
+G-SAM-096	MSH2	Mutation	G-SAM-096 MSH2 Mutation
+G-SAM-097	TERT	Mutation	G-SAM-097 TERT Mutation
+G-SAM-097	MTOR	Mutation	G-SAM-097 MTOR Mutation
+G-SAM-097	MGMT meth	Mutation	G-SAM-097 MGMT meth Mutation
+G-SAM-098	TERT	Mutation	G-SAM-098 TERT Mutation
+G-SAM-098	PIK3R1	Mutation	G-SAM-098 PIK3R1 Mutation
+G-SAM-098	TP53BP1	Mutation	G-SAM-098 TP53BP1 Mutation
+G-SAM-098	PTEN	Mutation	G-SAM-098 PTEN Mutation
+G-SAM-098	MTOR	Mutation	G-SAM-098 MTOR Mutation
+G-SAM-099	TERT	Mutation	G-SAM-099 TERT Mutation
+G-SAM-099	PTEN	Lost / decreased / male	G-SAM-099 PTEN Lost / decreased / male
+G-SAM-099	SETD2	Mutation	G-SAM-099 SETD2 Mutation
+G-SAM-099	JAK2	Mutation	G-SAM-099 JAK2 Mutation
+G-SAM-100	PDGFRA	Mutation	G-SAM-100 PDGFRA Mutation
+G-SAM-100	PDGFRA	Gained / increased / female	G-SAM-100 PDGFRA Gained / increased / female secondary
+G-SAM-100	PIK3R1	Mutation	G-SAM-100 PIK3R1 Mutation
+G-SAM-100	EGFR	Gained / increased / female	G-SAM-100 EGFR Gained / increased / female
+G-SAM-100	EGFR	Mutation	G-SAM-100 EGFR Mutation secondary
+G-SAM-100	BRCA2	Mutation	G-SAM-100 BRCA2 Mutation
+G-SAM-100	MSH2	Mutation	G-SAM-100 MSH2 Mutation
+G-SAM-100	AXIN2	Mutation	G-SAM-100 AXIN2 Mutation
+G-SAM-101	TERT	Gained / increased / female	G-SAM-101 TERT Gained / increased / female
+G-SAM-101	PIK3R1	Mutation	G-SAM-101 PIK3R1 Mutation
+G-SAM-101	NF1	Mutation	G-SAM-101 NF1 Mutation
+G-SAM-101	PTEN	Mutation	G-SAM-101 PTEN Mutation
+G-SAM-101	ARID2	Mutation	G-SAM-101 ARID2 Mutation
+G-SAM-102	TERT	Mutation	G-SAM-102 TERT Mutation
+G-SAM-102	TERT	Gained / increased / female	G-SAM-102 TERT Gained / increased / female secondary
+G-SAM-102	PIK3R1	Mutation	G-SAM-102 PIK3R1 Mutation
+G-SAM-102	EGFR	Mutation	G-SAM-102 EGFR Mutation
+G-SAM-102	HM	Lost / decreased / male	G-SAM-102 HM Lost / decreased / male
+G-SAM-103	PIK3R1	Mutation	G-SAM-103 PIK3R1 Mutation
+G-SAM-103	BRCA2	Mutation	G-SAM-103 BRCA2 Mutation
+G-SAM-104	TP53	Mutation	G-SAM-104 TP53 Mutation
+G-SAM-104	EGFR	Mutation	G-SAM-104 EGFR Mutation
+G-SAM-104	PTEN	Lost / decreased / male	G-SAM-104 PTEN Lost / decreased / male
+G-SAM-104	MTOR	Mutation	G-SAM-104 MTOR Mutation
+G-SAM-104	HM	Mutation	G-SAM-104 HM Mutation
+G-SAM-104	MGMT meth	Mutation	G-SAM-104 MGMT meth Mutation
+G-SAM-105	TERT	Mutation	G-SAM-105 TERT Mutation
+G-SAM-105	TSC2	Mutation	G-SAM-105 TSC2 Mutation
+G-SAM-105	PTEN	Mutation	G-SAM-105 PTEN Mutation
+G-SAM-106	TERT	Gained / increased / female	G-SAM-106 TERT Gained / increased / female
+G-SAM-106	TERT	Mutation	G-SAM-106 TERT Mutation secondary
+G-SAM-106	PDGFRA	Mutation	G-SAM-106 PDGFRA Mutation
+G-SAM-106	PDGFRA	Gained / increased / female	G-SAM-106 PDGFRA Gained / increased / female secondary
+G-SAM-106	PTEN	Gained / increased / female	G-SAM-106 PTEN Gained / increased / female
+G-SAM-106	MGMT meth	Mutation	G-SAM-106 MGMT meth Mutation
+G-SAM-107	PDGFRA	Gained / increased / female	G-SAM-107 PDGFRA Gained / increased / female
+G-SAM-107	PDGFRA	Mutation	G-SAM-107 PDGFRA Mutation secondary
+G-SAM-107	TP53	Gained / increased / female	G-SAM-107 TP53 Gained / increased / female
+G-SAM-107	TP53BP1	Gained / increased / female	G-SAM-107 TP53BP1 Gained / increased / female
+G-SAM-108	TP53	Mutation	G-SAM-108 TP53 Mutation
+G-SAM-108	MTOR	Mutation	G-SAM-108 MTOR Mutation
+G-SAM-108	ATM	Gained / increased / female	G-SAM-108 ATM Gained / increased / female
+G-SAM-108	MGMT meth	Mutation	G-SAM-108 MGMT meth Mutation
+G-SAM-109	TERT	Lost / decreased / male	G-SAM-109 TERT Lost / decreased / male
+G-SAM-110	TERT	Mutation	G-SAM-110 TERT Mutation
+G-SAM-110	PDGFRA	Mutation	G-SAM-110 PDGFRA Mutation
+G-SAM-111	TERT	Mutation	G-SAM-111 TERT Mutation
+G-SAM-111	EGFR	Mutation	G-SAM-111 EGFR Mutation
+G-SAM-111	NF1	Mutation	G-SAM-111 NF1 Mutation
+G-SAM-111	KMT2C	Lost / decreased / male	G-SAM-111 KMT2C Lost / decreased / male
+G-SAM-112	TERT	Mutation	G-SAM-112 TERT Mutation
+G-SAM-112	PDGFRA	Mutation	G-SAM-112 PDGFRA Mutation
+G-SAM-113	TERT	Mutation	G-SAM-113 TERT Mutation
+G-SAM-113	PDGFRA	Mutation	G-SAM-113 PDGFRA Mutation
+G-SAM-113	SETD2	Mutation	G-SAM-113 SETD2 Mutation
+G-SAM-113	RB1	Mutation	G-SAM-113 RB1 Mutation
+G-SAM-114	TERT	Mutation	G-SAM-114 TERT Mutation
+G-SAM-114	TERT	Gained / increased / female	G-SAM-114 TERT Gained / increased / female secondary
+G-SAM-114	PIK3R1	Mutation	G-SAM-114 PIK3R1 Mutation
+G-SAM-114	KMT2C	Mutation	G-SAM-114 KMT2C Mutation
+G-SAM-114	MSH2	Gained / increased / female	G-SAM-114 MSH2 Gained / increased / female
+G-SAM-114	MGMT meth	Mutation	G-SAM-114 MGMT meth Mutation
+G-SAM-114	MGMT meth	Gained / increased / female	G-SAM-114 MGMT meth Gained / increased / female secondary
+G-SAM-115	PDGFRA	Gained / increased / female	G-SAM-115 PDGFRA Gained / increased / female
+G-SAM-115	TP53	Mutation	G-SAM-115 TP53 Mutation
+G-SAM-115	EGFR	Mutation	G-SAM-115 EGFR Mutation
+G-SAM-115	EGFR	Gained / increased / female	G-SAM-115 EGFR Gained / increased / female secondary
+G-SAM-115	ATM	Mutation	G-SAM-115 ATM Mutation
+G-SAM-115	BRCA2	Mutation	G-SAM-115 BRCA2 Mutation
+G-SAM-115	BRCA2	Gained / increased / female	G-SAM-115 BRCA2 Gained / increased / female secondary
+G-SAM-115	RB1	Mutation	G-SAM-115 RB1 Mutation
+G-SAM-116	TP53	Lost / decreased / male	G-SAM-116 TP53 Lost / decreased / male
+G-SAM-116	ERBB3	Mutation	G-SAM-116 ERBB3 Mutation
+G-SAM-116	NF1	Mutation	G-SAM-116 NF1 Mutation
+G-SAM-116	NF1	Gained / increased / female	G-SAM-116 NF1 Gained / increased / female secondary
+G-SAM-116	KMT2C	Gained / increased / female	G-SAM-116 KMT2C Gained / increased / female
+G-SAM-117	EGFR	Mutation	G-SAM-117 EGFR Mutation
+G-SAM-118	TERT	Gained / increased / female	G-SAM-118 TERT Gained / increased / female
+G-SAM-118	KMT2C	Lost / decreased / male	G-SAM-118 KMT2C Lost / decreased / male
+G-SAM-118	MTOR	Mutation	G-SAM-118 MTOR Mutation
+G-SAM-119	PIK3CA	Mutation	G-SAM-119 PIK3CA Mutation
+G-SAM-119	NF1	Mutation	G-SAM-119 NF1 Mutation
+G-SAM-119	AXIN2	Mutation	G-SAM-119 AXIN2 Mutation
+G-SAM-120	TERT	Mutation	G-SAM-120 TERT Mutation
+G-SAM-120	PDGFRA	Lost / decreased / male	G-SAM-120 PDGFRA Lost / decreased / male
+G-SAM-120	EGFR	Mutation	G-SAM-120 EGFR Mutation
+G-SAM-121	TSC2	Mutation	G-SAM-121 TSC2 Mutation
+G-SAM-121	MGMT meth	Mutation	G-SAM-121 MGMT meth Mutation
+G-SAM-123	PIK3CA	Mutation	G-SAM-123 PIK3CA Mutation
+G-SAM-123	ATM	Mutation	G-SAM-123 ATM Mutation
+G-SAM-124	PDGFRA	Mutation	G-SAM-124 PDGFRA Mutation
+G-SAM-124	TP53	Lost / decreased / male	G-SAM-124 TP53 Lost / decreased / male
+G-SAM-124	EGFR	Mutation	G-SAM-124 EGFR Mutation
+G-SAM-124	MTOR	Mutation	G-SAM-124 MTOR Mutation
+G-SAM-125	PDGFRA	Mutation	G-SAM-125 PDGFRA Mutation
+G-SAM-125	EGFR	Mutation	G-SAM-125 EGFR Mutation
+G-SAM-125	ARID2	Mutation	G-SAM-125 ARID2 Mutation
+G-SAM-126	PIK3R1	Mutation	G-SAM-126 PIK3R1 Mutation
+G-SAM-126	EGFR	Mutation	G-SAM-126 EGFR Mutation
+G-SAM-126	NF1	Gained / increased / female	G-SAM-126 NF1 Gained / increased / female
+G-SAM-126	BRCA1	Gained / increased / female	G-SAM-126 BRCA1 Gained / increased / female
+G-SAM-127	TERT	Mutation	G-SAM-127 TERT Mutation
+G-SAM-127	PDGFRA	Mutation	G-SAM-127 PDGFRA Mutation
+G-SAM-127	PIK3R1	Mutation	G-SAM-127 PIK3R1 Mutation
+G-SAM-127	JAK2	Mutation	G-SAM-127 JAK2 Mutation
+G-SAM-128	PDGFRA	Gained / increased / female	G-SAM-128 PDGFRA Gained / increased / female
+G-SAM-128	EGFR	Mutation	G-SAM-128 EGFR Mutation
+G-SAM-128	NF1	Mutation	G-SAM-128 NF1 Mutation
+G-SAM-128	ARID2	Mutation	G-SAM-128 ARID2 Mutation
+G-SAM-129	TERT	Mutation	G-SAM-129 TERT Mutation
+G-SAM-129	TSC2	Gained / increased / female	G-SAM-129 TSC2 Gained / increased / female
+G-SAM-129	PIK3CA	Mutation	G-SAM-129 PIK3CA Mutation
+G-SAM-129	PIK3R1	Mutation	G-SAM-129 PIK3R1 Mutation
+G-SAM-129	TP53	Lost / decreased / male	G-SAM-129 TP53 Lost / decreased / male
+G-SAM-129	MTOR	Lost / decreased / male	G-SAM-129 MTOR Lost / decreased / male
+G-SAM-129	MGMT meth	Mutation	G-SAM-129 MGMT meth Mutation
+G-SAM-130	TERT	Mutation	G-SAM-130 TERT Mutation
+G-SAM-130	PDGFRA	Mutation	G-SAM-130 PDGFRA Mutation
+G-SAM-130	PIK3R1	Mutation	G-SAM-130 PIK3R1 Mutation
+G-SAM-130	TP53	Mutation	G-SAM-130 TP53 Mutation
+G-SAM-130	EGFR	Mutation	G-SAM-130 EGFR Mutation
+G-SAM-130	BRCA2	Mutation	G-SAM-130 BRCA2 Mutation
+G-SAM-130	MGMT meth	Mutation	G-SAM-130 MGMT meth Mutation
+G-SAM-130	MGMT meth	Gained / increased / female	G-SAM-130 MGMT meth Gained / increased / female secondary
+G-SAM-131	KMT2C	Lost / decreased / male	G-SAM-131 KMT2C Lost / decreased / male
+G-SAM-131	BRCA2	Mutation	G-SAM-131 BRCA2 Mutation
+G-SAM-131	RB1	Gained / increased / female	G-SAM-131 RB1 Gained / increased / female
+G-SAM-131	RB1	Mutation	G-SAM-131 RB1 Mutation secondary
+G-SAM-132	NF1	Mutation	G-SAM-132 NF1 Mutation
+G-SAM-132	PTEN	Lost / decreased / male	G-SAM-132 PTEN Lost / decreased / male
+G-SAM-132	MTOR	Gained / increased / female	G-SAM-132 MTOR Gained / increased / female
+G-SAM-132	BRCA2	Mutation	G-SAM-132 BRCA2 Mutation
+G-SAM-132	BRCA2	Gained / increased / female	G-SAM-132 BRCA2 Gained / increased / female secondary
+G-SAM-133	TERT	Mutation	G-SAM-133 TERT Mutation
+G-SAM-133	TERT	Gained / increased / female	G-SAM-133 TERT Gained / increased / female secondary
+G-SAM-133	PIK3CA	Gained / increased / female	G-SAM-133 PIK3CA Gained / increased / female
+G-SAM-133	TP53	Mutation	G-SAM-133 TP53 Mutation
+G-SAM-133	ARID2	Gained / increased / female	G-SAM-133 ARID2 Gained / increased / female
+G-SAM-133	BRCA1	Mutation	G-SAM-133 BRCA1 Mutation
+G-SAM-134	TERT	Lost / decreased / male	G-SAM-134 TERT Lost / decreased / male
+G-SAM-134	PDGFRA	Mutation	G-SAM-134 PDGFRA Mutation
+G-SAM-134	TP53	Mutation	G-SAM-134 TP53 Mutation
+G-SAM-134	PTEN	Mutation	G-SAM-134 PTEN Mutation
+G-SAM-134	RB1	Mutation	G-SAM-134 RB1 Mutation
+G-SAM-135	TERT	Mutation	G-SAM-135 TERT Mutation
+G-SAM-135	PDGFRA	Mutation	G-SAM-135 PDGFRA Mutation
+G-SAM-135	TP53BP1	Mutation	G-SAM-135 TP53BP1 Mutation
+G-SAM-135	AXIN2	Mutation	G-SAM-135 AXIN2 Mutation
+G-SAM-135	MGMT meth	Gained / increased / female	G-SAM-135 MGMT meth Gained / increased / female
+G-SAM-136	TERT	Lost / decreased / male	G-SAM-136 TERT Lost / decreased / male
+G-SAM-136	MSH2	Mutation	G-SAM-136 MSH2 Mutation
+G-SAM-136	RB1	Mutation	G-SAM-136 RB1 Mutation
+G-SAM-137	TP53	Mutation	G-SAM-137 TP53 Mutation
+G-SAM-137	HM	Mutation	G-SAM-137 HM Mutation
+G-SAM-137	MGMT meth	Mutation	G-SAM-137 MGMT meth Mutation
+G-SAM-138	TP53	Mutation	G-SAM-138 TP53 Mutation
+G-SAM-139	TERT	Gained / increased / female	G-SAM-139 TERT Gained / increased / female
+G-SAM-139	PDGFRA	Lost / decreased / male	G-SAM-139 PDGFRA Lost / decreased / male
+G-SAM-139	PTEN	Mutation	G-SAM-139 PTEN Mutation
+G-SAM-139	MSH2	Mutation	G-SAM-139 MSH2 Mutation
+G-SAM-140	TERT	Mutation	G-SAM-140 TERT Mutation
+G-SAM-140	TSC2	Mutation	G-SAM-140 TSC2 Mutation
+G-SAM-140	EGFR	Mutation	G-SAM-140 EGFR Mutation
+G-SAM-141	TERT	Mutation	G-SAM-141 TERT Mutation
+G-SAM-141	TP53	Gained / increased / female	G-SAM-141 TP53 Gained / increased / female
+G-SAM-141	BRCA2	Mutation	G-SAM-141 BRCA2 Mutation
+G-SAM-141	MGMT meth	Mutation	G-SAM-141 MGMT meth Mutation
+G-SAM-143	TERT	Mutation	G-SAM-143 TERT Mutation
+G-SAM-143	PIK3R1	Mutation	G-SAM-143 PIK3R1 Mutation
+G-SAM-143	PIK3R1	Gained / increased / female	G-SAM-143 PIK3R1 Gained / increased / female secondary
+G-SAM-143	EGFR	Mutation	G-SAM-143 EGFR Mutation
+G-SAM-144	PDGFRA	Mutation	G-SAM-144 PDGFRA Mutation
+G-SAM-144	TP53	Mutation	G-SAM-144 TP53 Mutation
+G-SAM-144	SETD2	Mutation	G-SAM-144 SETD2 Mutation
+G-SAM-144	SETD2	Gained / increased / female	G-SAM-144 SETD2 Gained / increased / female secondary
+G-SAM-145	TERT	Mutation	G-SAM-145 TERT Mutation
+G-SAM-145	TP53	Gained / increased / female	G-SAM-145 TP53 Gained / increased / female
+G-SAM-146	TERT	Mutation	G-SAM-146 TERT Mutation
+G-SAM-147	TERT	Mutation	G-SAM-147 TERT Mutation
+G-SAM-147	PDGFRA	Mutation	G-SAM-147 PDGFRA Mutation
+G-SAM-147	PIK3CA	Lost / decreased / male	G-SAM-147 PIK3CA Lost / decreased / male
+G-SAM-147	TP53	Mutation	G-SAM-147 TP53 Mutation
+G-SAM-147	EGFR	Lost / decreased / male	G-SAM-147 EGFR Lost / decreased / male
+G-SAM-147	PTEN	Lost / decreased / male	G-SAM-147 PTEN Lost / decreased / male

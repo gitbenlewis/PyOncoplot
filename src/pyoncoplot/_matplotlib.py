@@ -1,0 +1,542 @@
+"""Matplotlib renderer for static oncoplots."""
+
+from __future__ import annotations
+
+from typing import Any, Dict, List, Mapping, Optional, Sequence
+
+import numpy as np
+import pandas as pd
+
+from ._data import PreparedOncoplotData
+from ._options import OncoplotOptions, coerce_options
+from ._params import merge_params
+
+
+MATPLOTLIB_RENDER_PARAM_KEYS = {
+    "prepared",
+    "palette",
+    "metadata_palette",
+    "options",
+    "draw_gene_bar",
+    "draw_tmb_bar",
+}
+
+MATPLOTLIB_RENDER_DEFAULTS: dict[str, Any] = {
+    "metadata_palette": None,
+    "draw_gene_bar": False,
+    "draw_tmb_bar": False,
+}
+
+
+def _require_matplotlib():
+    try:
+        import matplotlib.pyplot as plt
+        from matplotlib.colors import ListedColormap
+        from matplotlib.gridspec import GridSpec
+        from matplotlib.patches import Patch, Rectangle
+    except ImportError as exc:
+        raise ImportError("Matplotlib rendering requires the 'matplotlib' package.") from exc
+    return plt, ListedColormap, GridSpec, Patch, Rectangle
+
+
+def _font_kwargs(style: str) -> Dict[str, str]:
+    if style == "bold":
+        return {"fontweight": "bold"}
+    if style == "italic":
+        return {"fontstyle": "italic"}
+    if style == "bold_italic":
+        return {"fontweight": "bold", "fontstyle": "italic"}
+    return {}
+
+
+def _validate_metadata_levels(prepared: PreparedOncoplotData, options: OncoplotOptions) -> None:
+    for track in prepared.metadata_tracks or []:
+        if track.kind == "categorical" and len(track.levels) > options.metadata_max_levels:
+            raise ValueError(
+                f"Metadata column {track.column!r} has {len(track.levels)} levels, "
+                f"which exceeds metadata_max_levels={options.metadata_max_levels}."
+            )
+
+
+def _draw_main(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str], options: OncoplotOptions):
+    _plt, _ListedColormap, _GridSpec, _Patch, Rectangle = _require_matplotlib()
+    n_genes = len(prepared.genes)
+    n_samples = len(prepared.samples)
+    pathway_width = 0.95 if prepared.pathway_groups else 0
+    ax.set_xlim(-pathway_width, n_samples)
+    ax.set_ylim(0, n_genes)
+    ax.invert_yaxis()
+    ax.set_facecolor(options.background_color)
+
+    for gene_index, gene in enumerate(prepared.genes):
+        for sample_index, _sample in enumerate(prepared.samples):
+            ax.add_patch(
+                Rectangle(
+                    (sample_index, gene_index),
+                    options.tile_width,
+                    options.tile_height,
+                    facecolor=options.background_color,
+                    edgecolor="white",
+                    linewidth=options.tile_linewidth,
+                )
+            )
+
+    sample_pos = {sample: index for index, sample in enumerate(prepared.samples)}
+    gene_pos = {gene: index for index, gene in enumerate(prepared.genes)}
+    for _index, row in prepared.tiles.iterrows():
+        sample = str(row["Sample"])
+        gene = str(row["Gene"])
+        if sample not in sample_pos or gene not in gene_pos:
+            continue
+        mutation_type = row["MutationType"]
+        color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
+        ax.add_patch(
+            Rectangle(
+                (sample_pos[sample], gene_pos[gene]),
+                options.tile_width,
+                options.tile_height,
+                facecolor=color,
+                edgecolor="white",
+                linewidth=options.tile_linewidth,
+            )
+        )
+
+    ax.hlines(
+        np.arange(n_genes + 1),
+        xmin=0,
+        xmax=n_samples,
+        colors="#666666",
+        linewidth=options.row_separator_linewidth,
+        alpha=0.75,
+    )
+    if prepared.pathway_groups:
+        for group in prepared.pathway_groups:
+            ax.add_patch(
+                Rectangle(
+                    (-pathway_width, group.start),
+                    pathway_width,
+                    group.end - group.start + 1,
+                    facecolor=options.pathway_background_color,
+                    edgecolor=options.pathway_outline_color,
+                    linewidth=max(0.4, options.row_separator_linewidth),
+                    clip_on=False,
+                )
+            )
+            ax.text(
+                -pathway_width / 2,
+                group.start + (group.end - group.start + 1) / 2,
+                group.name,
+                ha="center",
+                va="center",
+                rotation=options.pathway_text_angle,
+                color=options.pathway_text_color,
+                fontsize=max(7, options.font_size_genes * 0.75),
+                clip_on=False,
+            )
+            ax.hlines(
+                [group.start, group.end + 1],
+                xmin=-pathway_width,
+                xmax=n_samples,
+                colors=options.pathway_outline_color,
+                linewidth=max(0.4, options.row_separator_linewidth),
+                alpha=0.85,
+            )
+    ax.set_yticks(np.arange(n_genes) + 0.5)
+    ax.set_yticklabels(prepared.genes, fontsize=options.font_size_genes)
+    for label in ax.get_yticklabels():
+        label.update(_font_kwargs(options.gene_font_style))
+    if options.show_sample_ids:
+        ax.set_xticks(np.arange(n_samples) + 0.5)
+        ax.set_xticklabels(prepared.samples, rotation=options.sample_id_angle, fontsize=options.font_size_samples)
+        for label in ax.get_xticklabels():
+            label.update(_font_kwargs(options.sample_font_style))
+    else:
+        ax.set_xticks([])
+    ax.set_xlabel(options.x_label if options.show_x_label else "")
+    ax.set_ylabel(options.y_label if options.show_y_label else "")
+
+
+def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str], options: OncoplotOptions):
+    tiles = prepared.tiles
+    if tiles.empty:
+        return
+    y_positions = np.arange(len(prepared.genes)) + 0.5
+    left = np.zeros(len(prepared.genes))
+    for mutation_type, group in tiles.groupby("MutationType", dropna=False, sort=False):
+        counts = group.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0).to_numpy()
+        color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
+        ax.barh(y_positions, counts, left=left, height=0.85, color=color)
+        left = left + counts
+    if options.show_gene_bar_labels:
+        totals = tiles.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0).to_numpy()
+        denominator = max(prepared.total_samples, 1)
+        max_total = max(left.max(), 1)
+        for y_position, total in zip(y_positions, totals):
+            ax.text(
+                total + max_total * options.gene_bar_label_padding + options.gene_bar_label_nudge,
+                y_position,
+                f"{round(total / denominator * 100, options.gene_bar_label_round):g}%",
+                va="center",
+                ha="left",
+                fontsize=options.font_size_gene_bar_axis,
+            )
+        ax.set_xlim(0, max(left.max() * (1 + options.gene_bar_label_padding + 0.08), left.max() + 1))
+    ax.set_ylim(0, len(prepared.genes))
+    ax.invert_yaxis()
+    ax.set_yticks([])
+    if options.show_gene_bar_axis:
+        ax.set_xlabel("Samples", fontsize=options.font_size_gene_bar_axis)
+        if options.gene_bar_scale_breaks is not None:
+            ax.set_xticks(list(options.gene_bar_scale_breaks))
+        elif options.gene_bar_scale_n_breaks is not None:
+            ax.locator_params(axis="x", nbins=options.gene_bar_scale_n_breaks)
+    else:
+        ax.set_xticks([])
+    if prepared.pathway_groups:
+        for group in prepared.pathway_groups:
+            ax.hlines(
+                [group.start, group.end + 1],
+                xmin=0,
+                xmax=max(left.max(), 1),
+                colors=options.pathway_outline_color,
+                linewidth=max(0.4, options.row_separator_linewidth),
+                alpha=0.65,
+            )
+
+
+def _draw_tmb(ax, prepared: PreparedOncoplotData, options: OncoplotOptions):
+    if prepared.tmb is None or prepared.tmb_value_col is None:
+        return
+    sample_col = prepared.tmb.columns[0]
+    x_positions = np.arange(len(prepared.samples))
+    render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb and prepared.tmb_type_col is not None
+    if render_stacked:
+        bottoms = np.zeros(len(prepared.samples))
+        type_col = prepared.tmb_type_col
+        palette = getattr(prepared, "_render_palette", {})
+        for mutation_type, group in prepared.tmb.groupby(type_col, dropna=False, sort=False):
+            values = (
+                group.groupby(sample_col, observed=False)[prepared.tmb_value_col]
+                .sum()
+                .reindex(prepared.samples, fill_value=0)
+                .to_numpy(dtype=float)
+            )
+            color = "#4D4D4D" if pd.isna(mutation_type) else palette.get(str(mutation_type), "#4D4D4D")
+            ax.bar(x_positions, values, bottom=bottoms, color=color, width=1.0, linewidth=0)
+            bottoms = bottoms + values
+    else:
+        totals = prepared.tmb.groupby(sample_col, observed=False)[prepared.tmb_value_col].sum().reindex(prepared.samples, fill_value=0)
+        values = totals.to_numpy(dtype=float)
+        if options.log10_transform_tmb:
+            values = np.log10(np.maximum(values, 1))
+        ax.bar(x_positions, values, color="#4D4D4D", width=1.0, linewidth=0)
+    ax.set_xlim(-0.5, len(prepared.samples) - 0.5)
+    ax.set_xticks([])
+    if options.show_tmb_y_label:
+        ax.set_ylabel("TMB", fontsize=options.font_size_tmb_axis)
+    if not options.show_tmb_axis:
+        ax.set_yticks([])
+
+
+def _draw_metadata(
+    ax,
+    prepared: PreparedOncoplotData,
+    options: OncoplotOptions,
+    metadata_palette: Optional[Mapping[str, Mapping[str, str]]] = None,
+) -> List[tuple[str, List[object]]]:
+    if prepared.metadata is None or not prepared.metadata_cols:
+        return []
+    _plt, _ListedColormap, _GridSpec, Patch, Rectangle = _require_matplotlib()
+    metadata = prepared.metadata.set_index("Sample")
+    legends: List[tuple[str, List[object]]] = []
+    ax.set_xlim(0, len(prepared.samples))
+    ax.set_ylim(0, len(prepared.metadata_cols))
+    ax.invert_yaxis()
+    ax.set_facecolor("white")
+    metadata_palette = metadata_palette or {}
+
+    for row_index, column in enumerate(prepared.metadata_cols):
+        values = metadata[column].reindex(prepared.samples)
+        is_numeric = pd.api.types.is_numeric_dtype(values)
+        min_value = float(values.min(skipna=True)) if is_numeric and values.notna().any() else 0.0
+        max_value = float(values.max(skipna=True)) if is_numeric and values.notna().any() else 1.0
+        span = max(max_value - min_value, 1e-9)
+        if is_numeric and options.metadata_numeric_plot_type == "bar":
+            ax.add_patch(
+                Rectangle(
+                    (0, row_index),
+                    len(prepared.samples),
+                    1,
+                    facecolor="#F4F4F4",
+                    edgecolor="white",
+                    linewidth=0,
+                )
+            )
+            for col_index, sample in enumerate(prepared.samples):
+                value = values.get(sample, np.nan)
+                if pd.isna(value):
+                    ax.add_patch(Rectangle((col_index, row_index), 1, 1, facecolor="#D9D9D9", edgecolor="white", linewidth=0.1))
+                    ax.text(
+                        col_index + 0.5,
+                        row_index + 0.55,
+                        options.metadata_na_marker,
+                        ha="center",
+                        va="center",
+                        fontsize=options.metadata_na_marker_size,
+                        color="#333333",
+                    )
+                    continue
+                frac = (float(value) - min_value) / span
+                ax.add_patch(
+                    Rectangle(
+                        (col_index, row_index + (1 - frac)),
+                        1,
+                        frac,
+                        facecolor="#7F7F7F",
+                        edgecolor="white",
+                        linewidth=0.1,
+                    )
+                )
+            ax.text(
+                len(prepared.samples) + 0.12,
+                row_index + 0.25,
+                f"{max_value:g}",
+                ha="left",
+                va="center",
+                fontsize=options.font_size_metadata_bar_numbers,
+                clip_on=False,
+            )
+            ax.text(
+                len(prepared.samples) + 0.12,
+                row_index + 0.78,
+                f"{min_value:g}",
+                ha="left",
+                va="center",
+                fontsize=options.font_size_metadata_bar_numbers,
+                clip_on=False,
+            )
+            legends.append((column, [Patch(color="#7F7F7F", label=f"{min_value:g}-{max_value:g}")]))
+            continue
+
+        if is_numeric:
+            numeric_values = values.astype(float)
+            min_value = float(numeric_values.min(skipna=True)) if numeric_values.notna().any() else 0.0
+            max_value = float(numeric_values.max(skipna=True)) if numeric_values.notna().any() else 1.0
+            span = max(max_value - min_value, 1e-9)
+            colours = options.metadata_default_colors
+            for col_index, sample in enumerate(prepared.samples):
+                value = numeric_values.get(sample, np.nan)
+                if pd.isna(value):
+                    color = "#D9D9D9"
+                else:
+                    bucket = min(len(colours) - 1, int((float(value) - min_value) / span * len(colours)))
+                    color = colours[bucket]
+                ax.add_patch(Rectangle((col_index, row_index), 1, 1, facecolor=color, edgecolor="white", linewidth=0.1))
+                if pd.isna(value):
+                    ax.text(
+                        col_index + 0.5,
+                        row_index + 0.55,
+                        options.metadata_na_marker,
+                        ha="center",
+                        va="center",
+                        fontsize=options.metadata_na_marker_size,
+                        color="#333333",
+                    )
+            legends.append((column, [Patch(color=options.metadata_default_colors[0], label=f"{min_value:g}"), Patch(color=options.metadata_default_colors[-1], label=f"{max_value:g}")]))
+            continue
+
+        levels = [str(value) for value in pd.unique(values.dropna())]
+        column_palette = dict(metadata_palette.get(column, {}))
+        for level_index, level in enumerate(levels):
+            column_palette.setdefault(level, options.metadata_default_colors[level_index % len(options.metadata_default_colors)])
+        for col_index, sample in enumerate(prepared.samples):
+            value = values.get(sample, np.nan)
+            color = "#D9D9D9" if pd.isna(value) else column_palette[str(value)]
+            ax.add_patch(Rectangle((col_index, row_index), 1, 1, facecolor=color, edgecolor="white", linewidth=0.1))
+            if pd.isna(value):
+                ax.text(
+                    col_index + 0.5,
+                    row_index + 0.55,
+                    options.metadata_na_marker,
+                    ha="center",
+                    va="center",
+                    fontsize=options.metadata_na_marker_size,
+                    color="#333333",
+                )
+        handles = [Patch(color=color, label=level) for level, color in column_palette.items()]
+        if values.isna().any():
+            handles.append(Patch(color="#D9D9D9", label=options.metadata_na_marker))
+        legends.append((column, handles))
+
+    ax.set_yticks(np.arange(len(prepared.metadata_cols)))
+    ax.set_yticklabels(prepared.metadata_cols, fontsize=options.font_size_metadata)
+    for label in ax.get_yticklabels():
+        label.update(_font_kwargs(options.font_style_metadata))
+    ax.set_xticks([])
+    return legends
+
+
+def _add_static_legends(figure, mutation_handles, metadata_legends, options: OncoplotOptions) -> None:
+    if options.show_legend and mutation_handles and options.mutation_legend_position == "bottom":
+        figure.legend(
+            handles=mutation_handles,
+            loc="lower center",
+            bbox_to_anchor=(0.48, 0.01),
+            ncol=min(5, len(mutation_handles)),
+            frameon=True,
+            fontsize=9,
+            title="Mutation Type" if options.show_legend_titles else None,
+            handlelength=options.legend_key_size,
+            handleheight=options.legend_key_size,
+        )
+    elif options.show_legend and mutation_handles and options.mutation_legend_position == "right":
+        figure.legend(
+            handles=mutation_handles,
+            loc="upper left",
+            bbox_to_anchor=(0.74, 0.96),
+            ncol=1,
+            frameon=False,
+            fontsize=8,
+            title="Mutation Type" if options.show_legend_titles else None,
+            handlelength=options.legend_key_size,
+            handleheight=options.legend_key_size,
+        )
+
+    if not options.show_metadata_legends or not metadata_legends:
+        return
+
+    if options.metadata_legend_position == "bottom":
+        handles = []
+        for title, title_handles in metadata_legends:
+            handles.extend(title_handles[: max(1, min(3, len(title_handles)))])
+        if handles:
+            ncol = options.metadata_legend_ncol or 3
+            figure.legend(
+                handles=handles,
+                loc="lower right",
+                bbox_to_anchor=(0.99, 0.01),
+                ncol=ncol,
+                frameon=True,
+                fontsize=8,
+                handlelength=options.metadata_legend_key_size,
+                handleheight=options.metadata_legend_key_size,
+            )
+        return
+
+    y = 0.60 if options.mutation_legend_position == "right" and mutation_handles else 0.96
+    for title, handles in metadata_legends:
+        if not handles:
+            continue
+        ncol = options.metadata_legend_ncol or 1
+        if options.metadata_legend_nrow:
+            ncol = max(ncol, int(np.ceil(len(handles) / options.metadata_legend_nrow)))
+        figure.legend(
+            handles=handles,
+            loc="upper left",
+            bbox_to_anchor=(0.74, y),
+            ncol=ncol,
+            frameon=False,
+            fontsize=7,
+            title=title,
+            title_fontsize=8,
+            handlelength=options.metadata_legend_key_size,
+            handleheight=options.metadata_legend_key_size,
+        )
+        y -= min(0.26, 0.05 + 0.022 * len(handles))
+        if y < 0.05:
+            break
+
+
+def render_matplotlib_oncoplot(
+    prepared: Optional[PreparedOncoplotData] = None,
+    *,
+    params: Optional[Mapping[str, Any]] = None,
+    **kwargs: Any,
+) -> object:
+    """Render a static Matplotlib oncoplot."""
+
+    supplied = merge_params(params, allowed_keys=MATPLOTLIB_RENDER_PARAM_KEYS, context="matplotlib renderer", **kwargs)
+    merged = {**MATPLOTLIB_RENDER_DEFAULTS, **supplied}
+    if prepared is None:
+        prepared = merged.pop("prepared", None)
+    else:
+        merged.pop("prepared", None)
+    if prepared is None:
+        raise TypeError("render_matplotlib_oncoplot requires prepared data as the first argument or params['prepared'].")
+    if "palette" not in merged:
+        raise TypeError("render_matplotlib_oncoplot requires 'palette'.")
+    if "options" not in merged:
+        raise TypeError("render_matplotlib_oncoplot requires 'options'.")
+
+    palette = merged["palette"]
+    metadata_palette = merged["metadata_palette"]
+    options = coerce_options(merged["options"])
+    draw_gene_bar = merged["draw_gene_bar"]
+    draw_tmb_bar = merged["draw_tmb_bar"]
+
+    plt, _ListedColormap, GridSpec, Patch, _Rectangle = _require_matplotlib()
+    setattr(prepared, "_render_palette", dict(palette))
+    draw_metadata = prepared.metadata is not None and bool(prepared.metadata_cols)
+    if draw_metadata:
+        _validate_metadata_levels(prepared, options)
+    rows = []
+    if options.metadata_position == "top" and draw_metadata:
+        rows.append(("metadata", max(1, len(prepared.metadata_cols or []))))
+    if draw_tmb_bar:
+        rows.append(("tmb", 1.2))
+    rows.append(("main", max(3, len(prepared.genes) * 0.55)))
+    if options.metadata_position == "bottom" and draw_metadata:
+        rows.append(("metadata", max(1, len(prepared.metadata_cols or []))))
+
+    fig_width = max(8, options.width / 120)
+    fig_height = max(5, options.height / 120)
+    figure = plt.figure(figsize=(fig_width, fig_height), constrained_layout=False)
+    ncols = 2 if draw_gene_bar else 1
+    width_ratios = [1 - options.gene_bar_width_ratio, options.gene_bar_width_ratio] if draw_gene_bar else [1]
+    grid = GridSpec(
+        len(rows),
+        ncols,
+        figure=figure,
+        height_ratios=[weight for _name, weight in rows],
+        width_ratios=width_ratios,
+        hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
+        wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
+    )
+
+    axes = {}
+    for row_index, (name, _weight) in enumerate(rows):
+        axes[name] = figure.add_subplot(grid[row_index, 0])
+        if name == "main" and draw_gene_bar:
+            axes["gene_bar"] = figure.add_subplot(grid[row_index, 1])
+
+    if draw_tmb_bar and "tmb" in axes:
+        _draw_tmb(axes["tmb"], prepared, options)
+    metadata_legends = []
+    if draw_metadata and "metadata" in axes:
+        metadata_legends = _draw_metadata(axes["metadata"], prepared, options, metadata_palette=metadata_palette)
+    _draw_main(axes["main"], prepared, palette, options)
+    if draw_gene_bar and "gene_bar" in axes:
+        _draw_gene_bar(axes["gene_bar"], prepared, palette, options)
+
+    mutation_handles = []
+    if options.show_legend and options.mutation_legend_position != "none":
+        mutation_handles = [
+            Patch(color=color, label=options.prettify_function(name) if options.prettify_legend_values else name)
+            for name, color in palette.items()
+            if name in set(prepared.tiles["MutationType"].dropna().astype(str))
+        ]
+    has_bottom_legend = bool(mutation_handles and options.mutation_legend_position == "bottom")
+    has_right_legend = bool(
+        (mutation_handles and options.mutation_legend_position == "right")
+        or (metadata_legends and options.show_metadata_legends and options.metadata_legend_position == "right")
+    )
+    _add_static_legends(figure, mutation_handles, metadata_legends, options)
+    figure.subplots_adjust(
+        left=0.14 if draw_metadata else 0.08,
+        right=0.72 if has_right_legend else 0.98,
+        top=0.92,
+        bottom=0.18 if has_bottom_legend else 0.08,
+        hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
+        wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
+    )
+    return figure

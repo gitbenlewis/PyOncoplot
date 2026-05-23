@@ -1,0 +1,148 @@
+sample	Classification	PR_status	ER_status	HER2_status
+GSM-001	Triple Negative	Negative	Negative	Negative
+GSM-002	Triple Negative	Negative	Negative	Negative
+GSM-003	Triple Negative	Negative	Negative	Negative
+GSM-004	Triple Negative	Negative	Negative	Negative
+GSM-005	Triple Negative	Negative	Negative	Negative
+GSM-006	Triple Negative	Negative	Negative	Negative
+GSM-007	Triple Negative	Negative	Negative	Negative
+GSM-008	Triple Negative	Negative	Negative	Negative
+GSM-009	Triple Negative	Negative	Negative	Negative
+GSM-010	Triple Negative	Negative	Negative	Negative
+GSM-011	Triple Negative	Negative	Negative	Negative
+GSM-012	Triple Negative	Negative	Negative	Negative
+GSM-013	Triple Negative	Negative	Negative	Negative
+GSM-014	Triple Negative	Negative	Negative	Negative
+GSM-015	Triple Negative	Negative	Negative	Negative
+GSM-016	Triple Negative	Negative	Negative	Negative
+GSM-017	Triple Negative	Negative	Negative	Negative
+GSM-018	Triple Negative	Negative	Negative	Negative
+GSM-019	Triple Negative	Negative	Negative	Negative
+GSM-020	Triple Negative	Negative	Negative	Negative
+GSM-021	Triple Negative	Negative	Negative	Negative
+GSM-022	Triple Negative	Negative	Negative	Negative
+GSM-023	Triple Negative	Negative	Negative	Negative
+GSM-024	Triple Negative	Negative	Negative	Negative
+GSM-025	Triple Negative	Negative	Negative	Negative
+GSM-026	Triple Negative	Negative	Negative	Negative
+GSM-027	Triple Negative	Negative	Negative	Negative
+GSM-028	Triple Negative	Negative	Negative	Negative
+GSM-029	Triple Negative	Negative	Negative	Negative
+GSM-030	Triple Negative	Negative	Negative	Negative
+GSM-031	Not Triple Negative	Positive	Positive	Negative
+GSM-032	Not Triple Negative	Positive	Negative	Negative
+GSM-033	Not Triple Negative	Negative	Positive	Negative
+GSM-034	Triple Negative	Negative	Negative	Negative
+GSM-035	Not Triple Negative	Positive	Positive	Negative
+GSM-036	Not Triple Negative	Positive	Negative	Negative
+GSM-037	Not Triple Negative	Positive	Positive	Negative
+GSM-038	Not Triple Negative	Positive	Negative	Negative
+GSM-039	Not Triple Negative	Negative	Positive	Negative
+GSM-040	Not Triple Negative	Positive	Positive	Negative
+GSM-041	Not Triple Negative	Positive	Positive	Negative
+GSM-042	Not Triple Negative	Positive	Negative	Negative
+GSM-043	Not Triple Negative	Positive	Positive	Negative
+GSM-044	Not Triple Negative	Positive	Positive	Negative
+GSM-045	Not Triple Negative	Negative	Positive	Negative
+GSM-046	Triple Negative	Negative	Negative	Negative
+GSM-047	Triple Negative	Negative	Negative	Negative
+GSM-048	Ambiguous	Positive	Positive	Negative
+GSM-049	Not Triple Negative	Positive	Positive	Negative
+GSM-050	Not Triple Negative	Positive	Positive	Negative
+GSM-051	Ambiguous	Positive	Positive	Negative
+GSM-052	Not Triple Negative	Negative	Positive	Negative
+GSM-053	Not Triple Negative	Positive	Positive	Negative
+GSM-054	Triple Negative	Negative	Negative	Negative
+GSM-055	Not Triple Negative	Positive	Positive	Negative
+GSM-056	Not Triple Negative	Negative	Positive	Negative
+GSM-057	Not Triple Negative	Negative	Positive	Negative
+GSM-058	Triple Negative	Negative	Negative	Negative
+GSM-059	Ambiguous	Positive	Positive	Positive
+GSM-060	Triple Negative	Negative	Negative	Negative
+GSM-061	Not Triple Negative	Positive	Positive	Negative
+GSM-062	Not Triple Negative	Positive	Positive	Negative
+GSM-063	Not Triple Negative	Negative	Positive	Negative
+GSM-064	Not Triple Negative	Positive	Positive	Negative
+GSM-065	Triple Negative	Negative	Negative	Negative
+GSM-066	Triple Negative	Negative	Negative	Negative
+GSM-067	Not Triple Negative	Negative	Positive	Negative
+GSM-068	Ambiguous	Positive	Positive	Positive
+GSM-069	Not Triple Negative	Positive	Positive	Negative
+GSM-070	Not Triple Negative	Positive	Positive	Negative
+GSM-071	Not Triple Negative	Positive	Positive	Negative
+GSM-072	Not Triple Negative	Positive	Positive	Negative
+GSM-073	Not Triple Negative	Positive	Negative	Negative
+GSM-074	Not Triple Negative	Positive	Negative	Negative
+GSM-075	Triple Negative	Negative	Negative	Negative
+GSM-076	Not Triple Negative	Positive	Positive	Negative
+GSM-077	Triple Negative	Negative	Negative	Negative
+GSM-078	Not Triple Negative	Positive	Positive	Negative
+GSM-079	Triple Negative	Negative	Negative	Negative
+GSM-080	Not Triple Negative	Positive	Negative	Negative
+GSM-081	Triple Negative	Negative	Negative	Negative
+GSM-082	Not Triple Negative	Negative	Positive	Negative
+GSM-083	Not Triple Negative	Positive	Positive	Negative
+GSM-084	Triple Negative	Negative	Negative	Negative
+GSM-085	Ambiguous	Positive	Negative	Positive
+GSM-086	Not Triple Negative	Positive	Positive	Negative
+GSM-087	Not Triple Negative	Negative	Negative	Negative
+GSM-088	Not Triple Negative	Negative	Positive	Negative
+GSM-089	Not Triple Negative	Negative	Negative	Negative
+GSM-090	Not Triple Negative	Positive	Positive	Negative
+GSM-091	Not Triple Negative	Positive	Positive	Negative
+GSM-092	Ambiguous	Positive	Positive	Positive
+GSM-093	Not Triple Negative	Positive	Positive	Negative
+GSM-094	Not Triple Negative	Positive	Positive	Negative
+GSM-095	Not Triple Negative	Positive	Positive	Negative
+GSM-096	Triple Negative	Negative	Negative	Negative
+GSM-097	Not Triple Negative	Positive	Positive	Negative
+GSM-098	Not Triple Negative	Negative	Negative	Negative
+GSM-099	Not Triple Negative	Positive	Negative	Negative
+GSM-100	Not Triple Negative	Positive	Positive	Negative
+GSM-101	Triple Negative	Negative	Negative	Negative
+GSM-102	Not Triple Negative	Positive	Positive	Negative
+GSM-103	Triple Negative	Negative	Negative	Negative
+GSM-104	Ambiguous	Positive	Negative	Negative
+GSM-105	Triple Negative	Negative	Negative	Negative
+GSM-106	Not Triple Negative	Positive	Positive	Negative
+GSM-107	Not Triple Negative	Positive	Positive	Negative
+GSM-108	Triple Negative	Negative	Negative	Negative
+GSM-109	Triple Negative	Negative	Negative	Negative
+GSM-110	Not Triple Negative	Positive	Negative	Negative
+GSM-111	Triple Negative	Negative	Negative	Negative
+GSM-112	Not Triple Negative	Negative	Positive	Negative
+GSM-113	Not Triple Negative	Negative	Positive	Negative
+GSM-114	Not Triple Negative	Positive	Positive	Negative
+GSM-115	Not Triple Negative	Negative	Positive	Negative
+GSM-116	Ambiguous	Positive	Positive	Positive
+GSM-117	Not Triple Negative	Positive	Positive	Negative
+GSM-118	Not Triple Negative	Positive	Positive	Negative
+GSM-119	Triple Negative	Negative	Negative	Negative
+GSM-120	Triple Negative	Negative	Negative	Negative
+GSM-121	Not Triple Negative	Positive	Negative	Negative
+GSM-122	Triple Negative	Negative	Negative	Negative
+GSM-123	Not Triple Negative	Positive	Positive	Negative
+GSM-124	Triple Negative	Negative	Negative	Negative
+GSM-125	Not Triple Negative	Positive	Positive	Negative
+GSM-126	Not Triple Negative	Negative	Positive	Negative
+GSM-127	Not Triple Negative	Positive	Positive	Negative
+GSM-128	Not Triple Negative	Positive	Positive	Negative
+GSM-129	Triple Negative	Negative	Negative	Negative
+GSM-130	Ambiguous	Positive	Positive	Positive
+GSM-131	Not Triple Negative	Positive	Positive	Negative
+GSM-132	Not Triple Negative	Positive	Positive	Negative
+GSM-133	Not Triple Negative	Positive	Positive	Negative
+GSM-134	Not Triple Negative	Positive	Positive	Negative
+GSM-135	Not Triple Negative	Negative	Positive	Negative
+GSM-136	Not Triple Negative	Positive	Positive	Negative
+GSM-137	Triple Negative	Negative	Negative	Negative
+GSM-138	Not Triple Negative	Negative	Positive	Negative
+GSM-139	Not Triple Negative	Positive	Positive	Negative
+GSM-140	Not Triple Negative	Negative	Positive	Negative
+GSM-141	Triple Negative	Negative	Negative	Negative
+GSM-142	Ambiguous	Positive	Positive	Negative
+GSM-143	Not Triple Negative	Positive	Positive	Negative
+GSM-144	Ambiguous	Positive	Positive	Positive
+GSM-145	Not Triple Negative	Negative	Positive	Negative
+GSM-146	Ambiguous	Negative	Positive	Positive
+GSM-147	Not Triple Negative	Positive	Positive	Negative

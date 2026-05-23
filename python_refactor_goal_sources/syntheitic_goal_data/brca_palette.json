@@ -1,0 +1,12 @@
+{
+  "3'UTR": "#F2C16B",
+  "5'UTR": "#F2C16B",
+  "Frame_Shift_Del": "#1F77B4",
+  "Frame_Shift_Ins": "#9467BD",
+  "Intron": "#F2C16B",
+  "Missense_Mutation": "#2CA02C",
+  "Multi_Hit": "#000000",
+  "Nonsense_Mutation": "#17BECF",
+  "Silent": "#F2C16B",
+  "Splice_Site": "#FF7F0E"
+}

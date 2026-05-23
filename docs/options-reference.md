@@ -1,0 +1,146 @@
+# Options Reference
+
+`OncoplotOptions` controls layout and visual details. Pass it through the
+`options` argument:
+
+```python
+from pyoncoplot import OncoplotOptions, oncoplot
+
+result = oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    backend="matplotlib",
+    options=OncoplotOptions(width=1200, height=700),
+)
+```
+
+## Size and Layout
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `width` | `1200` | intended output width in pixels |
+| `height` | `650` | intended output height in pixels |
+| `tmb_height_ratio` | `0.14` | relative height of the TMB bar area |
+| `gene_bar_width_ratio` | `0.18` | relative width of the right gene bar |
+| `metadata_height_ratio` | `0.18` | relative height of metadata tracks |
+| `metadata_position` | `"bottom"` | `"bottom"` or `"top"` |
+| `buffer_metadata` | `0.08` | spacing around metadata tracks |
+| `buffer_tmb` | `0.08` | spacing around the TMB bar |
+| `buffer_gene_bar` | `0.02` | spacing between the matrix and gene bar |
+
+## Labels and Axes
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `x_label` | `"Sample"` | x-axis label |
+| `y_label` | `"Gene"` | y-axis label |
+| `show_sample_ids` | `False` | show sample labels |
+| `sample_id_position` | `"bottom"` | sample label placement |
+| `sample_id_angle` | `90` | sample label rotation |
+| `show_x_label` | `False` | show x-axis label |
+| `show_y_label` | `False` | show y-axis label |
+| `show_tmb_y_label` | `False` | show TMB y-axis label |
+| `show_tmb_axis` | `True` | show TMB tick labels |
+| `show_gene_bar_axis` | `True` | show gene bar axis |
+
+## Legends
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `show_legend` | `True` | draw mutation legend |
+| `show_legend_titles` | `True` | draw legend titles |
+| `mutation_legend_position` | `"bottom"` | `"bottom"`, `"right"`, or `"none"` |
+| `show_metadata_legends` | `True` | draw metadata legends |
+| `metadata_legend_position` | `"right"` | `"right"` or `"bottom"` |
+| `legend_key_size` | `1.0` | mutation legend key size multiplier |
+| `metadata_legend_nrow` | `None` | optional metadata legend row limit |
+| `metadata_legend_ncol` | `None` | optional metadata legend column count |
+| `metadata_legend_key_size` | `1.0` | metadata legend key size multiplier |
+
+## Tile Styling
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `background_color` | `"#E5E5E5"` | empty tile background |
+| `tile_linewidth` | `0.25` | tile border width |
+| `row_separator_linewidth` | `0.8` | row separator width |
+| `unspecified_mutation_color` | `"#1A1A1A"` | fallback mutation color |
+| `multi_hit_color` | `"black"` | multi-hit color |
+
+## Fonts
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `font_size_genes` | `12` | gene label size |
+| `font_size_samples` | `9` | sample label size |
+| `font_size_metadata` | `10` | metadata row label size |
+| `font_size_metadata_bar_numbers` | `8` | numeric metadata min/max label size |
+| `font_size_tmb_axis` | `10` | TMB axis text size |
+| `font_size_gene_bar_axis` | `10` | gene bar text size |
+| `font_family` | `"Arial"` | renderer font family |
+| `gene_font_style` | `"normal"` | gene label style |
+| `sample_font_style` | `"normal"` | sample label style |
+| `font_style_metadata` | `"normal"` | metadata row label style |
+
+## TMB and Gene Bar
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `log10_transform_tmb` | `True` | log-transform TMB values |
+| `scientific_tmb` | `False` | use scientific TMB labels where supported |
+| `show_gene_bar_labels` | `False` | show recurrence percentage labels |
+| `gene_bar_label_round` | `0` | rounding for recurrence labels |
+| `gene_bar_label_padding` | `0.24` | extra x-axis room for gene-bar percentage labels |
+| `gene_bar_label_nudge` | `0.0` | additional x-axis nudge for gene-bar labels |
+| `gene_bar_scale_breaks` | `None` | explicit gene-bar axis tick positions |
+| `gene_bar_scale_n_breaks` | `None` | requested number of gene-bar axis breaks |
+
+## Pathways
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `pathway_text_color` | `"white"` | pathway strip label color |
+| `pathway_background_color` | `"#1A1A1A"` | pathway strip fill color |
+| `pathway_outline_color` | `"black"` | pathway strip border color |
+| `pathway_text_angle` | `0` | pathway strip label rotation |
+
+## Metadata
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `metadata_na_marker` | `"!"` | legend label for missing metadata |
+| `metadata_na_marker_size` | `7` | visible NA marker text size |
+| `metadata_max_levels` | `6` | maximum categorical levels allowed per metadata track |
+| `metadata_numeric_plot_type` | `"heatmap"` | `"heatmap"` or `"bar"` |
+| `metadata_legend_orientation_heatmap` | `"vertical"` | orientation hint for numeric heatmap legends |
+| `metadata_default_colors` | color sequence | fallback metadata colors |
+
+## Common Bundles
+
+Compact static plot:
+
+```python
+OncoplotOptions(
+    width=900,
+    height=520,
+    font_size_genes=8,
+    tile_linewidth=0.1,
+    row_separator_linewidth=0.2,
+)
+```
+
+Gallery-style static plot:
+
+```python
+OncoplotOptions(
+    width=1800,
+    height=900,
+    log10_transform_tmb=False,
+    show_gene_bar_labels=True,
+    mutation_legend_position="right",
+    metadata_legend_position="right",
+    metadata_numeric_plot_type="bar",
+)
+```

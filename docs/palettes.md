@@ -1,0 +1,110 @@
+# Palettes
+
+Palettes are plain Python mappings from values to CSS-style colors.
+
+## Mutation Palette
+
+```python
+palette = {
+    "Missense_Mutation": "#2CA02C",
+    "Frame_Shift_Del": "#1F77B4",
+    "Nonsense_Mutation": "#17BECF",
+    "Splice_Site": "#FF7F0E",
+    "Multi_Hit": "#000000",
+}
+```
+
+Use it with:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    palette=palette,
+)
+```
+
+The palette must cover every mutation type that appears in displayed tiles.
+Ampersand-delimited Sequence Ontology values such as
+`missense_variant&intron_variant` are rejected; preselect the most severe
+consequence before plotting.
+
+## Metadata Palette
+
+Metadata palettes are nested mappings:
+
+```python
+metadata_palette = {
+    "FAB_classification": {
+        "M0": "#1B9E77",
+        "M1": "#D95F02",
+        "M2": "#7570B3",
+    },
+    "Overall_Survival_Status": {
+        "0": "#FDB7B4",
+        "1": "#BBD7EA",
+    },
+}
+```
+
+Use it with:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    metadata_cols=["FAB_classification", "Overall_Survival_Status"],
+    metadata_palette=metadata_palette,
+)
+```
+
+Categorical levels not listed in the metadata palette receive fallback colors.
+
+## TMB Palette
+
+When TMB data includes a mutation type column, pass a matching palette to stack
+TMB bars by mutation type:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    draw_tmb_bar=True,
+    tmb_data=tmb,
+    tmb_palette=palette,
+    options=OncoplotOptions(log10_transform_tmb=False),
+)
+```
+
+Stacked TMB bars are most useful with `log10_transform_tmb=False`.
+If custom stacked TMB categories are not covered by `tmb_palette` or by the
+mutation palette fallback, `pyoncoplot` raises a clear error instead of drawing
+uncolored bars.
+
+## Default Palettes
+
+If no mutation palette is provided, `pyoncoplot` creates a sensible default for
+the observed mutation types.
+
+You can inspect or validate palettes directly:
+
+```python
+from pyoncoplot import assert_palette_is_sensible, get_sensible_default_palette
+
+palette = get_sensible_default_palette(mutations["mutation_type"])
+assert_palette_is_sensible(palette, mutations["mutation_type"])
+```
+
+## Practical Color Guidance
+
+- Use high-contrast mutation colors.
+- Reserve black or near-black for multi-hit or truncating events.
+- Use white carefully in metadata palettes because white can look like missing data.
+- Keep numeric metadata bars neutral unless the value has an obvious semantic direction.

@@ -1,0 +1,595 @@
+gallery_params:
+  output_dirs:
+    clean: python_refactor_goal_sources/generated_plots/clean
+    reference_like: python_refactor_goal_sources/generated_plots/reference_like
+    comparison: python_refactor_goal_sources/generated_plots/comparison
+
+  input_files:
+    aml:
+      mutations: aml_mutations.tsv
+      metadata: aml_metadata.tsv
+      tmb: aml_tmb.tsv
+      palette: aml_palette.json
+    brca:
+      mutations: brca_mutations.tsv
+      metadata: brca_metadata.tsv
+      tmb: brca_tmb.tsv
+      palette: brca_palette.json
+    cssc:
+      mutations: cssc_mutations.tsv
+      tmb: cssc_tmb.tsv
+      palette: cssc_palette.json
+    gbm:
+      tracks: gbm_clinical_tracks.tsv
+      events: gbm_events.tsv
+      palette: gbm_palette.json
+    sv:
+      depth: sv_depth.tsv
+      allele_fraction: sv_allele_fraction.tsv
+      gene_models: sv_gene_models.tsv
+    readme:
+      mutations: ggoncoplot_readme_mutations.tsv
+      metadata: ggoncoplot_readme_metadata.tsv
+      tmb: ggoncoplot_readme_tmb.tsv
+      palette: ggoncoplot_readme_palette.json
+    multimodal:
+      samples: paper_multimodal_samples.tsv
+      points: paper_multimodal_points.tsv
+      events: paper_multimodal_events.tsv
+      clinical: paper_multimodal_clinical.tsv
+      selection: paper_multimodal_selection.tsv
+      palette: paper_multimodal_palette.json
+    comparison_table:
+      table: ggoncoplot_comparison_table.tsv
+
+  default_params:
+    run: true
+    backend: matplotlib
+    save:
+      dpi: 120
+
+  shared:
+    aml_genes: &aml_genes
+      [FLT3, DNMT3A, NPM1, IDH2, IDH1, TET2, RUNX1, NRAS, TP53, CEBPA]
+    aml_oncoplot: &aml_oncoplot
+      gene_col: gene
+      sample_col: sample
+      mutation_type_col: mutation_type
+      tooltip_col: tooltip
+      draw_gene_bar: true
+      draw_tmb_bar: true
+      show_all_samples: true
+      backend: matplotlib
+    aml_basic_options: &aml_basic_options
+      width: 1080
+      height: 720
+      show_tmb_y_label: true
+      show_gene_bar_axis: true
+      log10_transform_tmb: false
+      mutation_legend_position: bottom
+      show_metadata_legends: false
+      gene_bar_width_ratio: 0.11
+      tmb_height_ratio: 0.12
+      font_size_genes: 10
+    aml_metadata_options: &aml_metadata_options
+      width: 1080
+      height: 720
+      show_tmb_y_label: true
+      show_gene_bar_axis: true
+      log10_transform_tmb: false
+      mutation_legend_position: bottom
+      show_metadata_legends: true
+      metadata_legend_position: right
+      metadata_numeric_plot_type: bar
+      metadata_position: bottom
+      metadata_height_ratio: 0.18
+      metadata_max_levels: 8
+      gene_bar_width_ratio: 0.11
+      tmb_height_ratio: 0.11
+      font_size_genes: 9
+      font_size_metadata: 8
+    brca_large_genes: &brca_large_genes
+      [PIK3CA, TP53, CDH1, GATA3, KMT2C, MAP3K1, SPTA1, ZFHX4, PTEN, ABCA13]
+    brca_compact_genes: &brca_compact_genes
+      [TP53, PIK3CA, ERBB2, MYC, GATA3, FGFR1, CCND1, MAP3K1, NF1, AKT1, FOXA1, CDH1, BRCA2, EGFR, PTEN, AKT3, BRCA1, BRAF, RB1, PIK3R1, FGFR2, MAP2K4, KMT2C, ZFHX4]
+    brca_compact_oncoplot: &brca_compact_oncoplot
+      gene_col: gene
+      sample_col: sample
+      mutation_type_col: mutation_type
+      tooltip_col: tooltip
+      draw_gene_bar: true
+      draw_tmb_bar: true
+      show_all_samples: true
+      backend: matplotlib
+    brca_compact_options: &brca_compact_options
+      width: 1020
+      height: 820
+      show_tmb_axis: true
+      log10_transform_tmb: false
+      show_gene_bar_labels: false
+      gene_bar_width_ratio: 0.11
+      tmb_height_ratio: 0.09
+      metadata_height_ratio: 0.22
+      metadata_numeric_plot_type: heatmap
+      mutation_legend_position: right
+      metadata_legend_position: right
+      show_metadata_legends: true
+      font_size_genes: 6
+      font_size_metadata: 6
+      font_size_gene_bar_axis: 6
+      tile_linewidth: 0.02
+      row_separator_linewidth: 0.2
+    cssc_samples: &cssc_samples
+      [CSSC_0126-M1, CSSC_0014-M1, CSSC_0001-M1, CSSC_0134-M1, CSSC_0007-M1, CSSC_0066-M1, CSSC_0012-M1, CSSC_0125-M1, CSSC_0022-M1, CSSC_0130-M1, CSSC_0013-M1, CSSC_0133-M1, CSSC_0011-M1, CSSC_0005-M1, CSSC_0132-M1, CSSC_0024-M1, CSSC_0124-M1, CSSC_0025-M1, CSSC_0006-M1, CSSC_0010-M1, CSSC_0135-M1, CSSC_0004-M1, CSSC_0003-M1, CSSC_0002-M1, CSSC_0009-M1]
+    cssc_genes: &cssc_genes
+      [TP53, CDKN2A, C9, KHDRBS2, SLC22A6, COLEC12, LINGO2, CDHR5, ZNF442, PRLR, DHRS4]
+    gbm_tracks: &gbm_tracks
+      ["Recurrence", "Primary", "Sex", "Age above 50", "KPS 70 or above", "Deceased", "Treatment: RT", "Treatment: TMZ", "Treatment: Beva", "GITS subtype R2", "GITS subtype R1", "CN status MDM2", "CN status CDK4", "CN status NF1", "CN status RB1", "CN status EGFR"]
+    gbm_genes: &gbm_genes
+      [TERT, PDGFRA, TSC2, PIK3CA, PIK3R1, TP53, TP53BP1, EGFR, ERBB3, NF1, PTEN, KMT2C, MTOR, ARID2, SETD2, ATM, BRCA2, BRCA1, MSH2, RB1, JAK2, APC, AXIN2, HM, "MGMT meth"]
+    readme_genes: &readme_genes
+      [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN, KMT2C, NF1, ERBB2, BRCA1, RB1, EGFR]
+    readme_oncoplot: &readme_oncoplot
+      gene_col: gene
+      sample_col: sample
+      mutation_type_col: mutation_type
+      tooltip_col: tooltip
+      show_all_samples: true
+      backend: matplotlib
+    paper_multimodal_genes: &paper_multimodal_genes
+      [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN, NF1, BRCA1, RB1, EGFR]
+    paper_multimodal_axes: &paper_multimodal_axes
+      tsne: [0.045, 0.635, 0.255, 0.285]
+      umap: [0.325, 0.635, 0.255, 0.285]
+      main: [0.075, 0.205, 0.760, 0.360]
+      clinical: [0.075, 0.075, 0.760, 0.085]
+      legend: [0.850, 0.130, 0.130, 0.760]
+
+  plot_runs:
+    aml_basic:
+      run: true
+      renderer: aml_basic
+      style: clean
+      output_name: gen.goal_plot_1.png
+      goal_plot: goal_plot_1.png
+      expected_size: [1080, 720]
+      feature_axes_min: 3
+      params:
+        include_genes: *aml_genes
+        oncoplot: *aml_oncoplot
+        options: *aml_basic_options
+        save: {dpi: 120}
+
+    aml_metadata_unsorted:
+      run: true
+      renderer: aml_metadata
+      style: clean
+      output_name: gen.goal_plot_2.png
+      goal_plot: goal_plot_2.png
+      expected_size: [1080, 720]
+      clean_only: true
+      feature_axes_min: 4
+      params:
+        include_genes: *aml_genes
+        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+        metadata_sort_cols:
+        metadata_sort_by: alphabetical
+        metadata_sort_desc: false
+        title: gen.goal_plot_2.py
+        oncoplot: *aml_oncoplot
+        options: *aml_metadata_options
+        save: {dpi: 120}
+
+    aml_metadata_sorted:
+      run: true
+      renderer: aml_metadata
+      style: clean
+      output_name: gen.goal_plot_3.png
+      goal_plot: goal_plot_3.png
+      expected_size: [1080, 720]
+      clean_only: true
+      feature_axes_min: 4
+      params:
+        include_genes: *aml_genes
+        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+        metadata_sort_cols: [FAB_classification]
+        metadata_sort_by: alphabetical
+        metadata_sort_desc: false
+        title: gen.goal_plot_3.py
+        oncoplot: *aml_oncoplot
+        options: *aml_metadata_options
+        save: {dpi: 120}
+
+    brca_large:
+      run: true
+      renderer: brca_large
+      style: clean
+      output_name: gen.goal_plot_4.png
+      goal_plot: goal_plot_4.png
+      expected_size: [3600, 1800]
+      feature_axes_min: 5
+      params: &brca_large_params
+        genes: *brca_large_genes
+        sort_columns: [Subtype, Classification, ER_status, sample]
+        figure_size: [30, 15]
+        axes:
+          tmb: [0.135, 0.805, 0.645, 0.125]
+          main: [0.135, 0.285, 0.645, 0.505]
+          gene: [0.795, 0.285, 0.090, 0.505]
+          metadata: [0.135, 0.080, 0.645, 0.160]
+          legend: [0.900, 0.080, 0.095, 0.850]
+        metadata_cols: [PR_status, ER_status, HER2_status, Classification, Age_years]
+        metadata_legend_cols: [PR_status, ER_status, HER2_status, Classification, Subtype]
+        tmb_scale: 30
+        tmb_ymax_min: 100
+        mutation_legend_limit: 9
+        save: {dpi: 120}
+
+    brca_compact_complex:
+      run: true
+      renderer: brca_compact_complex
+      style: clean
+      output_name: gen.goal_plot_5.png
+      goal_plot: goal_plot_5.png
+      expected_size: [850, 683]
+      feature_axes_min: 4
+      params: &brca_compact_params
+        include_genes: *brca_compact_genes
+        metadata_cols: [Subtype, ER_status, PR_status, HER2_status, Age, Menopause, LN_stage, Grade, TNM_stage, Histological_type]
+        metadata_sort_cols: [Subtype, ER_status]
+        metadata_sort_by: [alphabetical, alphabetical]
+        metadata_sort_desc: [false, true]
+        oncoplot: *brca_compact_oncoplot
+        options: *brca_compact_options
+        save: {dpi: 100}
+
+    cssc_compact:
+      run: true
+      renderer: cssc_compact
+      style: clean
+      output_name: gen.goal_plot_6.png
+      goal_plot: goal_plot_6.png
+      expected_size: [1400, 700]
+      feature_axes_min: 4
+      params:
+        samples: *cssc_samples
+        genes: *cssc_genes
+        figure_size: [14, 7]
+        axes:
+          tmb: [0.060, 0.835, 0.655, 0.135]
+          main: [0.060, 0.335, 0.655, 0.480]
+          bar: [0.830, 0.335, 0.060, 0.480]
+          legend: [0.895, 0.355, 0.100, 0.360]
+        tmb_ymax_min: 15
+        bar_xlim: [0, 30]
+        bar_xticks: [0, 10, 20, 30]
+        save: {dpi: 100}
+
+    gbm_clinical_molecular:
+      run: true
+      renderer: gbm_clinical_molecular
+      style: clean
+      output_name: gen.goal_plot_7.png
+      goal_plot: goal_plot_7.png
+      expected_size: [1080, 436]
+      feature_axes_min: 3
+      params:
+        tracks: *gbm_tracks
+        genes: *gbm_genes
+        figure_size: [10.8, 4.36]
+        axes:
+          tracks: [0.185, 0.690, 0.760, 0.285]
+          main: [0.185, 0.155, 0.760, 0.505]
+          legend: [0.100, 0.015, 0.800, 0.120]
+        footer_text: "G-SAM pairs = 147 (122 >= 15%, 25 < 15%)"
+        legend_entries:
+          [Classical, Mesenchymal, Proneural, "No / wildtype / biopsy", "Yes / stable / resection", "NA / Beva: random trial", "Gained / increased / female", "Lost / decreased / male"]
+        save: {dpi: 100}
+
+    sv_panel:
+      run: true
+      renderer: sv_panel
+      style: clean
+      output_name: gen.goal_plot_8.png
+      goal_plot: goal_plot_8.png
+      expected_size: [1296, 864]
+      feature_axes_min: 6
+      params:
+        samples: [NA18973, NA10831, NA19109]
+        figure_size: [12.96, 8.64]
+        depth_ylim: [-15, 120]
+        allele_ylim: [-0.12, 1.1]
+        save: {dpi: 100}
+
+    ggoncoplot_readme_small:
+      run: true
+      renderer: readme_oncoplot
+      style: clean
+      output_name: gen.goal_plot_9.png
+      goal_plot: goal_plot_9.png
+      expected_size: [672, 480]
+      feature_axes_min: 1
+      params:
+        include_genes: [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN]
+        oncoplot:
+          <<: *readme_oncoplot
+          draw_gene_bar: false
+          draw_tmb_bar: false
+        options:
+          width: 672
+          height: 480
+          mutation_legend_position: bottom
+          show_metadata_legends: false
+          font_size_genes: 8
+          tile_linewidth: 0.08
+        title: "ggoncoplot"
+        save: {dpi: 120}
+
+    ggoncoplot_readme_basic:
+      run: true
+      renderer: readme_oncoplot
+      style: clean
+      output_name: gen.goal_plot_10.png
+      goal_plot: goal_plot_10.png
+      expected_size: [7200, 3000]
+      feature_axes_min: 1
+      params:
+        include_genes: *readme_genes
+        oncoplot:
+          <<: *readme_oncoplot
+          draw_gene_bar: false
+          draw_tmb_bar: false
+        options:
+          width: 7200
+          height: 3000
+          mutation_legend_position: bottom
+          show_metadata_legends: false
+          font_size_genes: 38
+          tile_linewidth: 0.03
+        title: "Basic ggoncoplot example"
+        save: {dpi: 120}
+
+    ggoncoplot_readme_marginal:
+      run: true
+      renderer: readme_oncoplot
+      style: clean
+      output_name: gen.goal_plot_11.png
+      goal_plot: goal_plot_11.png
+      expected_size: [7200, 3600]
+      feature_axes_min: 3
+      params:
+        include_genes: *readme_genes
+        oncoplot:
+          <<: *readme_oncoplot
+          draw_gene_bar: true
+          draw_tmb_bar: true
+        options:
+          width: 7200
+          height: 3600
+          show_tmb_y_label: true
+          show_gene_bar_axis: true
+          log10_transform_tmb: false
+          mutation_legend_position: bottom
+          show_metadata_legends: false
+          gene_bar_width_ratio: 0.12
+          tmb_height_ratio: 0.12
+          font_size_genes: 38
+          font_size_tmb_axis: 24
+          font_size_gene_bar_axis: 24
+          tile_linewidth: 0.03
+        title: "ggoncoplot with marginal bars"
+        save: {dpi: 120}
+
+    ggoncoplot_readme_metadata:
+      run: true
+      renderer: readme_oncoplot
+      style: clean
+      output_name: gen.goal_plot_12.png
+      goal_plot: goal_plot_12.png
+      expected_size: [7200, 3600]
+      feature_axes_min: 4
+      params:
+        include_genes: *readme_genes
+        metadata_cols: [Subtype, ER_status, PR_status, HER2_status, TMB_score]
+        metadata_sort_cols: [Subtype]
+        metadata_sort_by: alphabetical
+        metadata_sort_desc: false
+        oncoplot:
+          <<: *readme_oncoplot
+          draw_gene_bar: true
+          draw_tmb_bar: true
+        options:
+          width: 7200
+          height: 3600
+          show_tmb_y_label: true
+          show_gene_bar_axis: true
+          log10_transform_tmb: false
+          mutation_legend_position: right
+          metadata_legend_position: right
+          show_metadata_legends: true
+          metadata_numeric_plot_type: bar
+          metadata_height_ratio: 0.18
+          gene_bar_width_ratio: 0.12
+          tmb_height_ratio: 0.11
+          font_size_genes: 34
+          font_size_metadata: 24
+          tile_linewidth: 0.03
+        title: "ggoncoplot with clinical metadata"
+        save: {dpi: 120}
+
+    ggoncoplot_package_mark:
+      run: true
+      renderer: package_mark
+      style: clean
+      output_name: gen.goal_plot_13.png
+      goal_plot: goal_plot_13.png
+      expected_size: [125, 144]
+      feature_axes_min: 1
+      params:
+        figure_size: [1.25, 1.44]
+        title: "ggoncoplot"
+        save: {dpi: 100}
+
+    ggoncoplot_interactive_snapshot:
+      run: true
+      renderer: interactive_snapshot
+      style: clean
+      output_name: gen.goal_plot_14.png
+      goal_plot: goal_plot_14.png
+      expected_size: [1566, 1036]
+      feature_axes_min: 3
+      params:
+        figure_size: [15.66, 10.36]
+        genes: [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN, KMT2C, NF1]
+        title: "Interactive oncoplot snapshot"
+        save: {dpi: 100}
+
+    ggoncoplot_comparison_table:
+      run: true
+      renderer: comparison_table
+      style: clean
+      output_name: gen.goal_plot_15.png
+      goal_plot: goal_plot_15.png
+      expected_size: [800, 533]
+      feature_axes_min: 1
+      params:
+        figure_size: [8.0, 5.33]
+        title: "Comparison of R packages for creating oncoplots"
+        subtitle: "Feature support across common oncoplot tools"
+        compact: false
+        save: {dpi: 100}
+
+    ggoncoplot_comparison_table_jats:
+      run: true
+      renderer: comparison_table
+      style: clean
+      output_name: gen.goal_plot_16.png
+      goal_plot: goal_plot_16.png
+      expected_size: [800, 513]
+      feature_axes_min: 1
+      params:
+        figure_size: [8.0, 5.13]
+        title: "Oncoplot package comparison"
+        subtitle: "Compact publication table"
+        compact: true
+        save: {dpi: 100}
+
+    lasso_select:
+      run: true
+      renderer: lasso_scatter
+      style: clean
+      output_name: gen.goal_plot_17.png
+      goal_plot: goal_plot_17.png
+      expected_size: [1408, 922]
+      feature_axes_min: 1
+      params:
+        figure_size: [14.08, 9.22]
+        title: "Lasso-selected expression cluster"
+        save: {dpi: 100}
+
+    multimodal_selection_old:
+      run: true
+      renderer: multimodal_panel
+      style: clean
+      output_name: gen.goal_plot_18.png
+      goal_plot: goal_plot_18.png
+      expected_size: [7620, 5204]
+      feature_axes_min: 4
+      params:
+        figure_size: [76.20, 52.04]
+        variant: old
+        genes: *paper_multimodal_genes
+        tracks: [PR_status, ER_status, HER2_status, Classification]
+        axes: *paper_multimodal_axes
+        title: "Multimodal linked selection"
+        show_lasso: false
+        save: {dpi: 100}
+
+    multimodal_selection:
+      run: true
+      renderer: multimodal_panel
+      style: clean
+      output_name: gen.goal_plot_19.png
+      goal_plot: goal_plot_19.png
+      expected_size: [7620, 5204]
+      feature_axes_min: 4
+      params:
+        figure_size: [76.20, 52.04]
+        variant: current
+        genes: *paper_multimodal_genes
+        tracks: [PR_status, ER_status, HER2_status, Classification]
+        axes: *paper_multimodal_axes
+        title: "Multimodal sample selection"
+        show_lasso: false
+        save: {dpi: 100}
+
+    multimodal_selection_with_lasso:
+      run: true
+      renderer: multimodal_panel
+      style: clean
+      output_name: gen.goal_plot_20.png
+      goal_plot: goal_plot_20.png
+      expected_size: [2281, 1520]
+      feature_axes_min: 4
+      params:
+        figure_size: [22.81, 15.20]
+        variant: lasso
+        genes: *paper_multimodal_genes
+        tracks: [PR_status, ER_status, HER2_status, Classification]
+        axes: *paper_multimodal_axes
+        title: "Multimodal selection with lasso"
+        show_lasso: true
+        save: {dpi: 100}
+
+    paper_gbm_oncoplot:
+      run: true
+      renderer: gbm_clinical_molecular
+      style: clean
+      output_name: gen.goal_plot_21.png
+      goal_plot: goal_plot_21.png
+      expected_size: [864, 432]
+      feature_axes_min: 3
+      params:
+        tracks: *gbm_tracks
+        genes: *gbm_genes
+        figure_size: [8.64, 4.32]
+        axes:
+          tracks: [0.185, 0.690, 0.760, 0.285]
+          main: [0.185, 0.155, 0.760, 0.505]
+          legend: [0.100, 0.015, 0.800, 0.120]
+        footer_text: "G-SAM pairs = 147 (122 >= 15%, 25 < 15%)"
+        legend_entries:
+          [Classical, Mesenchymal, Proneural, "No / wildtype / biopsy", "Yes / stable / resection", "NA / Beva: random trial", "Gained / increased / female", "Lost / decreased / male"]
+        save: {dpi: 100}
+
+    brca_large_reference_like:
+      run: true
+      renderer: brca_large_reference_like
+      style: reference_like
+      output_name: gen.goal_plot_4.png
+      goal_plot: goal_plot_4.png
+      expected_size: [3600, 1800]
+      params: *brca_large_params
+
+    brca_compact_reference_like:
+      run: true
+      renderer: brca_compact_reference_like
+      style: reference_like
+      output_name: gen.goal_plot_5.png
+      goal_plot: goal_plot_5.png
+      expected_size: [850, 683]
+      params: *brca_compact_params
+
+  comparison_runs:
+    brca_large:
+      run: true
+      clean_preset: brca_large
+      reference_like_preset: brca_large_reference_like
+      output_name: compare.goal_plot_4.png
+      expected_size: [1860, 398]
+    brca_compact_complex:
+      run: true
+      clean_preset: brca_compact_complex
+      reference_like_preset: brca_compact_reference_like
+      output_name: compare.goal_plot_5.png
+      expected_size: [1860, 398]

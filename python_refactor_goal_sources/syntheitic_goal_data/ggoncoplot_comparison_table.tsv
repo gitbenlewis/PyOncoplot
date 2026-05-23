@@ -1,0 +1,6 @@
+package	tidy input	interactive	linked selection	metadata	auto palette	notes
+ggoncoplot	Yes	Yes	Yes	Yes	Yes	Python target
+ComplexHeatmap	No	Shiny	Limited	Yes	Manual	Matrix-first
+maftools	MAF	No	No	Yes	MAF classes	Cancer-focused
+genVisR	Wide	No	No	Yes	Manual	Static
+cBioPortal	Portal	Yes	Partial	Yes	Preset	Web app

@@ -1,0 +1,11 @@
+{
+  "Ambiguous": "#BDBDBD",
+  "Amplification": "#B74A5A",
+  "Deletion": "#5DA8A3",
+  "Fusion": "#D1A12B",
+  "Mutation": "#244A7F",
+  "Not Triple Negative": "#E43D30",
+  "Selected": "#E43D30",
+  "Triple Negative": "#111111",
+  "Unselected": "#BDBDBD"
+}

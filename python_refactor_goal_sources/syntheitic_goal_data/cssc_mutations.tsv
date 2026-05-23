@@ -1,0 +1,142 @@
+sample	gene	alteration	tooltip
+CSSC_0005-M1	TP53	missense_variant	CSSC_0005-M1 TP53 missense_variant
+CSSC_0005-M1	TP53	synonymous_variant	CSSC_0005-M1 TP53 synonymous_variant secondary
+CSSC_0130-M1	TP53	missense_variant	CSSC_0130-M1 TP53 missense_variant
+CSSC_0025-M1	TP53	complex_substitution	CSSC_0025-M1 TP53 complex_substitution
+CSSC_0132-M1	TP53	missense_variant	CSSC_0132-M1 TP53 missense_variant
+CSSC_0133-M1	TP53	missense_variant	CSSC_0133-M1 TP53 missense_variant
+CSSC_0004-M1	TP53	missense_variant	CSSC_0004-M1 TP53 missense_variant
+CSSC_0022-M1	TP53	inframe_deletion	CSSC_0022-M1 TP53 inframe_deletion
+CSSC_0066-M1	TP53	stop_gained	CSSC_0066-M1 TP53 stop_gained
+CSSC_0126-M1	TP53	missense_variant	CSSC_0126-M1 TP53 missense_variant
+CSSC_0126-M1	TP53	synonymous_variant	CSSC_0126-M1 TP53 synonymous_variant secondary
+CSSC_0006-M1	TP53	missense_variant	CSSC_0006-M1 TP53 missense_variant
+CSSC_0024-M1	TP53	inframe_deletion	CSSC_0024-M1 TP53 inframe_deletion
+CSSC_0135-M1	TP53	complex_substitution	CSSC_0135-M1 TP53 complex_substitution
+CSSC_0125-M1	TP53	missense_variant	CSSC_0125-M1 TP53 missense_variant
+CSSC_0001-M1	TP53	frameshift_truncation	CSSC_0001-M1 TP53 frameshift_truncation
+CSSC_0013-M1	TP53	stop_gained	CSSC_0013-M1 TP53 stop_gained
+CSSC_0014-M1	TP53	missense_variant	CSSC_0014-M1 TP53 missense_variant
+CSSC_0134-M1	TP53	missense_variant	CSSC_0134-M1 TP53 missense_variant
+CSSC_0134-M1	TP53	complex_substitution	CSSC_0134-M1 TP53 complex_substitution secondary
+CSSC_0124-M1	TP53	stop_gained	CSSC_0124-M1 TP53 stop_gained
+CSSC_0003-M1	TP53	missense_variant	CSSC_0003-M1 TP53 missense_variant
+CSSC_0012-M1	TP53	stop_gained	CSSC_0012-M1 TP53 stop_gained
+CSSC_0007-M1	TP53	missense_variant	CSSC_0007-M1 TP53 missense_variant
+CSSC_0002-M1	TP53	stop_gained	CSSC_0002-M1 TP53 stop_gained
+CSSC_0010-M1	TP53	missense_variant	CSSC_0010-M1 TP53 missense_variant
+CSSC_0011-M1	TP53	missense_variant	CSSC_0011-M1 TP53 missense_variant
+CSSC_0124-M1	CDKN2A	missense_variant	CSSC_0124-M1 CDKN2A missense_variant
+CSSC_0130-M1	CDKN2A	synonymous_variant	CSSC_0130-M1 CDKN2A synonymous_variant
+CSSC_0133-M1	CDKN2A	stop_gained	CSSC_0133-M1 CDKN2A stop_gained
+CSSC_0025-M1	CDKN2A	frameshift_truncation	CSSC_0025-M1 CDKN2A frameshift_truncation
+CSSC_0024-M1	CDKN2A	frameshift_truncation	CSSC_0024-M1 CDKN2A frameshift_truncation
+CSSC_0006-M1	CDKN2A	missense_variant	CSSC_0006-M1 CDKN2A missense_variant
+CSSC_0010-M1	CDKN2A	stop_gained	CSSC_0010-M1 CDKN2A stop_gained
+CSSC_0012-M1	CDKN2A	frameshift_truncation	CSSC_0012-M1 CDKN2A frameshift_truncation
+CSSC_0012-M1	CDKN2A	inframe_deletion	CSSC_0012-M1 CDKN2A inframe_deletion secondary
+CSSC_0007-M1	CDKN2A	missense_variant	CSSC_0007-M1 CDKN2A missense_variant
+CSSC_0022-M1	CDKN2A	frameshift_truncation	CSSC_0022-M1 CDKN2A frameshift_truncation
+CSSC_0001-M1	CDKN2A	missense_variant	CSSC_0001-M1 CDKN2A missense_variant
+CSSC_0135-M1	CDKN2A	stop_gained	CSSC_0135-M1 CDKN2A stop_gained
+CSSC_0014-M1	CDKN2A	complex_substitution	CSSC_0014-M1 CDKN2A complex_substitution
+CSSC_0066-M1	CDKN2A	stop_gained	CSSC_0066-M1 CDKN2A stop_gained
+CSSC_0134-M1	CDKN2A	frameshift_truncation	CSSC_0134-M1 CDKN2A frameshift_truncation
+CSSC_0132-M1	CDKN2A	stop_gained	CSSC_0132-M1 CDKN2A stop_gained
+CSSC_0132-M1	CDKN2A	synonymous_variant	CSSC_0132-M1 CDKN2A synonymous_variant secondary
+CSSC_0125-M1	CDKN2A	splice_site_variant	CSSC_0125-M1 CDKN2A splice_site_variant
+CSSC_0011-M1	CDKN2A	synonymous_variant	CSSC_0011-M1 CDKN2A synonymous_variant
+CSSC_0005-M1	CDKN2A	frameshift_truncation	CSSC_0005-M1 CDKN2A frameshift_truncation
+CSSC_0013-M1	CDKN2A	synonymous_variant	CSSC_0013-M1 CDKN2A synonymous_variant
+CSSC_0066-M1	C9	missense_variant	CSSC_0066-M1 C9 missense_variant
+CSSC_0011-M1	C9	stop_gained	CSSC_0011-M1 C9 stop_gained
+CSSC_0134-M1	C9	missense_variant	CSSC_0134-M1 C9 missense_variant
+CSSC_0125-M1	C9	stop_gained	CSSC_0125-M1 C9 stop_gained
+CSSC_0001-M1	C9	missense_variant	CSSC_0001-M1 C9 missense_variant
+CSSC_0022-M1	C9	splice_site_variant	CSSC_0022-M1 C9 splice_site_variant
+CSSC_0013-M1	C9	synonymous_variant	CSSC_0013-M1 C9 synonymous_variant
+CSSC_0013-M1	C9	frameshift_truncation	CSSC_0013-M1 C9 frameshift_truncation secondary
+CSSC_0012-M1	C9	stop_gained	CSSC_0012-M1 C9 stop_gained
+CSSC_0130-M1	C9	missense_variant	CSSC_0130-M1 C9 missense_variant
+CSSC_0133-M1	C9	missense_variant	CSSC_0133-M1 C9 missense_variant
+CSSC_0132-M1	C9	stop_gained	CSSC_0132-M1 C9 stop_gained
+CSSC_0005-M1	C9	stop_gained	CSSC_0005-M1 C9 stop_gained
+CSSC_0007-M1	C9	synonymous_variant	CSSC_0007-M1 C9 synonymous_variant
+CSSC_0125-M1	KHDRBS2	missense_variant	CSSC_0125-M1 KHDRBS2 missense_variant
+CSSC_0066-M1	KHDRBS2	missense_variant	CSSC_0066-M1 KHDRBS2 missense_variant
+CSSC_0133-M1	KHDRBS2	stop_gained	CSSC_0133-M1 KHDRBS2 stop_gained
+CSSC_0012-M1	KHDRBS2	synonymous_variant	CSSC_0012-M1 KHDRBS2 synonymous_variant
+CSSC_0011-M1	KHDRBS2	missense_variant	CSSC_0011-M1 KHDRBS2 missense_variant
+CSSC_0132-M1	KHDRBS2	stop_gained	CSSC_0132-M1 KHDRBS2 stop_gained
+CSSC_0132-M1	KHDRBS2	inframe_deletion	CSSC_0132-M1 KHDRBS2 inframe_deletion secondary
+CSSC_0007-M1	KHDRBS2	stop_gained	CSSC_0007-M1 KHDRBS2 stop_gained
+CSSC_0013-M1	KHDRBS2	missense_variant	CSSC_0013-M1 KHDRBS2 missense_variant
+CSSC_0005-M1	KHDRBS2	missense_variant	CSSC_0005-M1 KHDRBS2 missense_variant
+CSSC_0130-M1	KHDRBS2	missense_variant	CSSC_0130-M1 KHDRBS2 missense_variant
+CSSC_0022-M1	KHDRBS2	frameshift_truncation	CSSC_0022-M1 KHDRBS2 frameshift_truncation
+CSSC_0134-M1	KHDRBS2	synonymous_variant	CSSC_0134-M1 KHDRBS2 synonymous_variant
+CSSC_0011-M1	SLC22A6	missense_variant	CSSC_0011-M1 SLC22A6 missense_variant
+CSSC_0066-M1	SLC22A6	missense_variant	CSSC_0066-M1 SLC22A6 missense_variant
+CSSC_0005-M1	SLC22A6	complex_substitution	CSSC_0005-M1 SLC22A6 complex_substitution
+CSSC_0132-M1	SLC22A6	missense_variant	CSSC_0132-M1 SLC22A6 missense_variant
+CSSC_0125-M1	SLC22A6	stop_gained	CSSC_0125-M1 SLC22A6 stop_gained
+CSSC_0125-M1	SLC22A6	synonymous_variant	CSSC_0125-M1 SLC22A6 synonymous_variant secondary
+CSSC_0012-M1	SLC22A6	missense_variant	CSSC_0012-M1 SLC22A6 missense_variant
+CSSC_0022-M1	SLC22A6	complex_substitution	CSSC_0022-M1 SLC22A6 complex_substitution
+CSSC_0013-M1	SLC22A6	missense_variant	CSSC_0013-M1 SLC22A6 missense_variant
+CSSC_0007-M1	SLC22A6	missense_variant	CSSC_0007-M1 SLC22A6 missense_variant
+CSSC_0133-M1	SLC22A6	missense_variant	CSSC_0133-M1 SLC22A6 missense_variant
+CSSC_0130-M1	SLC22A6	synonymous_variant	CSSC_0130-M1 SLC22A6 synonymous_variant
+CSSC_0013-M1	COLEC12	missense_variant	CSSC_0013-M1 COLEC12 missense_variant
+CSSC_0133-M1	COLEC12	frameshift_truncation	CSSC_0133-M1 COLEC12 frameshift_truncation
+CSSC_0132-M1	COLEC12	frameshift_truncation	CSSC_0132-M1 COLEC12 frameshift_truncation
+CSSC_0005-M1	COLEC12	complex_substitution	CSSC_0005-M1 COLEC12 complex_substitution
+CSSC_0005-M1	COLEC12	synonymous_variant	CSSC_0005-M1 COLEC12 synonymous_variant secondary
+CSSC_0022-M1	COLEC12	missense_variant	CSSC_0022-M1 COLEC12 missense_variant
+CSSC_0130-M1	COLEC12	complex_substitution	CSSC_0130-M1 COLEC12 complex_substitution
+CSSC_0024-M1	COLEC12	synonymous_variant	CSSC_0024-M1 COLEC12 synonymous_variant
+CSSC_0125-M1	COLEC12	frameshift_truncation	CSSC_0125-M1 COLEC12 frameshift_truncation
+CSSC_0066-M1	COLEC12	complex_substitution	CSSC_0066-M1 COLEC12 complex_substitution
+CSSC_0012-M1	COLEC12	missense_variant	CSSC_0012-M1 COLEC12 missense_variant
+CSSC_0011-M1	COLEC12	missense_variant	CSSC_0011-M1 COLEC12 missense_variant
+CSSC_0130-M1	LINGO2	synonymous_variant	CSSC_0130-M1 LINGO2 synonymous_variant
+CSSC_0132-M1	LINGO2	stop_gained	CSSC_0132-M1 LINGO2 stop_gained
+CSSC_0133-M1	LINGO2	synonymous_variant	CSSC_0133-M1 LINGO2 synonymous_variant
+CSSC_0133-M1	LINGO2	complex_substitution	CSSC_0133-M1 LINGO2 complex_substitution secondary
+CSSC_0012-M1	LINGO2	missense_variant	CSSC_0012-M1 LINGO2 missense_variant
+CSSC_0013-M1	LINGO2	missense_variant	CSSC_0013-M1 LINGO2 missense_variant
+CSSC_0125-M1	LINGO2	splice_site_variant	CSSC_0125-M1 LINGO2 splice_site_variant
+CSSC_0022-M1	LINGO2	missense_variant	CSSC_0022-M1 LINGO2 missense_variant
+CSSC_0011-M1	LINGO2	missense_variant	CSSC_0011-M1 LINGO2 missense_variant
+CSSC_0005-M1	LINGO2	missense_variant	CSSC_0005-M1 LINGO2 missense_variant
+CSSC_0024-M1	LINGO2	frameshift_truncation	CSSC_0024-M1 LINGO2 frameshift_truncation
+CSSC_0130-M1	CDHR5	frameshift_truncation	CSSC_0130-M1 CDHR5 frameshift_truncation
+CSSC_0133-M1	CDHR5	missense_variant	CSSC_0133-M1 CDHR5 missense_variant
+CSSC_0133-M1	CDHR5	synonymous_variant	CSSC_0133-M1 CDHR5 synonymous_variant secondary
+CSSC_0125-M1	CDHR5	missense_variant	CSSC_0125-M1 CDHR5 missense_variant
+CSSC_0022-M1	CDHR5	missense_variant	CSSC_0022-M1 CDHR5 missense_variant
+CSSC_0011-M1	CDHR5	missense_variant	CSSC_0011-M1 CDHR5 missense_variant
+CSSC_0013-M1	CDHR5	missense_variant	CSSC_0013-M1 CDHR5 missense_variant
+CSSC_0132-M1	CDHR5	stop_gained	CSSC_0132-M1 CDHR5 stop_gained
+CSSC_0005-M1	CDHR5	stop_gained	CSSC_0005-M1 CDHR5 stop_gained
+CSSC_0022-M1	ZNF442	stop_gained	CSSC_0022-M1 ZNF442 stop_gained
+CSSC_0022-M1	ZNF442	complex_substitution	CSSC_0022-M1 ZNF442 complex_substitution secondary
+CSSC_0011-M1	ZNF442	missense_variant	CSSC_0011-M1 ZNF442 missense_variant
+CSSC_0013-M1	ZNF442	complex_substitution	CSSC_0013-M1 ZNF442 complex_substitution
+CSSC_0133-M1	ZNF442	missense_variant	CSSC_0133-M1 ZNF442 missense_variant
+CSSC_0005-M1	ZNF442	frameshift_truncation	CSSC_0005-M1 ZNF442 frameshift_truncation
+CSSC_0130-M1	ZNF442	missense_variant	CSSC_0130-M1 ZNF442 missense_variant
+CSSC_0024-M1	ZNF442	missense_variant	CSSC_0024-M1 ZNF442 missense_variant
+CSSC_0132-M1	ZNF442	missense_variant	CSSC_0132-M1 ZNF442 missense_variant
+CSSC_0013-M1	PRLR	complex_substitution	CSSC_0013-M1 PRLR complex_substitution
+CSSC_0132-M1	PRLR	missense_variant	CSSC_0132-M1 PRLR missense_variant
+CSSC_0130-M1	PRLR	missense_variant	CSSC_0130-M1 PRLR missense_variant
+CSSC_0024-M1	PRLR	stop_gained	CSSC_0024-M1 PRLR stop_gained
+CSSC_0133-M1	PRLR	frameshift_truncation	CSSC_0133-M1 PRLR frameshift_truncation
+CSSC_0011-M1	PRLR	missense_variant	CSSC_0011-M1 PRLR missense_variant
+CSSC_0005-M1	PRLR	missense_variant	CSSC_0005-M1 PRLR missense_variant
+CSSC_0013-M1	DHRS4	missense_variant	CSSC_0013-M1 DHRS4 missense_variant
+CSSC_0133-M1	DHRS4	stop_gained	CSSC_0133-M1 DHRS4 stop_gained
+CSSC_0005-M1	DHRS4	inframe_deletion	CSSC_0005-M1 DHRS4 inframe_deletion
+CSSC_0132-M1	DHRS4	missense_variant	CSSC_0132-M1 DHRS4 missense_variant
+CSSC_0011-M1	DHRS4	stop_gained	CSSC_0011-M1 DHRS4 stop_gained

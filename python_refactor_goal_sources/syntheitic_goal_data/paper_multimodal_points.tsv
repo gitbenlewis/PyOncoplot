@@ -1,0 +1,148 @@
+sample	classification	tsne_x	tsne_y	umap_x	umap_y	selected
+GSM-001	Triple Negative	-2.7564	1.4449	-0.7274	2.3004	True
+GSM-002	Triple Negative	-2.9091	1.6034	0.7714	1.1988	True
+GSM-003	Triple Negative	-3.8369	1.2929	-0.9289	1.903	True
+GSM-004	Triple Negative	-1.4546	0.8776	-2.5579	1.2368	True
+GSM-005	Triple Negative	-2.2139	1.1476	0.2172	-0.718	True
+GSM-006	Triple Negative	-1.5591	1.3173	-1.3596	1.0278	True
+GSM-007	Triple Negative	-2.3269	0.6303	-0.0875	-0.0646	True
+GSM-008	Triple Negative	-1.5052	1.924	0.1537	0.0934	True
+GSM-009	Triple Negative	-2.8408	0.5832	-1.541	1.2114	True
+GSM-010	Triple Negative	-1.6197	1.2214	-1.7623	-0.5331	True
+GSM-011	Triple Negative	-2.6915	2.2571	0.8073	3.5267	True
+GSM-012	Triple Negative	-2.2024	1.8461	-0.2282	0.637	True
+GSM-013	Triple Negative	-2.4065	0.5798	-1.188	1.3555	True
+GSM-014	Triple Negative	-1.7717	1.3933	-1.7771	1.1296	True
+GSM-015	Triple Negative	-3.3344	2.337	-1.4132	1.2365	True
+GSM-016	Triple Negative	-2.7636	1.0721	-4.1001	0.543	True
+GSM-017	Triple Negative	-1.727	0.4962	-3.4708	1.0882	True
+GSM-018	Triple Negative	-1.6032	1.6599	-0.4872	1.1512	True
+GSM-019	Triple Negative	-1.786	1.8959	-0.2973	0.1694	True
+GSM-020	Triple Negative	-2.2116	1.3858	-1.6614	0.375	True
+GSM-021	Triple Negative	-1.293	2.0938	-1.9249	0.3328	True
+GSM-022	Triple Negative	-1.8806	1.7867	-1.4181	0.0676	True
+GSM-023	Triple Negative	-2.1005	1.9947	-0.4459	1.7245	True
+GSM-024	Triple Negative	-2.1816	2.8061	-1.5464	1.555	True
+GSM-025	Triple Negative	-2.2132	1.5798	-1.0832	2.1491	True
+GSM-026	Triple Negative	-2.5354	1.6334	-2.8412	0.6989	True
+GSM-027	Triple Negative	-2.1026	1.2456	-1.4279	1.8345	True
+GSM-028	Triple Negative	-2.1795	1.8892	0.7886	1.0004	True
+GSM-029	Triple Negative	-0.7074	0.5399	-2.9496	0.3908	True
+GSM-030	Triple Negative	-2.7925	0.3659	-2.4247	-0.4325	True
+GSM-031	Not Triple Negative	0.8677	-0.6691	0.5705	-2.5259	False
+GSM-032	Not Triple Negative	1.495	-0.8724	3.3399	-0.2772	False
+GSM-033	Not Triple Negative	1.9754	-2.2869	1.1924	-1.4291	False
+GSM-034	Triple Negative	-2.6604	2.8177	0.949	2.1988	False
+GSM-035	Not Triple Negative	0.6601	-0.9069	1.8994	-0.7775	False
+GSM-036	Not Triple Negative	0.1962	-0.557	1.3557	-1.0315	False
+GSM-037	Not Triple Negative	1.3153	-0.3049	-0.0961	-0.1903	False
+GSM-038	Not Triple Negative	2.8132	-1.0797	-1.3906	-2.9548	False
+GSM-039	Not Triple Negative	0.8858	-1.5832	0.4771	0.4054	False
+GSM-040	Not Triple Negative	2.0402	-0.5391	2.3186	0.2104	False
+GSM-041	Not Triple Negative	1.9098	0.1571	-0.6036	-1.712	False
+GSM-042	Not Triple Negative	2.1886	0.3888	0.5738	-0.8316	False
+GSM-043	Not Triple Negative	0.8957	-2.4167	1.6109	-0.0877	False
+GSM-044	Not Triple Negative	2.1105	-1.1393	0.046	1.1939	False
+GSM-045	Not Triple Negative	2.0315	-1.3145	0.4593	-0.6615	False
+GSM-046	Triple Negative	-1.0561	2.0553	-2.8303	1.9363	False
+GSM-047	Triple Negative	-3.2153	1.6977	-2.382	1.4677	False
+GSM-048	Ambiguous	2.0185	1.7377	1.077	2.2707	False
+GSM-049	Not Triple Negative	1.082	-0.5343	-0.5749	-1.5611	False
+GSM-050	Not Triple Negative	2.0935	-1.7332	1.9315	0.1847	False
+GSM-051	Ambiguous	0.2267	2.1409	1.3057	2.8354	False
+GSM-052	Not Triple Negative	1.0841	-1.6178	1.8877	0.7683	False
+GSM-053	Not Triple Negative	1.1526	-1.4637	2.8722	-0.3124	False
+GSM-054	Triple Negative	-2.6575	1.9999	-1.6161	1.9399	False
+GSM-055	Not Triple Negative	1.4414	0.3124	0.4366	-1.4482	False
+GSM-056	Not Triple Negative	2.2504	0.2649	0.4465	-0.5713	False
+GSM-057	Not Triple Negative	-1.3676	-0.697	0.3194	-0.2896	False
+GSM-058	Triple Negative	-2.3035	0.6519	-2.4614	0.2554	False
+GSM-059	Ambiguous	0.6534	1.6624	1.8068	1.2082	False
+GSM-060	Triple Negative	-2.4715	0.1877	-1.8412	1.1266	False
+GSM-061	Not Triple Negative	1.6055	-2.431	1.5518	1.6049	False
+GSM-062	Not Triple Negative	1.8563	-0.7607	0.282	0.2586	False
+GSM-063	Not Triple Negative	-0.1377	-0.1885	1.5073	-1.6577	False
+GSM-064	Not Triple Negative	1.4861	-0.5967	0.2366	1.1792	False
+GSM-065	Triple Negative	-3.2897	0.4069	-0.7718	0.1636	False
+GSM-066	Triple Negative	-0.793	0.37	-1.0507	2.8772	False
+GSM-067	Not Triple Negative	0.7399	-0.752	0.3965	0.004	False
+GSM-068	Ambiguous	-0.6071	1.5893	-2.6442	1.3613	False
+GSM-069	Not Triple Negative	2.518	-2.2	0.5792	2.3597	False
+GSM-070	Not Triple Negative	1.2655	-0.6846	1.613	-0.3476	False
+GSM-071	Not Triple Negative	0.3094	-0.7737	1.0417	-1.6254	False
+GSM-072	Not Triple Negative	3.0155	-0.1887	1.3868	-0.1438	False
+GSM-073	Not Triple Negative	1.1621	0.3121	0.6528	-2.0527	False
+GSM-074	Not Triple Negative	2.3375	-1.1177	0.0078	-0.8103	False
+GSM-075	Triple Negative	-2.5044	1.4456	0.1686	0.2983	False
+GSM-076	Not Triple Negative	1.6079	-0.4746	1.1914	1.312	False
+GSM-077	Triple Negative	-2.5019	1.3857	-1.3983	1.3894	False
+GSM-078	Not Triple Negative	1.7518	-1.4275	-0.0238	-0.3464	False
+GSM-079	Triple Negative	-1.8004	0.9244	-2.0739	1.4443	False
+GSM-080	Not Triple Negative	1.9233	0.0642	1.2698	1.0479	False
+GSM-081	Triple Negative	-2.3973	1.9192	-0.3986	1.937	False
+GSM-082	Not Triple Negative	1.7611	0.1491	0.6445	-0.5907	False
+GSM-083	Not Triple Negative	1.3439	0.1543	-0.9041	0.7355	False
+GSM-084	Triple Negative	-2.4498	1.1364	-1.9158	-0.6055	False
+GSM-085	Ambiguous	1.772	1.6147	-0.0845	1.0005	False
+GSM-086	Not Triple Negative	2.2459	0.0125	3.2468	-0.2323	False
+GSM-087	Not Triple Negative	0.8285	-1.6304	-1.3969	-0.2211	False
+GSM-088	Not Triple Negative	2.9769	0.3333	1.0072	-0.1451	False
+GSM-089	Not Triple Negative	0.3531	-1.0496	-0.6539	0.3336	False
+GSM-090	Not Triple Negative	1.1053	-0.9366	0.7239	-0.3163	False
+GSM-091	Not Triple Negative	2.6846	0.1204	0.5109	-1.1933	False
+GSM-092	Ambiguous	-0.3524	0.5	0.7677	0.1962	False
+GSM-093	Not Triple Negative	0.8997	-0.2133	0.6481	1.4866	False
+GSM-094	Not Triple Negative	1.3215	-1.7597	0.9925	-1.6429	False
+GSM-095	Not Triple Negative	1.0222	-1.3306	-0.7251	-0.7546	False
+GSM-096	Triple Negative	-1.746	2.002	-1.6819	1.9193	False
+GSM-097	Not Triple Negative	0.3466	-0.2355	0.3707	0.8153	False
+GSM-098	Not Triple Negative	0.7682	-1.1582	0.0999	-0.4711	False
+GSM-099	Not Triple Negative	0.9206	-0.3451	2.3804	-1.7846	False
+GSM-100	Not Triple Negative	1.8254	-0.1888	0.0335	0.2186	False
+GSM-101	Triple Negative	-1.9356	1.6298	-0.968	-1.238	False
+GSM-102	Not Triple Negative	1.0974	-0.1925	-1.6267	-0.454	False
+GSM-103	Triple Negative	-0.9314	1.1295	-0.2856	0.4914	False
+GSM-104	Ambiguous	-0.2633	2.45	1.4086	2.4714	False
+GSM-105	Triple Negative	-2.3219	2.267	0.626	-0.9057	False
+GSM-106	Not Triple Negative	1.69	-0.9749	0.3978	-1.0253	False
+GSM-107	Not Triple Negative	0.8549	-0.5653	-0.0048	-0.5052	False
+GSM-108	Triple Negative	-1.5312	2.5252	-2.256	0.3796	False
+GSM-109	Triple Negative	-2.8539	1.9858	-1.4231	2.5125	False
+GSM-110	Not Triple Negative	1.0782	-0.854	1.8615	-1.4186	False
+GSM-111	Triple Negative	-1.8618	1.459	0.008	-0.4652	False
+GSM-112	Not Triple Negative	1.7834	-0.6621	1.3717	-0.4454	False
+GSM-113	Not Triple Negative	1.603	-0.5316	0.6437	-1.888	False
+GSM-114	Not Triple Negative	1.1696	-0.2868	0.2457	-0.2719	False
+GSM-115	Not Triple Negative	2.773	0.3449	2.1051	-0.6654	False
+GSM-116	Ambiguous	-1.157	0.886	0.2685	0.0429	False
+GSM-117	Not Triple Negative	-0.0662	-0.9055	-0.7386	-0.0994	False
+GSM-118	Not Triple Negative	0.777	-1.3949	1.1319	-2.8951	False
+GSM-119	Triple Negative	-3.3956	0.6954	-0.4396	-0.1599	False
+GSM-120	Triple Negative	-1.9385	1.9624	-0.3354	2.1555	False
+GSM-121	Not Triple Negative	0.8251	-1.2572	1.6572	-0.521	False
+GSM-122	Triple Negative	-1.6518	2.4359	-0.746	1.5001	False
+GSM-123	Not Triple Negative	0.6251	-1.4279	2.7089	0.1536	False
+GSM-124	Triple Negative	-3.0801	1.1686	-2.2148	1.2921	False
+GSM-125	Not Triple Negative	2.3411	-0.6989	-0.3678	-1.7228	False
+GSM-126	Not Triple Negative	0.689	-0.6389	1.0466	-1.2124	False
+GSM-127	Not Triple Negative	1.4819	-1.0976	-0.2439	0.2909	False
+GSM-128	Not Triple Negative	2.1549	-2.0463	0.2279	-2.1488	False
+GSM-129	Triple Negative	-1.9321	0.779	0.1143	-0.0419	False
+GSM-130	Ambiguous	0.2815	2.8602	0.8815	2.1976	False
+GSM-131	Not Triple Negative	2.6459	-1.4157	2.7975	-1.2523	False
+GSM-132	Not Triple Negative	1.2733	-2.1763	1.2149	0.3159	False
+GSM-133	Not Triple Negative	2.5884	-0.8484	1.0433	-1.2038	False
+GSM-134	Not Triple Negative	1.2135	-1.0607	-0.6023	1.0519	False
+GSM-135	Not Triple Negative	0.6251	-0.7998	1.9742	-0.3154	False
+GSM-136	Not Triple Negative	0.4768	-1.2516	0.8209	-1.0314	False
+GSM-137	Triple Negative	-1.91	1.7127	-3.0047	0.9183	False
+GSM-138	Not Triple Negative	1.1358	-2.235	1.9791	-0.0813	False
+GSM-139	Not Triple Negative	1.3029	-0.7157	1.671	0.4751	False
+GSM-140	Not Triple Negative	1.5786	-0.0258	2.0234	-1.2897	False
+GSM-141	Triple Negative	-2.228	0.4722	-2.7641	1.1394	False
+GSM-142	Ambiguous	-1.0801	1.1818	0.2823	2.3503	False
+GSM-143	Not Triple Negative	1.1602	-0.889	0.6121	1.388	False
+GSM-144	Ambiguous	0.0636	2.5022	-1.5532	0.978	False
+GSM-145	Not Triple Negative	2.1752	-1.6062	1.1888	-0.1346	False
+GSM-146	Ambiguous	-0.1614	2.2914	-0.7068	1.301	False
+GSM-147	Not Triple Negative	1.7333	-0.8185	-0.7686	-0.3165	False

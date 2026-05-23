@@ -1,0 +1,9 @@
+{
+  "Multi_Hit": "#111111",
+  "frameshift": "#377EB8",
+  "inframe": "#984EA3",
+  "missense": "#4DAF4A",
+  "nonsense": "#E41A1C",
+  "silent": "#BDBDBD",
+  "splice": "#FF7F00"
+}

@@ -1,0 +1,9 @@
+{
+  "complex_substitution": "#1E3CFF",
+  "frameshift_truncation": "#000000",
+  "inframe_deletion": "#62D7F2",
+  "missense_variant": "#F5A000",
+  "splice_site_variant": "#19E33A",
+  "stop_gained": "#F20D0D",
+  "synonymous_variant": "#8E2F17"
+}

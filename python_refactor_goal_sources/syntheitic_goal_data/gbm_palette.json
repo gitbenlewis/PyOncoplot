@@ -1,0 +1,17 @@
+{
+  "alterations": {
+    "Gained / increased / female": "#BE5362",
+    "Lost / decreased / male": "#70B7B4",
+    "Mutation": "#1E355C"
+  },
+  "tracks": {
+    "Classical": "#4F8DC3",
+    "Gained / increased / female": "#BE5362",
+    "Lost / decreased / male": "#70B7B4",
+    "Mesenchymal": "#F0C400",
+    "NA / Beva: random trial": "#AFAFAF",
+    "No / wildtype / biopsy": "#FFFFFF",
+    "Proneural": "#EF5A6E",
+    "Yes / stable / resection": "#1E355C"
+  }
+}
