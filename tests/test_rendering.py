@@ -108,7 +108,31 @@ def test_custom_stacked_tmb_requires_palette_coverage():
             draw_tmb_bar=True,
             tmb_data=tmb,
             backend="matplotlib",
+            options=OncoplotOptions(log10_transform_tmb=False),
         )
+
+
+def test_custom_stacked_tmb_log_scale_does_not_require_palette_coverage():
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "tmb_type": ["Subtype_A", "Subtype_B", "Subtype_A"],
+            "mutations": [4, 2, 3],
+        }
+    )
+    with pytest.warns(UserWarning, match="log10_transform_tmb=True"):
+        result = oncoplot(
+            small_df(),
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            draw_tmb_bar=True,
+            tmb_data=tmb,
+            backend="plotly",
+        )
+    assert result.prepared_data.tmb_type_col == "tmb_type"
+    assert result.prepared_data.tmb_totals is not None
+    assert result.prepared_data.tmb_totals.loc["S1"] == 6.0
 
 
 def test_plotly_tmb_hover_uses_real_totals_and_metadata_palette_legend():
@@ -137,7 +161,260 @@ def test_plotly_tmb_hover_uses_real_totals_and_metadata_palette_legend():
     tmb_traces = [trace for trace in result.figure.data if getattr(trace, "type", "") == "bar" and trace.orientation is None]
     assert tmb_traces
     assert tmb_traces[0].customdata[0]["tmb"] == 6.0
-    assert any(getattr(trace, "name", "") == "group: A" for trace in result.figure.data)
+    assert any(getattr(trace, "name", "") == "Group: A" for trace in result.figure.data)
+
+
+def test_custom_stacked_tmb_legends_render_in_both_backends():
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "tmb_type": ["Subtype_A", "Subtype_B", "Subtype_A"],
+            "mutations": [4, 2, 3],
+        }
+    )
+    tmb_palette = {"Subtype_A": "#111111", "Subtype_B": "#222222"}
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        tmb_palette=tmb_palette,
+        backend="plotly",
+        options=OncoplotOptions(log10_transform_tmb=False, mutation_legend_position="right"),
+    )
+    tmb_legend_traces = [
+        trace for trace in plotly_result.figure.data if getattr(trace, "legendgroup", "") == "tmb"
+    ]
+    assert [trace.name for trace in tmb_legend_traces] == ["TMB: Subtype A", "TMB: Subtype B"]
+    assert all(trace.showlegend is True for trace in tmb_legend_traces)
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        tmb_palette=tmb_palette,
+        backend="matplotlib",
+        options=OncoplotOptions(log10_transform_tmb=False, mutation_legend_position="right"),
+    )
+    legend_titles = [legend.get_title().get_text() for legend in matplotlib_result.figure.legends]
+    legend_labels = [
+        text.get_text() for legend in matplotlib_result.figure.legends for text in legend.get_texts()
+    ]
+    assert "TMB Type" in legend_titles
+    assert "Subtype A" in legend_labels
+    assert "Subtype B" in legend_labels
+
+
+def test_tmb_legend_none_hides_tmb_but_metadata_can_remain():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "tmb_type": ["Subtype_A", "Subtype_B", "Subtype_A"],
+            "mutations": [4, 2, 3],
+        }
+    )
+    tmb_palette = {"Subtype_A": "#111111", "Subtype_B": "#222222"}
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        tmb_palette=tmb_palette,
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="plotly",
+        options=OncoplotOptions(
+            log10_transform_tmb=False,
+            mutation_legend_position="none",
+            show_metadata_legends=True,
+        ),
+    )
+    tmb_traces = [trace for trace in plotly_result.figure.data if getattr(trace, "legendgroup", "") == "tmb"]
+    metadata_legend_traces = [
+        trace for trace in plotly_result.figure.data if str(getattr(trace, "legendgroup", "")).startswith("metadata:")
+    ]
+    assert tmb_traces
+    assert all(trace.showlegend is False for trace in tmb_traces)
+    assert metadata_legend_traces
+    assert all(trace.showlegend is True for trace in metadata_legend_traces)
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        tmb_palette=tmb_palette,
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="matplotlib",
+        options=OncoplotOptions(
+            log10_transform_tmb=False,
+            mutation_legend_position="none",
+            show_metadata_legends=True,
+        ),
+    )
+    legend_titles = [legend.get_title().get_text() for legend in matplotlib_result.figure.legends]
+    assert "TMB Type" not in legend_titles
+    assert "Group" in legend_titles
+
+
+def test_tmb_palette_does_not_recolor_main_mutation_tiles_when_keys_overlap():
+    mutation_palette = {
+        "Missense_Mutation": "#1F78B4",
+        "Frame_Shift_Del": "#33A02C",
+        "Nonsense_Mutation": "#E31A1C",
+        "Splice_Site": "#6A3D9A",
+    }
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S2"],
+            "type": ["Missense_Mutation", "Subtype_B"],
+            "mutations": [4, 3],
+        }
+    )
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        palette=mutation_palette,
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        tmb_palette={"Missense_Mutation": "#00FF00", "Subtype_B": "#222222"},
+        backend="plotly",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+    main_trace = next(trace for trace in result.figure.data if getattr(trace, "name", "") == "Missense Mutation")
+    tmb_trace = next(trace for trace in result.figure.data if getattr(trace, "name", "") == "TMB: Missense Mutation")
+    assert main_trace.marker.color == "#1F78B4"
+    assert tmb_trace.marker.color == "#00FF00"
+
+
+def test_typed_tmb_log_scale_warns_in_both_backends():
+    for backend in ("plotly", "matplotlib"):
+        with pytest.warns(UserWarning, match="log10_transform_tmb=True disables stacked TMB rendering"):
+            oncoplot(
+                small_df(),
+                gene_col="gene",
+                sample_col="sample",
+                mutation_type_col="type",
+                draw_tmb_bar=True,
+                backend=backend,
+            )
+
+
+def test_matplotlib_tmb_axis_label_and_scientific_formatting():
+    tmb = pd.DataFrame({"sample": ["S1", "S2", "S3"], "score": [10, 100, 1000]})
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        backend="matplotlib",
+        options=OncoplotOptions(
+            log10_transform_tmb=False,
+            scientific_tmb=True,
+            show_tmb_y_label=True,
+        ),
+    )
+    tmb_axis = result.figure.axes[0]
+    result.figure.canvas.draw()
+    assert tmb_axis.get_ylabel() == "score"
+    assert any("e" in label.get_text() for label in tmb_axis.get_yticklabels() if label.get_text())
+
+    log_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        backend="matplotlib",
+        options=OncoplotOptions(show_tmb_y_label=True),
+    )
+    assert log_result.figure.axes[0].get_ylabel() == "log10 score"
+
+
+def test_metadata_prettification_applies_to_both_backends_without_mutating_customdata():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "clinical_group": ["high_risk", "low_risk", "high_risk"],
+        }
+    )
+    metadata_palette = {"clinical_group": {"high_risk": "#00AA88", "low_risk": "#CC5500"}}
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["clinical_group"],
+        metadata_palette=metadata_palette,
+        backend="plotly",
+        options=OncoplotOptions(metadata_position="top", mutation_legend_position="none"),
+    )
+    metadata_heatmap = next(
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "metadata"
+    )
+    assert list(metadata_heatmap.y) == ["Clinical Group"]
+    assert metadata_heatmap.text[0][0] == "Clinical Group: High Risk"
+    assert metadata_heatmap.customdata[0][0]["column"] == "clinical_group"
+    assert metadata_heatmap.customdata[0][0]["value"] == "high_risk"
+    assert any(getattr(trace, "name", "") == "Clinical Group: High Risk" for trace in plotly_result.figure.data)
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["clinical_group"],
+        metadata_palette=metadata_palette,
+        backend="matplotlib",
+        options=OncoplotOptions(metadata_position="top", mutation_legend_position="none"),
+    )
+    metadata_axis = matplotlib_result.figure.axes[0]
+    legend_titles = [legend.get_title().get_text() for legend in matplotlib_result.figure.legends]
+    legend_labels = [
+        text.get_text() for legend in matplotlib_result.figure.legends for text in legend.get_texts()
+    ]
+    assert [label.get_text() for label in metadata_axis.get_yticklabels()] == ["Clinical Group"]
+    assert "Clinical Group" in legend_titles
+    assert "High Risk" in legend_labels
+
+    hidden_title_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["clinical_group"],
+        metadata_palette=metadata_palette,
+        backend="matplotlib",
+        options=OncoplotOptions(
+            metadata_position="top",
+            mutation_legend_position="none",
+            show_legend_titles=False,
+        ),
+    )
+    assert all(legend.get_title().get_text() == "" for legend in hidden_title_result.figure.legends)
 
 
 def test_custom_tmb_sample_column_order_renders_in_both_backends():
@@ -212,6 +489,158 @@ def test_sample_id_position_and_axis_label_fonts_are_applied():
     )
     assert plotly_result.figure.layout.xaxis.side == "top"
     assert plotly_result.figure.layout.xaxis.tickangle == 45
+
+
+def test_plotly_mutation_legend_none_keeps_metadata_legend():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="plotly",
+        options=OncoplotOptions(mutation_legend_position="none", show_metadata_legends=True),
+    )
+    mutation_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "customdata", None)
+        and isinstance(trace.customdata[0], dict)
+        and trace.customdata[0].get("role") == "main_tile"
+    ]
+    metadata_legend_traces = [
+        trace for trace in result.figure.data if str(getattr(trace, "legendgroup", "")).startswith("metadata:")
+    ]
+    assert mutation_traces
+    assert all(trace.showlegend is False for trace in mutation_traces)
+    assert metadata_legend_traces
+    assert all(trace.showlegend is True for trace in metadata_legend_traces)
+    assert result.figure.layout.showlegend is True
+
+
+def test_plotly_legend_positions_are_applied():
+    bottom = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="plotly",
+        options=OncoplotOptions(mutation_legend_position="bottom"),
+    )
+    assert bottom.figure.layout.legend.orientation == "h"
+    assert bottom.figure.layout.legend.xanchor == "center"
+    assert bottom.figure.layout.margin.b == 90
+
+    right = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="plotly",
+        options=OncoplotOptions(mutation_legend_position="right"),
+    )
+    assert right.figure.layout.legend.orientation == "v"
+    assert right.figure.layout.legend.x > 1
+    assert right.figure.layout.margin.r == 150
+
+
+def test_plotly_font_sizes_tile_linewidth_and_gene_bar_nticks_are_applied():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_gene_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(
+            show_sample_ids=True,
+            show_x_label=True,
+            show_y_label=True,
+            font_size_samples=17,
+            font_size_genes=19,
+            font_size_x_label=23,
+            font_size_y_label=29,
+            font_size_gene_bar_axis=13,
+            tile_linewidth=2.5,
+            gene_bar_scale_n_breaks=4,
+        ),
+    )
+    mutation_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "customdata", None)
+        and isinstance(trace.customdata[0], dict)
+        and trace.customdata[0].get("role") == "main_tile"
+    ]
+    assert mutation_traces
+    assert mutation_traces[0].marker.line.width == 2.5
+    assert result.figure.layout.xaxis.tickfont.size == 17
+    assert result.figure.layout.yaxis.tickfont.size == 19
+    assert result.figure.layout.xaxis.title.font.size == 23
+    assert result.figure.layout.yaxis.title.font.size == 29
+    assert result.figure.layout.xaxis2.nticks == 4
+    assert result.figure.layout.xaxis2.tickfont.size == 13
+
+
+def test_plotly_tmb_and_metadata_font_sizes_are_applied():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    metadata_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="plotly",
+        options=OncoplotOptions(metadata_position="top", font_size_metadata=16),
+    )
+    assert metadata_result.figure.layout.yaxis.tickfont.size == 16
+
+    tmb_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(show_tmb_y_label=True, font_size_tmb_axis=14),
+    )
+    assert tmb_result.figure.layout.yaxis.tickfont.size == 14
+    assert tmb_result.figure.layout.yaxis.title.font.size == 14
+
+
+def test_multi_hit_color_applies_to_defaults_and_explicit_palette_wins():
+    data = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "gene": ["TP53", "TP53", "TP53"],
+            "type": ["Missense_Mutation", "Nonsense_Mutation", "Splice_Site"],
+        }
+    )
+    default_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="plotly",
+        options=OncoplotOptions(multi_hit_color="#FF00FF"),
+    )
+    default_multi_hit = next(trace for trace in default_result.figure.data if trace.name == "Multi Hit")
+    assert default_multi_hit.marker.color == "#FF00FF"
+
+    explicit_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        palette={"Multi_Hit": "#00FF00", "Splice_Site": "#6A3D9A"},
+        backend="plotly",
+        options=OncoplotOptions(multi_hit_color="#FF00FF"),
+    )
+    explicit_multi_hit = next(trace for trace in explicit_result.figure.data if trace.name == "Multi Hit")
+    assert explicit_multi_hit.marker.color == "#00FF00"
 
 
 def test_plotly_gene_bar_hover_and_visible_labels_are_separate():

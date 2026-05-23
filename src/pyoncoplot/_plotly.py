@@ -18,6 +18,7 @@ from ._utils import as_percent
 PLOTLY_RENDER_PARAM_KEYS = {
     "prepared",
     "palette",
+    "tmb_palette",
     "metadata_palette",
     "options",
     "draw_gene_bar",
@@ -26,6 +27,7 @@ PLOTLY_RENDER_PARAM_KEYS = {
 }
 
 PLOTLY_RENDER_DEFAULTS: dict[str, Any] = {
+    "tmb_palette": None,
     "metadata_palette": None,
     "draw_gene_bar": False,
     "draw_tmb_bar": False,
@@ -47,6 +49,31 @@ def _legend_label(value: object, options: OncoplotOptions) -> str:
     return options.prettify_function(text) if options.prettify_legend_values else text
 
 
+def _legend_title(value: object, options: OncoplotOptions) -> str:
+    text = "" if value is None else str(value)
+    return options.prettify_function(text) if options.prettify_legend_titles else text
+
+
+def _metadata_value_label(value: object, options: OncoplotOptions) -> str:
+    if pd.isna(value):
+        return options.metadata_na_marker
+    text = str(value)
+    return options.prettify_function(text) if options.prettify_legend_values else text
+
+
+def _should_show_tmb_legend(
+    prepared: PreparedOncoplotData,
+    options: OncoplotOptions,
+    render_stacked: bool,
+) -> bool:
+    return bool(
+        prepared.tmb_is_custom
+        and render_stacked
+        and options.show_legend
+        and options.mutation_legend_position != "none"
+    )
+
+
 def _copy_value(row: pd.Series, copy_on_click: str) -> str:
     if copy_on_click == "sample":
         return str(row["Sample"])
@@ -61,6 +88,10 @@ def _copy_value(row: pd.Series, copy_on_click: str) -> str:
 
 def _custom_payload(**values: object) -> Dict[str, object]:
     return dict(values)
+
+
+def _font_options(size: float, options: OncoplotOptions) -> Dict[str, object]:
+    return {"size": size, "family": options.font_family}
 
 
 def _validate_metadata_levels(prepared: PreparedOncoplotData, options: OncoplotOptions) -> None:
@@ -97,6 +128,7 @@ def _add_tmb_bar(
     row: int,
     col: int,
     palette: Mapping[str, str],
+    tmb_palette: Optional[Mapping[str, str]],
     options: OncoplotOptions,
 ):
     go, _make_subplots = _require_plotly()
@@ -113,22 +145,26 @@ def _add_tmb_bar(
     value_col = prepared.tmb_value_col
     type_col = prepared.tmb_type_col
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb
-    if prepared.tmb_is_custom and prepared.tmb_render_stacked and options.log10_transform_tmb:
+    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked)
+    if prepared.tmb_render_stacked and options.log10_transform_tmb:
         warnings.warn(
             "log10_transform_tmb=True disables stacked TMB rendering; totals are rendered instead.",
             stacklevel=2,
         )
 
     if render_stacked:
+        tmb_color_palette = tmb_palette or palette
         for tmb_type, group in tmb.groupby(type_col, dropna=False, sort=False):
-            color = palette.get(str(tmb_type), options.unspecified_mutation_color)
+            color = tmb_color_palette.get(str(tmb_type), options.unspecified_mutation_color)
             sample_values = group[sample_col].astype(str).tolist()
             values = group[value_col].astype(float).tolist()
+            tmb_label = _legend_label(tmb_type, options)
             fig.add_trace(
                 go.Bar(
                     x=sample_values,
                     y=values,
-                    name=_legend_label(tmb_type, options),
+                    name=f"TMB: {tmb_label}",
+                    legendgroup="tmb",
                     marker_color=color,
                     customdata=[
                         _custom_payload(
@@ -140,9 +176,9 @@ def _add_tmb_bar(
                         for sample, value in zip(sample_values, values)
                     ],
                     hovertemplate="Sample: %{x}<br>TMB: %{y}<br>Type: "
-                    + _legend_label(tmb_type, options)
+                    + tmb_label
                     + "<extra></extra>",
-                    showlegend=False,
+                    showlegend=show_tmb_legend,
                     selected=dict(marker=dict(opacity=1.0)),
                     unselected=dict(marker=dict(opacity=0.18)),
                 ),
@@ -176,8 +212,16 @@ def _add_tmb_bar(
             col=col,
         )
         if options.show_tmb_y_label:
-            fig.update_yaxes(title_text=axis_title, row=row, col=col)
+            fig.update_yaxes(
+                title_text=axis_title,
+                title_font=_font_options(options.font_size_tmb_axis, options),
+                row=row,
+                col=col,
+            )
 
+    fig.update_yaxes(tickfont=_font_options(options.font_size_tmb_axis, options), row=row, col=col)
+    if options.scientific_tmb:
+        fig.update_yaxes(tickformat=".1e", row=row, col=col)
     if not options.show_tmb_axis:
         fig.update_yaxes(showticklabels=False, showline=False, ticks="", row=row, col=col)
     fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)
@@ -232,6 +276,7 @@ def _add_metadata_strip(
     metadata_by_sample = metadata.set_index("Sample")
 
     for col_name in prepared.metadata_cols:
+        display_col = _legend_title(col_name, options)
         row_values = []
         row_text = []
         row_custom = []
@@ -254,7 +299,7 @@ def _add_metadata_strip(
         )
         for sample in prepared.samples:
             value = values_by_sample.get(sample, np.nan)
-            row_text.append(f"{col_name}: {options.metadata_na_marker if pd.isna(value) else value}")
+            row_text.append(f"{display_col}: {_metadata_value_label(value, options)}")
             if pd.isna(value):
                 key = ("__NA__", col_name)
                 color = "#D9D9D9"
@@ -283,13 +328,14 @@ def _add_metadata_strip(
 
         if not is_numeric and options.show_metadata_legends:
             for level, color in level_map.items():
+                display_level = _metadata_value_label(level, options)
                 fig.add_trace(
                     go.Scatter(
                         x=[None],
                         y=[None],
                         mode="markers",
                         marker=dict(symbol="square", size=max(8, options.metadata_legend_key_size * 9), color=color),
-                        name=f"{col_name}: {level}",
+                        name=f"{display_col}: {display_level}",
                         legendgroup=f"metadata:{col_name}",
                         showlegend=True,
                         hoverinfo="skip",
@@ -303,7 +349,7 @@ def _add_metadata_strip(
     fig.add_trace(
         go.Heatmap(
             x=prepared.samples,
-            y=list(prepared.metadata_cols),
+            y=[_legend_title(column, options) for column in prepared.metadata_cols],
             z=matrix,
             text=text,
             customdata=customdata,
@@ -316,8 +362,18 @@ def _add_metadata_strip(
         row=row,
         col=col,
     )
-    fig.update_xaxes(showticklabels=options.show_sample_ids, row=row, col=col)
-    fig.update_yaxes(autorange="reversed", row=row, col=col)
+    fig.update_xaxes(
+        showticklabels=options.show_sample_ids,
+        tickfont=_font_options(options.font_size_samples, options),
+        row=row,
+        col=col,
+    )
+    fig.update_yaxes(
+        autorange="reversed",
+        tickfont=_font_options(options.font_size_metadata, options),
+        row=row,
+        col=col,
+    )
 
 
 def _add_main_tiles(
@@ -330,6 +386,7 @@ def _add_main_tiles(
     copy_on_click: str,
 ):
     go, _make_subplots = _require_plotly()
+    show_mutation_legend = options.show_legend and options.mutation_legend_position != "none"
     z = np.zeros((len(prepared.genes), len(prepared.samples)))
     fig.add_trace(
         go.Heatmap(
@@ -365,12 +422,17 @@ def _add_main_tiles(
                     x=group["Sample"].astype(str),
                     y=group["Gene"].astype(str),
                     mode="markers",
-                    marker=dict(symbol="square", size=13, color=color, line=dict(color="white", width=0.25)),
+                    marker=dict(
+                        symbol="square",
+                        size=13,
+                        color=color,
+                        line=dict(color="white", width=options.tile_linewidth),
+                    ),
                     name=_legend_label(mutation_type, options),
                     text=group["Tooltip"].astype(str),
                     customdata=customdata,
                     hovertemplate="%{text}<extra></extra>",
-                    showlegend=options.show_legend,
+                    showlegend=show_mutation_legend,
                     selected=dict(marker=dict(opacity=1.0)),
                     unselected=dict(marker=dict(opacity=0.18)),
                 ),
@@ -388,7 +450,7 @@ def _add_main_tiles(
                         symbol="square",
                         size=13,
                         color=options.unspecified_mutation_color,
-                        line=dict(color="white", width=0.25),
+                        line=dict(color="white", width=options.tile_linewidth),
                     ),
                     name="Mutation",
                     text=unspecified["Tooltip"].astype(str),
@@ -403,7 +465,7 @@ def _add_main_tiles(
                         for _index, row_value in unspecified.iterrows()
                     ],
                     hovertemplate="%{text}<extra></extra>",
-                    showlegend=options.show_legend and prepared.mutation_type_col is None,
+                    showlegend=show_mutation_legend and prepared.mutation_type_col is None,
                     selected=dict(marker=dict(opacity=1.0)),
                     unselected=dict(marker=dict(opacity=0.18)),
                 ),
@@ -412,15 +474,32 @@ def _add_main_tiles(
             )
 
     fig.update_yaxes(categoryorder="array", categoryarray=list(reversed(prepared.genes)), row=row, col=col)
-    fig.update_xaxes(categoryorder="array", categoryarray=prepared.samples, row=row, col=col)
+    fig.update_yaxes(tickfont=_font_options(options.font_size_genes, options), row=row, col=col)
+    fig.update_xaxes(
+        categoryorder="array",
+        categoryarray=prepared.samples,
+        tickfont=_font_options(options.font_size_samples, options),
+        row=row,
+        col=col,
+    )
     if not options.show_sample_ids:
         fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)
     else:
         fig.update_xaxes(side=options.sample_id_position, tickangle=options.sample_id_angle, row=row, col=col)
     if options.show_x_label:
-        fig.update_xaxes(title_text=options.x_label, row=row, col=col)
+        fig.update_xaxes(
+            title_text=options.x_label,
+            title_font=_font_options(options.font_size_x_label, options),
+            row=row,
+            col=col,
+        )
     if options.show_y_label:
-        fig.update_yaxes(title_text=options.y_label, row=row, col=col)
+        fig.update_yaxes(
+            title_text=options.y_label,
+            title_font=_font_options(options.font_size_y_label, options),
+            row=row,
+            col=col,
+        )
 
     if prepared.pathway_groups:
         xref = f"x{'' if row == 1 and col == 1 else row}"
@@ -523,13 +602,27 @@ def _add_gene_bar(
             col=col,
         )
         fig.update_xaxes(range=[0, max(label_x.max(), max_total) * 1.08], row=row, col=col)
-    fig.update_yaxes(categoryorder="array", categoryarray=list(reversed(prepared.genes)), showticklabels=False, row=row, col=col)
+    fig.update_yaxes(
+        categoryorder="array",
+        categoryarray=list(reversed(prepared.genes)),
+        showticklabels=False,
+        row=row,
+        col=col,
+    )
     if not options.show_gene_bar_axis:
         fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)
     else:
-        fig.update_xaxes(title_text="Samples", row=row, col=col)
+        fig.update_xaxes(
+            title_text="Samples",
+            tickfont=_font_options(options.font_size_gene_bar_axis, options),
+            title_font=_font_options(options.font_size_gene_bar_axis, options),
+            row=row,
+            col=col,
+        )
     if options.gene_bar_scale_breaks is not None:
         fig.update_xaxes(tickmode="array", tickvals=list(options.gene_bar_scale_breaks), row=row, col=col)
+    elif options.gene_bar_scale_n_breaks is not None:
+        fig.update_xaxes(nticks=options.gene_bar_scale_n_breaks, row=row, col=col)
 
 
 def render_plotly_oncoplot(
@@ -554,6 +647,7 @@ def render_plotly_oncoplot(
         raise TypeError("render_plotly_oncoplot requires 'options'.")
 
     palette = merged["palette"]
+    tmb_palette = merged["tmb_palette"]
     metadata_palette = merged["metadata_palette"]
     options = coerce_options(merged["options"])
     draw_gene_bar = merged["draw_gene_bar"]
@@ -588,7 +682,7 @@ def render_plotly_oncoplot(
     )
 
     if draw_tmb_bar and "tmb" in row_by_name:
-        _add_tmb_bar(figure, prepared, row_by_name["tmb"], 1, palette, options)
+        _add_tmb_bar(figure, prepared, row_by_name["tmb"], 1, palette, tmb_palette, options)
     if draw_metadata and "metadata" in row_by_name:
         _add_metadata_strip(figure, prepared, row_by_name["metadata"], 1, options, metadata_palette=metadata_palette)
 
@@ -598,6 +692,44 @@ def render_plotly_oncoplot(
         _add_gene_bar(figure, prepared, main_row, 2, palette, options)
 
     dragmode = {"none": "zoom", "multiple": "lasso", "single": "select"}[options.selection_type]
+    mutation_legend_active = options.show_legend and options.mutation_legend_position != "none"
+    tmb_render_stacked = (
+        draw_tmb_bar
+        and prepared.tmb is not None
+        and prepared.tmb_render_stacked
+        and not options.log10_transform_tmb
+    )
+    tmb_legend_active = _should_show_tmb_legend(prepared, options, tmb_render_stacked)
+    metadata_legend_active = options.show_metadata_legends and draw_metadata
+    legend_active = mutation_legend_active or tmb_legend_active or metadata_legend_active
+    bottom_legend = (
+        (mutation_legend_active and options.mutation_legend_position == "bottom")
+        or (tmb_legend_active and options.mutation_legend_position == "bottom")
+        or (metadata_legend_active and options.metadata_legend_position == "bottom")
+    )
+    margin = dict(l=70, r=30, t=25, b=50)
+    legend: Dict[str, object] = {
+        "itemsizing": "constant",
+        "itemwidth": max(30, int(options.legend_key_size * 30)),
+    }
+    if legend_active and bottom_legend:
+        legend.update(
+            orientation="h",
+            x=0.5,
+            xanchor="center",
+            y=-0.18,
+            yanchor="top",
+        )
+        margin["b"] = 90
+    elif legend_active:
+        legend.update(
+            orientation="v",
+            x=1.02,
+            xanchor="left",
+            y=1.0,
+            yanchor="top",
+        )
+        margin["r"] = 150
     figure.update_layout(
         width=options.width,
         height=options.height,
@@ -606,8 +738,8 @@ def render_plotly_oncoplot(
         paper_bgcolor="white",
         font=dict(family=options.font_family),
         dragmode=dragmode,
-        showlegend=options.show_legend or (options.show_metadata_legends and draw_metadata),
-        margin=dict(l=70, r=30, t=25, b=50),
-        legend=dict(itemsizing="constant", itemwidth=max(30, int(options.legend_key_size * 30))),
+        showlegend=legend_active,
+        margin=margin,
+        legend=legend,
     )
     return figure

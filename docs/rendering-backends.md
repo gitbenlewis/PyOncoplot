@@ -71,10 +71,21 @@ Matplotlib currently has the richest static layout support for:
 | deterministic gallery recreation | Matplotlib |
 | manuscript-style static output | Matplotlib |
 
+## Backend Support Matrix
+
+| Feature | Plotly | Matplotlib |
+| --- | --- | --- |
+| mutation grid | interactive markers with hover and linked selection | static tile grid |
+| TMB totals | bar trace; log and scientific tick formatting supported | bar axis; log labels and scientific tick formatting supported |
+| TMB subtype legends | `TMB: <subtype>` entries when custom stacked TMB is rendered | separate `TMB Type` legend when custom stacked TMB is rendered |
+| metadata display | heatmap strip with prettified hover labels and shared interactive legend | heatmap or mini-bar strip with separate metadata legends |
+| image export | HTML built in; image export needs the `export` extra | PNG, SVG, PDF, and other `savefig` formats |
+| copy-on-click | supported in exported HTML | not applicable to static figures |
+| static layout controls | useful font, legend, marker, and axis controls | richest support for tile dimensions, metadata bars, font faces, and separate legend layout |
+
 The `interactive` argument is a convenience alias:
 
 ```python
 oncoplot(..., interactive=True)   # backend="plotly"
 oncoplot(..., interactive=False)  # backend="matplotlib"
 ```
-

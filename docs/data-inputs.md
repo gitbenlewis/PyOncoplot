@@ -41,7 +41,8 @@ mutations = pd.DataFrame(
 
 If one sample has multiple rows for the same gene, the plot collapses those rows
 into a single tile. With a mutation type column, multi-hit cells are marked as
-`Multi_Hit` when more than one mutation type is present.
+`Multi_Hit` when more than one mutation row is present for that sample/gene
+cell, even if the repeated rows have the same mutation type.
 
 The tooltip content is aggregated so the original mutation-level evidence is not
 lost in interactive output.
@@ -84,8 +85,9 @@ Other gene-selection controls:
 ## Sample Selection
 
 By default, samples with no selected-gene mutations are not shown. Use
-`show_all_samples=True` to keep all samples available from mutation, metadata,
-TMB, or explicit sample order inputs.
+`show_all_samples=True` to keep all samples available from mutation data and,
+when supplied, custom TMB input. Metadata-only samples are retained only when
+`metadata_require_mutations=False` is also set.
 
 ```python
 oncoplot(

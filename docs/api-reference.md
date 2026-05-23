@@ -51,6 +51,26 @@ result = oncoplot(params=params, top_n=20)
 
 Here `top_n=20` overrides any `params["top_n"]` value.
 
+### Core Arguments
+
+| Argument | Purpose |
+| --- | --- |
+| `data` | mutation-level `pandas.DataFrame` |
+| `gene_col`, `sample_col` | required column names for gene and sample identifiers |
+| `mutation_type_col` | optional mutation category column used for tile colors and legends |
+| `tooltip_col` | optional tooltip text column; defaults to `sample_col` |
+| `include_genes`, `ignore_genes`, `top_n` | choose the displayed gene panel |
+| `draw_gene_bar`, `draw_tmb_bar` | add recurrence and mutation burden side panels |
+| `palette`, `tmb_palette`, `metadata_palette` | color mappings for mutation tiles, typed TMB bars, and metadata tracks |
+| `metadata`, `metadata_cols`, `metadata_sample_col` | clinical annotation input and selected tracks |
+| `metadata_require_mutations`, `show_all_samples` | sample inclusion controls |
+| `pathway`, `pathway_gene_col` | pathway grouping input |
+| `sample_order`, `metadata_sort_cols` | explicit or metadata-driven sample sorting |
+| `tmb_data` | optional 2- or 3-column custom TMB table |
+| `backend`, `interactive` | choose Plotly or Matplotlib rendering |
+| `copy_on_click` | Plotly clipboard payload behavior |
+| `options` | `OncoplotOptions` instance or mapping for visual controls |
+
 ## `OncoplotResult`
 
 Returned by `oncoplot()`.
@@ -63,6 +83,14 @@ Returned by `oncoplot()`.
 | `show()` | call the backend's display method |
 | `save(path, **kwargs)` | save HTML or image output |
 | `to_html(...)` | Plotly-only HTML string export |
+
+### Save Behavior
+
+`OncoplotResult.save()` chooses behavior from the file suffix. Plotly results
+save `.html` directly, while Plotly image suffixes such as `.png`, `.svg`, and
+`.pdf` require the export extra. Matplotlib results save through
+`figure.savefig()` and support the image/vector formats available in the local
+Matplotlib installation.
 
 ## `prepare_oncoplot_data`
 
@@ -86,6 +114,21 @@ print(prepared.genes)
 print(prepared.samples)
 print(prepared.tiles.head())
 ```
+
+### `PreparedOncoplotData` Fields
+
+| Field | Summary |
+| --- | --- |
+| `tiles` | one displayed row per sample/gene tile, with collapsed `MutationType` and tooltip text |
+| `samples`, `genes` | final display order used by both renderers |
+| `total_samples` | denominator used for recurrence percentages |
+| `mutation_type_col` | original mutation type column name, when supplied |
+| `metadata`, `metadata_cols`, `metadata_tracks` | filtered metadata table and renderer-neutral track summaries |
+| `pathway`, `pathway_by_gene`, `pathway_groups` | pathway input and contiguous display groups |
+| `tmb` | filtered TMB input or inferred mutation burden table |
+| `tmb_sample_col`, `tmb_value_col`, `tmb_type_col` | resolved TMB sample, numeric value, and optional subtype columns |
+| `tmb_render_stacked`, `tmb_is_custom` | flags used by renderers to decide stacked TMB behavior |
+| `mutation_counts`, `tmb_totals`, `tmb_type_counts` | summary tables for testing, debugging, and downstream inspection |
 
 ## `identify_top_genes`
 

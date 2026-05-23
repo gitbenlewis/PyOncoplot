@@ -470,6 +470,17 @@ def _prepare_tmb_data(
     return out, sample_col, value_col, type_col, render_stacked
 
 
+def _custom_tmb_sample_ids(tmb_data: Optional[pd.DataFrame], sample_col: str) -> List[str]:
+    if tmb_data is None:
+        return []
+    if not _is_dataframe(tmb_data):
+        raise TypeError("tmb_data must be a pandas DataFrame.")
+    check_valid_dataframe_columns(tmb_data, [sample_col])
+    if _empty_or_missing_mask(tmb_data[sample_col]).any():
+        raise ValueError("tmb_data sample column cannot contain missing values or empty strings.")
+    return unique_preserve_order(_as_str_series(tmb_data[sample_col]))
+
+
 def _summarise_mutation_counts(tiles: pd.DataFrame) -> pd.DataFrame:
     columns = ["Gene", "MutationType", "Count"]
     if tiles.empty:
@@ -631,8 +642,14 @@ def prepare_oncoplot_data(
     samples_with_metadata = (
         unique_preserve_order(metadata[metadata_sample_col].astype(str)) if metadata is not None else []
     )
+    samples_with_custom_tmb = (
+        _custom_tmb_sample_ids(tmb_data, sample_col) if prepare_tmb and tmb_data is not None else []
+    )
     all_sample_ids = unique_preserve_order(
-        list(samples_with_selected_mutations) + list(samples_with_any_mutations) + list(samples_with_metadata)
+        list(samples_with_selected_mutations)
+        + list(samples_with_any_mutations)
+        + list(samples_with_metadata)
+        + list(samples_with_custom_tmb)
     )
     samples_to_show = list(all_sample_ids if show_all_samples else samples_with_selected_mutations)
 

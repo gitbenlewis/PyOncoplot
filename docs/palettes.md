@@ -84,9 +84,13 @@ oncoplot(
 ```
 
 Stacked TMB bars are most useful with `log10_transform_tmb=False`.
-If custom stacked TMB categories are not covered by `tmb_palette` or by the
-mutation palette fallback, `pyoncoplot` raises a clear error instead of drawing
-uncolored bars.
+Palette coverage for custom TMB categories is required only when stacked subtype
+bars are rendered with `log10_transform_tmb=False`. If those categories are not
+covered by `tmb_palette` or by the mutation palette fallback, `pyoncoplot`
+raises a clear error instead of drawing uncolored bars.
+
+Default-generated mutation palettes use `OncoplotOptions.multi_hit_color` for
+`Multi_Hit`. An explicit `palette={"Multi_Hit": ...}` entry takes precedence.
 
 ## Default Palettes
 

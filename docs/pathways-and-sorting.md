@@ -103,8 +103,8 @@ Common values for `metadata_sort_by`:
 
 ## Showing All Samples
 
-Use `show_all_samples=True` when metadata or TMB should define the cohort, even
-if some samples have no mutations in the selected gene panel.
+Use `show_all_samples=True` when metadata or custom TMB inputs should define
+the cohort, even if some samples have no mutations in the selected gene panel.
 
 ```python
 oncoplot(
@@ -117,4 +117,3 @@ oncoplot(
     show_all_samples=True,
 )
 ```
-

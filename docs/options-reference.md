@@ -60,6 +60,12 @@ result = oncoplot(
 | `metadata_legend_ncol` | `None` | optional metadata legend column count |
 | `metadata_legend_key_size` | `1.0` | metadata legend key size multiplier |
 
+Plotly uses one shared interactive legend. `mutation_legend_position="none"`
+hides mutation traces while categorical metadata legends can remain visible. A
+bottom request creates a horizontal Plotly legend; otherwise visible legends are
+placed vertically on the right. Matplotlib keeps separate static legend layout
+controls, including `metadata_legend_nrow` and `metadata_legend_ncol`.
+
 ## Tile Styling
 
 | Option | Default | Meaning |
@@ -71,6 +77,10 @@ result = oncoplot(
 | `row_separator_linewidth` | `0.8` | row separator width |
 | `unspecified_mutation_color` | `"#1A1A1A"` | fallback mutation color |
 | `multi_hit_color` | `"black"` | multi-hit color |
+
+`tile_width` and `tile_height` are Matplotlib/static-layout controls. Plotly
+uses fixed interactive square markers; `tile_linewidth` applies to marker
+outlines in both renderers.
 
 ## Fonts
 
@@ -89,6 +99,11 @@ result = oncoplot(
 | `sample_font_style` | `"normal"` | sample label style |
 | `font_style_metadata` | `"normal"` | metadata row label style |
 
+Plotly applies practical font sizes for sample ticks, gene ticks, axis labels,
+TMB axes, gene-bar axes, and metadata row labels. Font face style controls such
+as `gene_font_style`, `sample_font_style`, and `font_style_metadata` are
+Matplotlib/static-layout oriented.
+
 ## TMB and Gene Bar
 
 | Option | Default | Meaning |
@@ -101,6 +116,9 @@ result = oncoplot(
 | `gene_bar_label_nudge` | `0.0` | additional x-axis nudge for gene-bar labels |
 | `gene_bar_scale_breaks` | `None` | explicit gene-bar axis tick positions |
 | `gene_bar_scale_n_breaks` | `None` | requested number of gene-bar axis breaks |
+
+In Plotly, `gene_bar_scale_n_breaks` is passed through as an `nticks` request
+when `gene_bar_scale_breaks` is not supplied.
 
 ## Pathways
 
@@ -121,6 +139,11 @@ result = oncoplot(
 | `metadata_numeric_plot_type` | `"heatmap"` | `"heatmap"` or `"bar"` |
 | `metadata_legend_orientation_heatmap` | `"vertical"` | orientation hint for numeric heatmap legends |
 | `metadata_default_colors` | color sequence | fallback metadata colors |
+
+`metadata_numeric_plot_type="bar"`, metadata legend row/column controls, and
+`metadata_legend_orientation_heatmap` are Matplotlib/static metadata controls.
+Plotly renders compact metadata heatmaps and categorical metadata legend entries
+that fit its interactive model.
 
 ## Text Prettification
 

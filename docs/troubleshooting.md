@@ -30,10 +30,22 @@ mutations = mutations[(mutations["sample"] != "") & (mutations["gene"] != "")]
 
 ## Palette Coverage Errors
 
-If a mutation palette is supplied, it must cover displayed mutation types.
+If a mutation palette is supplied, it must cover displayed mutation types after
+mutation rows have been collapsed. This can include `Multi_Hit` even when that
+value is not present in the raw mutation table.
 
 ```python
-set(mutations["mutation_type"]) - set(palette)
+from pyoncoplot import prepare_oncoplot_data
+
+prepared = prepare_oncoplot_data(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+)
+
+displayed_types = set(prepared.tiles["MutationType"].dropna().astype(str))
+displayed_types - set(palette)
 ```
 
 Add missing colors or let `pyoncoplot` create a default palette.
@@ -56,7 +68,12 @@ By default, samples without selected-gene mutations are filtered out. Use:
 show_all_samples=True
 ```
 
-when metadata or TMB should keep the full cohort visible.
+when mutation-table or custom TMB samples should keep the full cohort visible.
+Samples that exist only in metadata also need:
+
+```python
+metadata_require_mutations=False
+```
 
 ## Plotly Image Export Fails
 
@@ -82,4 +99,3 @@ usually environment warnings and do not necessarily mean the figure failed.
 Rendering cost should scale mostly with displayed samples times displayed genes,
 not raw mutation row count. Use `include_genes`, `ignore_genes`, or `top_n` to
 control the displayed matrix size.
-

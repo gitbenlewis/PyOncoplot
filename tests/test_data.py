@@ -188,6 +188,29 @@ def test_custom_tmb_sample_column_does_not_need_to_be_first():
     assert prepared.tmb_totals.loc["S2"] == 7.0
 
 
+def test_show_all_samples_includes_custom_tmb_only_samples():
+    tmb = pd.DataFrame(
+        {
+            "mutations": [5, 11],
+            "sample": ["S1", "TMB_ONLY"],
+        }
+    )
+    prepared = prepare_oncoplot_data(
+        mutation_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        tmb_data=tmb,
+        prepare_tmb=True,
+        show_all_samples=True,
+        total_samples="all",
+    )
+    assert "TMB_ONLY" in prepared.samples
+    assert prepared.tmb_totals is not None
+    assert prepared.tmb_totals.loc["TMB_ONLY"] == 11.0
+    assert prepared.total_samples == len(prepared.samples)
+
+
 def test_gbm_fixture_top_gene_order_matches_ggoncoplot_snapshot():
     fixture = (
         Path(__file__).resolve().parents[1]

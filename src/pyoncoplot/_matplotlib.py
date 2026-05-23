@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import numpy as np
@@ -15,6 +16,7 @@ from ._params import merge_params
 MATPLOTLIB_RENDER_PARAM_KEYS = {
     "prepared",
     "palette",
+    "tmb_palette",
     "metadata_palette",
     "options",
     "draw_gene_bar",
@@ -22,6 +24,7 @@ MATPLOTLIB_RENDER_PARAM_KEYS = {
 }
 
 MATPLOTLIB_RENDER_DEFAULTS: dict[str, Any] = {
+    "tmb_palette": None,
     "metadata_palette": None,
     "draw_gene_bar": False,
     "draw_tmb_bar": False,
@@ -47,6 +50,29 @@ def _font_kwargs(style: str) -> Dict[str, str]:
     if style == "bold_italic":
         return {"fontweight": "bold", "fontstyle": "italic"}
     return {}
+
+
+def _legend_label(value: object, options: OncoplotOptions) -> str:
+    text = "Unspecified" if pd.isna(value) else str(value)
+    return options.prettify_function(text) if options.prettify_legend_values else text
+
+
+def _legend_title(value: object, options: OncoplotOptions) -> str:
+    text = "" if value is None else str(value)
+    return options.prettify_function(text) if options.prettify_legend_titles else text
+
+
+def _should_show_tmb_legend(
+    prepared: PreparedOncoplotData,
+    options: OncoplotOptions,
+    render_stacked: bool,
+) -> bool:
+    return bool(
+        prepared.tmb_is_custom
+        and render_stacked
+        and options.show_legend
+        and options.mutation_legend_position != "none"
+    )
 
 
 def _validate_metadata_levels(prepared: PreparedOncoplotData, options: OncoplotOptions) -> None:
@@ -210,16 +236,29 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
             )
 
 
-def _draw_tmb(ax, prepared: PreparedOncoplotData, options: OncoplotOptions):
+def _draw_tmb(
+    ax,
+    prepared: PreparedOncoplotData,
+    tmb_palette: Optional[Mapping[str, str]],
+    options: OncoplotOptions,
+) -> List[object]:
     if prepared.tmb is None or prepared.tmb_sample_col is None or prepared.tmb_value_col is None:
-        return
+        return []
+    _plt, _ListedColormap, _GridSpec, Patch, _Rectangle = _require_matplotlib()
     sample_col = prepared.tmb_sample_col
     x_positions = np.arange(len(prepared.samples))
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb and prepared.tmb_type_col is not None
+    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked)
+    handles: List[object] = []
+    if prepared.tmb_render_stacked and options.log10_transform_tmb:
+        warnings.warn(
+            "log10_transform_tmb=True disables stacked TMB rendering; totals are rendered instead.",
+            stacklevel=2,
+        )
     if render_stacked:
         bottoms = np.zeros(len(prepared.samples))
         type_col = prepared.tmb_type_col
-        palette = getattr(prepared, "_render_palette", {})
+        palette = tmb_palette or {}
         for mutation_type, group in prepared.tmb.groupby(type_col, dropna=False, sort=False):
             values = (
                 group.groupby(sample_col, observed=False)[prepared.tmb_value_col]
@@ -229,6 +268,8 @@ def _draw_tmb(ax, prepared: PreparedOncoplotData, options: OncoplotOptions):
             )
             color = "#4D4D4D" if pd.isna(mutation_type) else palette.get(str(mutation_type), "#4D4D4D")
             ax.bar(x_positions, values, bottom=bottoms, color=color, width=1.0, linewidth=0)
+            if show_tmb_legend:
+                handles.append(Patch(color=color, label=_legend_label(mutation_type, options)))
             bottoms = bottoms + values
     else:
         totals = prepared.tmb.groupby(sample_col, observed=False)[prepared.tmb_value_col].sum().reindex(prepared.samples, fill_value=0)
@@ -239,9 +280,18 @@ def _draw_tmb(ax, prepared: PreparedOncoplotData, options: OncoplotOptions):
     ax.set_xlim(-0.5, len(prepared.samples) - 0.5)
     ax.set_xticks([])
     if options.show_tmb_y_label:
-        ax.set_ylabel("TMB", fontsize=options.font_size_tmb_axis)
+        axis_label = prepared.tmb_value_col
+        if options.log10_transform_tmb:
+            axis_label = f"log10 {axis_label}"
+        ax.set_ylabel(axis_label, fontsize=options.font_size_tmb_axis)
+    ax.tick_params(axis="y", labelsize=options.font_size_tmb_axis)
+    if options.scientific_tmb:
+        from matplotlib.ticker import FormatStrFormatter
+
+        ax.yaxis.set_major_formatter(FormatStrFormatter("%.1e"))
     if not options.show_tmb_axis:
         ax.set_yticks([])
+    return handles
 
 
 def _draw_metadata(
@@ -262,6 +312,7 @@ def _draw_metadata(
     metadata_palette = metadata_palette or {}
 
     for row_index, column in enumerate(prepared.metadata_cols):
+        display_column = _legend_title(column, options)
         values = metadata[column].reindex(prepared.samples)
         is_numeric = pd.api.types.is_numeric_dtype(values)
         min_value = float(values.min(skipna=True)) if is_numeric and values.notna().any() else 0.0
@@ -321,7 +372,7 @@ def _draw_metadata(
                 fontsize=options.font_size_metadata_bar_numbers,
                 clip_on=False,
             )
-            legends.append((column, [Patch(color="#7F7F7F", label=f"{min_value:g}-{max_value:g}")]))
+            legends.append((display_column, [Patch(color="#7F7F7F", label=f"{min_value:g}-{max_value:g}")]))
             continue
 
         if is_numeric:
@@ -348,7 +399,15 @@ def _draw_metadata(
                         fontsize=options.metadata_na_marker_size,
                         color="#333333",
                     )
-            legends.append((column, [Patch(color=options.metadata_default_colors[0], label=f"{min_value:g}"), Patch(color=options.metadata_default_colors[-1], label=f"{max_value:g}")]))
+            legends.append(
+                (
+                    display_column,
+                    [
+                        Patch(color=options.metadata_default_colors[0], label=f"{min_value:g}"),
+                        Patch(color=options.metadata_default_colors[-1], label=f"{max_value:g}"),
+                    ],
+                )
+            )
             continue
 
         levels = [str(value) for value in pd.unique(values.dropna())]
@@ -369,25 +428,37 @@ def _draw_metadata(
                     fontsize=options.metadata_na_marker_size,
                     color="#333333",
                 )
-        handles = [Patch(color=color, label=level) for level, color in column_palette.items()]
+        handles = [
+            Patch(color=color, label=_legend_label(level, options))
+            for level, color in column_palette.items()
+        ]
         if values.isna().any():
             handles.append(Patch(color="#D9D9D9", label=options.metadata_na_marker))
-        legends.append((column, handles))
+        legends.append((display_column, handles))
 
     ax.set_yticks(np.arange(len(prepared.metadata_cols)))
-    ax.set_yticklabels(prepared.metadata_cols, fontsize=options.font_size_metadata)
+    ax.set_yticklabels(
+        [_legend_title(column, options) for column in prepared.metadata_cols],
+        fontsize=options.font_size_metadata,
+    )
     for label in ax.get_yticklabels():
         label.update(_font_kwargs(options.font_style_metadata))
     ax.set_xticks([])
     return legends
 
 
-def _add_static_legends(figure, mutation_handles, metadata_legends, options: OncoplotOptions) -> None:
+def _add_static_legends(
+    figure,
+    mutation_handles,
+    tmb_handles,
+    metadata_legends,
+    options: OncoplotOptions,
+) -> None:
     if options.show_legend and mutation_handles and options.mutation_legend_position == "bottom":
         figure.legend(
             handles=mutation_handles,
             loc="lower center",
-            bbox_to_anchor=(0.48, 0.01),
+            bbox_to_anchor=(0.42, 0.01),
             ncol=min(5, len(mutation_handles)),
             frameon=True,
             fontsize=9,
@@ -395,11 +466,25 @@ def _add_static_legends(figure, mutation_handles, metadata_legends, options: Onc
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
-    elif options.show_legend and mutation_handles and options.mutation_legend_position == "right":
+    if options.show_legend and tmb_handles and options.mutation_legend_position == "bottom":
+        figure.legend(
+            handles=tmb_handles,
+            loc="lower right",
+            bbox_to_anchor=(0.99, 0.01),
+            ncol=min(4, len(tmb_handles)),
+            frameon=True,
+            fontsize=8,
+            title="TMB Type" if options.show_legend_titles else None,
+            handlelength=options.legend_key_size,
+            handleheight=options.legend_key_size,
+        )
+
+    right_y = 0.96
+    if options.show_legend and mutation_handles and options.mutation_legend_position == "right":
         figure.legend(
             handles=mutation_handles,
             loc="upper left",
-            bbox_to_anchor=(0.74, 0.96),
+            bbox_to_anchor=(0.74, right_y),
             ncol=1,
             frameon=False,
             fontsize=8,
@@ -407,6 +492,20 @@ def _add_static_legends(figure, mutation_handles, metadata_legends, options: Onc
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
+        right_y -= min(0.30, 0.08 + 0.025 * len(mutation_handles))
+    if options.show_legend and tmb_handles and options.mutation_legend_position == "right":
+        figure.legend(
+            handles=tmb_handles,
+            loc="upper left",
+            bbox_to_anchor=(0.74, right_y),
+            ncol=1,
+            frameon=False,
+            fontsize=8,
+            title="TMB Type" if options.show_legend_titles else None,
+            handlelength=options.legend_key_size,
+            handleheight=options.legend_key_size,
+        )
+        right_y -= min(0.30, 0.08 + 0.025 * len(tmb_handles))
 
     if not options.show_metadata_legends or not metadata_legends:
         return
@@ -429,7 +528,7 @@ def _add_static_legends(figure, mutation_handles, metadata_legends, options: Onc
             )
         return
 
-    y = 0.60 if options.mutation_legend_position == "right" and mutation_handles else 0.96
+    y = right_y
     for title, handles in metadata_legends:
         if not handles:
             continue
@@ -443,7 +542,7 @@ def _add_static_legends(figure, mutation_handles, metadata_legends, options: Onc
             ncol=ncol,
             frameon=False,
             fontsize=7,
-            title=title,
+            title=title if options.show_legend_titles else None,
             title_fontsize=8,
             handlelength=options.metadata_legend_key_size,
             handleheight=options.metadata_legend_key_size,
@@ -475,13 +574,13 @@ def render_matplotlib_oncoplot(
         raise TypeError("render_matplotlib_oncoplot requires 'options'.")
 
     palette = merged["palette"]
+    tmb_palette = merged["tmb_palette"]
     metadata_palette = merged["metadata_palette"]
     options = coerce_options(merged["options"])
     draw_gene_bar = merged["draw_gene_bar"]
     draw_tmb_bar = merged["draw_tmb_bar"]
 
     plt, _ListedColormap, GridSpec, Patch, _Rectangle = _require_matplotlib()
-    setattr(prepared, "_render_palette", dict(palette))
     draw_metadata = prepared.metadata is not None and bool(prepared.metadata_cols)
     if draw_metadata:
         _validate_metadata_levels(prepared, options)
@@ -515,8 +614,9 @@ def render_matplotlib_oncoplot(
         if name == "main" and draw_gene_bar:
             axes["gene_bar"] = figure.add_subplot(grid[row_index, 1])
 
+    tmb_handles = []
     if draw_tmb_bar and "tmb" in axes:
-        _draw_tmb(axes["tmb"], prepared, options)
+        tmb_handles = _draw_tmb(axes["tmb"], prepared, tmb_palette or palette, options)
     metadata_legends = []
     if draw_metadata and "metadata" in axes:
         metadata_legends = _draw_metadata(axes["metadata"], prepared, options, metadata_palette=metadata_palette)
@@ -527,16 +627,16 @@ def render_matplotlib_oncoplot(
     mutation_handles = []
     if options.show_legend and options.mutation_legend_position != "none":
         mutation_handles = [
-            Patch(color=color, label=options.prettify_function(name) if options.prettify_legend_values else name)
+            Patch(color=color, label=_legend_label(name, options))
             for name, color in palette.items()
             if name in set(prepared.tiles["MutationType"].dropna().astype(str))
         ]
-    has_bottom_legend = bool(mutation_handles and options.mutation_legend_position == "bottom")
+    has_bottom_legend = bool((mutation_handles or tmb_handles) and options.mutation_legend_position == "bottom")
     has_right_legend = bool(
-        (mutation_handles and options.mutation_legend_position == "right")
+        ((mutation_handles or tmb_handles) and options.mutation_legend_position == "right")
         or (metadata_legends and options.show_metadata_legends and options.metadata_legend_position == "right")
     )
-    _add_static_legends(figure, mutation_handles, metadata_legends, options)
+    _add_static_legends(figure, mutation_handles, tmb_handles, metadata_legends, options)
     figure.subplots_adjust(
         left=0.14 if draw_metadata else 0.08,
         right=0.72 if has_right_legend else 0.98,

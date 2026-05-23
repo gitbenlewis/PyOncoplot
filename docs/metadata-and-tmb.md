@@ -47,8 +47,10 @@ oncoplot(
 
 ## Metadata Filtering
 
-By default, `metadata_require_mutations=True`, so metadata rows without displayed
-mutation samples are filtered out unless `show_all_samples=True` is used.
+By default, `metadata_require_mutations=True`, so metadata rows whose samples do
+not appear in the mutation table are filtered before sample selection. After
+gene selection, `show_all_samples=True` keeps mutation-table samples even when
+they do not have mutations in the selected genes.
 
 Use:
 
@@ -64,7 +66,23 @@ oncoplot(
 )
 ```
 
-to show samples even when they do not have selected-gene mutations.
+to show mutation-table samples even when they do not have selected-gene
+mutations.
+
+To keep samples that exist only in metadata, use both controls:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    metadata_cols=["Subtype"],
+    metadata_require_mutations=False,
+    show_all_samples=True,
+)
+```
 
 ## Numeric Metadata
 
@@ -122,7 +140,8 @@ oncoplot(
 )
 ```
 
-If `log10_transform_tmb=True` with custom stacked TMB data, Plotly renders
-sample totals instead of stacked subtype bars and records a warning. Custom TMB
-categories must be covered by `tmb_palette` unless they are already present in
+If `log10_transform_tmb=True` with typed TMB data, both renderers collapse the
+bars to sample totals and emit a `UserWarning`. Custom TMB categories need
+`tmb_palette` coverage only when stacked subtype bars are
+rendered with `log10_transform_tmb=False`, unless they are already present in
 the mutation palette fallback.

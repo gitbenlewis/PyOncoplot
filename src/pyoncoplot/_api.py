@@ -87,16 +87,26 @@ def _palette_for_data(
     prepared,
     palette: Optional[Mapping[str, str]],
     tmb_palette: Optional[Mapping[str, str]],
+    options: OncoplotOptions,
 ) -> tuple[Mapping[str, str], Optional[Mapping[str, str]]]:
     mutation_types = prepared.tiles["MutationType"] if not prepared.tiles.empty else []
     if prepared.mutation_type_col is None:
         mutation_palette = {}
     elif palette is None:
         mutation_palette = get_sensible_default_palette(mutation_types) or {}
+        if "Multi_Hit" in mutation_palette:
+            mutation_palette = dict(mutation_palette)
+            mutation_palette["Multi_Hit"] = options.multi_hit_color
     else:
         mutation_palette = assert_palette_is_sensible(palette, mutation_types)
 
-    if prepared.tmb is not None and prepared.tmb_type_col is not None and prepared.tmb_render_stacked:
+    render_stacked_tmb = (
+        prepared.tmb is not None
+        and prepared.tmb_type_col is not None
+        and prepared.tmb_render_stacked
+        and not options.log10_transform_tmb
+    )
+    if render_stacked_tmb:
         tmb_terms = prepared.tmb[prepared.tmb_type_col]
         source_palette = mutation_palette if tmb_palette is None else tmb_palette
         try:
@@ -106,9 +116,7 @@ def _palette_for_data(
                 "tmb_palette must define colors for every custom stacked TMB category, "
                 "or those categories must be covered by the mutation palette fallback."
             ) from exc
-    if tmb_palette is None:
-        return mutation_palette, None
-    return mutation_palette, tmb_palette
+    return mutation_palette, None
 
 
 def oncoplot(
@@ -171,15 +179,20 @@ def oncoplot(
         prepare_tmb=merged["draw_tmb_bar"],
         verbose=merged["verbose"],
     )
-    mutation_palette, validated_tmb_palette = _palette_for_data(prepared, merged["palette"], merged["tmb_palette"])
+    mutation_palette, validated_tmb_palette = _palette_for_data(
+        prepared,
+        merged["palette"],
+        merged["tmb_palette"],
+        options,
+    )
     palette_for_render = dict(mutation_palette)
-    if validated_tmb_palette:
-        palette_for_render.update(validated_tmb_palette)
+    tmb_palette_for_render = dict(validated_tmb_palette) if validated_tmb_palette is not None else None
 
     if backend == "plotly":
         figure = render_plotly_oncoplot(
             prepared,
             palette=palette_for_render,
+            tmb_palette=tmb_palette_for_render,
             metadata_palette=merged["metadata_palette"],
             options=options,
             draw_gene_bar=merged["draw_gene_bar"],
@@ -190,6 +203,7 @@ def oncoplot(
         figure = render_matplotlib_oncoplot(
             prepared,
             palette=palette_for_render,
+            tmb_palette=tmb_palette_for_render,
             metadata_palette=merged["metadata_palette"],
             options=options,
             draw_gene_bar=merged["draw_gene_bar"],

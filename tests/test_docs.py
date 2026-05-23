@@ -107,6 +107,7 @@ def test_docs_describe_tooltip_default_and_precise_parity_status():
     data_inputs = (DOCS / "data-inputs.md").read_text(encoding="utf-8")
     assert "defaults to `sample_col`" in data_inputs
     assert "defaults to the mutation type column" not in data_inputs
+    assert "custom TMB input" in data_inputs
 
     migration = (DOCS / "migration-from-ggoncoplot.md").read_text(encoding="utf-8")
     assert "supported with renderer differences" in migration
@@ -114,3 +115,48 @@ def test_docs_describe_tooltip_default_and_precise_parity_status():
 
     installation = (DOCS / "installation.md").read_text(encoding="utf-8")
     assert "Installing only `pytest` is not enough" in installation
+
+
+def test_docs_describe_python_first_renderer_limits():
+    options = (DOCS / "options-reference.md").read_text(encoding="utf-8")
+    assert "`tile_width` and `tile_height` are Matplotlib/static-layout controls" in options
+    assert "`tile_linewidth` applies to marker" in options
+    assert "outlines in both renderers" in options
+    assert "Font face style controls" in options
+    assert "`metadata_numeric_plot_type=\"bar\"`" in options
+    assert "Plotly uses one shared interactive legend" in options
+
+    metadata_tmb = (DOCS / "metadata-and-tmb.md").read_text(encoding="utf-8")
+    assert "coverage only when stacked subtype bars are" in metadata_tmb
+    assert "rendered with `log10_transform_tmb=False`" in metadata_tmb
+
+    palettes = (DOCS / "palettes.md").read_text(encoding="utf-8")
+    assert "Default-generated mutation palettes use `OncoplotOptions.multi_hit_color`" in palettes
+
+
+def test_docs_cover_remaining_parity_corrections():
+    data_inputs = (DOCS / "data-inputs.md").read_text(encoding="utf-8")
+    assert "more than one mutation row" in data_inputs
+    assert "`metadata_require_mutations=False` is also set" in data_inputs
+
+    metadata_tmb = (DOCS / "metadata-and-tmb.md").read_text(encoding="utf-8")
+    assert "metadata_require_mutations=True" in metadata_tmb
+    assert "metadata_require_mutations=False" in metadata_tmb
+    assert "both renderers collapse the" in metadata_tmb
+    assert "emit a `UserWarning`" in metadata_tmb
+
+    troubleshooting = (DOCS / "troubleshooting.md").read_text(encoding="utf-8")
+    assert "prepare_oncoplot_data" in troubleshooting
+    assert "Multi_Hit" in troubleshooting
+    assert "displayed_types - set(palette)" in troubleshooting
+
+    api_reference = (DOCS / "api-reference.md").read_text(encoding="utf-8")
+    assert "Core Arguments" in api_reference
+    assert "`PreparedOncoplotData` Fields" in api_reference
+    assert "`tmb_sample_col`, `tmb_value_col`, `tmb_type_col`" in api_reference
+    assert "Save Behavior" in api_reference
+
+    rendering_backends = (DOCS / "rendering-backends.md").read_text(encoding="utf-8")
+    assert "Backend Support Matrix" in rendering_backends
+    assert "TMB subtype legends" in rendering_backends
+    assert "`TMB: <subtype>`" in rendering_backends
