@@ -423,6 +423,16 @@ def _manual_legend(ax, title: str, entries: Sequence[tuple[str, str]], x: float,
     return y - step * 0.45
 
 
+def _weighted_row_starts(columns: Sequence[str], weights: Mapping[str, float]) -> tuple[dict[str, float], dict[str, float], float]:
+    row_heights = {column: float(weights.get(column, 1.0)) for column in columns}
+    row_starts: dict[str, float] = {}
+    y_cursor = 0.0
+    for column in columns:
+        row_starts[column] = y_cursor
+        y_cursor += row_heights[column]
+    return row_starts, row_heights, y_cursor
+
+
 def render_aml_basic(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml_basic gallery", **kwargs)
     mutations, _metadata, tmb, palette = _load_aml()
@@ -567,24 +577,27 @@ def render_brca_large_reference_like(output_path: Path, *, params: Optional[Mapp
 
     meta_cols = list(merged["metadata_cols"])
     metadata_indexed = metadata.set_index("sample")
+    row_starts, row_heights, total_metadata_height = _weighted_row_starts(meta_cols, {"Age_years": 2.0})
     ax_meta.set_xlim(0, len(samples))
-    ax_meta.set_ylim(0, len(meta_cols))
+    ax_meta.set_ylim(0, total_metadata_height)
     ax_meta.invert_yaxis()
-    for y, column in enumerate(meta_cols):
+    for column in meta_cols:
+        y = row_starts[column]
+        row_height = row_heights[column]
         values = metadata_indexed[column].reindex(samples)
         if pd.api.types.is_numeric_dtype(values):
             min_value = float(values.min())
             max_value = float(values.max())
             span = max(max_value - min_value, 1e-9)
-            ax_meta.add_patch(Rectangle((0, y), len(samples), 1, facecolor="#F4F4F4", edgecolor="white", linewidth=0))
+            ax_meta.add_patch(Rectangle((0, y), len(samples), row_height, facecolor="#F4F4F4", edgecolor="white", linewidth=0))
             for x, value in enumerate(values):
                 frac = (float(value) - min_value) / span
-                ax_meta.add_patch(Rectangle((x, y + 1 - frac), 1, frac, facecolor="#7F7F7F", edgecolor="white", linewidth=0.04))
+                ax_meta.add_patch(Rectangle((x, y + row_height * (1 - frac)), 1, row_height * frac, facecolor="#7F7F7F", edgecolor="white", linewidth=0.04))
             continue
         column_palette = metadata_palette.get(column, {})
         for x, value in enumerate(values.astype(str)):
-            ax_meta.add_patch(Rectangle((x, y), 1, 1, facecolor=column_palette.get(value, "#D9D9D9"), edgecolor="white", linewidth=0.04))
-    ax_meta.set_yticks(np.arange(len(meta_cols)) + 0.5)
+            ax_meta.add_patch(Rectangle((x, y), 1, row_height, facecolor=column_palette.get(value, "#D9D9D9"), edgecolor="white", linewidth=0.04))
+    ax_meta.set_yticks([row_starts[column] + row_heights[column] / 2 for column in meta_cols])
     ax_meta.set_yticklabels(meta_cols, fontsize=20)
     ax_meta.set_xticks([])
     ax_meta.tick_params(axis="y", length=0)
@@ -593,11 +606,11 @@ def render_brca_large_reference_like(output_path: Path, *, params: Optional[Mapp
 
     used_mutation_types = [name for name in palette if name in set(mutations["mutation_type"].astype(str))]
     mutation_limit = int(merged.get("mutation_legend_limit", 9))
-    y_cursor = _manual_legend(ax_legend, "Mutation", [(name, palette[name]) for name in used_mutation_types[:mutation_limit]], 0.0, 0.98, step=0.032, fontsize=9)
+    y_cursor = _manual_legend(ax_legend, "Mutation", [(name, palette[name]) for name in used_mutation_types[:mutation_limit]], 0.0, 0.98, step=0.032, fontsize=13)
     for column in merged["metadata_legend_cols"]:
         entries = list(metadata_palette[column].items())
-        y_cursor = _manual_legend(ax_legend, column, entries, 0.0, y_cursor, step=0.033, fontsize=8)
-    _manual_legend(ax_legend, "Age_years", [("28-90", "#7F7F7F")], 0.0, y_cursor, step=0.033, fontsize=8)
+        y_cursor = _manual_legend(ax_legend, column, entries, 0.0, y_cursor, step=0.033, fontsize=12)
+    _manual_legend(ax_legend, "Age_years", [("28-90", "#7F7F7F")], 0.0, y_cursor, step=0.033, fontsize=12)
     fig.savefig(output_path, dpi=_save_dpi(merged, default=120))
     plt.close(fig)
 
@@ -696,11 +709,11 @@ def render_cssc_compact(output_path: Path, *, params: Optional[Mapping[str, Any]
     ax_bar.set_yticks([])
     ax_bar.spines[["left", "right", "bottom"]].set_visible(False)
 
-    ax_legend.text(0.0, 0.98, "Alterations", fontsize=10, weight="bold", va="top")
+    ax_legend.text(0.0, 0.98, "Alterations", fontsize=15, weight="bold", va="top")
     y_cursor = 0.84
     for label, color in palette.items():
         ax_legend.add_patch(Rectangle((0.0, y_cursor - 0.027), 0.055, 0.054, facecolor=color, edgecolor="#333333", linewidth=0.4))
-        ax_legend.text(0.075, y_cursor, label, fontsize=8, va="center")
+        ax_legend.text(0.075, y_cursor, label, fontsize=12, va="center")
         y_cursor -= 0.095
     ax_legend.set_xlim(0, 1)
     ax_legend.set_ylim(0, 1)
@@ -762,7 +775,7 @@ def render_gbm_clinical_molecular(output_path: Path, *, params: Optional[Mapping
         col_index = index if index < 4 else index - 4
         x_cursor = 0.01 + col_index * 0.24
         ax_legend.add_patch(Rectangle((x_cursor, y_rows[row] - 0.12), 0.018, 0.22, facecolor=color, edgecolor="#333333", linewidth=0.35))
-        ax_legend.text(x_cursor + 0.024, y_rows[row], label, fontsize=7, va="center")
+        ax_legend.text(x_cursor + 0.024, y_rows[row], label, fontsize=8.5, va="center")
     ax_legend.set_xlim(0, 1)
     ax_legend.set_ylim(0, 1)
     fig.savefig(output_path, dpi=_save_dpi(merged, default=100))
@@ -912,7 +925,7 @@ def render_interactive_snapshot(output_path: Path, *, params: Optional[Mapping[s
     y_cursor = 0.96
     for label, color in list(palette.items())[:6]:
         ax_legend.add_patch(Rectangle((0.0, y_cursor - 0.035), 0.08, 0.04, facecolor=color, edgecolor="#333333", linewidth=0.3))
-        ax_legend.text(0.11, y_cursor - 0.015, label, fontsize=8, va="center")
+        ax_legend.text(0.11, y_cursor - 0.015, label, fontsize=11, va="center")
         y_cursor -= 0.09
     fig.savefig(output_path, dpi=dpi)
     plt.close(fig)
@@ -976,7 +989,7 @@ def render_lasso_scatter(output_path: Path, *, params: Optional[Mapping[str, Any
     ax.set_xlabel("t-SNE 1")
     ax.set_ylabel("t-SNE 2")
     ax.grid(True, color="#E6E6E6")
-    ax.legend(loc="upper right", frameon=True, fontsize=10)
+    ax.legend(loc="upper right", frameon=True, fontsize=12)
     fig.savefig(output_path, dpi=dpi)
     plt.close(fig)
 
@@ -1055,7 +1068,7 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
     y_cursor = 0.95
     for label in ["Triple Negative", "Not Triple Negative", "Ambiguous", "Mutation", "Amplification", "Deletion"]:
         ax_legend.add_patch(Rectangle((0.0, y_cursor - 0.035), 0.07, 0.04, facecolor=palette.get(label, "#999999"), edgecolor="#333333", linewidth=0.3))
-        ax_legend.text(0.09, y_cursor - 0.015, label, fontsize=7, va="center")
+        ax_legend.text(0.09, y_cursor - 0.015, label, fontsize=11, va="center")
         y_cursor -= 0.10
     fig.suptitle(str(merged.get("title", "Multimodal sample selection")), fontsize=12, weight="bold", y=0.985)
     fig.savefig(output_path, dpi=dpi)

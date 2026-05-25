@@ -17,6 +17,7 @@ from python_refactor_goal_sources.recreate_gallery import (
     REFERENCE_LIKE_PRESETS,
     _load_brca,
     _sample_order_by_mutation_rank,
+    _weighted_row_starts,
     render_preset,
 )
 
@@ -204,6 +205,16 @@ def test_brca_large_gallery_sample_order_uses_mutation_rank():
     scores = [int(hits.get(sample, 0)) for sample in order]
     assert scores == sorted(scores, reverse=True)
     assert scores[0] > scores[-1]
+
+
+def test_brca_large_age_years_metadata_row_is_double_height():
+    columns = list(GALLERY_PRESETS["brca_large"].params["metadata_cols"])
+    row_starts, row_heights, total_height = _weighted_row_starts(columns, {"Age_years": 2.0})
+
+    assert row_heights["Age_years"] == 2.0
+    assert all(row_heights[column] == 1.0 for column in columns if column != "Age_years")
+    assert total_height == len(columns) + 1
+    assert row_starts["Age_years"] == len(columns) - 1
 
 
 def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):

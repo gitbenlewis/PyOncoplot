@@ -300,6 +300,45 @@ def test_tmb_palette_does_not_recolor_main_mutation_tiles_when_keys_overlap():
     assert tmb_trace.marker.color == "#00FF00"
 
 
+def test_duplicate_tmb_categories_do_not_add_redundant_tmb_legend():
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S2"],
+            "type": ["Missense_Mutation", "Frame_Shift_Del"],
+            "mutations": [4, 3],
+        }
+    )
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        backend="plotly",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+    tmb_traces = [
+        trace for trace in plotly_result.figure.data if getattr(trace, "legendgroup", "") == "tmb"
+    ]
+    assert tmb_traces
+    assert all(trace.showlegend is False for trace in tmb_traces)
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        backend="matplotlib",
+        options=OncoplotOptions(log10_transform_tmb=False, mutation_legend_position="right"),
+    )
+    legend_titles = [legend.get_title().get_text() for legend in matplotlib_result.figure.legends]
+    assert "Mutation Type" in legend_titles
+    assert "TMB Type" not in legend_titles
+
+
 def test_typed_tmb_log_scale_warns_in_both_backends():
     for backend in ("plotly", "matplotlib"):
         with pytest.warns(UserWarning, match="log10_transform_tmb=True disables stacked TMB rendering"):
@@ -679,6 +718,34 @@ def test_plotly_gene_bar_hover_and_visible_labels_are_separate():
     assert label_traces
     assert all("%" in text for text in label_traces[0].text)
     assert all("Total Samples Mutated" not in text for text in label_traces[0].text)
+
+
+def test_matplotlib_static_legend_text_scales_with_plot_fonts():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "clinical_group": ["A", "B", "A"]})
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["clinical_group"],
+        backend="matplotlib",
+        options=OncoplotOptions(
+            font_size_genes=32,
+            font_size_metadata=24,
+            mutation_legend_position="right",
+            metadata_legend_position="right",
+            show_metadata_legends=True,
+        ),
+    )
+    legend_by_title = {legend.get_title().get_text(): legend for legend in result.figure.legends}
+
+    mutation_legend = legend_by_title["Mutation Type"]
+    metadata_legend = legend_by_title["Clinical Group"]
+    assert mutation_legend.get_texts()[0].get_fontsize() >= 24
+    assert mutation_legend.get_title().get_fontsize() >= 25
+    assert metadata_legend.get_texts()[0].get_fontsize() >= 20
+    assert metadata_legend.get_title().get_fontsize() >= 21
 
 
 def test_metadata_max_levels_validation_applies_to_renderers():

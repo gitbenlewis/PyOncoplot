@@ -52,6 +52,10 @@ def _font_kwargs(style: str) -> Dict[str, str]:
     return {}
 
 
+def _legend_font_size(base: float, reference: float, scale: float = 0.75) -> float:
+    return max(base, reference * scale)
+
+
 def _legend_label(value: object, options: OncoplotOptions) -> str:
     text = "Unspecified" if pd.isna(value) else str(value)
     return options.prettify_function(text) if options.prettify_legend_values else text
@@ -66,13 +70,35 @@ def _should_show_tmb_legend(
     prepared: PreparedOncoplotData,
     options: OncoplotOptions,
     render_stacked: bool,
+    mutation_palette: Optional[Mapping[str, str]] = None,
+    tmb_palette: Optional[Mapping[str, str]] = None,
 ) -> bool:
-    return bool(
+    show = bool(
         prepared.tmb_is_custom
         and render_stacked
         and options.show_legend
         and options.mutation_legend_position != "none"
     )
+    if not show or mutation_palette is None:
+        return show
+    if prepared.tmb is None or prepared.tmb_type_col is None or prepared.tiles.empty:
+        return show
+
+    tmb_categories = [
+        str(value)
+        for value in pd.unique(prepared.tmb[prepared.tmb_type_col])
+        if not pd.isna(value)
+    ]
+    mutation_categories = set(prepared.tiles["MutationType"].dropna().astype(str))
+    if not tmb_categories or not set(tmb_categories).issubset(mutation_categories):
+        return show
+
+    tmb_colors = tmb_palette or mutation_palette
+    duplicates_mutation_legend = all(
+        tmb_colors.get(category) == mutation_palette.get(category)
+        for category in tmb_categories
+    )
+    return not duplicates_mutation_legend
 
 
 def _validate_metadata_levels(prepared: PreparedOncoplotData, options: OncoplotOptions) -> None:
@@ -239,6 +265,7 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
 def _draw_tmb(
     ax,
     prepared: PreparedOncoplotData,
+    mutation_palette: Mapping[str, str],
     tmb_palette: Optional[Mapping[str, str]],
     options: OncoplotOptions,
 ) -> List[object]:
@@ -248,7 +275,7 @@ def _draw_tmb(
     sample_col = prepared.tmb_sample_col
     x_positions = np.arange(len(prepared.samples))
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb and prepared.tmb_type_col is not None
-    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked)
+    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked, mutation_palette, tmb_palette)
     handles: List[object] = []
     if prepared.tmb_render_stacked and options.log10_transform_tmb:
         warnings.warn(
@@ -258,7 +285,7 @@ def _draw_tmb(
     if render_stacked:
         bottoms = np.zeros(len(prepared.samples))
         type_col = prepared.tmb_type_col
-        palette = tmb_palette or {}
+        palette = tmb_palette or mutation_palette
         for mutation_type, group in prepared.tmb.groupby(type_col, dropna=False, sort=False):
             values = (
                 group.groupby(sample_col, observed=False)[prepared.tmb_value_col]
@@ -454,6 +481,13 @@ def _add_static_legends(
     metadata_legends,
     options: OncoplotOptions,
 ) -> None:
+    large_figure = options.width >= 1600 or options.height >= 1200
+    mutation_base = 10 if large_figure else 8
+    metadata_base = 9 if large_figure else 7
+    mutation_fontsize = _legend_font_size(mutation_base, options.font_size_genes)
+    mutation_title_fontsize = mutation_fontsize + 1
+    metadata_fontsize = _legend_font_size(metadata_base, options.font_size_metadata, scale=0.85)
+    metadata_title_fontsize = metadata_fontsize + 1
     if options.show_legend and mutation_handles and options.mutation_legend_position == "bottom":
         figure.legend(
             handles=mutation_handles,
@@ -461,8 +495,9 @@ def _add_static_legends(
             bbox_to_anchor=(0.42, 0.01),
             ncol=min(5, len(mutation_handles)),
             frameon=True,
-            fontsize=9,
+            fontsize=mutation_fontsize,
             title="Mutation Type" if options.show_legend_titles else None,
+            title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
@@ -473,8 +508,9 @@ def _add_static_legends(
             bbox_to_anchor=(0.99, 0.01),
             ncol=min(4, len(tmb_handles)),
             frameon=True,
-            fontsize=8,
+            fontsize=mutation_fontsize,
             title="TMB Type" if options.show_legend_titles else None,
+            title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
@@ -487,8 +523,9 @@ def _add_static_legends(
             bbox_to_anchor=(0.74, right_y),
             ncol=1,
             frameon=False,
-            fontsize=8,
+            fontsize=mutation_fontsize,
             title="Mutation Type" if options.show_legend_titles else None,
+            title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
@@ -500,8 +537,9 @@ def _add_static_legends(
             bbox_to_anchor=(0.74, right_y),
             ncol=1,
             frameon=False,
-            fontsize=8,
+            fontsize=mutation_fontsize,
             title="TMB Type" if options.show_legend_titles else None,
+            title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
@@ -522,7 +560,7 @@ def _add_static_legends(
                 bbox_to_anchor=(0.99, 0.01),
                 ncol=ncol,
                 frameon=True,
-                fontsize=8,
+                fontsize=metadata_fontsize,
                 handlelength=options.metadata_legend_key_size,
                 handleheight=options.metadata_legend_key_size,
             )
@@ -541,9 +579,9 @@ def _add_static_legends(
             bbox_to_anchor=(0.74, y),
             ncol=ncol,
             frameon=False,
-            fontsize=7,
+            fontsize=metadata_fontsize,
             title=title if options.show_legend_titles else None,
-            title_fontsize=8,
+            title_fontsize=metadata_title_fontsize,
             handlelength=options.metadata_legend_key_size,
             handleheight=options.metadata_legend_key_size,
         )
@@ -616,7 +654,7 @@ def render_matplotlib_oncoplot(
 
     tmb_handles = []
     if draw_tmb_bar and "tmb" in axes:
-        tmb_handles = _draw_tmb(axes["tmb"], prepared, tmb_palette or palette, options)
+        tmb_handles = _draw_tmb(axes["tmb"], prepared, palette, tmb_palette, options)
     metadata_legends = []
     if draw_metadata and "metadata" in axes:
         metadata_legends = _draw_metadata(axes["metadata"], prepared, options, metadata_palette=metadata_palette)

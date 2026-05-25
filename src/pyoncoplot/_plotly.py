@@ -65,13 +65,35 @@ def _should_show_tmb_legend(
     prepared: PreparedOncoplotData,
     options: OncoplotOptions,
     render_stacked: bool,
+    mutation_palette: Optional[Mapping[str, str]] = None,
+    tmb_palette: Optional[Mapping[str, str]] = None,
 ) -> bool:
-    return bool(
+    show = bool(
         prepared.tmb_is_custom
         and render_stacked
         and options.show_legend
         and options.mutation_legend_position != "none"
     )
+    if not show or mutation_palette is None:
+        return show
+    if prepared.tmb is None or prepared.tmb_type_col is None or prepared.tiles.empty:
+        return show
+
+    tmb_categories = [
+        str(value)
+        for value in pd.unique(prepared.tmb[prepared.tmb_type_col])
+        if not pd.isna(value)
+    ]
+    mutation_categories = set(prepared.tiles["MutationType"].dropna().astype(str))
+    if not tmb_categories or not set(tmb_categories).issubset(mutation_categories):
+        return show
+
+    tmb_colors = tmb_palette or mutation_palette
+    duplicates_mutation_legend = all(
+        tmb_colors.get(category) == mutation_palette.get(category)
+        for category in tmb_categories
+    )
+    return not duplicates_mutation_legend
 
 
 def _copy_value(row: pd.Series, copy_on_click: str) -> str:
@@ -145,7 +167,7 @@ def _add_tmb_bar(
     value_col = prepared.tmb_value_col
     type_col = prepared.tmb_type_col
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb
-    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked)
+    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked, palette, tmb_palette)
     if prepared.tmb_render_stacked and options.log10_transform_tmb:
         warnings.warn(
             "log10_transform_tmb=True disables stacked TMB rendering; totals are rendered instead.",
@@ -699,7 +721,7 @@ def render_plotly_oncoplot(
         and prepared.tmb_render_stacked
         and not options.log10_transform_tmb
     )
-    tmb_legend_active = _should_show_tmb_legend(prepared, options, tmb_render_stacked)
+    tmb_legend_active = _should_show_tmb_legend(prepared, options, tmb_render_stacked, palette, tmb_palette)
     metadata_legend_active = options.show_metadata_legends and draw_metadata
     legend_active = mutation_legend_active or tmb_legend_active or metadata_legend_active
     bottom_legend = (
