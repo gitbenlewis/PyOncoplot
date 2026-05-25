@@ -15,6 +15,8 @@ from python_refactor_goal_sources.recreate_gallery import (
     GOAL_PLOTS,
     INPUTS,
     REFERENCE_LIKE_PRESETS,
+    _load_brca,
+    _sample_order_by_mutation_rank,
     render_preset,
 )
 
@@ -175,6 +177,33 @@ def test_gallery_config_loads_and_declares_enabled_runs():
     comparison_runs = GALLERY_CONFIG["comparison_runs"]
     assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_4.png"
     assert comparison_runs["brca_compact_complex"]["output_name"] == "compare.goal_plot_5.png"
+
+
+def test_brca_large_gallery_sample_order_uses_mutation_rank():
+    genes = list(GALLERY_PRESETS["brca_large"].params["genes"])
+    mutations, metadata, _, _ = _load_brca()
+    order = _sample_order_by_mutation_rank(
+        mutations,
+        metadata,
+        sample_col="sample",
+        gene_col="gene",
+        genes=genes,
+    )
+    metadata_order = metadata.sort_values(["Subtype", "Classification", "ER_status", "sample"], kind="stable")[
+        "sample"
+    ].astype(str).tolist()
+    assert order != metadata_order
+
+    weights = {gene: 2 ** (len(genes) - index - 1) for index, gene in enumerate(genes)}
+    hits = (
+        mutations[mutations["gene"].isin(genes)]
+        .drop_duplicates(["sample", "gene"])
+        .groupby("sample")["gene"]
+        .apply(lambda values: sum(weights[gene] for gene in values.astype(str)))
+    )
+    scores = [int(hits.get(sample, 0)) for sample in order]
+    assert scores == sorted(scores, reverse=True)
+    assert scores[0] > scores[-1]
 
 
 def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):

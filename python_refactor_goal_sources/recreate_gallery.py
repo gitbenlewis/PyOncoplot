@@ -18,6 +18,7 @@ from PIL import Image, ImageDraw
 import yaml
 
 from pyoncoplot import OncoplotOptions, oncoplot
+from pyoncoplot._data import score_sample_by_gene_rank
 from pyoncoplot._params import merge_params
 
 
@@ -282,6 +283,37 @@ def _load_brca():
     return mutations, metadata, tmb, palette
 
 
+def _sample_order_by_mutation_rank(
+    mutations: pd.DataFrame,
+    metadata: pd.DataFrame,
+    *,
+    sample_col: str,
+    gene_col: str,
+    genes: Sequence[str],
+) -> list[str]:
+    selected = mutations[mutations[gene_col].astype(str).isin([str(gene) for gene in genes])].copy()
+    if selected.empty:
+        ranked_samples: list[str] = []
+    else:
+        rank_values = list(range(len(genes), 0, -1))
+        scores = selected.groupby(sample_col, sort=False)[gene_col].apply(
+            lambda values: score_sample_by_gene_rank(values.astype(str), list(genes), rank_values)
+        )
+        ranked_samples = scores.sort_values(ascending=False, kind="mergesort").index.astype(str).tolist()
+
+    ordered: list[str] = []
+    seen: set[str] = set()
+    for sample in (
+        ranked_samples
+        + mutations[sample_col].astype(str).drop_duplicates().tolist()
+        + metadata[sample_col].astype(str).drop_duplicates().tolist()
+    ):
+        if sample not in seen:
+            seen.add(sample)
+            ordered.append(sample)
+    return ordered
+
+
 def _load_cssc():
     return (
         _read_tsv(_input_file("cssc", "mutations")),
@@ -450,9 +482,14 @@ def render_brca_large_reference_like(output_path: Path, *, params: Optional[Mapp
     merged = merge_params(params, allowed_keys=BRCA_LARGE_KEYS, context="brca_large gallery", **kwargs)
     mutations, metadata, tmb, palette = _load_brca()
     metadata_palette = _brca_metadata_palette()
-    metadata = metadata.sort_values(list(merged["sort_columns"]), kind="stable")
-    samples = metadata["sample"].astype(str).tolist()
     genes = list(merged["genes"])
+    samples = _sample_order_by_mutation_rank(
+        mutations,
+        metadata,
+        sample_col="sample",
+        gene_col="gene",
+        genes=genes,
+    )
     grouped = _group_events(
         mutations[mutations["gene"].isin(genes)].rename(columns={"mutation_type": "alteration"}),
         type_col="alteration",
