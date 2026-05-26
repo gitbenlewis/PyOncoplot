@@ -1,12 +1,12 @@
 {
-  "Frame_Shift_Del": "#1F77B4",
-  "Frame_Shift_Ins": "#9467BD",
-  "In_Frame_Del": "#BCBD22",
-  "In_Frame_Ins": "#D62728",
-  "Missense_Mutation": "#2CA02C",
+  "Frame_Shift_Del": "#1f77b4",
+  "Frame_Shift_Ins": "#9467bd",
+  "In_Frame_Del": "#bcbd22",
+  "In_Frame_Ins": "#d62728",
+  "Missense_Mutation": "#2ca02c",
   "Multi_Hit": "#000000",
-  "Nonsense_Mutation": "#17BECF",
-  "Nonstop_Mutation": "#E377C2",
-  "Splice_Site": "#FF7F0E",
-  "Translation_Start_Site": "#8C564B"
+  "Nonsense_Mutation": "#17becf",
+  "Nonstop_Mutation": "#e377c2",
+  "Splice_Site": "#ff7f0e",
+  "Translation_Start_Site": "#8c564b"
 }

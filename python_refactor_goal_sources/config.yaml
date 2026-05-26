@@ -9,6 +9,7 @@ gallery_params:
       metadata: aml_metadata.tsv
       tmb: aml_tmb.tsv
       palette: aml_palette.json
+      gallery_params: aml_gallery_params.json
     brca:
       mutations: brca_mutations.tsv
       metadata: brca_metadata.tsv
@@ -57,7 +58,7 @@ gallery_params:
       tooltip_col: tooltip
       draw_gene_bar: true
       draw_tmb_bar: true
-      show_all_samples: true
+      show_all_samples: false
       backend: matplotlib
     aml_basic_options: &aml_basic_options
       width: 1080
@@ -501,7 +502,8 @@ gallery_params:
       expected_size: [1080, 720]
       feature_axes_min: 3
       params:
-        include_genes: *aml_genes
+        include_genes_key: full_top_genes
+        sample_order_key: waterfall_sample_order
         oncoplot: *aml_oncoplot
         options: *aml_basic_options
         save: {dpi: 120}
@@ -516,12 +518,13 @@ gallery_params:
       clean_only: true
       feature_axes_min: 4
       params:
-        include_genes: *aml_genes
+        include_genes_key: full_top_genes
+        sample_order_key: waterfall_sample_order
         metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
         metadata_sort_cols:
         metadata_sort_by: alphabetical
         metadata_sort_desc: false
-        title: gen.goal_plot_19.py
+        title: customized_oncoplot_1.py
         oncoplot: *aml_oncoplot
         options: *aml_metadata_options
         save: {dpi: 120}
@@ -536,12 +539,13 @@ gallery_params:
       clean_only: true
       feature_axes_min: 4
       params:
-        include_genes: *aml_genes
+        include_genes_key: full_top_genes
+        sample_order_key: sorted_sample_order
         metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
-        metadata_sort_cols: [FAB_classification]
+        metadata_sort_cols:
         metadata_sort_by: alphabetical
         metadata_sort_desc: false
-        title: gen.goal_plot_20.py
+        title: customized_oncoplot_2.py
         oncoplot: *aml_oncoplot
         options: *aml_metadata_options
         save: {dpi: 120}
@@ -560,6 +564,30 @@ gallery_params:
         depth_ylim: [-15, 120]
         allele_ylim: [-0.12, 1.1]
         save: {dpi: 100}
+
+    aml_metadata_survival:
+      run: true
+      renderer: aml_metadata
+      style: clean
+      output_name: gen.goal_plot_22.png
+      goal_plot: goal_plot_22.png
+      expected_size: [1080, 720]
+      clean_only: true
+      feature_axes_min: 4
+      params:
+        include_genes_key: survival_top_genes
+        sample_order_key: survival_filtered_sample_order
+        metadata_filter:
+          column: Overall_Survival_Status
+          value: "1"
+        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+        metadata_sort_cols:
+        metadata_sort_by: alphabetical
+        metadata_sort_desc: false
+        title: customized_oncoplot_3.py
+        oncoplot: *aml_oncoplot
+        options: *aml_metadata_options
+        save: {dpi: 120}
 
   comparison_runs:
     brca_large:

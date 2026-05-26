@@ -1,4 +1,4 @@
-"""Generate deterministic synthetic inputs for the gallery examples."""
+"""Generate deterministic synthetic inputs for non-fuc gallery examples."""
 
 from __future__ import annotations
 
@@ -739,15 +739,14 @@ def generate_comparison_table() -> None:
 
 def main() -> None:
     OUT.mkdir(exist_ok=True)
-    generate_aml()
     generate_brca()
-    generate_sv()
     generate_cssc()
     generate_gbm()
     generate_readme_examples()
     generate_paper_multimodal()
     generate_comparison_table()
     print(f"Wrote synthetic inputs to {OUT}")
+    print("Skipped AML and SV: those fuc-backed fixtures are rebuilt with fuc_sources/rebuild_fuc_fixtures.py.")
 
 
 if __name__ == "__main__":

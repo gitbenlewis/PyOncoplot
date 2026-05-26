@@ -1,4 +1,4 @@
-"""Recreate goal gallery images from deterministic synthetic inputs.
+"""Recreate goal gallery images from deterministic local inputs.
 
 Generated PNGs are written under ``python_refactor_goal_sources/generated_plots``
 so numbered source goal plots remain untouched.
@@ -68,13 +68,16 @@ OUT = CLEAN_OUT
 
 ONCOPLOT_GALLERY_KEYS = {
     "include_genes",
+    "include_genes_key",
     "metadata_cols",
     "metadata_sort_cols",
     "metadata_sort_by",
     "metadata_sort_desc",
+    "metadata_filter",
     "oncoplot",
     "options",
     "save",
+    "sample_order_key",
     "title",
 }
 
@@ -167,6 +170,10 @@ def _read_tsv(name: str) -> pd.DataFrame:
 
 
 def _read_palette(name: str) -> Dict[str, str]:
+    return json.loads((INPUTS / name).read_text(encoding="utf-8"))
+
+
+def _read_json(name: str) -> Dict[str, Any]:
     return json.loads((INPUTS / name).read_text(encoding="utf-8"))
 
 
@@ -293,6 +300,47 @@ def _load_aml():
     tmb = _read_tsv(_input_file("aml", "tmb"))
     palette = _read_palette(_input_file("aml", "palette"))
     return mutations, metadata, tmb, palette
+
+
+def _load_aml_gallery_params() -> Mapping[str, Any]:
+    return _read_json(_input_file("aml", "gallery_params"))
+
+
+def _resolve_aml_sequence(params: Mapping[str, Any], key_name: str, fallback_key: str) -> Sequence[str]:
+    if key_name in params and params[key_name] is not None:
+        return list(params[key_name])
+    gallery_params = _load_aml_gallery_params()
+    source_key = str(params.get(f"{key_name}_key", fallback_key))
+    return list(gallery_params[source_key])
+
+
+def _filter_aml_inputs(
+    mutations: pd.DataFrame,
+    metadata: pd.DataFrame,
+    tmb: pd.DataFrame,
+    filter_params: Optional[Mapping[str, Any]],
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    if not filter_params:
+        return mutations, metadata, tmb
+    column = str(filter_params["column"])
+    value = str(filter_params["value"])
+    selected = metadata.loc[metadata[column].astype(str) == value, "sample"].astype(str)
+    selected_samples = set(selected)
+    return (
+        mutations[mutations["sample"].astype(str).isin(selected_samples)].copy(),
+        metadata[metadata["sample"].astype(str).isin(selected_samples)].copy(),
+        tmb[tmb["sample"].astype(str).isin(selected_samples)].copy(),
+    )
+
+
+def _aml_run_inputs(params: Mapping[str, Any]) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Mapping[str, str], Sequence[str], Sequence[str]]:
+    mutations, metadata, tmb, palette = _load_aml()
+    mutations, metadata, tmb = _filter_aml_inputs(mutations, metadata, tmb, params.get("metadata_filter"))
+    include_genes = _resolve_aml_sequence(params, "include_genes", "full_top_genes")
+    sample_order = _resolve_aml_sequence(params, "sample_order", "waterfall_sample_order")
+    selected_samples = set(metadata["sample"].astype(str))
+    sample_order = [sample for sample in sample_order if sample in selected_samples]
+    return mutations, metadata, tmb, palette, include_genes, sample_order
 
 
 def _load_brca():
@@ -458,12 +506,13 @@ def _weighted_row_starts(columns: Sequence[str], weights: Mapping[str, float]) -
 
 def render_aml_basic(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml_basic gallery", **kwargs)
-    mutations, _metadata, tmb, palette = _load_aml()
+    mutations, _metadata, tmb, palette, include_genes, sample_order = _aml_run_inputs(merged)
     oncoplot_params = {
         **dict(merged.get("oncoplot", {})),
         "data": mutations,
-        "include_genes": merged["include_genes"],
+        "include_genes": include_genes,
         "palette": palette,
+        "sample_order": sample_order,
         "tmb_data": tmb,
         "tmb_palette": palette,
         "options": _options_from_params(merged),
@@ -483,12 +532,13 @@ def render_aml_metadata(
     if sort_metadata:
         extra_kwargs.setdefault("metadata_sort_cols", ["FAB_classification"])
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml metadata gallery", **extra_kwargs)
-    mutations, metadata, tmb, palette = _load_aml()
+    mutations, metadata, tmb, palette, include_genes, sample_order = _aml_run_inputs(merged)
     oncoplot_params = {
         **dict(merged.get("oncoplot", {})),
         "data": mutations,
-        "include_genes": merged["include_genes"],
+        "include_genes": include_genes,
         "palette": palette,
+        "sample_order": sample_order,
         "tmb_data": tmb,
         "tmb_palette": palette,
         "metadata": metadata,
@@ -820,9 +870,10 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
         axes[0, col].set_title(sample_depth["title"].iloc[0], fontsize=18)
         axes[0, col].set_ylim(*depth_ylim)
         axes[0, col].grid(True, color="white")
-        for _, model in gene_models.iterrows():
-            axes[0, col].add_patch(Rectangle((model["start"], -7), model["end"] - model["start"], 4, color="black"))
-            axes[0, col].text((model["start"] + model["end"]) / 2, -10, model["gene"], ha="center", va="top", fontsize=9, style="italic")
+        for gene, models in gene_models.groupby("gene", sort=False):
+            for _, model in models.iterrows():
+                axes[0, col].add_patch(Rectangle((model["start"], -7), model["end"] - model["start"], 4, color="black"))
+            axes[0, col].text((models["start"].min() + models["end"].max()) / 2, -10, gene, ha="center", va="top", fontsize=9, style="italic")
 
         for allele_name, color in [("REF", "#4C72B0"), ("ALT", "#DD8452")]:
             group = sample_allele[sample_allele["allele"] == allele_name]
@@ -830,9 +881,10 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
         axes[1, col].set_ylim(*allele_ylim)
         axes[1, col].grid(True, color="white")
         axes[1, col].set_xlabel("Position", fontsize=14)
-        for _, model in gene_models.iterrows():
-            axes[1, col].add_patch(Rectangle((model["start"], -0.08), model["end"] - model["start"], 0.04, color="black"))
-            axes[1, col].text((model["start"] + model["end"]) / 2, -0.10, model["gene"], ha="center", va="top", fontsize=9, style="italic")
+        for gene, models in gene_models.groupby("gene", sort=False):
+            for _, model in models.iterrows():
+                axes[1, col].add_patch(Rectangle((model["start"], -0.08), model["end"] - model["start"], 0.04, color="black"))
+            axes[1, col].text((models["start"].min() + models["end"].max()) / 2, -0.10, gene, ha="center", va="top", fontsize=9, style="italic")
     axes[0, 0].set_ylabel("Depth", fontsize=14)
     axes[1, 0].set_ylabel("Allele fraction", fontsize=14)
     axes[1, 0].legend(loc="upper left", fontsize=16, frameon=True)

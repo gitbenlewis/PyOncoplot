@@ -1,0 +1,69 @@
+{
+  "source_urls": {
+    "tcga_laml.maf.gz": "https://raw.githubusercontent.com/sbslee/fuc-data/main/tcga-laml/tcga_laml.maf.gz",
+    "tcga_laml_annot.tsv": "https://raw.githubusercontent.com/sbslee/fuc-data/main/tcga-laml/tcga_laml_annot.tsv",
+    "getrm-cyp2d6-vdr.vcf": "https://raw.githubusercontent.com/sbslee/fuc-data/main/pyvcf/getrm-cyp2d6-vdr.vcf"
+  },
+  "source_checksums": {
+    "tcga_laml.maf.gz": "cad31eb051302056efcb61a0bf3d3f1ca1f0dfa91af81e8d3be4ed0847b6d372",
+    "tcga_laml_annot.tsv": "8679e62a0d1cc9e9b976981061b0edd1d4754bf1e9815fc4a78c413097d545e3",
+    "getrm-cyp2d6-vdr.vcf": "58963f31be951330b51a3dffdd808eb0f1855756f2c65d7dc347510b73296923"
+  },
+  "source_scripts": {
+    "goal_plot_18.png": "oncoplot.py",
+    "goal_plot_19.png": "customized_oncoplot_1.py",
+    "goal_plot_20.png": "customized_oncoplot_2.py",
+    "goal_plot_21.png": "vcf_sv.py",
+    "goal_plot_22.png": "customized_oncoplot_3.py"
+  },
+  "goal_plot_22_sha256": "6e6f19675709e97c08f5c9e1326f96046775f73ab9b170c5dee7f5d2a9d97f85",
+  "derived_fixture_checksums": {
+    "aml_mutations.tsv": "eda552368068a0c0aa4bfbaf5931cecb9334521b213b0c375accb26fceea0361",
+    "aml_metadata.tsv": "31068677bcd5f6dd50ef5371444aca2e3eb79bd3b0394cdb93d3ff7edf2b9efe",
+    "aml_tmb.tsv": "f38b764f864d52195f891e2fea5c46e9b99964e3e00f84bfea569c697b758b66",
+    "aml_palette.json": "4a8c52552d7b98ef106ab32322e4dd941a13f8857829781649167d5cbdde182b",
+    "aml_gallery_params.json": "dc8d1954ecfe1dfc15c9475e91f7b4716e882defd9e9bdd21ed7c73a18f7b421",
+    "sv_depth.tsv": "64d2941dbe7d92296504664ab36290ccf867d22c251ca3fb9ed3efc65ed69a0e",
+    "sv_allele_fraction.tsv": "472a529a54b2536f7c74bae85555dc89f67c3bef9d95ee3701837075731e0eb6",
+    "sv_gene_models.tsv": "b352dacd7a5117a7ed137a0591d2cb6404fb8141179ff556503b923be9579a53"
+  },
+  "summary": {
+    "aml": {
+      "raw_rows": 2207,
+      "nonsyn_rows": 1732,
+      "samples": 200,
+      "full_top_genes": [
+        "FLT3",
+        "DNMT3A",
+        "NPM1",
+        "IDH2",
+        "IDH1",
+        "TET2",
+        "RUNX1",
+        "NRAS",
+        "TP53",
+        "CEBPA"
+      ],
+      "survival_top_genes": [
+        "DNMT3A",
+        "FLT3",
+        "NPM1",
+        "TP53",
+        "IDH2",
+        "RUNX1",
+        "IDH1",
+        "TET2",
+        "NRAS",
+        "CEBPA"
+      ]
+    },
+    "sv": {
+      "positions": 555,
+      "samples": [
+        "NA18973",
+        "NA10831",
+        "NA19109"
+      ]
+    }
+  }
+}

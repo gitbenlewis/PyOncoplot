@@ -5,13 +5,15 @@ Reviewed on 2026-05-26.
 This note maps the example/reference plots in
 `python_refactor_goal_sources/goal_plots/` to the primary papers, data sources,
 or documentation pages that produced or motivated them. The clean gallery images
-in `python_refactor_goal_sources/generated_plots/clean/` use deterministic
-synthetic TSV/JSON fixtures to recreate the visual structure of those sources.
+in `python_refactor_goal_sources/generated_plots/clean/` use deterministic local
+TSV/JSON fixtures to recreate the visual structure of those sources; the
+Python/fuc fixtures are compact derivatives of upstream `sbslee/fuc-data`.
 
 Local source files reviewed:
 
 - `python_refactor_goal_sources/source_info_for_training.md`
 - `python_refactor_goal_sources/config.yaml`
+- `python_refactor_goal_sources/fuc_sources/manifest.json`
 - `python_refactor_goal_sources/ggoncoplot/paper/paper.md`
 - `python_refactor_goal_sources/ggoncoplot/paper/paper.bib`
 - `python_refactor_goal_sources/ggoncoplot/inst/CITATION`
@@ -28,7 +30,7 @@ Local source files reviewed:
 | `goal_plot_15.png` | Chinese breast tumor oncoplot | Zhang et al. 2019 | https://pmc.ncbi.nlm.nih.gov/articles/PMC6526269/ |
 | `goal_plot_16.png` | Metastatic cutaneous squamous cell carcinoma alteration matrix | Thind et al. 2022 | https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.919118/full |
 | `goal_plot_17.png` | Glioblastoma clinical/molecular panel | Hoogstrate et al. 2023 | https://www.sciencedirect.com/science/article/pii/S1535610823000478 |
-| `goal_plot_18.png` - `goal_plot_20.png` | AML/fuc oncoplot tutorial examples | Lee, fuc tutorials | https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html |
+| `goal_plot_18.png` - `goal_plot_20.png`, `goal_plot_22.png` | AML/fuc oncoplot tutorial examples | Lee, fuc tutorials and fuc-data TCGA-LAML fixtures | https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html |
 | `goal_plot_21.png` | fuc structural-variation VCF tutorial example | Lee, fuc tutorials; Biostars post linked in the source map | https://www.biostars.org/p/9493544/ |
 
 ## Directly Used Papers
@@ -64,11 +66,13 @@ locations for several imported reference images.
 
 2. Lee S. fuc-data image assets. GitHub. Accessed 2026-05-26. https://github.com/sbslee/fuc-data/tree/main/images
 
-3. El-Kamand S, Quinn JMW, Cowley MJ. ggoncoplot source repository, paper assets, and README figures. GitHub. Accessed 2026-05-26. https://github.com/selkamand/ggoncoplot
+3. Lee S. fuc-data TCGA-LAML and pyvcf example datasets. GitHub. Accessed 2026-05-26. https://github.com/sbslee/fuc-data
 
-4. El-Kamand S, Quinn JMW, Cowley MJ. Easily Create Interactive Oncoplots: ggoncoplot package site. Accessed 2026-05-26. https://selkamand.github.io/ggoncoplot/
+4. El-Kamand S, Quinn JMW, Cowley MJ. ggoncoplot source repository, paper assets, and README figures. GitHub. Accessed 2026-05-26. https://github.com/selkamand/ggoncoplot
 
-5. Biostars post referenced by the local source map for the structural-variation example. https://www.biostars.org/p/9493544/
+5. El-Kamand S, Quinn JMW, Cowley MJ. Easily Create Interactive Oncoplots: ggoncoplot package site. Accessed 2026-05-26. https://selkamand.github.io/ggoncoplot/
+
+6. Biostars post referenced by the local source map for the structural-variation example. https://www.biostars.org/p/9493544/
 
 ## Supporting Visualization References
 
@@ -86,9 +90,10 @@ are not themselves the source images.
 
 ## Notes
 
-- The generated PyOncoplot gallery uses synthetic fixture data in
-  `python_refactor_goal_sources/syntheitic_goal_data/`; those files are
-  deterministic stand-ins for visual regression and documentation examples.
+- The generated PyOncoplot gallery uses fixture data in
+  `python_refactor_goal_sources/syntheitic_goal_data/`; most files are
+  deterministic stand-ins, while the Python/fuc AML and SV files are compact
+  derivatives of upstream fuc-data examples.
 - The original numbered goal plots are source/reference images and should stay
   immutable.
 - The spelling `syntheitic_goal_data` matches the existing repository path.

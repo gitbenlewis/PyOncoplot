@@ -22,7 +22,8 @@ plans/                                   implementation plans
 python_refactor_goal_sources/            gallery scripts and training source tree
 python_refactor_goal_sources/config.yaml config-driven gallery run definitions
 python_refactor_goal_sources/goal_plots/ numbered source/reference plots
-python_refactor_goal_sources/syntheitic_goal_data/ deterministic synthetic TSV/JSON inputs
+python_refactor_goal_sources/fuc_sources/ fuc source scripts and fixture rebuild helper
+python_refactor_goal_sources/syntheitic_goal_data/ deterministic TSV/JSON gallery inputs
 ```
 
 ## Regenerate Gallery Inputs
@@ -31,10 +32,18 @@ python_refactor_goal_sources/syntheitic_goal_data/ deterministic synthetic TSV/J
 python3 python_refactor_goal_sources/generate_synthetic_inputs.py
 ```
 
-This rewrites deterministic TSV/JSON files under:
+This rewrites deterministic non-fuc TSV/JSON files under:
 
 ```text
 python_refactor_goal_sources/syntheitic_goal_data/
+```
+
+The AML and structural-variation fuc fixtures are rebuilt separately after
+downloading the upstream `fuc-data` source files listed in
+`python_refactor_goal_sources/fuc_sources/manifest.json`:
+
+```bash
+python3 python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py --source-dir /path/to/fuc-data
 ```
 
 ## Regenerate Gallery Images
@@ -48,7 +57,7 @@ Generated gallery images are tracked when intentionally updated.
 
 ## Adding A Gallery Preset
 
-1. Add or extend synthetic inputs in `python_refactor_goal_sources/generate_synthetic_inputs.py`.
+1. Add or extend synthetic inputs in `python_refactor_goal_sources/generate_synthetic_inputs.py`, or fuc-derived inputs in `python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py`.
 2. Commit the generated TSV/JSON inputs.
 3. Add a renderer function in `python_refactor_goal_sources/recreate_gallery.py` only when an existing renderer cannot express the plot.
 4. Add the named run to `python_refactor_goal_sources/config.yaml` under `gallery_params.plot_runs`.

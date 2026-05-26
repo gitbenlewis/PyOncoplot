@@ -1,6 +1,6 @@
 # Metadata Example
 
-This example uses the deterministic AML synthetic inputs.
+This example uses the fuc-derived AML gallery inputs.
 
 ```python
 import json
@@ -69,4 +69,3 @@ metadata_sort_cols=["FAB_classification"],
 metadata_sort_by="alphabetical",
 metadata_sort_desc=False,
 ```
-

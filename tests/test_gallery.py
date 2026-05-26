@@ -36,6 +36,7 @@ OLD_GOAL_PLOT_NAMES = {
     "oncoplot.png",
     "customized_oncoplot_1.png",
     "customized_oncoplot_2.png",
+    "customized_oncoplot_3.png",
     "73b90cf5-8b0b-4787-b38e-f0b1a2d6.png",
     "9c4c2e0f-74b4-4992-82be-57048160.png",
     "7a1ffb71-a4d9-4f42-8cf8-d992b037.png",
@@ -98,6 +99,11 @@ def test_synthetic_fixture_files_exist_and_load():
         palette = json.loads((INPUTS / filename).read_text(encoding="utf-8"))
         assert "Missense_Mutation" in palette
         assert "Multi_Hit" in palette
+
+    aml_gallery_params = json.loads((INPUTS / "aml_gallery_params.json").read_text(encoding="utf-8"))
+    assert aml_gallery_params["full_top_genes"][:3] == ["FLT3", "DNMT3A", "NPM1"]
+    assert aml_gallery_params["survival_top_genes"][:3] == ["DNMT3A", "FLT3", "NPM1"]
+    assert aml_gallery_params["waterfall_sample_order"]
 
     cssc_palette = json.loads((INPUTS / "cssc_palette.json").read_text(encoding="utf-8"))
     assert "missense_variant" in cssc_palette
@@ -181,7 +187,7 @@ def test_gallery_config_loads_and_declares_enabled_runs():
         assert required.issubset(run), name
 
     clean_names = [preset.output_name for preset in GALLERY_PRESETS.values()]
-    assert clean_names == [f"gen.goal_plot_{index}.png" for index in range(1, 22)]
+    assert clean_names == [f"gen.goal_plot_{index}.png" for index in range(1, 23)]
     comparison_runs = GALLERY_CONFIG["comparison_runs"]
     assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_1.png"
     assert comparison_runs["brca_large"]["expected_size"] == [1240, 398]
@@ -273,7 +279,7 @@ def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):
 
 
 def test_new_gallery_outputs_are_generated_not_copied(rendered_clean_gallery):
-    for index in range(1, 22):
+    for index in range(1, 23):
         preset = next(preset for preset in GALLERY_PRESETS.values() if preset.output_name == f"gen.goal_plot_{index}.png")
         output = rendered_clean_gallery / preset.output_name
         goal = GOAL_PLOTS / f"goal_plot_{index}.png"
@@ -300,7 +306,7 @@ def test_new_gallery_outputs_have_expected_broad_features(rendered_clean_gallery
 
 
 def test_accepted_aml_metadata_outputs_remain_clean_only_and_featureful(tmp_path):
-    for name in ("aml_metadata_unsorted", "aml_metadata_sorted"):
+    for name in ("aml_metadata_unsorted", "aml_metadata_sorted", "aml_metadata_survival"):
         preset = GALLERY_PRESETS[name]
         assert preset.clean_only
         assert preset.feature_axes_min >= 4

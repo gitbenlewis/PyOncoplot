@@ -3,7 +3,7 @@
 `pyoncoplot` creates Python-native oncoplots from mutation-level cohort data.
 It supports interactive Plotly output and static Matplotlib output, with
 metadata tracks, TMB bars, gene recurrence bars, pathway grouping, palettes,
-tooltips, and deterministic gallery recreation from synthetic inputs.
+tooltips, and deterministic gallery recreation from local TSV/JSON inputs.
 
 The project is inspired by the R package `ggoncoplot`. The goal is feature and
 behavior parity, not pixel-identical ggplot output.
@@ -73,5 +73,5 @@ result.save("oncoplot.png", dpi=120)
 | [Palettes](palettes.md) | mutation, metadata, and TMB colors |
 | [Options Reference](options-reference.md) | layout, text, legend, and rendering knobs |
 | [Rendering Backends](rendering-backends.md) | Plotly vs Matplotlib behavior |
-| [Gallery](gallery.md) | deterministic synthetic examples |
+| [Gallery](gallery.md) | deterministic local examples |
 | [Troubleshooting](troubleshooting.md) | common errors and fixes |

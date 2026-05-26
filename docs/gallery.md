@@ -1,6 +1,6 @@
 # Example Gallery
 
-The gallery recreates reference-style plots from deterministic synthetic inputs.
+The gallery recreates reference-style plots from deterministic local inputs.
 Generated images are written outside the reference image paths so originals stay
 untouched.
 
@@ -23,13 +23,20 @@ Outputs are written to:
 python_refactor_goal_sources/generated_plots/clean/
 ```
 
-## Regenerate Synthetic Inputs
+## Regenerate Gallery Inputs
 
 ```bash
 python3 python_refactor_goal_sources/generate_synthetic_inputs.py
 ```
 
-Synthetic inputs are checked in under:
+This regenerates the non-fuc synthetic fixtures. The Python/fuc AML and SV
+fixtures are derived from upstream `sbslee/fuc-data` files with:
+
+```bash
+python3 python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py --source-dir /path/to/fuc-data
+```
+
+Gallery inputs are checked in under:
 
 ```text
 python_refactor_goal_sources/syntheitic_goal_data/
@@ -56,6 +63,7 @@ The generated AML metadata plots are treated as approved clean baselines:
 
 - `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_19.png`
 - `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_20.png`
+- `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_22.png`
 
 Do not tune these toward the originals if it makes the generated versions worse.
 
@@ -87,6 +95,7 @@ R-based paper examples next, and Python/fuc examples last.
 | `aml_metadata_unsorted` | `gen.goal_plot_19.png` | `1080 x 720` | Python/fuc accepted clean baseline |
 | `aml_metadata_sorted` | `gen.goal_plot_20.png` | `1080 x 720` | Python/fuc accepted clean baseline |
 | `sv_panel` | `gen.goal_plot_21.png` | `1296 x 864` | Python/fuc structural-variation panel |
+| `aml_metadata_survival` | `gen.goal_plot_22.png` | `1080 x 720` | Python/fuc survival-filtered AML baseline |
 
 ## Config-Driven Runs
 
@@ -112,15 +121,15 @@ Generated outputs keep the numbered naming convention:
 `gen.goal_plot_N.png` for generated plots and `compare.goal_plot_N.png` for
 comparison sheets.
 
-## Synthetic Input Families
+## Input Families
 
 | Family | Files |
 | --- | --- |
-| AML | `aml_mutations.tsv`, `aml_metadata.tsv`, `aml_tmb.tsv`, `aml_palette.json` |
+| AML/fuc | `aml_mutations.tsv`, `aml_metadata.tsv`, `aml_tmb.tsv`, `aml_palette.json`, `aml_gallery_params.json` |
 | BRCA | `brca_mutations.tsv`, `brca_metadata.tsv`, `brca_tmb.tsv`, `brca_palette.json` |
 | CSSC | `cssc_mutations.tsv`, `cssc_tmb.tsv`, `cssc_palette.json` |
 | GBM | `gbm_clinical_tracks.tsv`, `gbm_events.tsv`, `gbm_palette.json` |
-| SV | `sv_depth.tsv`, `sv_allele_fraction.tsv`, `sv_gene_models.tsv` |
+| SV/fuc | `sv_depth.tsv`, `sv_allele_fraction.tsv`, `sv_gene_models.tsv` |
 | ggoncoplot README | `ggoncoplot_readme_mutations.tsv`, `ggoncoplot_readme_metadata.tsv`, `ggoncoplot_readme_tmb.tsv`, `ggoncoplot_readme_palette.json` |
 | Multimodal paper | `paper_multimodal_samples.tsv`, `paper_multimodal_points.tsv`, `paper_multimodal_events.tsv`, `paper_multimodal_clinical.tsv`, `paper_multimodal_selection.tsv`, `paper_multimodal_palette.json` |
 | Comparison table | `ggoncoplot_comparison_table.tsv` |

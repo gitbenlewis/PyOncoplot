@@ -1,268 +1,1733 @@
 sample	gene	mutation_type	tooltip	cluster
-AML-001	DNMT3A	Frame_Shift_Del	AML-001 DNMT3A Frame_Shift_Del hit 1	FLT3/NPM1
-AML-001	NPM1	Splice_Site	AML-001 NPM1 Splice_Site hit 1	FLT3/NPM1
-AML-001	CEBPA	Frame_Shift_Del	AML-001 CEBPA Frame_Shift_Del hit 1	FLT3/NPM1
-AML-002	FLT3	In_Frame_Del	AML-002 FLT3 In_Frame_Del hit 1	FLT3/NPM1
-AML-002	DNMT3A	Missense_Mutation	AML-002 DNMT3A Missense_Mutation hit 1	FLT3/NPM1
-AML-002	NPM1	Nonstop_Mutation	AML-002 NPM1 Nonstop_Mutation hit 1	FLT3/NPM1
-AML-003	NPM1	Missense_Mutation	AML-003 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-004	FLT3	Missense_Mutation	AML-004 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-004	FLT3	In_Frame_Ins	AML-004 FLT3 In_Frame_Ins hit 2	FLT3/NPM1
-AML-004	DNMT3A	Frame_Shift_Ins	AML-004 DNMT3A Frame_Shift_Ins hit 1	FLT3/NPM1
-AML-004	TET2	Translation_Start_Site	AML-004 TET2 Translation_Start_Site hit 1	FLT3/NPM1
-AML-004	RUNX1	Missense_Mutation	AML-004 RUNX1 Missense_Mutation hit 1	FLT3/NPM1
-AML-004	TP53	Missense_Mutation	AML-004 TP53 Missense_Mutation hit 1	FLT3/NPM1
-AML-004	TP53	Splice_Site	AML-004 TP53 Splice_Site hit 2	FLT3/NPM1
-AML-005	NPM1	Missense_Mutation	AML-005 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-006	FLT3	Missense_Mutation	AML-006 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-006	IDH2	Frame_Shift_Ins	AML-006 IDH2 Frame_Shift_Ins hit 1	FLT3/NPM1
-AML-006	IDH1	Missense_Mutation	AML-006 IDH1 Missense_Mutation hit 1	FLT3/NPM1
-AML-007	FLT3	Missense_Mutation	AML-007 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-007	DNMT3A	Frame_Shift_Ins	AML-007 DNMT3A Frame_Shift_Ins hit 1	FLT3/NPM1
-AML-008	FLT3	Splice_Site	AML-008 FLT3 Splice_Site hit 1	FLT3/NPM1
-AML-008	FLT3	Missense_Mutation	AML-008 FLT3 Missense_Mutation hit 2	FLT3/NPM1
-AML-008	TET2	Missense_Mutation	AML-008 TET2 Missense_Mutation hit 1	FLT3/NPM1
-AML-009	DNMT3A	Missense_Mutation	AML-009 DNMT3A Missense_Mutation hit 1	FLT3/NPM1
-AML-009	IDH2	Translation_Start_Site	AML-009 IDH2 Translation_Start_Site hit 1	FLT3/NPM1
-AML-009	NRAS	Splice_Site	AML-009 NRAS Splice_Site hit 1	FLT3/NPM1
-AML-010	FLT3	Nonsense_Mutation	AML-010 FLT3 Nonsense_Mutation hit 1	FLT3/NPM1
-AML-010	NPM1	Missense_Mutation	AML-010 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-011	FLT3	Splice_Site	AML-011 FLT3 Splice_Site hit 1	FLT3/NPM1
-AML-011	DNMT3A	Missense_Mutation	AML-011 DNMT3A Missense_Mutation hit 1	FLT3/NPM1
-AML-011	DNMT3A	Nonsense_Mutation	AML-011 DNMT3A Nonsense_Mutation hit 2	FLT3/NPM1
-AML-012	FLT3	In_Frame_Ins	AML-012 FLT3 In_Frame_Ins hit 1	FLT3/NPM1
-AML-013	FLT3	Missense_Mutation	AML-013 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-013	IDH2	Missense_Mutation	AML-013 IDH2 Missense_Mutation hit 1	FLT3/NPM1
-AML-013	IDH2	Missense_Mutation	AML-013 IDH2 Missense_Mutation hit 2	FLT3/NPM1
-AML-015	FLT3	Missense_Mutation	AML-015 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-015	DNMT3A	Splice_Site	AML-015 DNMT3A Splice_Site hit 1	FLT3/NPM1
-AML-015	TET2	Translation_Start_Site	AML-015 TET2 Translation_Start_Site hit 1	FLT3/NPM1
-AML-016	FLT3	Missense_Mutation	AML-016 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-016	NPM1	Missense_Mutation	AML-016 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-017	DNMT3A	Nonsense_Mutation	AML-017 DNMT3A Nonsense_Mutation hit 1	FLT3/NPM1
-AML-017	DNMT3A	Missense_Mutation	AML-017 DNMT3A Missense_Mutation hit 2	FLT3/NPM1
-AML-018	FLT3	Missense_Mutation	AML-018 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-018	DNMT3A	Missense_Mutation	AML-018 DNMT3A Missense_Mutation hit 1	FLT3/NPM1
-AML-018	NPM1	Frame_Shift_Del	AML-018 NPM1 Frame_Shift_Del hit 1	FLT3/NPM1
-AML-019	FLT3	Missense_Mutation	AML-019 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-019	DNMT3A	Missense_Mutation	AML-019 DNMT3A Missense_Mutation hit 1	FLT3/NPM1
-AML-019	NPM1	Missense_Mutation	AML-019 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-019	NPM1	Missense_Mutation	AML-019 NPM1 Missense_Mutation hit 2	FLT3/NPM1
-AML-020	FLT3	Missense_Mutation	AML-020 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-020	FLT3	Missense_Mutation	AML-020 FLT3 Missense_Mutation hit 2	FLT3/NPM1
-AML-020	DNMT3A	Missense_Mutation	AML-020 DNMT3A Missense_Mutation hit 1	FLT3/NPM1
-AML-020	TET2	Nonsense_Mutation	AML-020 TET2 Nonsense_Mutation hit 1	FLT3/NPM1
-AML-021	FLT3	In_Frame_Ins	AML-021 FLT3 In_Frame_Ins hit 1	FLT3/NPM1
-AML-021	NPM1	Missense_Mutation	AML-021 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-022	FLT3	Missense_Mutation	AML-022 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-022	FLT3	Missense_Mutation	AML-022 FLT3 Missense_Mutation hit 2	FLT3/NPM1
-AML-022	NPM1	Frame_Shift_Del	AML-022 NPM1 Frame_Shift_Del hit 1	FLT3/NPM1
-AML-022	IDH2	Missense_Mutation	AML-022 IDH2 Missense_Mutation hit 1	FLT3/NPM1
-AML-023	NPM1	Missense_Mutation	AML-023 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-025	FLT3	Missense_Mutation	AML-025 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-025	NPM1	Missense_Mutation	AML-025 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-025	IDH1	Nonsense_Mutation	AML-025 IDH1 Nonsense_Mutation hit 1	FLT3/NPM1
-AML-025	RUNX1	In_Frame_Ins	AML-025 RUNX1 In_Frame_Ins hit 1	FLT3/NPM1
-AML-026	FLT3	In_Frame_Ins	AML-026 FLT3 In_Frame_Ins hit 1	FLT3/NPM1
-AML-026	NPM1	Missense_Mutation	AML-026 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-026	NPM1	Splice_Site	AML-026 NPM1 Splice_Site hit 2	FLT3/NPM1
-AML-026	CEBPA	Missense_Mutation	AML-026 CEBPA Missense_Mutation hit 1	FLT3/NPM1
-AML-027	FLT3	Missense_Mutation	AML-027 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-027	TET2	Splice_Site	AML-027 TET2 Splice_Site hit 1	FLT3/NPM1
-AML-028	FLT3	Missense_Mutation	AML-028 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-028	IDH2	Missense_Mutation	AML-028 IDH2 Missense_Mutation hit 1	FLT3/NPM1
-AML-028	TP53	Missense_Mutation	AML-028 TP53 Missense_Mutation hit 1	FLT3/NPM1
-AML-028	TP53	Missense_Mutation	AML-028 TP53 Missense_Mutation hit 2	FLT3/NPM1
-AML-029	IDH2	Missense_Mutation	AML-029 IDH2 Missense_Mutation hit 1	FLT3/NPM1
-AML-030	DNMT3A	Missense_Mutation	AML-030 DNMT3A Missense_Mutation hit 1	FLT3/NPM1
-AML-030	NPM1	Missense_Mutation	AML-030 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-030	TET2	Missense_Mutation	AML-030 TET2 Missense_Mutation hit 1	FLT3/NPM1
-AML-031	FLT3	Missense_Mutation	AML-031 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-031	DNMT3A	In_Frame_Del	AML-031 DNMT3A In_Frame_Del hit 1	FLT3/NPM1
-AML-031	NPM1	Splice_Site	AML-031 NPM1 Splice_Site hit 1	FLT3/NPM1
-AML-032	FLT3	Missense_Mutation	AML-032 FLT3 Missense_Mutation hit 1	FLT3/NPM1
-AML-032	NPM1	Missense_Mutation	AML-032 NPM1 Missense_Mutation hit 1	FLT3/NPM1
-AML-033	DNMT3A	Frame_Shift_Del	AML-033 DNMT3A Frame_Shift_Del hit 1	FLT3/NPM1
-AML-033	TET2	Missense_Mutation	AML-033 TET2 Missense_Mutation hit 1	FLT3/NPM1
-AML-034	FLT3	Translation_Start_Site	AML-034 FLT3 Translation_Start_Site hit 1	FLT3/NPM1
-AML-034	NPM1	In_Frame_Ins	AML-034 NPM1 In_Frame_Ins hit 1	FLT3/NPM1
-AML-034	NRAS	In_Frame_Ins	AML-034 NRAS In_Frame_Ins hit 1	FLT3/NPM1
-AML-034	NRAS	Nonsense_Mutation	AML-034 NRAS Nonsense_Mutation hit 2	FLT3/NPM1
-AML-035	IDH1	Missense_Mutation	AML-035 IDH1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-035	TET2	Nonsense_Mutation	AML-035 TET2 Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-036	FLT3	Missense_Mutation	AML-036 FLT3 Missense_Mutation hit 1	DNMT3A/TET2
-AML-036	DNMT3A	Frame_Shift_Ins	AML-036 DNMT3A Frame_Shift_Ins hit 1	DNMT3A/TET2
-AML-036	IDH1	Frame_Shift_Del	AML-036 IDH1 Frame_Shift_Del hit 1	DNMT3A/TET2
-AML-037	TET2	Splice_Site	AML-037 TET2 Splice_Site hit 1	DNMT3A/TET2
-AML-038	DNMT3A	In_Frame_Del	AML-038 DNMT3A In_Frame_Del hit 1	DNMT3A/TET2
-AML-038	NPM1	Translation_Start_Site	AML-038 NPM1 Translation_Start_Site hit 1	DNMT3A/TET2
-AML-039	FLT3	Frame_Shift_Del	AML-039 FLT3 Frame_Shift_Del hit 1	DNMT3A/TET2
-AML-039	DNMT3A	Missense_Mutation	AML-039 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-040	DNMT3A	In_Frame_Ins	AML-040 DNMT3A In_Frame_Ins hit 1	DNMT3A/TET2
-AML-040	NPM1	In_Frame_Del	AML-040 NPM1 In_Frame_Del hit 1	DNMT3A/TET2
-AML-040	TET2	Missense_Mutation	AML-040 TET2 Missense_Mutation hit 1	DNMT3A/TET2
-AML-043	IDH2	Nonsense_Mutation	AML-043 IDH2 Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-044	DNMT3A	Frame_Shift_Del	AML-044 DNMT3A Frame_Shift_Del hit 1	DNMT3A/TET2
-AML-044	IDH2	Nonsense_Mutation	AML-044 IDH2 Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-045	DNMT3A	Missense_Mutation	AML-045 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-046	DNMT3A	Missense_Mutation	AML-046 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-046	NPM1	Splice_Site	AML-046 NPM1 Splice_Site hit 1	DNMT3A/TET2
-AML-047	IDH1	Missense_Mutation	AML-047 IDH1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-048	FLT3	Missense_Mutation	AML-048 FLT3 Missense_Mutation hit 1	DNMT3A/TET2
-AML-048	TET2	Missense_Mutation	AML-048 TET2 Missense_Mutation hit 1	DNMT3A/TET2
-AML-049	DNMT3A	Missense_Mutation	AML-049 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-049	DNMT3A	Missense_Mutation	AML-049 DNMT3A Missense_Mutation hit 2	DNMT3A/TET2
-AML-050	FLT3	In_Frame_Del	AML-050 FLT3 In_Frame_Del hit 1	DNMT3A/TET2
-AML-050	DNMT3A	Missense_Mutation	AML-050 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-050	IDH1	Missense_Mutation	AML-050 IDH1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-050	RUNX1	Frame_Shift_Del	AML-050 RUNX1 Frame_Shift_Del hit 1	DNMT3A/TET2
-AML-052	FLT3	Nonsense_Mutation	AML-052 FLT3 Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-052	DNMT3A	Missense_Mutation	AML-052 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-052	DNMT3A	In_Frame_Ins	AML-052 DNMT3A In_Frame_Ins hit 2	DNMT3A/TET2
-AML-052	IDH2	Frame_Shift_Del	AML-052 IDH2 Frame_Shift_Del hit 1	DNMT3A/TET2
-AML-053	NPM1	Splice_Site	AML-053 NPM1 Splice_Site hit 1	DNMT3A/TET2
-AML-054	DNMT3A	Missense_Mutation	AML-054 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-054	NPM1	Missense_Mutation	AML-054 NPM1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-055	DNMT3A	Translation_Start_Site	AML-055 DNMT3A Translation_Start_Site hit 1	DNMT3A/TET2
-AML-055	IDH2	Splice_Site	AML-055 IDH2 Splice_Site hit 1	DNMT3A/TET2
-AML-056	FLT3	Nonsense_Mutation	AML-056 FLT3 Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-056	DNMT3A	Nonsense_Mutation	AML-056 DNMT3A Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-056	DNMT3A	Missense_Mutation	AML-056 DNMT3A Missense_Mutation hit 2	DNMT3A/TET2
-AML-056	IDH1	Missense_Mutation	AML-056 IDH1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-056	TP53	Missense_Mutation	AML-056 TP53 Missense_Mutation hit 1	DNMT3A/TET2
-AML-056	TP53	Missense_Mutation	AML-056 TP53 Missense_Mutation hit 2	DNMT3A/TET2
-AML-058	DNMT3A	Missense_Mutation	AML-058 DNMT3A Missense_Mutation hit 1	DNMT3A/TET2
-AML-059	FLT3	Missense_Mutation	AML-059 FLT3 Missense_Mutation hit 1	DNMT3A/TET2
-AML-059	FLT3	Splice_Site	AML-059 FLT3 Splice_Site hit 2	DNMT3A/TET2
-AML-061	TET2	Missense_Mutation	AML-061 TET2 Missense_Mutation hit 1	DNMT3A/TET2
-AML-063	FLT3	Missense_Mutation	AML-063 FLT3 Missense_Mutation hit 1	DNMT3A/TET2
-AML-063	FLT3	Splice_Site	AML-063 FLT3 Splice_Site hit 2	DNMT3A/TET2
-AML-063	IDH1	Missense_Mutation	AML-063 IDH1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-064	DNMT3A	Nonstop_Mutation	AML-064 DNMT3A Nonstop_Mutation hit 1	DNMT3A/TET2
-AML-064	IDH2	Nonsense_Mutation	AML-064 IDH2 Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-065	FLT3	Nonsense_Mutation	AML-065 FLT3 Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-065	DNMT3A	In_Frame_Ins	AML-065 DNMT3A In_Frame_Ins hit 1	DNMT3A/TET2
-AML-066	FLT3	Missense_Mutation	AML-066 FLT3 Missense_Mutation hit 1	DNMT3A/TET2
-AML-066	NPM1	Missense_Mutation	AML-066 NPM1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-066	RUNX1	Missense_Mutation	AML-066 RUNX1 Missense_Mutation hit 1	DNMT3A/TET2
-AML-067	FLT3	Missense_Mutation	AML-067 FLT3 Missense_Mutation hit 1	DNMT3A/TET2
-AML-067	TET2	Frame_Shift_Del	AML-067 TET2 Frame_Shift_Del hit 1	DNMT3A/TET2
-AML-068	FLT3	Missense_Mutation	AML-068 FLT3 Missense_Mutation hit 1	DNMT3A/TET2
-AML-068	FLT3	Frame_Shift_Ins	AML-068 FLT3 Frame_Shift_Ins hit 2	DNMT3A/TET2
-AML-068	DNMT3A	Nonsense_Mutation	AML-068 DNMT3A Nonsense_Mutation hit 1	DNMT3A/TET2
-AML-068	DNMT3A	Missense_Mutation	AML-068 DNMT3A Missense_Mutation hit 2	DNMT3A/TET2
-AML-068	IDH2	Missense_Mutation	AML-068 IDH2 Missense_Mutation hit 1	DNMT3A/TET2
-AML-069	IDH2	Translation_Start_Site	AML-069 IDH2 Translation_Start_Site hit 1	IDH
-AML-070	IDH2	Missense_Mutation	AML-070 IDH2 Missense_Mutation hit 1	IDH
-AML-071	IDH2	Missense_Mutation	AML-071 IDH2 Missense_Mutation hit 1	IDH
-AML-071	TET2	Nonsense_Mutation	AML-071 TET2 Nonsense_Mutation hit 1	IDH
-AML-072	IDH1	Frame_Shift_Ins	AML-072 IDH1 Frame_Shift_Ins hit 1	IDH
-AML-073	IDH2	Frame_Shift_Ins	AML-073 IDH2 Frame_Shift_Ins hit 1	IDH
-AML-073	NRAS	Missense_Mutation	AML-073 NRAS Missense_Mutation hit 1	IDH
-AML-074	FLT3	Nonsense_Mutation	AML-074 FLT3 Nonsense_Mutation hit 1	IDH
-AML-074	FLT3	Frame_Shift_Ins	AML-074 FLT3 Frame_Shift_Ins hit 2	IDH
-AML-074	DNMT3A	Missense_Mutation	AML-074 DNMT3A Missense_Mutation hit 1	IDH
-AML-074	NPM1	Splice_Site	AML-074 NPM1 Splice_Site hit 1	IDH
-AML-075	IDH2	Nonsense_Mutation	AML-075 IDH2 Nonsense_Mutation hit 1	IDH
-AML-075	IDH1	Missense_Mutation	AML-075 IDH1 Missense_Mutation hit 1	IDH
-AML-075	IDH1	In_Frame_Ins	AML-075 IDH1 In_Frame_Ins hit 2	IDH
-AML-076	FLT3	Missense_Mutation	AML-076 FLT3 Missense_Mutation hit 1	IDH
-AML-076	IDH1	Missense_Mutation	AML-076 IDH1 Missense_Mutation hit 1	IDH
-AML-077	DNMT3A	Missense_Mutation	AML-077 DNMT3A Missense_Mutation hit 1	IDH
-AML-077	CEBPA	Frame_Shift_Ins	AML-077 CEBPA Frame_Shift_Ins hit 1	IDH
-AML-078	FLT3	Splice_Site	AML-078 FLT3 Splice_Site hit 1	IDH
-AML-078	IDH2	Missense_Mutation	AML-078 IDH2 Missense_Mutation hit 1	IDH
-AML-079	FLT3	Translation_Start_Site	AML-079 FLT3 Translation_Start_Site hit 1	IDH
-AML-079	NPM1	Missense_Mutation	AML-079 NPM1 Missense_Mutation hit 1	IDH
-AML-079	CEBPA	Missense_Mutation	AML-079 CEBPA Missense_Mutation hit 1	IDH
-AML-080	DNMT3A	Missense_Mutation	AML-080 DNMT3A Missense_Mutation hit 1	IDH
-AML-080	IDH2	Nonsense_Mutation	AML-080 IDH2 Nonsense_Mutation hit 1	IDH
-AML-082	NPM1	Missense_Mutation	AML-082 NPM1 Missense_Mutation hit 1	IDH
-AML-083	CEBPA	Translation_Start_Site	AML-083 CEBPA Translation_Start_Site hit 1	IDH
-AML-084	IDH2	Nonsense_Mutation	AML-084 IDH2 Nonsense_Mutation hit 1	IDH
-AML-084	IDH1	Missense_Mutation	AML-084 IDH1 Missense_Mutation hit 1	IDH
-AML-085	DNMT3A	Missense_Mutation	AML-085 DNMT3A Missense_Mutation hit 1	IDH
-AML-085	DNMT3A	Splice_Site	AML-085 DNMT3A Splice_Site hit 2	IDH
-AML-086	IDH2	Missense_Mutation	AML-086 IDH2 Missense_Mutation hit 1	IDH
-AML-087	FLT3	Nonsense_Mutation	AML-087 FLT3 Nonsense_Mutation hit 1	IDH
-AML-088	IDH1	Missense_Mutation	AML-088 IDH1 Missense_Mutation hit 1	IDH
-AML-089	DNMT3A	Missense_Mutation	AML-089 DNMT3A Missense_Mutation hit 1	IDH
-AML-089	DNMT3A	Missense_Mutation	AML-089 DNMT3A Missense_Mutation hit 2	IDH
-AML-089	IDH2	Missense_Mutation	AML-089 IDH2 Missense_Mutation hit 1	IDH
-AML-090	IDH1	Missense_Mutation	AML-090 IDH1 Missense_Mutation hit 1	IDH
-AML-090	TET2	Missense_Mutation	AML-090 TET2 Missense_Mutation hit 1	IDH
-AML-091	IDH1	Missense_Mutation	AML-091 IDH1 Missense_Mutation hit 1	IDH
-AML-091	TET2	Missense_Mutation	AML-091 TET2 Missense_Mutation hit 1	IDH
-AML-092	FLT3	Missense_Mutation	AML-092 FLT3 Missense_Mutation hit 1	IDH
-AML-092	DNMT3A	Missense_Mutation	AML-092 DNMT3A Missense_Mutation hit 1	IDH
-AML-092	IDH2	Missense_Mutation	AML-092 IDH2 Missense_Mutation hit 1	IDH
-AML-093	IDH2	Missense_Mutation	AML-093 IDH2 Missense_Mutation hit 1	IDH
-AML-093	IDH1	Missense_Mutation	AML-093 IDH1 Missense_Mutation hit 1	IDH
-AML-094	TET2	Missense_Mutation	AML-094 TET2 Missense_Mutation hit 1	IDH
-AML-095	FLT3	Missense_Mutation	AML-095 FLT3 Missense_Mutation hit 1	IDH
-AML-095	FLT3	Frame_Shift_Del	AML-095 FLT3 Frame_Shift_Del hit 2	IDH
-AML-095	DNMT3A	Missense_Mutation	AML-095 DNMT3A Missense_Mutation hit 1	IDH
-AML-095	NPM1	Missense_Mutation	AML-095 NPM1 Missense_Mutation hit 1	IDH
-AML-095	IDH2	Missense_Mutation	AML-095 IDH2 Missense_Mutation hit 1	IDH
-AML-095	IDH1	In_Frame_Ins	AML-095 IDH1 In_Frame_Ins hit 1	IDH
-AML-097	FLT3	Frame_Shift_Ins	AML-097 FLT3 Frame_Shift_Ins hit 1	IDH
-AML-097	FLT3	Missense_Mutation	AML-097 FLT3 Missense_Mutation hit 2	IDH
-AML-097	NPM1	Nonsense_Mutation	AML-097 NPM1 Nonsense_Mutation hit 1	IDH
-AML-098	IDH2	Missense_Mutation	AML-098 IDH2 Missense_Mutation hit 1	IDH
-AML-100	IDH2	Missense_Mutation	AML-100 IDH2 Missense_Mutation hit 1	IDH
-AML-101	DNMT3A	Frame_Shift_Ins	AML-101 DNMT3A Frame_Shift_Ins hit 1	IDH
-AML-101	IDH2	Nonsense_Mutation	AML-101 IDH2 Nonsense_Mutation hit 1	IDH
-AML-102	IDH2	Missense_Mutation	AML-102 IDH2 Missense_Mutation hit 1	IDH
-AML-103	NRAS	Splice_Site	AML-103 NRAS Splice_Site hit 1	TP53/CEBPA
-AML-103	TP53	Missense_Mutation	AML-103 TP53 Missense_Mutation hit 1	TP53/CEBPA
-AML-104	CEBPA	Missense_Mutation	AML-104 CEBPA Missense_Mutation hit 1	TP53/CEBPA
-AML-106	IDH1	Splice_Site	AML-106 IDH1 Splice_Site hit 1	TP53/CEBPA
-AML-106	TET2	Nonsense_Mutation	AML-106 TET2 Nonsense_Mutation hit 1	TP53/CEBPA
-AML-106	RUNX1	In_Frame_Del	AML-106 RUNX1 In_Frame_Del hit 1	TP53/CEBPA
-AML-107	NPM1	Frame_Shift_Del	AML-107 NPM1 Frame_Shift_Del hit 1	TP53/CEBPA
-AML-108	DNMT3A	Missense_Mutation	AML-108 DNMT3A Missense_Mutation hit 1	TP53/CEBPA
-AML-109	CEBPA	Missense_Mutation	AML-109 CEBPA Missense_Mutation hit 1	TP53/CEBPA
-AML-110	NRAS	Frame_Shift_Del	AML-110 NRAS Frame_Shift_Del hit 1	TP53/CEBPA
-AML-110	NRAS	Missense_Mutation	AML-110 NRAS Missense_Mutation hit 2	TP53/CEBPA
-AML-111	CEBPA	Missense_Mutation	AML-111 CEBPA Missense_Mutation hit 1	TP53/CEBPA
-AML-113	DNMT3A	Nonstop_Mutation	AML-113 DNMT3A Nonstop_Mutation hit 1	TP53/CEBPA
-AML-113	DNMT3A	Missense_Mutation	AML-113 DNMT3A Missense_Mutation hit 2	TP53/CEBPA
-AML-113	IDH2	Splice_Site	AML-113 IDH2 Splice_Site hit 1	TP53/CEBPA
-AML-113	TET2	Nonsense_Mutation	AML-113 TET2 Nonsense_Mutation hit 1	TP53/CEBPA
-AML-113	CEBPA	Nonsense_Mutation	AML-113 CEBPA Nonsense_Mutation hit 1	TP53/CEBPA
-AML-114	IDH2	Frame_Shift_Del	AML-114 IDH2 Frame_Shift_Del hit 1	TP53/CEBPA
-AML-114	IDH1	Missense_Mutation	AML-114 IDH1 Missense_Mutation hit 1	TP53/CEBPA
-AML-114	RUNX1	Missense_Mutation	AML-114 RUNX1 Missense_Mutation hit 1	TP53/CEBPA
-AML-115	NPM1	Splice_Site	AML-115 NPM1 Splice_Site hit 1	TP53/CEBPA
-AML-116	FLT3	Missense_Mutation	AML-116 FLT3 Missense_Mutation hit 1	TP53/CEBPA
-AML-116	DNMT3A	Splice_Site	AML-116 DNMT3A Splice_Site hit 1	TP53/CEBPA
-AML-116	TET2	Nonstop_Mutation	AML-116 TET2 Nonstop_Mutation hit 1	TP53/CEBPA
-AML-118	NPM1	Frame_Shift_Del	AML-118 NPM1 Frame_Shift_Del hit 1	TP53/CEBPA
-AML-119	DNMT3A	Missense_Mutation	AML-119 DNMT3A Missense_Mutation hit 1	TP53/CEBPA
-AML-119	CEBPA	Missense_Mutation	AML-119 CEBPA Missense_Mutation hit 1	TP53/CEBPA
-AML-119	CEBPA	Splice_Site	AML-119 CEBPA Splice_Site hit 2	TP53/CEBPA
-AML-121	RUNX1	In_Frame_Del	AML-121 RUNX1 In_Frame_Del hit 1	TP53/CEBPA
-AML-122	TP53	In_Frame_Ins	AML-122 TP53 In_Frame_Ins hit 1	TP53/CEBPA
-AML-122	TP53	Nonsense_Mutation	AML-122 TP53 Nonsense_Mutation hit 2	TP53/CEBPA
-AML-122	CEBPA	Missense_Mutation	AML-122 CEBPA Missense_Mutation hit 1	TP53/CEBPA
-AML-124	NPM1	Missense_Mutation	AML-124 NPM1 Missense_Mutation hit 1	TP53/CEBPA
-AML-126	DNMT3A	Missense_Mutation	AML-126 DNMT3A Missense_Mutation hit 1	TP53/CEBPA
-AML-126	TET2	Missense_Mutation	AML-126 TET2 Missense_Mutation hit 1	TP53/CEBPA
-AML-126	TET2	Missense_Mutation	AML-126 TET2 Missense_Mutation hit 2	TP53/CEBPA
-AML-126	RUNX1	Missense_Mutation	AML-126 RUNX1 Missense_Mutation hit 1	TP53/CEBPA
-AML-127	DNMT3A	Splice_Site	AML-127 DNMT3A Splice_Site hit 1	TP53/CEBPA
-AML-127	IDH1	Missense_Mutation	AML-127 IDH1 Missense_Mutation hit 1	TP53/CEBPA
-AML-128	DNMT3A	Missense_Mutation	AML-128 DNMT3A Missense_Mutation hit 1	TP53/CEBPA
-AML-128	DNMT3A	Frame_Shift_Del	AML-128 DNMT3A Frame_Shift_Del hit 2	TP53/CEBPA
-AML-128	IDH1	Missense_Mutation	AML-128 IDH1 Missense_Mutation hit 1	TP53/CEBPA
-AML-129	NPM1	In_Frame_Del	AML-129 NPM1 In_Frame_Del hit 1	TP53/CEBPA
-AML-129	IDH2	Missense_Mutation	AML-129 IDH2 Missense_Mutation hit 1	TP53/CEBPA
-AML-129	IDH1	Nonsense_Mutation	AML-129 IDH1 Nonsense_Mutation hit 1	TP53/CEBPA
-AML-130	IDH2	Missense_Mutation	AML-130 IDH2 Missense_Mutation hit 1	TP53/CEBPA
-AML-132	NPM1	Missense_Mutation	AML-132 NPM1 Missense_Mutation hit 1	TP53/CEBPA
-AML-133	FLT3	Missense_Mutation	AML-133 FLT3 Missense_Mutation hit 1	TP53/CEBPA
-AML-133	FLT3	Missense_Mutation	AML-133 FLT3 Missense_Mutation hit 2	TP53/CEBPA
-AML-134	RUNX1	Nonsense_Mutation	AML-134 RUNX1 Nonsense_Mutation hit 1	TP53/CEBPA
-AML-134	NRAS	Missense_Mutation	AML-134 NRAS Missense_Mutation hit 1	TP53/CEBPA
-AML-135	FLT3	Nonsense_Mutation	AML-135 FLT3 Nonsense_Mutation hit 1	TP53/CEBPA
-AML-135	DNMT3A	In_Frame_Ins	AML-135 DNMT3A In_Frame_Ins hit 1	TP53/CEBPA
+TCGA-AB-2988	ABCA10	Splice_Site	ABCA10 Splice_Site p.K960R	tcga-laml
+TCGA-AB-2869	ABCA4	Missense_Mutation	ABCA4 Missense_Mutation p.R1517H	tcga-laml
+TCGA-AB-3009	ABCB11	Missense_Mutation	ABCB11 Missense_Mutation p.A1283V	tcga-laml
+TCGA-AB-2887	ABCC3	Missense_Mutation	ABCC3 Missense_Mutation p.P1271S	tcga-laml
+TCGA-AB-2920	ABCF1	Missense_Mutation	ABCF1 Missense_Mutation p.G658S	tcga-laml
+TCGA-AB-2934	ABCG4	Missense_Mutation	ABCG4 Missense_Mutation p.Y567C	tcga-laml
+TCGA-AB-2905	ABCG8	Missense_Mutation	ABCG8 Missense_Mutation p.M208I	tcga-laml
+TCGA-AB-2999	ABL1	Missense_Mutation	ABL1 Missense_Mutation p.P918L	tcga-laml
+TCGA-AB-2950	ACOXL	Missense_Mutation	ACOXL Missense_Mutation p.A46V	tcga-laml
+TCGA-AB-2923	ACPL2	Missense_Mutation	ACPL2 Missense_Mutation p.Y184D	tcga-laml
+TCGA-AB-2847	ACSM2A	Splice_Site	ACSM2A Splice_Site p.G247D	tcga-laml
+TCGA-AB-3009	ACSS3	Missense_Mutation	ACSS3 Missense_Mutation p.A266V	tcga-laml
+TCGA-AB-2931	ACTBL2	Missense_Mutation	ACTBL2 Missense_Mutation p.S266P	tcga-laml
+TCGA-AB-2920	ACTL7A	Missense_Mutation	ACTL7A Missense_Mutation p.G426R	tcga-laml
+TCGA-AB-2973	ACVR2B	Missense_Mutation	ACVR2B Missense_Mutation p.T137M	tcga-laml
+TCGA-AB-2854	ADAM11	Missense_Mutation	ADAM11 Missense_Mutation p.T717K	tcga-laml
+TCGA-AB-2906	ADAM11	Missense_Mutation	ADAM11 Missense_Mutation p.R72C	tcga-laml
+TCGA-AB-2894	ADAMTS1	Missense_Mutation	ADAMTS1 Missense_Mutation p.R330W	tcga-laml
+TCGA-AB-2945	ADAMTS12	Missense_Mutation	ADAMTS12 Missense_Mutation p.R597H	tcga-laml
+TCGA-AB-2847	ADAMTS16	Missense_Mutation	ADAMTS16 Missense_Mutation p.G770E	tcga-laml
+TCGA-AB-2913	ADAMTS17	Splice_Site	ADAMTS17 Splice_Site p.R864W	tcga-laml
+TCGA-AB-2996	ADAMTSL1	Missense_Mutation	ADAMTSL1 Missense_Mutation p.G269V	tcga-laml
+TCGA-AB-2952	ADCY10	Missense_Mutation	ADCY10 Missense_Mutation p.R66S	tcga-laml
+TCGA-AB-2805	ADCY3	Missense_Mutation	ADCY3 Missense_Mutation p.P797S	tcga-laml
+TCGA-AB-2833	ADCY5	Missense_Mutation	ADCY5 Missense_Mutation p.A417V	tcga-laml
+TCGA-AB-2890	ADNP	Missense_Mutation	ADNP Missense_Mutation p.K716Q	tcga-laml
+TCGA-AB-2911	ADRBK1	Splice_Site	ADRBK1 Splice_Site 	tcga-laml
+TCGA-AB-2912	ADSS	Splice_Site	ADSS Splice_Site 	tcga-laml
+TCGA-AB-3001	AFF2	Splice_Site	AFF2 Splice_Site p.R362Q	tcga-laml
+TCGA-AB-2910	AFF4	Missense_Mutation	AFF4 Missense_Mutation p.K781Q	tcga-laml
+TCGA-AB-2901	AGBL2	Missense_Mutation	AGBL2 Missense_Mutation p.D402Y	tcga-laml
+TCGA-AB-2822	AGXT2	Missense_Mutation	AGXT2 Missense_Mutation p.T139N	tcga-laml
+TCGA-AB-2807	AKAP12	Missense_Mutation	AKAP12 Missense_Mutation p.V1406I	tcga-laml
+TCGA-AB-2997	AKAP13	Frame_Shift_Del	AKAP13 Frame_Shift_Del p.KIM2014fs	tcga-laml
+TCGA-AB-2926	AKAP5	Missense_Mutation	AKAP5 Missense_Mutation p.E102K	tcga-laml
+TCGA-AB-2897	AKD1	Missense_Mutation	AKD1 Missense_Mutation p.H1895Y	tcga-laml
+TCGA-AB-2927	AKR7A2	Missense_Mutation	AKR7A2 Missense_Mutation p.R297P	tcga-laml
+TCGA-AB-2929	ALDH1A3	Missense_Mutation	ALDH1A3 Missense_Mutation p.R98W	tcga-laml
+TCGA-AB-2899	ALG13	Missense_Mutation	ALG13 Missense_Mutation p.P1087L	tcga-laml
+TCGA-AB-2882	ALG6	Missense_Mutation	ALG6 Missense_Mutation p.G189R	tcga-laml
+TCGA-AB-2805	ALMS1	Missense_Mutation	ALMS1 Missense_Mutation p.L3188F	tcga-laml
+TCGA-AB-2807	ALPK3	Missense_Mutation	ALPK3 Missense_Mutation p.A1320V	tcga-laml
+TCGA-AB-2907	ALS2CR11	Missense_Mutation	ALS2CR11 Missense_Mutation p.V442M	tcga-laml
+TCGA-AB-2992	AMOT	Missense_Mutation	AMOT Missense_Mutation p.S442T	tcga-laml
+TCGA-AB-2988	ANG	Missense_Mutation	ANG Missense_Mutation p.V7I	tcga-laml
+TCGA-AB-2853	ANK2	Missense_Mutation	ANK2 Missense_Mutation p.T1113N	tcga-laml
+TCGA-AB-3009	ANK3	Splice_Site	ANK3 Splice_Site 	tcga-laml
+TCGA-AB-2900	ANKRD12	Missense_Mutation	ANKRD12 Missense_Mutation p.K1134R	tcga-laml
+TCGA-AB-2976	ANKRD13A	Missense_Mutation	ANKRD13A Missense_Mutation p.V478M	tcga-laml
+TCGA-AB-2990	ANKRD24	Nonsense_Mutation	ANKRD24 Nonsense_Mutation p.R7*	tcga-laml
+TCGA-AB-2984	ANKRD26	Missense_Mutation	ANKRD26 Missense_Mutation p.K1300N	tcga-laml
+TCGA-AB-2802	ANKRD30A	Missense_Mutation	ANKRD30A Missense_Mutation p.A649V	tcga-laml
+TCGA-AB-2838	ANO2	Missense_Mutation	ANO2 Missense_Mutation p.G967C	tcga-laml
+TCGA-AB-2935	ANO3	Missense_Mutation	ANO3 Missense_Mutation p.G728A	tcga-laml
+TCGA-AB-3009	AP1G2	Missense_Mutation	AP1G2 Missense_Mutation p.R346Q	tcga-laml
+TCGA-AB-2966	AP1M1	Missense_Mutation	AP1M1 Missense_Mutation p.S192R	tcga-laml
+TCGA-AB-2817	AP3S2	Missense_Mutation	AP3S2 Missense_Mutation p.H112R	tcga-laml
+TCGA-AB-2921	APOB	Missense_Mutation	APOB Missense_Mutation p.D1432N	tcga-laml
+TCGA-AB-2959	APOB	Missense_Mutation	APOB Missense_Mutation p.V1448I	tcga-laml
+TCGA-AB-2959	AQP5	Missense_Mutation	AQP5 Missense_Mutation p.L163P	tcga-laml
+TCGA-AB-2846	ARAP2	Missense_Mutation	ARAP2 Missense_Mutation p.Y934H	tcga-laml
+TCGA-AB-2930	ARAP2	Splice_Site	ARAP2 Splice_Site 	tcga-laml
+TCGA-AB-3009	ARC	Missense_Mutation	ARC Missense_Mutation p.W253C	tcga-laml
+TCGA-AB-2888	ARHGAP18	Frame_Shift_Del	ARHGAP18 Frame_Shift_Del p.KE244fs	tcga-laml
+TCGA-AB-2994	ARHGAP39	Missense_Mutation	ARHGAP39 Missense_Mutation p.Q526E	tcga-laml
+TCGA-AB-2964	ARHGAP5	Missense_Mutation	ARHGAP5 Missense_Mutation p.V205M	tcga-laml
+TCGA-AB-2920	ARHGEF1	Missense_Mutation	ARHGEF1 Missense_Mutation p.R816K	tcga-laml
+TCGA-AB-2915	ARHGEF10L	Splice_Site	ARHGEF10L Splice_Site p.V315M	tcga-laml
+TCGA-AB-2838	ARHGEF11	Missense_Mutation	ARHGEF11 Missense_Mutation p.R65C	tcga-laml
+TCGA-AB-2828	ARHGEF19	Splice_Site	ARHGEF19 Splice_Site p.G751S	tcga-laml
+TCGA-AB-2861	ARHGEF5	Missense_Mutation	ARHGEF5 Missense_Mutation p.R866Q	tcga-laml
+TCGA-AB-2950	ARHGEF6	Frame_Shift_Del	ARHGEF6 Frame_Shift_Del p.E391fs	tcga-laml
+TCGA-AB-2908	ARID1A	Missense_Mutation	ARID1A Missense_Mutation p.R1658Q	tcga-laml
+TCGA-AB-2991	ARID2	Nonsense_Mutation	ARID2 Nonsense_Mutation p.Q1637*	tcga-laml
+TCGA-AB-2922	ARID4B	Missense_Mutation	ARID4B Missense_Mutation p.D923V	tcga-laml
+TCGA-AB-2916	ARL3	Missense_Mutation	ARL3 Missense_Mutation p.D96E	tcga-laml
+TCGA-AB-2964	ARSF	Missense_Mutation	ARSF Missense_Mutation p.V381I	tcga-laml
+TCGA-AB-2923	ASB11	Missense_Mutation	ASB11 Missense_Mutation p.R256C	tcga-laml
+TCGA-AB-2888	ASB15	Missense_Mutation	ASB15 Missense_Mutation p.A353V	tcga-laml
+TCGA-AB-2864	ASB4	Splice_Site	ASB4 Splice_Site 	tcga-laml
+TCGA-AB-2972	ASTL	Missense_Mutation	ASTL Missense_Mutation p.L62F	tcga-laml
+TCGA-AB-2807	ASXL1	Frame_Shift_Del	ASXL1 Frame_Shift_Del p.G738fs	tcga-laml
+TCGA-AB-2821	ASXL1	Nonsense_Mutation	ASXL1 Nonsense_Mutation p.Q733*	tcga-laml
+TCGA-AB-2864	ASXL1	Frame_Shift_Ins	ASXL1 Frame_Shift_Ins p.-920fs	tcga-laml
+TCGA-AB-2907	ASXL1	Nonsense_Mutation	ASXL1 Nonsense_Mutation p.R1415*	tcga-laml
+TCGA-AB-2927	ASXL1	Splice_Site	ASXL1 Splice_Site 	tcga-laml
+TCGA-AB-2898	ASXL2	Frame_Shift_Ins	ASXL2 Frame_Shift_Ins p.A658fs	tcga-laml
+TCGA-AB-2885	ASXL3	Missense_Mutation	ASXL3 Missense_Mutation p.R335W	tcga-laml
+TCGA-AB-2910	ATF7IP	Frame_Shift_Del	ATF7IP Frame_Shift_Del p.TN936fs	tcga-laml
+TCGA-AB-2821	ATG16L1	Missense_Mutation	ATG16L1 Missense_Mutation p.L558Q	tcga-laml
+TCGA-AB-2870	ATG4C	Missense_Mutation	ATG4C Missense_Mutation p.D354Y	tcga-laml
+TCGA-AB-2869	ATP10B	Missense_Mutation	ATP10B Missense_Mutation p.Y1181H	tcga-laml
+TCGA-AB-2895	ATP10B	Missense_Mutation	ATP10B Missense_Mutation p.K139R	tcga-laml
+TCGA-AB-2814	ATP11B	Missense_Mutation	ATP11B Missense_Mutation p.V404M	tcga-laml
+TCGA-AB-2864	ATP13A5	Missense_Mutation	ATP13A5 Missense_Mutation p.A824G	tcga-laml
+TCGA-AB-2972	ATP1B4	Missense_Mutation	ATP1B4 Missense_Mutation p.F185S	tcga-laml
+TCGA-AB-2804	ATP2A2	Missense_Mutation	ATP2A2 Missense_Mutation p.T242I	tcga-laml
+TCGA-AB-2913	ATP2B2	Missense_Mutation	ATP2B2 Missense_Mutation p.T900M	tcga-laml
+TCGA-AB-2910	ATP2B3	Missense_Mutation	ATP2B3 Missense_Mutation p.V429F	tcga-laml
+TCGA-AB-2898	ATP2C1	Missense_Mutation	ATP2C1 Missense_Mutation p.V703I	tcga-laml
+TCGA-AB-2978	ATP6AP2	Missense_Mutation	ATP6AP2 Missense_Mutation p.R155C	tcga-laml
+TCGA-AB-2943	ATP6V1C1	Missense_Mutation	ATP6V1C1 Missense_Mutation p.W197C	tcga-laml
+TCGA-AB-3005	ATP6V1G3	Missense_Mutation	ATP6V1G3 Missense_Mutation p.A14V	tcga-laml
+TCGA-AB-2889	ATRNL1	Missense_Mutation	ATRNL1 Missense_Mutation p.R1277H	tcga-laml
+TCGA-AB-2827	ATXN7L1	Missense_Mutation	ATXN7L1 Missense_Mutation p.E352D	tcga-laml
+TCGA-AB-2906	AURKB	Missense_Mutation	AURKB Missense_Mutation p.R147W	tcga-laml
+TCGA-AB-2874	AURKC	Missense_Mutation	AURKC Missense_Mutation p.R142C	tcga-laml
+TCGA-AB-2950	B3GALT5	Missense_Mutation	B3GALT5 Missense_Mutation p.V236I	tcga-laml
+TCGA-AB-2956	B4GALNT3	Missense_Mutation	B4GALNT3 Missense_Mutation p.T462I	tcga-laml
+TCGA-AB-2988	BAAT	Missense_Mutation	BAAT Missense_Mutation p.T376M	tcga-laml
+TCGA-AB-3009	BAI1	Missense_Mutation	BAI1 Missense_Mutation p.T1542M	tcga-laml
+TCGA-AB-2917	BAIAP2L1	Missense_Mutation	BAIAP2L1 Missense_Mutation p.E373K	tcga-laml
+TCGA-AB-2813	BBS12	Missense_Mutation	BBS12 Missense_Mutation p.Y524C	tcga-laml
+TCGA-AB-2912	BCAN	Missense_Mutation	BCAN Missense_Mutation p.R167C	tcga-laml
+TCGA-AB-2882	BCHE	Frame_Shift_Del	BCHE Frame_Shift_Del p.L116fs	tcga-laml
+TCGA-AB-2924	BCMO1	Missense_Mutation	BCMO1 Missense_Mutation p.Y69D	tcga-laml
+TCGA-AB-2968	BCOR	Frame_Shift_Ins	BCOR Frame_Shift_Ins p.K839fs	tcga-laml
+TCGA-AB-2970	BCOR	Frame_Shift_Del	BCOR Frame_Shift_Del p.L247fs	tcga-laml
+TCGA-AB-2814	BCORL1	Frame_Shift_Ins	BCORL1 Frame_Shift_Ins p.T597fs	tcga-laml
+TCGA-AB-2963	BECN1	Missense_Mutation	BECN1 Missense_Mutation p.Q181R	tcga-laml
+TCGA-AB-2905	BICD1	Missense_Mutation	BICD1 Missense_Mutation p.A964T	tcga-laml
+TCGA-AB-2805	BLZF1	Missense_Mutation	BLZF1 Missense_Mutation p.G38R	tcga-laml
+TCGA-AB-2925	BMP10	Missense_Mutation	BMP10 Missense_Mutation p.F411Y	tcga-laml
+TCGA-AB-2971	BMP5	Nonsense_Mutation	BMP5 Nonsense_Mutation p.R321*	tcga-laml
+TCGA-AB-2904	BMP6	Missense_Mutation	BMP6 Missense_Mutation p.V250M	tcga-laml
+TCGA-AB-2875	BMPER	Missense_Mutation	BMPER Missense_Mutation p.R17S	tcga-laml
+TCGA-AB-2985	BMPER	Missense_Mutation	BMPER Missense_Mutation p.H617P	tcga-laml
+TCGA-AB-2861	BNC2	Missense_Mutation	BNC2 Missense_Mutation p.R486H	tcga-laml
+TCGA-AB-2821	BOD1L	Missense_Mutation	BOD1L Missense_Mutation p.K384R	tcga-laml
+TCGA-AB-2968	BPTF	Missense_Mutation	BPTF Missense_Mutation p.V1454G	tcga-laml
+TCGA-AB-2929	BRCC3	Nonsense_Mutation	BRCC3 Nonsense_Mutation p.R81*	tcga-laml
+TCGA-AB-2888	BRMS1	Nonsense_Mutation	BRMS1 Nonsense_Mutation p.R82*	tcga-laml
+TCGA-AB-3009	BRPF1	Missense_Mutation	BRPF1 Missense_Mutation p.V981A	tcga-laml
+TCGA-AB-2876	BRS3	Missense_Mutation	BRS3 Missense_Mutation p.R316W	tcga-laml
+TCGA-AB-2887	BRWD3	Missense_Mutation	BRWD3 Missense_Mutation p.N373S	tcga-laml
+TCGA-AB-2885	BSN	Missense_Mutation	BSN Missense_Mutation p.A870V	tcga-laml
+TCGA-AB-2891	BSN	Missense_Mutation	BSN Missense_Mutation p.Q3887R	tcga-laml
+TCGA-AB-2861	BTBD16	Splice_Site	BTBD16 Splice_Site p.T6M	tcga-laml
+TCGA-AB-2916	BTD	Missense_Mutation	BTD Missense_Mutation p.D355N	tcga-laml
+TCGA-AB-2851	BUB1	Missense_Mutation	BUB1 Missense_Mutation p.A358V	tcga-laml
+TCGA-AB-2854	BUB3	Missense_Mutation	BUB3 Missense_Mutation p.R202L	tcga-laml
+TCGA-AB-2972	C10orf118	Missense_Mutation	C10orf118 Missense_Mutation p.S566R	tcga-laml
+TCGA-AB-2945	C10orf120	Missense_Mutation	C10orf120 Missense_Mutation p.A330P	tcga-laml
+TCGA-AB-2830	C10orf18	Missense_Mutation	C10orf18 Missense_Mutation p.R208H	tcga-laml
+TCGA-AB-2821	C10orf28	Missense_Mutation	C10orf28 Missense_Mutation p.G275D	tcga-laml
+TCGA-AB-2831	C10orf28	Missense_Mutation	C10orf28 Missense_Mutation p.G417R	tcga-laml
+TCGA-AB-2985	C10orf76	Missense_Mutation	C10orf76 Missense_Mutation p.Y481N	tcga-laml
+TCGA-AB-2939	C11orf41	Missense_Mutation	C11orf41 Missense_Mutation p.Q916K	tcga-laml
+TCGA-AB-2891	C11orf70	Missense_Mutation	C11orf70 Missense_Mutation p.G262D	tcga-laml
+TCGA-AB-2828	C12orf11	Nonsense_Mutation	C12orf11 Nonsense_Mutation p.G574*	tcga-laml
+TCGA-AB-2858	C12orf63	Splice_Site	C12orf63 Splice_Site p.G2649R	tcga-laml
+TCGA-AB-2977	C13orf18	Missense_Mutation	C13orf18 Missense_Mutation p.A155T	tcga-laml
+TCGA-AB-2839	C15orf57	Missense_Mutation	C15orf57 Missense_Mutation p.V44M	tcga-laml
+TCGA-AB-2952	C15orf60	Missense_Mutation	C15orf60 Missense_Mutation p.A2T	tcga-laml
+TCGA-AB-2901	C16orf57	Missense_Mutation	C16orf57 Missense_Mutation p.A162G	tcga-laml
+TCGA-AB-2828	C19orf46	Missense_Mutation	C19orf46 Missense_Mutation p.T245I	tcga-laml
+TCGA-AB-2984	C19orf62	Splice_Site	C19orf62 Splice_Site 	tcga-laml
+TCGA-AB-2868	C1RL	Missense_Mutation	C1RL Missense_Mutation p.R329H	tcga-laml
+TCGA-AB-2820	C1orf103	Missense_Mutation	C1orf103 Missense_Mutation p.D598H	tcga-laml
+TCGA-AB-2908	C1orf105	Frame_Shift_Del	C1orf105 Frame_Shift_Del p.L77fs	tcga-laml
+TCGA-AB-2905	C1orf168	Missense_Mutation	C1orf168 Missense_Mutation p.V288M	tcga-laml
+TCGA-AB-2859	C1orf183	Missense_Mutation	C1orf183 Missense_Mutation p.V63M	tcga-laml
+TCGA-AB-2939	C1orf51	Missense_Mutation	C1orf51 Missense_Mutation p.P61T	tcga-laml
+TCGA-AB-2937	C2	Missense_Mutation	C2 Missense_Mutation p.T200M	tcga-laml
+TCGA-AB-2802	C20orf24	Missense_Mutation	C20orf24 Missense_Mutation p.H135Y	tcga-laml
+TCGA-AB-2807	C20orf26	Nonsense_Mutation	C20orf26 Nonsense_Mutation p.R283*	tcga-laml
+TCGA-AB-2807	C22orf42	Missense_Mutation	C22orf42 Missense_Mutation p.A37S	tcga-laml
+TCGA-AB-2949	C2orf89	Missense_Mutation	C2orf89 Missense_Mutation p.R122S	tcga-laml
+TCGA-AB-2931	C3	Missense_Mutation	C3 Missense_Mutation p.R710Q	tcga-laml
+TCGA-AB-2915	C3orf67	Splice_Site	C3orf67 Splice_Site p.R621W	tcga-laml
+TCGA-AB-2904	C4BPB	Missense_Mutation	C4BPB Missense_Mutation p.T60I	tcga-laml
+TCGA-AB-2869	C5	Missense_Mutation	C5 Missense_Mutation p.T1363P	tcga-laml
+TCGA-AB-2943	C6orf106	Missense_Mutation	C6orf106 Missense_Mutation p.Y62C	tcga-laml
+TCGA-AB-2864	C6orf118	Missense_Mutation	C6orf118 Missense_Mutation p.R53Q	tcga-laml
+TCGA-AB-2994	C6orf142	Missense_Mutation	C6orf142 Missense_Mutation p.D183N	tcga-laml
+TCGA-AB-2881	C6orf170	Missense_Mutation	C6orf170 Missense_Mutation p.K1039R	tcga-laml
+TCGA-AB-2808	C6orf174	Missense_Mutation	C6orf174 Missense_Mutation p.R745S	tcga-laml
+TCGA-AB-2899	C7	In_Frame_Del	C7 In_Frame_Del p.E800del	tcga-laml
+TCGA-AB-2936	C7orf10	Missense_Mutation	C7orf10 Missense_Mutation p.C165F	tcga-laml
+TCGA-AB-2952	C8orf80	Missense_Mutation	C8orf80 Missense_Mutation p.R250H	tcga-laml
+TCGA-AB-3008	C8orf84	Missense_Mutation	C8orf84 Missense_Mutation p.D88N	tcga-laml
+TCGA-AB-2816	C9orf171	Missense_Mutation	C9orf171 Missense_Mutation p.R294H	tcga-laml
+TCGA-AB-2934	C9orf43	Missense_Mutation	C9orf43 Missense_Mutation p.T181A	tcga-laml
+TCGA-AB-2806	C9orf78	Missense_Mutation	C9orf78 Missense_Mutation p.N270K	tcga-laml
+TCGA-AB-2904	C9orf93	Missense_Mutation	C9orf93 Missense_Mutation p.R799H	tcga-laml
+TCGA-AB-2813	CACNA1B	Missense_Mutation	CACNA1B Missense_Mutation p.R2309H	tcga-laml
+TCGA-AB-2814	CACNA1B	Splice_Site	CACNA1B Splice_Site p.S1237L	tcga-laml
+TCGA-AB-2925	CACNA1B	Missense_Mutation	CACNA1B Missense_Mutation p.G2166C	tcga-laml
+TCGA-AB-2878	CACNA1E	Missense_Mutation	CACNA1E Missense_Mutation p.E1507G	tcga-laml
+TCGA-AB-2964	CACNA1E	Missense_Mutation	CACNA1E Missense_Mutation p.R590W	tcga-laml
+TCGA-AB-3001	CACNA1E	Missense_Mutation	CACNA1E Missense_Mutation p.Q1893E	tcga-laml
+TCGA-AB-3006	CACNA1G	Missense_Mutation	CACNA1G Missense_Mutation p.Y807H	tcga-laml
+TCGA-AB-2803	CACNA1S	Missense_Mutation	CACNA1S Missense_Mutation p.L363F	tcga-laml
+TCGA-AB-2943	CACNA2D3	Nonsense_Mutation	CACNA2D3 Nonsense_Mutation p.Y770*	tcga-laml
+TCGA-AB-2980	CACNA2D3	Missense_Mutation	CACNA2D3 Missense_Mutation p.L806P	tcga-laml
+TCGA-AB-2839	CACNA2D4	Missense_Mutation	CACNA2D4 Missense_Mutation p.A744S	tcga-laml
+TCGA-AB-2865	CACNG2	Missense_Mutation	CACNG2 Missense_Mutation p.V57I	tcga-laml
+TCGA-AB-2990	CADM2	Missense_Mutation	CADM2 Missense_Mutation p.T381M	tcga-laml
+TCGA-AB-3012	CADM2	Missense_Mutation	CADM2 Missense_Mutation p.I373R	tcga-laml
+TCGA-AB-2875	CADM3	Missense_Mutation	CADM3 Missense_Mutation p.R162Q	tcga-laml
+TCGA-AB-2810	CADPS	Missense_Mutation	CADPS Missense_Mutation p.R737Q	tcga-laml
+TCGA-AB-2943	CADPS	Splice_Site	CADPS Splice_Site p.R479Q	tcga-laml
+TCGA-AB-2923	CAGE1	Missense_Mutation	CAGE1 Missense_Mutation p.Q177K	tcga-laml
+TCGA-AB-2872	CALR	Frame_Shift_Ins	CALR Frame_Shift_Ins p.T173fs	tcga-laml
+TCGA-AB-2897	CALR	Splice_Site	CALR Splice_Site 	tcga-laml
+TCGA-AB-2816	CAMK1G	Missense_Mutation	CAMK1G Missense_Mutation p.G378D	tcga-laml
+TCGA-AB-2935	CAMKV	Missense_Mutation	CAMKV Missense_Mutation p.R497K	tcga-laml
+TCGA-AB-2964	CAMTA1	Missense_Mutation	CAMTA1 Missense_Mutation p.G232R	tcga-laml
+TCGA-AB-2895	CAND1	Missense_Mutation	CAND1 Missense_Mutation p.L936V	tcga-laml
+TCGA-AB-2964	CAPN6	Missense_Mutation	CAPN6 Missense_Mutation p.R53H	tcga-laml
+TCGA-AB-2845	CAPRIN2	Nonsense_Mutation	CAPRIN2 Nonsense_Mutation p.W24*	tcga-laml
+TCGA-AB-2945	CARD18	Missense_Mutation	CARD18 Missense_Mutation p.R7H	tcga-laml
+TCGA-AB-2959	CASC5	Missense_Mutation	CASC5 Missense_Mutation p.G1403A	tcga-laml
+TCGA-AB-2849	CASP10	Missense_Mutation	CASP10 Missense_Mutation p.T198K	tcga-laml
+TCGA-AB-2864	CASZ1	Missense_Mutation	CASZ1 Missense_Mutation p.G525S	tcga-laml
+TCGA-AB-2868	CATSPER4	Missense_Mutation	CATSPER4 Missense_Mutation p.P199H	tcga-laml
+TCGA-AB-2817	CBFB	Frame_Shift_Ins	CBFB Frame_Shift_Ins p.F153fs	tcga-laml
+TCGA-AB-2833	CBFB	Nonsense_Mutation	CBFB Nonsense_Mutation p.R78*	tcga-laml
+TCGA-AB-2914	CBL	Splice_Site	CBL Splice_Site 	tcga-laml
+TCGA-AB-2989	CBL	Missense_Mutation	CBL Missense_Mutation p.Q367R	tcga-laml
+TCGA-AB-2922	CBX5	Nonsense_Mutation	CBX5 Nonsense_Mutation p.W41*	tcga-laml
+TCGA-AB-2920	CBX7	Frame_Shift_Ins	CBX7 Frame_Shift_Ins p.-67fs	tcga-laml
+TCGA-AB-2920	CBX7	Frame_Shift_Ins	CBX7 Frame_Shift_Ins p.-65fs	tcga-laml
+TCGA-AB-2803	CC2D2A	Missense_Mutation	CC2D2A Missense_Mutation p.T1114M	tcga-laml
+TCGA-AB-2928	CCBE1	Missense_Mutation	CCBE1 Missense_Mutation p.G358R	tcga-laml
+TCGA-AB-2807	CCDC150	Splice_Site	CCDC150 Splice_Site 	tcga-laml
+TCGA-AB-2959	CCDC24	Missense_Mutation	CCDC24 Missense_Mutation p.A200E	tcga-laml
+TCGA-AB-2906	CCDC57	Missense_Mutation	CCDC57 Missense_Mutation p.P867S	tcga-laml
+TCGA-AB-2874	CCDC60	Missense_Mutation	CCDC60 Missense_Mutation p.A472T	tcga-laml
+TCGA-AB-2959	CCDC67	Missense_Mutation	CCDC67 Missense_Mutation p.R72Q	tcga-laml
+TCGA-AB-2949	CCL11	Missense_Mutation	CCL11 Missense_Mutation p.P76S	tcga-laml
+TCGA-AB-2955	CCL16	Missense_Mutation	CCL16 Missense_Mutation p.T18I	tcga-laml
+TCGA-AB-2923	CCL20	Missense_Mutation	CCL20 Missense_Mutation p.I60N	tcga-laml
+TCGA-AB-2891	CCL21	Missense_Mutation	CCL21 Missense_Mutation p.A2V	tcga-laml
+TCGA-AB-2968	CCNG2	Frame_Shift_Del	CCNG2 Frame_Shift_Del p.F334fs	tcga-laml
+TCGA-AB-2831	CD109	Splice_Site	CD109 Splice_Site p.W987C	tcga-laml
+TCGA-AB-2938	CD320	Missense_Mutation	CD320 Missense_Mutation p.C74S	tcga-laml
+TCGA-AB-2929	CD70	Missense_Mutation	CD70 Missense_Mutation p.R157C	tcga-laml
+TCGA-AB-2843	CD74	Missense_Mutation	CD74 Missense_Mutation p.R10W	tcga-laml
+TCGA-AB-2929	CD74	Missense_Mutation	CD74 Missense_Mutation p.P206S	tcga-laml
+TCGA-AB-2984	CDC42	Missense_Mutation	CDC42 Missense_Mutation p.S30L	tcga-laml
+TCGA-AB-2857	CDH16	Missense_Mutation	CDH16 Missense_Mutation p.R594Q	tcga-laml
+TCGA-AB-2993	CDH24	Nonsense_Mutation	CDH24 Nonsense_Mutation p.Y590*	tcga-laml
+TCGA-AB-2988	CDH4	Missense_Mutation	CDH4 Missense_Mutation p.P127L	tcga-laml
+TCGA-AB-2993	CDHR2	Missense_Mutation	CDHR2 Missense_Mutation p.P1004L	tcga-laml
+TCGA-AB-2805	CDON	Missense_Mutation	CDON Missense_Mutation p.V691M	tcga-laml
+TCGA-AB-2808	CEBPA	In_Frame_Ins	CEBPA In_Frame_Ins p.317_318insM	tcga-laml
+TCGA-AB-2839	CEBPA	Frame_Shift_Del	CEBPA Frame_Shift_Del p.R343fs	tcga-laml
+TCGA-AB-2845	CEBPA	In_Frame_Ins	CEBPA In_Frame_Ins p.310_311TQ>TKQNPQ	tcga-laml
+TCGA-AB-2845	CEBPA	Frame_Shift_Del	CEBPA Frame_Shift_Del p.A44fs	tcga-laml
+TCGA-AB-2845	CEBPA	Missense_Mutation	CEBPA Missense_Mutation p.A44P	tcga-laml
+TCGA-AB-2863	CEBPA	In_Frame_Del	CEBPA In_Frame_Del p.T318del	tcga-laml
+TCGA-AB-2874	CEBPA	Missense_Mutation	CEBPA Missense_Mutation p.R300C	tcga-laml
+TCGA-AB-2880	CEBPA	Frame_Shift_Ins	CEBPA Frame_Shift_Ins p.G110fs	tcga-laml
+TCGA-AB-2900	CEBPA	Frame_Shift_Ins	CEBPA Frame_Shift_Ins p.R286fs	tcga-laml
+TCGA-AB-2940	CEBPA	In_Frame_Ins	CEBPA In_Frame_Ins p.308_309insV	tcga-laml
+TCGA-AB-2940	CEBPA	Frame_Shift_Del	CEBPA Frame_Shift_Del p.P23fs	tcga-laml
+TCGA-AB-2952	CEBPA	Frame_Shift_Del	CEBPA Frame_Shift_Del p.R142fs	tcga-laml
+TCGA-AB-2955	CEBPA	In_Frame_Ins	CEBPA In_Frame_Ins p.305_306insQ	tcga-laml
+TCGA-AB-2955	CEBPA	Frame_Shift_Del	CEBPA Frame_Shift_Del p.P46fs	tcga-laml
+TCGA-AB-2979	CEBPA	In_Frame_Del	CEBPA In_Frame_Del p.307_309NVE>K	tcga-laml
+TCGA-AB-2979	CEBPA	Frame_Shift_Del	CEBPA Frame_Shift_Del p.I68fs	tcga-laml
+TCGA-AB-3000	CEBPA	In_Frame_Ins	CEBPA In_Frame_Ins p.310_311TQ>TWQ	tcga-laml
+TCGA-AB-3000	CEBPA	Nonsense_Mutation	CEBPA Nonsense_Mutation p.E59*	tcga-laml
+TCGA-AB-3008	CEBPA	In_Frame_Ins	CEBPA In_Frame_Ins p.304_305KQ>KLQ	tcga-laml
+TCGA-AB-2900	CECR2	Missense_Mutation	CECR2 Missense_Mutation p.V152I	tcga-laml
+TCGA-AB-3007	CECR2	Missense_Mutation	CECR2 Missense_Mutation p.D789N	tcga-laml
+TCGA-AB-2997	CELSR1	Missense_Mutation	CELSR1 Missense_Mutation p.P2600H	tcga-laml
+TCGA-AB-2810	CELSR3	Missense_Mutation	CELSR3 Missense_Mutation p.N320D	tcga-laml
+TCGA-AB-2864	CENPB	Nonsense_Mutation	CENPB Nonsense_Mutation p.W84*	tcga-laml
+TCGA-AB-2846	CENPF	Missense_Mutation	CENPF Missense_Mutation p.L2299V	tcga-laml
+TCGA-AB-2867	CENPN	Missense_Mutation	CENPN Missense_Mutation p.H185Y	tcga-laml
+TCGA-AB-2984	CEP170	In_Frame_Ins	CEP170 In_Frame_Ins p.176_177insL	tcga-laml
+TCGA-AB-2875	CEP290	Missense_Mutation	CEP290 Missense_Mutation p.T1318I	tcga-laml
+TCGA-AB-2925	CFHR2	Missense_Mutation	CFHR2 Missense_Mutation p.N29K	tcga-laml
+TCGA-AB-2923	CGN	Missense_Mutation	CGN Missense_Mutation p.R919Q	tcga-laml
+TCGA-AB-2878	CHD4	Missense_Mutation	CHD4 Missense_Mutation p.R1173W	tcga-laml
+TCGA-AB-2949	CHD4	Missense_Mutation	CHD4 Missense_Mutation p.R975H	tcga-laml
+TCGA-AB-2922	CHIC2	Missense_Mutation	CHIC2 Missense_Mutation p.R125K	tcga-laml
+TCGA-AB-2983	CHIT1	Missense_Mutation	CHIT1 Missense_Mutation p.R432Q	tcga-laml
+TCGA-AB-2927	CHST6	Missense_Mutation	CHST6 Missense_Mutation p.D190H	tcga-laml
+TCGA-AB-2910	CIC	Missense_Mutation	CIC Missense_Mutation p.G167R	tcga-laml
+TCGA-AB-2910	CKAP4	Missense_Mutation	CKAP4 Missense_Mutation p.R429C	tcga-laml
+TCGA-AB-2886	CLCN1	Missense_Mutation	CLCN1 Missense_Mutation p.E422K	tcga-laml
+TCGA-AB-3000	CLCN6	Missense_Mutation	CLCN6 Missense_Mutation p.Q749H	tcga-laml
+TCGA-AB-2846	CLDN11	Missense_Mutation	CLDN11 Missense_Mutation p.R82H	tcga-laml
+TCGA-AB-2810	CLDN14	Missense_Mutation	CLDN14 Missense_Mutation p.G129S	tcga-laml
+TCGA-AB-2865	CLDN18	Missense_Mutation	CLDN18 Missense_Mutation p.V88F	tcga-laml
+TCGA-AB-2891	CLPX	Missense_Mutation	CLPX Missense_Mutation p.Y198C	tcga-laml
+TCGA-AB-2907	CLVS2	Missense_Mutation	CLVS2 Missense_Mutation p.R311C	tcga-laml
+TCGA-AB-2810	CMYA5	Missense_Mutation	CMYA5 Missense_Mutation p.E1022K	tcga-laml
+TCGA-AB-2817	CMYA5	Missense_Mutation	CMYA5 Missense_Mutation p.P3275S	tcga-laml
+TCGA-AB-2843	CNGA3	Missense_Mutation	CNGA3 Missense_Mutation p.T247M	tcga-laml
+TCGA-AB-2829	CNOT6	Missense_Mutation	CNOT6 Missense_Mutation p.R335L	tcga-laml
+TCGA-AB-2890	CNOT6L	Missense_Mutation	CNOT6L Missense_Mutation p.V419I	tcga-laml
+TCGA-AB-3002	CNTLN	Nonsense_Mutation	CNTLN Nonsense_Mutation p.Q178*	tcga-laml
+TCGA-AB-2812	CNTN5	Missense_Mutation	CNTN5 Missense_Mutation p.E1003A	tcga-laml
+TCGA-AB-2997	CNTN5	Missense_Mutation	CNTN5 Missense_Mutation p.S514F	tcga-laml
+TCGA-AB-2839	CNTN6	Missense_Mutation	CNTN6 Missense_Mutation p.P600T	tcga-laml
+TCGA-AB-2908	CNTNAP4	Missense_Mutation	CNTNAP4 Missense_Mutation p.E661K	tcga-laml
+TCGA-AB-2971	CNTNAP4	Missense_Mutation	CNTNAP4 Missense_Mutation p.V144D	tcga-laml
+TCGA-AB-2886	CNTNAP5	Missense_Mutation	CNTNAP5 Missense_Mutation p.V152F	tcga-laml
+TCGA-AB-2999	COL11A2	Missense_Mutation	COL11A2 Missense_Mutation p.G349D	tcga-laml
+TCGA-AB-2870	COL12A1	Missense_Mutation	COL12A1 Missense_Mutation p.L72F	tcga-laml
+TCGA-AB-2871	COL12A1	Missense_Mutation	COL12A1 Missense_Mutation p.D1339Y	tcga-laml
+TCGA-AB-2917	COL12A1	Splice_Site	COL12A1 Splice_Site p.P2614S	tcga-laml
+TCGA-AB-2931	COL22A1	Missense_Mutation	COL22A1 Missense_Mutation p.A956V	tcga-laml
+TCGA-AB-2857	COL25A1	Splice_Site	COL25A1 Splice_Site 	tcga-laml
+TCGA-AB-3002	COL27A1	Missense_Mutation	COL27A1 Missense_Mutation p.G1243R	tcga-laml
+TCGA-AB-2983	COL2A1	Missense_Mutation	COL2A1 Missense_Mutation p.G504C	tcga-laml
+TCGA-AB-2870	COL5A3	Missense_Mutation	COL5A3 Missense_Mutation p.G346R	tcga-laml
+TCGA-AB-2955	COL7A1	Missense_Mutation	COL7A1 Missense_Mutation p.A2361V	tcga-laml
+TCGA-AB-2906	COL9A1	Missense_Mutation	COL9A1 Missense_Mutation p.S336F	tcga-laml
+TCGA-AB-2950	COPS2	Missense_Mutation	COPS2 Missense_Mutation p.C10G	tcga-laml
+TCGA-AB-2858	CORIN	Missense_Mutation	CORIN Missense_Mutation p.E524K	tcga-laml
+TCGA-AB-2888	CPNE3	Missense_Mutation	CPNE3 Missense_Mutation p.T234A	tcga-laml
+TCGA-AB-2923	CR1	Missense_Mutation	CR1 Missense_Mutation p.V2173M	tcga-laml
+TCGA-AB-2959	CRB1	Missense_Mutation	CRB1 Missense_Mutation p.A483T	tcga-laml
+TCGA-AB-2894	CRISPLD1	Missense_Mutation	CRISPLD1 Missense_Mutation p.R261Q	tcga-laml
+TCGA-AB-2898	CRISPLD1	Missense_Mutation	CRISPLD1 Missense_Mutation p.G371S	tcga-laml
+TCGA-AB-2927	CRISPLD2	Splice_Site	CRISPLD2 Splice_Site 	tcga-laml
+TCGA-AB-2833	CROCC	Missense_Mutation	CROCC Missense_Mutation p.V93M	tcga-laml
+TCGA-AB-2808	CSF3R	Missense_Mutation	CSF3R Missense_Mutation p.T618I	tcga-laml
+TCGA-AB-2905	CSMD1	Frame_Shift_Del	CSMD1 Frame_Shift_Del p.E2060fs	tcga-laml
+TCGA-AB-2916	CSMD1	Missense_Mutation	CSMD1 Missense_Mutation p.D2240E	tcga-laml
+TCGA-AB-2925	CSMD1	Missense_Mutation	CSMD1 Missense_Mutation p.N1467K	tcga-laml
+TCGA-AB-2808	CSMD3	Missense_Mutation	CSMD3 Missense_Mutation p.R1135H	tcga-laml
+TCGA-AB-2857	CSMD3	Missense_Mutation	CSMD3 Missense_Mutation p.G910E	tcga-laml
+TCGA-AB-2904	CSTF2T	Missense_Mutation	CSTF2T Missense_Mutation p.S205Y	tcga-laml
+TCGA-AB-3009	CTCF	Nonsense_Mutation	CTCF Nonsense_Mutation p.R457*	tcga-laml
+TCGA-AB-2808	CTNNA2	Missense_Mutation	CTNNA2 Missense_Mutation p.A141V	tcga-laml
+TCGA-AB-2986	CTSG	Missense_Mutation	CTSG Missense_Mutation p.Q87K	tcga-laml
+TCGA-AB-2838	CUL1	Missense_Mutation	CUL1 Missense_Mutation p.N141S	tcga-laml
+TCGA-AB-2938	CUL1	Missense_Mutation	CUL1 Missense_Mutation p.E241D	tcga-laml
+TCGA-AB-2997	CUL3	Missense_Mutation	CUL3 Missense_Mutation p.K12N	tcga-laml
+TCGA-AB-2891	CUL9	Missense_Mutation	CUL9 Missense_Mutation p.R969H	tcga-laml
+TCGA-AB-2927	CXorf58	Nonsense_Mutation	CXorf58 Nonsense_Mutation p.R235*	tcga-laml
+TCGA-AB-2905	CYBB	Missense_Mutation	CYBB Missense_Mutation p.R446Q	tcga-laml
+TCGA-AB-3012	CYLC1	Missense_Mutation	CYLC1 Missense_Mutation p.T330K	tcga-laml
+TCGA-AB-2817	CYP26A1	Missense_Mutation	CYP26A1 Missense_Mutation p.V322I	tcga-laml
+TCGA-AB-2930	CYP4A22	Missense_Mutation	CYP4A22 Missense_Mutation p.R505H	tcga-laml
+TCGA-AB-2890	CYP4F12	Missense_Mutation	CYP4F12 Missense_Mutation p.R272W	tcga-laml
+TCGA-AB-2887	CYP4F2	Missense_Mutation	CYP4F2 Missense_Mutation p.R276H	tcga-laml
+TCGA-AB-3009	DAAM2	Missense_Mutation	DAAM2 Missense_Mutation p.R990C	tcga-laml
+TCGA-AB-2820	DAB2	Frame_Shift_Del	DAB2 Frame_Shift_Del p.G344fs	tcga-laml
+TCGA-AB-2841	DAG1	Missense_Mutation	DAG1 Missense_Mutation p.S134N	tcga-laml
+TCGA-AB-2963	DAOA	Frame_Shift_Del	DAOA Frame_Shift_Del p.D139fs	tcga-laml
+TCGA-AB-3009	DAXX	Missense_Mutation	DAXX Missense_Mutation p.R371W	tcga-laml
+TCGA-AB-3002	DAZAP2	Missense_Mutation	DAZAP2 Missense_Mutation p.N146S	tcga-laml
+TCGA-AB-2917	DBX2	Missense_Mutation	DBX2 Missense_Mutation p.R267W	tcga-laml
+TCGA-AB-2810	DCAF6	Missense_Mutation	DCAF6 Missense_Mutation p.Y219H	tcga-laml
+TCGA-AB-2895	DCAF8	Missense_Mutation	DCAF8 Missense_Mutation p.S72P	tcga-laml
+TCGA-AB-2860	DCHS2	Missense_Mutation	DCHS2 Missense_Mutation p.S675C	tcga-laml
+TCGA-AB-2807	DCLK1	Missense_Mutation	DCLK1 Missense_Mutation p.R292H	tcga-laml
+TCGA-AB-3002	DCLK1	Missense_Mutation	DCLK1 Missense_Mutation p.R326C	tcga-laml
+TCGA-AB-2980	DCT	Missense_Mutation	DCT Missense_Mutation p.A144T	tcga-laml
+TCGA-AB-2849	DCTD	Missense_Mutation	DCTD Missense_Mutation p.S5F	tcga-laml
+TCGA-AB-2999	DDR2	Missense_Mutation	DDR2 Missense_Mutation p.M291I	tcga-laml
+TCGA-AB-3006	DDR2	Missense_Mutation	DDR2 Missense_Mutation p.G222R	tcga-laml
+TCGA-AB-3002	DDX1	Splice_Site	DDX1 Splice_Site 	tcga-laml
+TCGA-AB-2926	DDX17	Splice_Site	DDX17 Splice_Site 	tcga-laml
+TCGA-AB-2888	DDX23	Missense_Mutation	DDX23 Missense_Mutation p.R54Q	tcga-laml
+TCGA-AB-2995	DDX41	Missense_Mutation	DDX41 Missense_Mutation p.R525H	tcga-laml
+TCGA-AB-3002	DDX41	Splice_Site	DDX41 Splice_Site 	tcga-laml
+TCGA-AB-2926	DDX53	Missense_Mutation	DDX53 Missense_Mutation p.P41L	tcga-laml
+TCGA-AB-2968	DDX60	Missense_Mutation	DDX60 Missense_Mutation p.I1676V	tcga-laml
+TCGA-AB-2895	DHX32	Missense_Mutation	DHX32 Missense_Mutation p.V81A	tcga-laml
+TCGA-AB-3012	DHX34	Missense_Mutation	DHX34 Missense_Mutation p.V648I	tcga-laml
+TCGA-AB-2917	DIAPH2	Missense_Mutation	DIAPH2 Missense_Mutation p.R1075W	tcga-laml
+TCGA-AB-2924	DIO2	Nonsense_Mutation	DIO2 Nonsense_Mutation p.W28*	tcga-laml
+TCGA-AB-2865	DIS3	Missense_Mutation	DIS3 Missense_Mutation p.R514K	tcga-laml
+TCGA-AB-2927	DIS3	Missense_Mutation	DIS3 Missense_Mutation p.M667V	tcga-laml
+TCGA-AB-2997	DIS3	Missense_Mutation	DIS3 Missense_Mutation p.D488N	tcga-laml
+TCGA-AB-2914	DLC1	Missense_Mutation	DLC1 Missense_Mutation p.R54C	tcga-laml
+TCGA-AB-2938	DLC1	Missense_Mutation	DLC1 Missense_Mutation p.R1086C	tcga-laml
+TCGA-AB-2813	DLD	Missense_Mutation	DLD Missense_Mutation p.D254N	tcga-laml
+TCGA-AB-2989	DLX3	Missense_Mutation	DLX3 Missense_Mutation p.N282K	tcga-laml
+TCGA-AB-2810	DMD	Missense_Mutation	DMD Missense_Mutation p.P2377L	tcga-laml
+TCGA-AB-2924	DMRT3	Missense_Mutation	DMRT3 Missense_Mutation p.T339R	tcga-laml
+TCGA-AB-2886	DNAH11	Missense_Mutation	DNAH11 Missense_Mutation p.M2834I	tcga-laml
+TCGA-AB-2972	DNAH3	Missense_Mutation	DNAH3 Missense_Mutation p.D2615E	tcga-laml
+TCGA-AB-2972	DNAH5	Missense_Mutation	DNAH5 Missense_Mutation p.Q786K	tcga-laml
+TCGA-AB-2937	DNAH9	Missense_Mutation	DNAH9 Missense_Mutation p.R771C	tcga-laml
+TCGA-AB-2978	DNAH9	Missense_Mutation	DNAH9 Missense_Mutation p.E1959K	tcga-laml
+TCGA-AB-2997	DNAH9	Missense_Mutation	DNAH9 Missense_Mutation p.L1016R	tcga-laml
+TCGA-AB-2858	DNAI1	Missense_Mutation	DNAI1 Missense_Mutation p.F532L	tcga-laml
+TCGA-AB-2955	DNAJC7	Missense_Mutation	DNAJC7 Missense_Mutation p.G457D	tcga-laml
+TCGA-AB-3009	DNM2	Frame_Shift_Ins	DNM2 Frame_Shift_Ins p.T471fs	tcga-laml
+TCGA-AB-2833	DNMT1	Missense_Mutation	DNMT1 Missense_Mutation p.I167F	tcga-laml
+TCGA-AB-2802	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882C	tcga-laml
+TCGA-AB-2809	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2816	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882C	tcga-laml
+TCGA-AB-2818	DNMT3A	Splice_Site	DNMT3A Splice_Site p.R803S	tcga-laml
+TCGA-AB-2822	DNMT3A	Splice_Site	DNMT3A Splice_Site 	tcga-laml
+TCGA-AB-2824	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R736H	tcga-laml
+TCGA-AB-2825	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2830	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882P	tcga-laml
+TCGA-AB-2833	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2839	DNMT3A	Nonsense_Mutation	DNMT3A Nonsense_Mutation p.Q515*	tcga-laml
+TCGA-AB-2851	DNMT3A	Frame_Shift_Del	DNMT3A Frame_Shift_Del p.Q615fs	tcga-laml
+TCGA-AB-2853	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2859	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2861	DNMT3A	Nonsense_Mutation	DNMT3A Nonsense_Mutation p.Q615*	tcga-laml
+TCGA-AB-2863	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2864	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2867	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.K829R	tcga-laml
+TCGA-AB-2867	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.K468R	tcga-laml
+TCGA-AB-2869	DNMT3A	Nonsense_Mutation	DNMT3A Nonsense_Mutation p.Q485*	tcga-laml
+TCGA-AB-2873	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2884	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2887	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.P718L	tcga-laml
+TCGA-AB-2891	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R729Q	tcga-laml
+TCGA-AB-2891	DNMT3A	Splice_Site	DNMT3A Splice_Site 	tcga-laml
+TCGA-AB-2895	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2896	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2898	DNMT3A	Splice_Site	DNMT3A Splice_Site 	tcga-laml
+TCGA-AB-2898	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R792H	tcga-laml
+TCGA-AB-2908	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882C	tcga-laml
+TCGA-AB-2912	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R729W	tcga-laml
+TCGA-AB-2916	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882C	tcga-laml
+TCGA-AB-2919	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.C497Y	tcga-laml
+TCGA-AB-2925	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2928	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.D781G	tcga-laml
+TCGA-AB-2928	DNMT3A	Nonsense_Mutation	DNMT3A Nonsense_Mutation p.R320*	tcga-laml
+TCGA-AB-2931	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882C	tcga-laml
+TCGA-AB-2934	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R736H	tcga-laml
+TCGA-AB-2934	DNMT3A	Splice_Site	DNMT3A Splice_Site p.G646V	tcga-laml
+TCGA-AB-2938	DNMT3A	Frame_Shift_Del	DNMT3A Frame_Shift_Del p.M315fs	tcga-laml
+TCGA-AB-2945	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2947	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2949	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2955	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2965	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2966	DNMT3A	Frame_Shift_Del	DNMT3A Frame_Shift_Del p.G590fs	tcga-laml
+TCGA-AB-2967	DNMT3A	Nonsense_Mutation	DNMT3A Nonsense_Mutation p.E505*	tcga-laml
+TCGA-AB-2968	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.A741V	tcga-laml
+TCGA-AB-2968	DNMT3A	Splice_Site	DNMT3A Splice_Site p.E477*	tcga-laml
+TCGA-AB-2974	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882C	tcga-laml
+TCGA-AB-2975	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2981	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882C	tcga-laml
+TCGA-AB-2987	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.R882H	tcga-laml
+TCGA-AB-2988	DNMT3A	Missense_Mutation	DNMT3A Missense_Mutation p.F909C	tcga-laml
+TCGA-AB-2993	DNMT3A	Frame_Shift_Del	DNMT3A Frame_Shift_Del p.L723fs	tcga-laml
+TCGA-AB-2882	DNMT3B	Missense_Mutation	DNMT3B Missense_Mutation p.R538C	tcga-laml
+TCGA-AB-2912	DOCK1	Splice_Site	DOCK1 Splice_Site p.F650I	tcga-laml
+TCGA-AB-2857	DOCK10	Missense_Mutation	DOCK10 Missense_Mutation p.C631Y	tcga-laml
+TCGA-AB-2895	DOCK2	Splice_Site	DOCK2 Splice_Site 	tcga-laml
+TCGA-AB-2972	DOCK2	Missense_Mutation	DOCK2 Missense_Mutation p.I417V	tcga-laml
+TCGA-AB-2959	DOCK5	Missense_Mutation	DOCK5 Missense_Mutation p.E84K	tcga-laml
+TCGA-AB-2849	DOCK8	Frame_Shift_Ins	DOCK8 Frame_Shift_Ins p.D1681fs	tcga-laml
+TCGA-AB-2978	DOCK9	Missense_Mutation	DOCK9 Missense_Mutation p.R1918C	tcga-laml
+TCGA-AB-2997	DOK2	Missense_Mutation	DOK2 Missense_Mutation p.R24C	tcga-laml
+TCGA-AB-2898	DOPEY2	Missense_Mutation	DOPEY2 Missense_Mutation p.P542H	tcga-laml
+TCGA-AB-2875	DRD2	Splice_Site	DRD2 Splice_Site p.G380G	tcga-laml
+TCGA-AB-3002	DRD2	Missense_Mutation	DRD2 Missense_Mutation p.S364F	tcga-laml
+TCGA-AB-2819	DSCAM	Missense_Mutation	DSCAM Missense_Mutation p.L765F	tcga-laml
+TCGA-AB-2846	DST	Missense_Mutation	DST Missense_Mutation p.R5372Q	tcga-laml
+TCGA-AB-2923	DST	Missense_Mutation	DST Missense_Mutation p.E2458K	tcga-laml
+TCGA-AB-2839	DUOXA2	Missense_Mutation	DUOXA2 Missense_Mutation p.T83N	tcga-laml
+TCGA-AB-2899	DUSP1	Missense_Mutation	DUSP1 Missense_Mutation p.N351S	tcga-laml
+TCGA-AB-2912	DUSP26	Missense_Mutation	DUSP26 Missense_Mutation p.G115V	tcga-laml
+TCGA-AB-2983	DYNC1H1	Missense_Mutation	DYNC1H1 Missense_Mutation p.R835C	tcga-laml
+TCGA-AB-2882	DYNC2H1	Missense_Mutation	DYNC2H1 Missense_Mutation p.C34G	tcga-laml
+TCGA-AB-2872	DYRK4	Missense_Mutation	DYRK4 Missense_Mutation p.R176C	tcga-laml
+TCGA-AB-2882	DYSF	Missense_Mutation	DYSF Missense_Mutation p.R2020H	tcga-laml
+TCGA-AB-2929	E2F8	Missense_Mutation	E2F8 Missense_Mutation p.F363L	tcga-laml
+TCGA-AB-2971	E2F8	Nonsense_Mutation	E2F8 Nonsense_Mutation p.E597*	tcga-laml
+TCGA-AB-2813	ECM2	Missense_Mutation	ECM2 Missense_Mutation p.G151E	tcga-laml
+TCGA-AB-2938	EDC4	Missense_Mutation	EDC4 Missense_Mutation p.P365S	tcga-laml
+TCGA-AB-2876	EED	Nonsense_Mutation	EED Nonsense_Mutation p.S75*	tcga-laml
+TCGA-AB-3009	EED	Missense_Mutation	EED Missense_Mutation p.L196Q	tcga-laml
+TCGA-AB-2952	EFCAB6	Missense_Mutation	EFCAB6 Missense_Mutation p.L1008M	tcga-laml
+TCGA-AB-2965	EFTUD1	Missense_Mutation	EFTUD1 Missense_Mutation p.N231S	tcga-laml
+TCGA-AB-2963	EGFL8	Missense_Mutation	EGFL8 Missense_Mutation p.R209H	tcga-laml
+TCGA-AB-2890	EGFLAM	Missense_Mutation	EGFLAM Missense_Mutation p.G899R	tcga-laml
+TCGA-AB-2863	EGFR	Missense_Mutation	EGFR Missense_Mutation p.T1141S	tcga-laml
+TCGA-AB-2878	EGFR	Missense_Mutation	EGFR Missense_Mutation p.T638M	tcga-laml
+TCGA-AB-2921	EHD2	Missense_Mutation	EHD2 Missense_Mutation p.R292C	tcga-laml
+TCGA-AB-2983	ELF1	Missense_Mutation	ELF1 Missense_Mutation p.I452T	tcga-laml
+TCGA-AB-2871	ELF4	Missense_Mutation	ELF4 Missense_Mutation p.R267Q	tcga-laml
+TCGA-AB-3005	ELL	Missense_Mutation	ELL Missense_Mutation p.G426S	tcga-laml
+TCGA-AB-2877	ELMOD1	Missense_Mutation	ELMOD1 Missense_Mutation p.M52I	tcga-laml
+TCGA-AB-2964	ELN	Splice_Site	ELN Splice_Site p.A55A	tcga-laml
+TCGA-AB-2987	ENC1	Missense_Mutation	ENC1 Missense_Mutation p.R471S	tcga-laml
+TCGA-AB-2860	ENTPD1	Missense_Mutation	ENTPD1 Missense_Mutation p.D280N	tcga-laml
+TCGA-AB-2892	EPB41L3	Frame_Shift_Ins	EPB41L3 Frame_Shift_Ins p.A653fs	tcga-laml
+TCGA-AB-2990	EPB41L5	Missense_Mutation	EPB41L5 Missense_Mutation p.R378Q	tcga-laml
+TCGA-AB-2900	EPGN	Missense_Mutation	EPGN Missense_Mutation p.A23E	tcga-laml
+TCGA-AB-2891	EPHA10	Missense_Mutation	EPHA10 Missense_Mutation p.I721V	tcga-laml
+TCGA-AB-2845	EPHA2	Missense_Mutation	EPHA2 Missense_Mutation p.A146V	tcga-laml
+TCGA-AB-2943	EPHA3	Missense_Mutation	EPHA3 Missense_Mutation p.V958M	tcga-laml
+TCGA-AB-2963	EPHA8	Missense_Mutation	EPHA8 Missense_Mutation p.G382S	tcga-laml
+TCGA-AB-2906	EPHB1	Nonsense_Mutation	EPHB1 Nonsense_Mutation p.Q459*	tcga-laml
+TCGA-AB-2908	ESCO2	Missense_Mutation	ESCO2 Missense_Mutation p.R258K	tcga-laml
+TCGA-AB-2963	ETF1	Missense_Mutation	ETF1 Missense_Mutation p.F131V	tcga-laml
+TCGA-AB-2874	ETV3	Missense_Mutation	ETV3 Missense_Mutation p.R79K	tcga-laml
+TCGA-AB-2891	ETV6	Splice_Site	ETV6 Splice_Site p.R418G	tcga-laml
+TCGA-AB-3012	ETV6	Frame_Shift_Del	ETV6 Frame_Shift_Del p.YRSPH104fs	tcga-laml
+TCGA-AB-3012	EWSR1	Splice_Site	EWSR1 Splice_Site 	tcga-laml
+TCGA-AB-2872	EXD1	Nonsense_Mutation	EXD1 Nonsense_Mutation p.R239*	tcga-laml
+TCGA-AB-2862	EYA4	Missense_Mutation	EYA4 Missense_Mutation p.N321K	tcga-laml
+TCGA-AB-2817	EZH2	Frame_Shift_Ins	EZH2 Frame_Shift_Ins p.-739fs	tcga-laml
+TCGA-AB-2817	EZH2	Frame_Shift_Ins	EZH2 Frame_Shift_Ins p.I739fs	tcga-laml
+TCGA-AB-2865	EZH2	Splice_Site	EZH2 Splice_Site 	tcga-laml
+TCGA-AB-2887	EZH2	Missense_Mutation	EZH2 Missense_Mutation p.R685H	tcga-laml
+TCGA-AB-3002	EZR	Missense_Mutation	EZR Missense_Mutation p.H554R	tcga-laml
+TCGA-AB-2817	FAM115A	Missense_Mutation	FAM115A Missense_Mutation p.F193S	tcga-laml
+TCGA-AB-2966	FAM123A	Missense_Mutation	FAM123A Missense_Mutation p.I639L	tcga-laml
+TCGA-AB-2807	FAM154B	Missense_Mutation	FAM154B Missense_Mutation p.L97F	tcga-laml
+TCGA-AB-2925	FAM154B	Missense_Mutation	FAM154B Missense_Mutation p.P107S	tcga-laml
+TCGA-AB-2996	FAM171A1	Missense_Mutation	FAM171A1 Missense_Mutation p.A243V	tcga-laml
+TCGA-AB-2957	FAM194A	Missense_Mutation	FAM194A Missense_Mutation p.R544H	tcga-laml
+TCGA-AB-2905	FAM19A4	Missense_Mutation	FAM19A4 Missense_Mutation p.R88Q	tcga-laml
+TCGA-AB-2877	FAM40B	Missense_Mutation	FAM40B Missense_Mutation p.R115W	tcga-laml
+TCGA-AB-2885	FAM40B	Missense_Mutation	FAM40B Missense_Mutation p.C182R	tcga-laml
+TCGA-AB-2939	FAM47A	Missense_Mutation	FAM47A Missense_Mutation p.S108F	tcga-laml
+TCGA-AB-2919	FAM48A	Missense_Mutation	FAM48A Missense_Mutation p.L635V	tcga-laml
+TCGA-AB-2967	FAM57B	Nonsense_Mutation	FAM57B Nonsense_Mutation p.R151*	tcga-laml
+TCGA-AB-2981	FAM57B	Missense_Mutation	FAM57B Missense_Mutation p.R254H	tcga-laml
+TCGA-AB-2817	FAM5C	Missense_Mutation	FAM5C Missense_Mutation p.R530C	tcga-laml
+TCGA-AB-2838	FAM5C	Missense_Mutation	FAM5C Missense_Mutation p.R403C	tcga-laml
+TCGA-AB-2838	FAM5C	Missense_Mutation	FAM5C Missense_Mutation p.R109H	tcga-laml
+TCGA-AB-2965	FAM5C	Missense_Mutation	FAM5C Missense_Mutation p.G487S	tcga-laml
+TCGA-AB-2976	FAM5C	Missense_Mutation	FAM5C Missense_Mutation p.T119S	tcga-laml
+TCGA-AB-2998	FAM5C	Missense_Mutation	FAM5C Missense_Mutation p.R719C	tcga-laml
+TCGA-AB-2814	FAM65A	Missense_Mutation	FAM65A Missense_Mutation p.R968W	tcga-laml
+TCGA-AB-2827	FAM65A	Missense_Mutation	FAM65A Missense_Mutation p.R154W	tcga-laml
+TCGA-AB-2823	FAM90A1	Frame_Shift_Del	FAM90A1 Frame_Shift_Del p.Q21fs	tcga-laml
+TCGA-AB-2891	FANCC	Missense_Mutation	FANCC Missense_Mutation p.E43G	tcga-laml
+TCGA-AB-2972	FANCI	Missense_Mutation	FANCI Missense_Mutation p.S1011T	tcga-laml
+TCGA-AB-2844	FANCM	Missense_Mutation	FANCM Missense_Mutation p.G535S	tcga-laml
+TCGA-AB-2952	FAT1	Missense_Mutation	FAT1 Missense_Mutation p.R1099P	tcga-laml
+TCGA-AB-2821	FAT2	Missense_Mutation	FAT2 Missense_Mutation p.E1561K	tcga-laml
+TCGA-AB-2922	FAT4	Missense_Mutation	FAT4 Missense_Mutation p.G2170E	tcga-laml
+TCGA-AB-2878	FBN1	Missense_Mutation	FBN1 Missense_Mutation p.V764I	tcga-laml
+TCGA-AB-2806	FBXO11	Frame_Shift_Ins	FBXO11 Frame_Shift_Ins p.N811fs	tcga-laml
+TCGA-AB-2818	FBXO30	Missense_Mutation	FBXO30 Missense_Mutation p.R529K	tcga-laml
+TCGA-AB-2828	FCGBP	Missense_Mutation	FCGBP Missense_Mutation p.P3826S	tcga-laml
+TCGA-AB-2874	FCGBP	Missense_Mutation	FCGBP Missense_Mutation p.C3164S	tcga-laml
+TCGA-AB-2923	FCGBP	Missense_Mutation	FCGBP Missense_Mutation p.A3192T	tcga-laml
+TCGA-AB-2810	FCHSD1	Splice_Site	FCHSD1 Splice_Site p.R78R	tcga-laml
+TCGA-AB-2838	FEZF2	Missense_Mutation	FEZF2 Missense_Mutation p.H355L	tcga-laml
+TCGA-AB-2887	FGD6	Missense_Mutation	FGD6 Missense_Mutation p.A394T	tcga-laml
+TCGA-AB-2982	FGL2	Missense_Mutation	FGL2 Missense_Mutation p.V321L	tcga-laml
+TCGA-AB-2808	FILIP1	Nonsense_Mutation	FILIP1 Nonsense_Mutation p.R889*	tcga-laml
+TCGA-AB-2863	FKBP8	Missense_Mutation	FKBP8 Missense_Mutation p.A63V	tcga-laml
+TCGA-AB-2907	FKTN	Splice_Site	FKTN Splice_Site 	tcga-laml
+TCGA-AB-2915	FLG	Missense_Mutation	FLG Missense_Mutation p.R2885W	tcga-laml
+TCGA-AB-2986	FLRT2	Missense_Mutation	FLRT2 Missense_Mutation p.Y518F	tcga-laml
+TCGA-AB-2959	FLT1	Missense_Mutation	FLT1 Missense_Mutation p.M1254T	tcga-laml
+TCGA-AB-2812	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.600_600D>DSSDNEYFYVDFREYEYD	tcga-laml
+TCGA-AB-2814	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835E	tcga-laml
+TCGA-AB-2816	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2818	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2825	FLT3	Splice_Site	FLT3 Splice_Site 	tcga-laml
+TCGA-AB-2830	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.604_605insSPRGGNEYFYVDFREYEYDLKWE	tcga-laml
+TCGA-AB-2834	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835E	tcga-laml
+TCGA-AB-2836	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.595_596insEDNEYFYVDFR	tcga-laml
+TCGA-AB-2840	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.602_603insYEYDLK	tcga-laml
+TCGA-AB-2851	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2853	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.595_596insDYVDFR	tcga-laml
+TCGA-AB-2869	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.601_602insQMGVSKRKFRVWRI*I*S	tcga-laml
+TCGA-AB-2870	FLT3	In_Frame_Del	FLT3 In_Frame_Del p.594_600FREYEYD>Y	tcga-laml
+TCGA-AB-2871	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.598_598E>EMVQVTGSSDNEYFYVDFREYE	tcga-laml
+TCGA-AB-2875	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.597_598insEVAYVDFREY	tcga-laml
+TCGA-AB-2877	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.604_604E>EYDLKWE	tcga-laml
+TCGA-AB-2879	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.601_602insNVDFREYEYDL	tcga-laml
+TCGA-AB-2880	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.601_602insREYEYDL	tcga-laml
+TCGA-AB-2895	FLT3	Splice_Site	FLT3 Splice_Site 	tcga-laml
+TCGA-AB-2900	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2906	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insDFREYEY	tcga-laml
+TCGA-AB-2909	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.595_595R>SRI	tcga-laml
+TCGA-AB-2910	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835H	tcga-laml
+TCGA-AB-2913	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.604_605insFSSDNEYFYVDFREYEYDLKWE	tcga-laml
+TCGA-AB-2915	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.598_599insSGSSDNEYFYVDFREYE	tcga-laml
+TCGA-AB-2918	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.601_602insQRI*I*F	tcga-laml
+TCGA-AB-2921	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.598_599insIR*FQRI*	tcga-laml
+TCGA-AB-2922	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.593_594insSPEDNEYFYVD	tcga-laml
+TCGA-AB-2924	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2925	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insDNEYFYVDFREYEY	tcga-laml
+TCGA-AB-2926	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2928	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D839G	tcga-laml
+TCGA-AB-2930	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.593_594insFGTGSSDNEYFYVD	tcga-laml
+TCGA-AB-2931	FLT3	Splice_Site	FLT3 Splice_Site p.611_612insFQGFYVDFREYEYDLKWEFPRENLE	tcga-laml
+TCGA-AB-2934	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insGTGS*DNEYFYVDFREYEY	tcga-laml
+TCGA-AB-2942	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600YD>YR*FQRI*ID	tcga-laml
+TCGA-AB-2945	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835E	tcga-laml
+TCGA-AB-2947	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2957	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2963	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2965	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.573_574insKPATDGTGDRLLR**VLLR*FQRK	tcga-laml
+TCGA-AB-2970	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600YD>YPAPQIMSTSTLISENMNIAD	tcga-laml
+TCGA-AB-2974	FLT3	Missense_Mutation	FLT3 Missense_Mutation p.D835Y	tcga-laml
+TCGA-AB-2976	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insEYEYEYEY	tcga-laml
+TCGA-AB-2980	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insDFREYEY	tcga-laml
+TCGA-AB-2981	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.582_582T>MAGSSDNEYFYVDFREYES	tcga-laml
+TCGA-AB-2986	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.597_598insAGSSDNEYFYVDFREY	tcga-laml
+TCGA-AB-2993	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.593_594insFSDNEYFYVD	tcga-laml
+TCGA-AB-2994	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insDFREYEY	tcga-laml
+TCGA-AB-2998	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insDFREYEY	tcga-laml
+TCGA-AB-3006	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.597_598insDEYFYVDFREY	tcga-laml
+TCGA-AB-3007	FLT3	In_Frame_Ins	FLT3 In_Frame_Ins p.599_600insDFREYEY	tcga-laml
+TCGA-AB-2863	FN1	Nonsense_Mutation	FN1 Nonsense_Mutation p.E1983*	tcga-laml
+TCGA-AB-3005	FNDC1	Missense_Mutation	FNDC1 Missense_Mutation p.R667W	tcga-laml
+TCGA-AB-2803	FNIP2	Missense_Mutation	FNIP2 Missense_Mutation p.C212Y	tcga-laml
+TCGA-AB-2885	FOXP4	Frame_Shift_Ins	FOXP4 Frame_Shift_Ins p.H306fs	tcga-laml
+TCGA-AB-2984	FREM2	Missense_Mutation	FREM2 Missense_Mutation p.Q2077E	tcga-laml
+TCGA-AB-2854	FRYL	Splice_Site	FRYL Splice_Site 	tcga-laml
+TCGA-AB-3012	FRYL	Missense_Mutation	FRYL Missense_Mutation p.M924V	tcga-laml
+TCGA-AB-2907	FRZB	Missense_Mutation	FRZB Missense_Mutation p.I69V	tcga-laml
+TCGA-AB-2803	FSD2	Missense_Mutation	FSD2 Missense_Mutation p.G135R	tcga-laml
+TCGA-AB-3009	FZD1	Missense_Mutation	FZD1 Missense_Mutation p.R517H	tcga-laml
+TCGA-AB-3007	G6PC	Missense_Mutation	G6PC Missense_Mutation p.L211R	tcga-laml
+TCGA-AB-2925	GABBR1	Missense_Mutation	GABBR1 Missense_Mutation p.A470S	tcga-laml
+TCGA-AB-2956	GABRA4	Missense_Mutation	GABRA4 Missense_Mutation p.R254W	tcga-laml
+TCGA-AB-2891	GABRB1	Missense_Mutation	GABRB1 Missense_Mutation p.S220F	tcga-laml
+TCGA-AB-2900	GABRG2	Missense_Mutation	GABRG2 Missense_Mutation p.V332F	tcga-laml
+TCGA-AB-3009	GABRR1	Missense_Mutation	GABRR1 Missense_Mutation p.A292T	tcga-laml
+TCGA-AB-2821	GALNT2	Splice_Site	GALNT2 Splice_Site p.K521T	tcga-laml
+TCGA-AB-2915	GALNTL4	Missense_Mutation	GALNTL4 Missense_Mutation p.V516M	tcga-laml
+TCGA-AB-2939	GALNTL4	Missense_Mutation	GALNTL4 Missense_Mutation p.R274W	tcga-laml
+TCGA-AB-3012	GANC	Missense_Mutation	GANC Missense_Mutation p.E812K	tcga-laml
+TCGA-AB-2925	GATA2	Missense_Mutation	GATA2 Missense_Mutation p.P385L	tcga-laml
+TCGA-AB-2955	GATA2	Missense_Mutation	GATA2 Missense_Mutation p.P304H	tcga-laml
+TCGA-AB-2976	GATAD2B	Nonsense_Mutation	GATAD2B Nonsense_Mutation p.R179*	tcga-laml
+TCGA-AB-2849	GBP1	Missense_Mutation	GBP1 Missense_Mutation p.L506F	tcga-laml
+TCGA-AB-2858	GBP4	Missense_Mutation	GBP4 Missense_Mutation p.G499R	tcga-laml
+TCGA-AB-2979	GBP4	Missense_Mutation	GBP4 Missense_Mutation p.E526K	tcga-laml
+TCGA-AB-3002	GBP4	Splice_Site	GBP4 Splice_Site p.K121N	tcga-laml
+TCGA-AB-2926	GCLM	Missense_Mutation	GCLM Missense_Mutation p.V116I	tcga-laml
+TCGA-AB-2822	GCM2	Missense_Mutation	GCM2 Missense_Mutation p.R110W	tcga-laml
+TCGA-AB-2807	GCN1L1	Missense_Mutation	GCN1L1 Missense_Mutation p.R2424W	tcga-laml
+TCGA-AB-2907	GDF10	Missense_Mutation	GDF10 Missense_Mutation p.L177F	tcga-laml
+TCGA-AB-2999	GDPD4	Nonsense_Mutation	GDPD4 Nonsense_Mutation p.W121*	tcga-laml
+TCGA-AB-2996	GDPD5	Missense_Mutation	GDPD5 Missense_Mutation p.R602Q	tcga-laml
+TCGA-AB-2846	GEMIN4	Missense_Mutation	GEMIN4 Missense_Mutation p.L607H	tcga-laml
+TCGA-AB-2806	GIGYF2	Frame_Shift_Ins	GIGYF2 Frame_Shift_Ins p.-770fs	tcga-laml
+TCGA-AB-2886	GIGYF2	Frame_Shift_Ins	GIGYF2 Frame_Shift_Ins p.-770fs	tcga-laml
+TCGA-AB-2917	GJB3	Nonsense_Mutation	GJB3 Nonsense_Mutation p.R216*	tcga-laml
+TCGA-AB-2935	GJB3	Missense_Mutation	GJB3 Missense_Mutation p.F143L	tcga-laml
+TCGA-AB-2832	GJB4	Missense_Mutation	GJB4 Missense_Mutation p.R98H	tcga-laml
+TCGA-AB-2952	GLIS3	Missense_Mutation	GLIS3 Missense_Mutation p.L741F	tcga-laml
+TCGA-AB-2986	GLRA1	Missense_Mutation	GLRA1 Missense_Mutation p.T6I	tcga-laml
+TCGA-AB-2881	GNA15	Missense_Mutation	GNA15 Missense_Mutation p.A160V	tcga-laml
+TCGA-AB-3009	GNAI2	Missense_Mutation	GNAI2 Missense_Mutation p.R179H	tcga-laml
+TCGA-AB-2805	GNB1	Missense_Mutation	GNB1 Missense_Mutation p.K57T	tcga-laml
+TCGA-AB-2804	GNRHR	Missense_Mutation	GNRHR Missense_Mutation p.R139C	tcga-laml
+TCGA-AB-2874	GPATCH8	Missense_Mutation	GPATCH8 Missense_Mutation p.T1252I	tcga-laml
+TCGA-AB-2989	GPBP1	Frame_Shift_Ins	GPBP1 Frame_Shift_Ins p.K233fs	tcga-laml
+TCGA-AB-2952	GPR101	Missense_Mutation	GPR101 Missense_Mutation p.A44T	tcga-laml
+TCGA-AB-2849	GPR112	Missense_Mutation	GPR112 Missense_Mutation p.L428H	tcga-laml
+TCGA-AB-2877	GPR112	Missense_Mutation	GPR112 Missense_Mutation p.P1894L	tcga-laml
+TCGA-AB-2937	GPR115	Nonsense_Mutation	GPR115 Nonsense_Mutation p.Q274*	tcga-laml
+TCGA-AB-2807	GPR124	Missense_Mutation	GPR124 Missense_Mutation p.P879L	tcga-laml
+TCGA-AB-2820	GPR125	Missense_Mutation	GPR125 Missense_Mutation p.A1156V	tcga-laml
+TCGA-AB-2921	GPR128	Missense_Mutation	GPR128 Missense_Mutation p.A548T	tcga-laml
+TCGA-AB-2993	GPR183	Missense_Mutation	GPR183 Missense_Mutation p.A338V	tcga-laml
+TCGA-AB-2817	GPR6	Missense_Mutation	GPR6 Missense_Mutation p.V185M	tcga-laml
+TCGA-AB-2977	GPR98	Missense_Mutation	GPR98 Missense_Mutation p.D601N	tcga-laml
+TCGA-AB-2863	GPRC5B	Missense_Mutation	GPRC5B Missense_Mutation p.T275M	tcga-laml
+TCGA-AB-3009	GPRC6A	Missense_Mutation	GPRC6A Missense_Mutation p.D405Y	tcga-laml
+TCGA-AB-2921	GPX2	Missense_Mutation	GPX2 Missense_Mutation p.N84K	tcga-laml
+TCGA-AB-2914	GRB10	Missense_Mutation	GRB10 Missense_Mutation p.T422M	tcga-laml
+TCGA-AB-2874	GREM2	Missense_Mutation	GREM2 Missense_Mutation p.N24K	tcga-laml
+TCGA-AB-2822	GRID1	Missense_Mutation	GRID1 Missense_Mutation p.D742V	tcga-laml
+TCGA-AB-2950	GRID1	Nonsense_Mutation	GRID1 Nonsense_Mutation p.Y690*	tcga-laml
+TCGA-AB-2900	GRIK2	Missense_Mutation	GRIK2 Missense_Mutation p.I41V	tcga-laml
+TCGA-AB-2919	GRIK2	Missense_Mutation	GRIK2 Missense_Mutation p.R874Q	tcga-laml
+TCGA-AB-2813	GRIK3	Missense_Mutation	GRIK3 Missense_Mutation p.R450W	tcga-laml
+TCGA-AB-2858	GRIK4	Missense_Mutation	GRIK4 Missense_Mutation p.G709R	tcga-laml
+TCGA-AB-2952	GRIK4	Missense_Mutation	GRIK4 Missense_Mutation p.R180W	tcga-laml
+TCGA-AB-2950	ARHGAP35	Missense_Mutation	ARHGAP35 Missense_Mutation p.A390V	tcga-laml
+TCGA-AB-2908	GRM3	Missense_Mutation	GRM3 Missense_Mutation p.C513S	tcga-laml
+TCGA-AB-2925	GRM3	Missense_Mutation	GRM3 Missense_Mutation p.A288T	tcga-laml
+TCGA-AB-2974	GRM8	Missense_Mutation	GRM8 Missense_Mutation p.A686V	tcga-laml
+TCGA-AB-3006	GRM8	Missense_Mutation	GRM8 Missense_Mutation p.R729W	tcga-laml
+TCGA-AB-2861	GRWD1	Missense_Mutation	GRWD1 Missense_Mutation p.V311I	tcga-laml
+TCGA-AB-2931	GSTK1	Missense_Mutation	GSTK1 Missense_Mutation p.P5L	tcga-laml
+TCGA-AB-2937	GSTK1	Missense_Mutation	GSTK1 Missense_Mutation p.P3H	tcga-laml
+TCGA-AB-2995	GSTM3	Splice_Site	GSTM3 Splice_Site p.C91F	tcga-laml
+TCGA-AB-2988	GUCA2A	Missense_Mutation	GUCA2A Missense_Mutation p.F56S	tcga-laml
+TCGA-AB-2838	GUCY2C	Missense_Mutation	GUCY2C Missense_Mutation p.N574I	tcga-laml
+TCGA-AB-2895	GUCY2D	Missense_Mutation	GUCY2D Missense_Mutation p.P769S	tcga-laml
+TCGA-AB-2830	GYG2	Missense_Mutation	GYG2 Missense_Mutation p.V389M	tcga-laml
+TCGA-AB-2959	GZMB	Missense_Mutation	GZMB Missense_Mutation p.A151V	tcga-laml
+TCGA-AB-2900	HADH	Missense_Mutation	HADH Missense_Mutation p.G216W	tcga-laml
+TCGA-AB-2966	HCFC1	Missense_Mutation	HCFC1 Missense_Mutation p.P72L	tcga-laml
+TCGA-AB-2863	HCLS1	Missense_Mutation	HCLS1 Missense_Mutation p.V6G	tcga-laml
+TCGA-AB-2806	HCN1	Missense_Mutation	HCN1 Missense_Mutation p.R838S	tcga-laml
+TCGA-AB-2861	HDAC2	Missense_Mutation	HDAC2 Missense_Mutation p.D175N	tcga-laml
+TCGA-AB-2819	HDAC3	Missense_Mutation	HDAC3 Missense_Mutation p.N148S	tcga-laml
+TCGA-AB-2871	HEATR4	Missense_Mutation	HEATR4 Missense_Mutation p.A135T	tcga-laml
+TCGA-AB-2854	HEATR7B2	Missense_Mutation	HEATR7B2 Missense_Mutation p.S208R	tcga-laml
+TCGA-AB-2862	HECW1	Missense_Mutation	HECW1 Missense_Mutation p.R1272Q	tcga-laml
+TCGA-AB-2925	HECW1	Missense_Mutation	HECW1 Missense_Mutation p.S1585L	tcga-laml
+TCGA-AB-2939	HELZ	Missense_Mutation	HELZ Missense_Mutation p.R1907S	tcga-laml
+TCGA-AB-2998	HERC1	Missense_Mutation	HERC1 Missense_Mutation p.G2610E	tcga-laml
+TCGA-AB-2935	HERC2	Missense_Mutation	HERC2 Missense_Mutation p.L3757M	tcga-laml
+TCGA-AB-2927	HIST1H3D	Missense_Mutation	HIST1H3D Missense_Mutation p.K28M	tcga-laml
+TCGA-AB-3001	HIVEP1	Missense_Mutation	HIVEP1 Missense_Mutation p.L834S	tcga-laml
+TCGA-AB-2830	HIVEP2	Missense_Mutation	HIVEP2 Missense_Mutation p.R642Q	tcga-laml
+TCGA-AB-2965	HK1	Missense_Mutation	HK1 Missense_Mutation p.R853H	tcga-laml
+TCGA-AB-2806	HKR1	Missense_Mutation	HKR1 Missense_Mutation p.A602T	tcga-laml
+TCGA-AB-2888	HLA-B	Missense_Mutation	HLA-B Missense_Mutation p.R7G	tcga-laml
+TCGA-AB-2972	HMCN1	Splice_Site	HMCN1 Splice_Site p.K1017R	tcga-laml
+TCGA-AB-2859	HNRNPK	Frame_Shift_Del	HNRNPK Frame_Shift_Del p.L68fs	tcga-laml
+TCGA-AB-2937	HNRNPK	Splice_Site	HNRNPK Splice_Site 	tcga-laml
+TCGA-AB-2937	HNRNPK	Splice_Site	HNRNPK Splice_Site 	tcga-laml
+TCGA-AB-2989	HNRNPUL1	Missense_Mutation	HNRNPUL1 Missense_Mutation p.S301F	tcga-laml
+TCGA-AB-2978	HOOK3	Missense_Mutation	HOOK3 Missense_Mutation p.T351S	tcga-laml
+TCGA-AB-2818	HPS5	Missense_Mutation	HPS5 Missense_Mutation p.T617I	tcga-laml
+TCGA-AB-2913	HSD17B1	Missense_Mutation	HSD17B1 Missense_Mutation p.E202G	tcga-laml
+TCGA-AB-2814	HSD3B1	Missense_Mutation	HSD3B1 Missense_Mutation p.V100I	tcga-laml
+TCGA-AB-2829	HSPA13	Missense_Mutation	HSPA13 Missense_Mutation p.N462S	tcga-laml
+TCGA-AB-2835	HSPA4	Nonsense_Mutation	HSPA4 Nonsense_Mutation p.L586*	tcga-laml
+TCGA-AB-2931	HSPB7	Missense_Mutation	HSPB7 Missense_Mutation p.R153H	tcga-laml
+TCGA-AB-2819	HSPG2	Missense_Mutation	HSPG2 Missense_Mutation p.G2259S	tcga-laml
+TCGA-AB-2999	HTR5A	Missense_Mutation	HTR5A Missense_Mutation p.P95R	tcga-laml
+TCGA-AB-2819	HYAL4	Missense_Mutation	HYAL4 Missense_Mutation p.N253K	tcga-laml
+TCGA-AB-2967	HYDIN	Missense_Mutation	HYDIN Missense_Mutation p.A4328V	tcga-laml
+TCGA-AB-2802	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132H	tcga-laml
+TCGA-AB-2821	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2822	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2863	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2867	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2884	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132H	tcga-laml
+TCGA-AB-2887	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2901	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2919	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2926	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2928	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2945	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132H	tcga-laml
+TCGA-AB-2949	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132H	tcga-laml
+TCGA-AB-2977	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2984	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-2990	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132G	tcga-laml
+TCGA-AB-2992	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132C	tcga-laml
+TCGA-AB-3011	IDH1	Missense_Mutation	IDH1 Missense_Mutation p.R132S	tcga-laml
+TCGA-AB-2805	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2807	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2810	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2821	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R172K	tcga-laml
+TCGA-AB-2826	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2850	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2864	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R172K	tcga-laml
+TCGA-AB-2866	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2874	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2877	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2891	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2898	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R172K	tcga-laml
+TCGA-AB-2907	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2934	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2936	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2948	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2959	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2966	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-2973	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140Q	tcga-laml
+TCGA-AB-3002	IDH2	Missense_Mutation	IDH2 Missense_Mutation p.R140L	tcga-laml
+TCGA-AB-2884	IFI44	Missense_Mutation	IFI44 Missense_Mutation p.H291L	tcga-laml
+TCGA-AB-3005	IGHMBP2	Nonsense_Mutation	IGHMBP2 Nonsense_Mutation p.R788*	tcga-laml
+TCGA-AB-2839	IGSF5	Missense_Mutation	IGSF5 Missense_Mutation p.V216M	tcga-laml
+TCGA-AB-2877	IGSF9B	Missense_Mutation	IGSF9B Missense_Mutation p.R89Q	tcga-laml
+TCGA-AB-2906	IKZF1	Missense_Mutation	IKZF1 Missense_Mutation p.N130S	tcga-laml
+TCGA-AB-2836	IKZF4	Missense_Mutation	IKZF4 Missense_Mutation p.P40L	tcga-laml
+TCGA-AB-2906	IL17RD	Nonsense_Mutation	IL17RD Nonsense_Mutation p.S671*	tcga-laml
+TCGA-AB-2905	IL1R1	Missense_Mutation	IL1R1 Missense_Mutation p.V566M	tcga-laml
+TCGA-AB-2820	IL1RL2	Missense_Mutation	IL1RL2 Missense_Mutation p.T573M	tcga-laml
+TCGA-AB-2877	ILDR1	Missense_Mutation	ILDR1 Missense_Mutation p.V325M	tcga-laml
+TCGA-AB-2912	ILDR1	Missense_Mutation	ILDR1 Missense_Mutation p.V56M	tcga-laml
+TCGA-AB-2899	IMMP2L	Missense_Mutation	IMMP2L Missense_Mutation p.I118V	tcga-laml
+TCGA-AB-2984	IMPG2	Missense_Mutation	IMPG2 Missense_Mutation p.G834D	tcga-laml
+TCGA-AB-2820	IPO7	Missense_Mutation	IPO7 Missense_Mutation p.V639I	tcga-laml
+TCGA-AB-2914	ISLR	Missense_Mutation	ISLR Missense_Mutation p.A231V	tcga-laml
+TCGA-AB-2885	ITGA10	Missense_Mutation	ITGA10 Missense_Mutation p.R1117W	tcga-laml
+TCGA-AB-2926	ITGAV	Nonsense_Mutation	ITGAV Nonsense_Mutation p.Y110*	tcga-laml
+TCGA-AB-3002	ITGAX	Missense_Mutation	ITGAX Missense_Mutation p.R685C	tcga-laml
+TCGA-AB-2829	ITPR1	Missense_Mutation	ITPR1 Missense_Mutation p.G2171D	tcga-laml
+TCGA-AB-2886	ITPR3	Missense_Mutation	ITPR3 Missense_Mutation p.A821T	tcga-laml
+TCGA-AB-2886	JAK3	Missense_Mutation	JAK3 Missense_Mutation p.M511I	tcga-laml
+TCGA-AB-2905	JAM2	Missense_Mutation	JAM2 Missense_Mutation p.R108H	tcga-laml
+TCGA-AB-2857	JMJD1C	Missense_Mutation	JMJD1C Missense_Mutation p.S1421P	tcga-laml
+TCGA-AB-2983	JMJD5	Missense_Mutation	JMJD5 Missense_Mutation p.M125R	tcga-laml
+TCGA-AB-2861	KATNAL2	Missense_Mutation	KATNAL2 Missense_Mutation p.H362Q	tcga-laml
+TCGA-AB-2916	KCNA4	Missense_Mutation	KCNA4 Missense_Mutation p.R389C	tcga-laml
+TCGA-AB-2920	KCNA4	Missense_Mutation	KCNA4 Missense_Mutation p.R98Q	tcga-laml
+TCGA-AB-2910	KCNE3	Missense_Mutation	KCNE3 Missense_Mutation p.N28S	tcga-laml
+TCGA-AB-2899	KCNH2	Missense_Mutation	KCNH2 Missense_Mutation p.V1097I	tcga-laml
+TCGA-AB-2995	KCNH5	Missense_Mutation	KCNH5 Missense_Mutation p.A229T	tcga-laml
+TCGA-AB-2904	KCNH8	Missense_Mutation	KCNH8 Missense_Mutation p.K610Q	tcga-laml
+TCGA-AB-2871	KCNJ6	Missense_Mutation	KCNJ6 Missense_Mutation p.R223Q	tcga-laml
+TCGA-AB-2884	KCNK13	Frame_Shift_Ins	KCNK13 Frame_Shift_Ins p.G389fs	tcga-laml
+TCGA-AB-2922	KCNK13	Missense_Mutation	KCNK13 Missense_Mutation p.Q377K	tcga-laml
+TCGA-AB-2904	KCNN3	Missense_Mutation	KCNN3 Missense_Mutation p.L413Q	tcga-laml
+TCGA-AB-3002	KCNQ2	Splice_Site	KCNQ2 Splice_Site 	tcga-laml
+TCGA-AB-2976	KCNQ3	Missense_Mutation	KCNQ3 Missense_Mutation p.R384K	tcga-laml
+TCGA-AB-2900	KCNT1	Missense_Mutation	KCNT1 Missense_Mutation p.S92T	tcga-laml
+TCGA-AB-3009	KCNT2	Missense_Mutation	KCNT2 Missense_Mutation p.R1117Q	tcga-laml
+TCGA-AB-2912	KCNU1	Nonsense_Mutation	KCNU1 Nonsense_Mutation p.R7*	tcga-laml
+TCGA-AB-2922	KCNU1	Missense_Mutation	KCNU1 Missense_Mutation p.R857Q	tcga-laml
+TCGA-AB-2806	KDM2B	Missense_Mutation	KDM2B Missense_Mutation p.E953G	tcga-laml
+TCGA-AB-2849	KDM3B	Missense_Mutation	KDM3B Missense_Mutation p.R938H	tcga-laml
+TCGA-AB-2908	KDM3B	Frame_Shift_Del	KDM3B Frame_Shift_Del p.Q827fs	tcga-laml
+TCGA-AB-2806	KDM6A	Missense_Mutation	KDM6A Missense_Mutation p.Q333K	tcga-laml
+TCGA-AB-2867	KDM6A	Missense_Mutation	KDM6A Missense_Mutation p.R621C	tcga-laml
+TCGA-AB-2883	KDM6A	Splice_Site	KDM6A Splice_Site 	tcga-laml
+TCGA-AB-2826	KDR	Missense_Mutation	KDR Missense_Mutation p.V1041M	tcga-laml
+TCGA-AB-2839	KDR	Missense_Mutation	KDR Missense_Mutation p.S264F	tcga-laml
+TCGA-AB-2912	KHDRBS3	Missense_Mutation	KHDRBS3 Missense_Mutation p.R86C	tcga-laml
+TCGA-AB-2972	KIAA0240	Missense_Mutation	KIAA0240 Missense_Mutation p.R539Q	tcga-laml
+TCGA-AB-2996	KIAA0240	Missense_Mutation	KIAA0240 Missense_Mutation p.S850G	tcga-laml
+TCGA-AB-2881	KIAA0802	Missense_Mutation	KIAA0802 Missense_Mutation p.R1150H	tcga-laml
+TCGA-AB-2871	KIAA0831	Missense_Mutation	KIAA0831 Missense_Mutation p.T213M	tcga-laml
+TCGA-AB-2844	KIAA0892	Missense_Mutation	KIAA0892 Missense_Mutation p.S536L	tcga-laml
+TCGA-AB-2950	KIAA1109	Missense_Mutation	KIAA1109 Missense_Mutation p.S2996C	tcga-laml
+TCGA-AB-2806	KIAA1217	Missense_Mutation	KIAA1217 Missense_Mutation p.A428T	tcga-laml
+TCGA-AB-2914	KIAA1267	Frame_Shift_Ins	KIAA1267 Frame_Shift_Ins p.R299fs	tcga-laml
+TCGA-AB-2917	KIAA1529	Missense_Mutation	KIAA1529 Missense_Mutation p.R581H	tcga-laml
+TCGA-AB-2813	KIAA1683	Missense_Mutation	KIAA1683 Missense_Mutation p.K478E	tcga-laml
+TCGA-AB-2922	KIAA1683	Frame_Shift_Ins	KIAA1683 Frame_Shift_Ins p.Q747fs	tcga-laml
+TCGA-AB-2991	KIDINS220	Missense_Mutation	KIDINS220 Missense_Mutation p.P1099L	tcga-laml
+TCGA-AB-2914	KIF1C	Nonsense_Mutation	KIF1C Nonsense_Mutation p.R155*	tcga-laml
+TCGA-AB-2926	KIF27	Missense_Mutation	KIF27 Missense_Mutation p.V423I	tcga-laml
+TCGA-AB-2838	KIF2B	Missense_Mutation	KIF2B Missense_Mutation p.T47M	tcga-laml
+TCGA-AB-2850	KIF2B	Missense_Mutation	KIF2B Missense_Mutation p.T310M	tcga-laml
+TCGA-AB-2819	KIT	Missense_Mutation	KIT Missense_Mutation p.Y418S	tcga-laml
+TCGA-AB-2843	KIT	Missense_Mutation	KIT Missense_Mutation p.S197L	tcga-laml
+TCGA-AB-2843	KIT	Missense_Mutation	KIT Missense_Mutation p.D816V	tcga-laml
+TCGA-AB-2846	KIT	Frame_Shift_Del	KIT Frame_Shift_Del p.L416fs	tcga-laml
+TCGA-AB-2846	KIT	Frame_Shift_Ins	KIT Frame_Shift_Ins p.Y418fs	tcga-laml
+TCGA-AB-2881	KIT	Missense_Mutation	KIT Missense_Mutation p.D816Y	tcga-laml
+TCGA-AB-2888	KIT	In_Frame_Ins	KIT In_Frame_Ins p.418_419YD>YFFD	tcga-laml
+TCGA-AB-2937	KIT	Missense_Mutation	KIT Missense_Mutation p.D816V	tcga-laml
+TCGA-AB-2939	KIT	Missense_Mutation	KIT Missense_Mutation p.D816V	tcga-laml
+TCGA-AB-2945	KIT	Missense_Mutation	KIT Missense_Mutation p.D816V	tcga-laml
+TCGA-AB-2877	KLF15	Missense_Mutation	KLF15 Missense_Mutation p.V133I	tcga-laml
+TCGA-AB-2882	KLHDC3	Missense_Mutation	KLHDC3 Missense_Mutation p.V15A	tcga-laml
+TCGA-AB-2900	KLHDC7A	Missense_Mutation	KLHDC7A Missense_Mutation p.T669M	tcga-laml
+TCGA-AB-2818	KLHL12	Missense_Mutation	KLHL12 Missense_Mutation p.S425R	tcga-laml
+TCGA-AB-2838	KLHL18	Missense_Mutation	KLHL18 Missense_Mutation p.S499P	tcga-laml
+TCGA-AB-2881	KLHL2	Missense_Mutation	KLHL2 Missense_Mutation p.N495Y	tcga-laml
+TCGA-AB-2992	KLK7	Nonsense_Mutation	KLK7 Nonsense_Mutation p.Q216*	tcga-laml
+TCGA-AB-2835	KLRK1	Missense_Mutation	KLRK1 Missense_Mutation p.R5C	tcga-laml
+TCGA-AB-2925	KPRP	Missense_Mutation	KPRP Missense_Mutation p.F579L	tcga-laml
+TCGA-AB-2826	KRAS	Missense_Mutation	KRAS Missense_Mutation p.Q61H	tcga-laml
+TCGA-AB-2861	KRAS	Missense_Mutation	KRAS Missense_Mutation p.G12V	tcga-laml
+TCGA-AB-2864	KRAS	Missense_Mutation	KRAS Missense_Mutation p.A59E	tcga-laml
+TCGA-AB-2865	KRAS	Missense_Mutation	KRAS Missense_Mutation p.G12D	tcga-laml
+TCGA-AB-2917	KRAS	Missense_Mutation	KRAS Missense_Mutation p.I36M	tcga-laml
+TCGA-AB-2929	KRAS	Missense_Mutation	KRAS Missense_Mutation p.G12D	tcga-laml
+TCGA-AB-2966	KRAS	Missense_Mutation	KRAS Missense_Mutation p.A146T	tcga-laml
+TCGA-AB-2987	KRAS	Missense_Mutation	KRAS Missense_Mutation p.G13D	tcga-laml
+TCGA-AB-2859	KRT13	Missense_Mutation	KRT13 Missense_Mutation p.S337F	tcga-laml
+TCGA-AB-2912	KRT19	Missense_Mutation	KRT19 Missense_Mutation p.T327R	tcga-laml
+TCGA-AB-2807	KRT20	Missense_Mutation	KRT20 Missense_Mutation p.R80H	tcga-laml
+TCGA-AB-2924	KRT27	Missense_Mutation	KRT27 Missense_Mutation p.A70V	tcga-laml
+TCGA-AB-2986	KRT79	Missense_Mutation	KRT79 Missense_Mutation p.G495E	tcga-laml
+TCGA-AB-2987	KRTAP10-8	Missense_Mutation	KRTAP10-8 Missense_Mutation p.A141T	tcga-laml
+TCGA-AB-2927	KRTAP24-1	Missense_Mutation	KRTAP24-1 Missense_Mutation p.P94L	tcga-laml
+TCGA-AB-2991	KRTAP26-1	Missense_Mutation	KRTAP26-1 Missense_Mutation p.G81S	tcga-laml
+TCGA-AB-2859	KRTAP4-2	Missense_Mutation	KRTAP4-2 Missense_Mutation p.C35S	tcga-laml
+TCGA-AB-2968	KSR2	Missense_Mutation	KSR2 Missense_Mutation p.T802M	tcga-laml
+TCGA-AB-2807	LAMA1	Nonsense_Mutation	LAMA1 Nonsense_Mutation p.Y593*	tcga-laml
+TCGA-AB-2887	LAMA2	Missense_Mutation	LAMA2 Missense_Mutation p.R1687W	tcga-laml
+TCGA-AB-2808	LAMA3	Missense_Mutation	LAMA3 Missense_Mutation p.Y617H	tcga-laml
+TCGA-AB-2990	LAMA5	Missense_Mutation	LAMA5 Missense_Mutation p.A1823T	tcga-laml
+TCGA-AB-2972	LARP4B	Missense_Mutation	LARP4B Missense_Mutation p.P429S	tcga-laml
+TCGA-AB-2932	LARS	Missense_Mutation	LARS Missense_Mutation p.A177G	tcga-laml
+TCGA-AB-2914	LAS1L	Missense_Mutation	LAS1L Missense_Mutation p.D220N	tcga-laml
+TCGA-AB-2976	LBXCOR1	Missense_Mutation	LBXCOR1 Missense_Mutation p.G124C	tcga-laml
+TCGA-AB-2996	LCE1B	Nonsense_Mutation	LCE1B Nonsense_Mutation p.G49*	tcga-laml
+TCGA-AB-2822	LEO1	Missense_Mutation	LEO1 Missense_Mutation p.I657M	tcga-laml
+TCGA-AB-3002	LGTN	Missense_Mutation	LGTN Missense_Mutation p.Y385C	tcga-laml
+TCGA-AB-2804	LILRB2	Missense_Mutation	LILRB2 Missense_Mutation p.R262H	tcga-laml
+TCGA-AB-2979	LIMA1	Frame_Shift_Ins	LIMA1 Frame_Shift_Ins p.M161fs	tcga-laml
+TCGA-AB-2804	LIMS2	Missense_Mutation	LIMS2 Missense_Mutation p.P97R	tcga-laml
+TCGA-AB-2803	LMOD1	Missense_Mutation	LMOD1 Missense_Mutation p.T55M	tcga-laml
+TCGA-AB-2803	LNX1	Missense_Mutation	LNX1 Missense_Mutation p.E176K	tcga-laml
+TCGA-AB-2807	LPA	Splice_Site	LPA Splice_Site 	tcga-laml
+TCGA-AB-2877	LPPR1	Missense_Mutation	LPPR1 Missense_Mutation p.T325I	tcga-laml
+TCGA-AB-2914	LPPR4	Missense_Mutation	LPPR4 Missense_Mutation p.G699R	tcga-laml
+TCGA-AB-2868	LRBA	Missense_Mutation	LRBA Missense_Mutation p.Y591C	tcga-laml
+TCGA-AB-2949	LRCH3	Missense_Mutation	LRCH3 Missense_Mutation p.R289K	tcga-laml
+TCGA-AB-2871	LRFN3	Missense_Mutation	LRFN3 Missense_Mutation p.S550L	tcga-laml
+TCGA-AB-3001	LRIG3	Missense_Mutation	LRIG3 Missense_Mutation p.R399H	tcga-laml
+TCGA-AB-2890	LRIT1	Missense_Mutation	LRIT1 Missense_Mutation p.R602H	tcga-laml
+TCGA-AB-2885	LRP1B	Splice_Site	LRP1B Splice_Site p.E1920K	tcga-laml
+TCGA-AB-2900	LRP5	Missense_Mutation	LRP5 Missense_Mutation p.A65V	tcga-laml
+TCGA-AB-2881	LRRC15	Missense_Mutation	LRRC15 Missense_Mutation p.E480K	tcga-laml
+TCGA-AB-2967	LRRC2	Splice_Site	LRRC2 Splice_Site p.G164D	tcga-laml
+TCGA-AB-2976	LRRC37B	Frame_Shift_Ins	LRRC37B Frame_Shift_Ins p.I922fs	tcga-laml
+TCGA-AB-2822	LRRC43	Missense_Mutation	LRRC43 Missense_Mutation p.R440H	tcga-laml
+TCGA-AB-2877	LRRC58	Missense_Mutation	LRRC58 Missense_Mutation p.V360I	tcga-laml
+TCGA-AB-2849	LRRFIP1	Splice_Site	LRRFIP1 Splice_Site p.A23V	tcga-laml
+TCGA-AB-2843	LRRTM2	Missense_Mutation	LRRTM2 Missense_Mutation p.Q144E	tcga-laml
+TCGA-AB-2988	LRWD1	Missense_Mutation	LRWD1 Missense_Mutation p.N136K	tcga-laml
+TCGA-AB-2984	LTA4H	Missense_Mutation	LTA4H Missense_Mutation p.F107S	tcga-laml
+TCGA-AB-2917	LTBP3	Missense_Mutation	LTBP3 Missense_Mutation p.V364M	tcga-laml
+TCGA-AB-3001	LUZP2	Splice_Site	LUZP2 Splice_Site 	tcga-laml
+TCGA-AB-2901	LYRM5	Missense_Mutation	LYRM5 Missense_Mutation p.S84L	tcga-laml
+TCGA-AB-2868	LZTS1	Missense_Mutation	LZTS1 Missense_Mutation p.Q192E	tcga-laml
+TCGA-AB-2939	MAEL	Missense_Mutation	MAEL Missense_Mutation p.I139T	tcga-laml
+TCGA-AB-2999	MAGEL2	Missense_Mutation	MAGEL2 Missense_Mutation p.R278H	tcga-laml
+TCGA-AB-2989	MAGI1	Missense_Mutation	MAGI1 Missense_Mutation p.R476Q	tcga-laml
+TCGA-AB-2921	MAGI3	Missense_Mutation	MAGI3 Missense_Mutation p.V158M	tcga-laml
+TCGA-AB-3006	MAP1B	Missense_Mutation	MAP1B Missense_Mutation p.F926L	tcga-laml
+TCGA-AB-2875	MAP2	Missense_Mutation	MAP2 Missense_Mutation p.G430R	tcga-laml
+TCGA-AB-2983	MAP2	Missense_Mutation	MAP2 Missense_Mutation p.G814S	tcga-laml
+TCGA-AB-2891	MAP6	Missense_Mutation	MAP6 Missense_Mutation p.N431Y	tcga-laml
+TCGA-AB-2971	MAPK1	Missense_Mutation	MAPK1 Missense_Mutation p.R172H	tcga-laml
+TCGA-AB-2930	MAT1A	Missense_Mutation	MAT1A Missense_Mutation p.R163Q	tcga-laml
+TCGA-AB-2991	MAX	Missense_Mutation	MAX Missense_Mutation p.R60Q	tcga-laml
+TCGA-AB-2923	MBOAT1	Frame_Shift_Del	MBOAT1 Frame_Shift_Del p.I463fs	tcga-laml
+TCGA-AB-2910	MBTPS1	Missense_Mutation	MBTPS1 Missense_Mutation p.V714M	tcga-laml
+TCGA-AB-2868	MCART2	Missense_Mutation	MCART2 Missense_Mutation p.R261Q	tcga-laml
+TCGA-AB-2863	MCHR2	Missense_Mutation	MCHR2 Missense_Mutation p.R152W	tcga-laml
+TCGA-AB-2828	MCM10	Splice_Site	MCM10 Splice_Site p.G544E	tcga-laml
+TCGA-AB-3005	MDFI	Missense_Mutation	MDFI Missense_Mutation p.P154H	tcga-laml
+TCGA-AB-2824	MDH1B	Missense_Mutation	MDH1B Missense_Mutation p.R274C	tcga-laml
+TCGA-AB-2952	MDM2	Missense_Mutation	MDM2 Missense_Mutation p.E271D	tcga-laml
+TCGA-AB-2830	MECR	Missense_Mutation	MECR Missense_Mutation p.I82V	tcga-laml
+TCGA-AB-2822	MED12	Nonsense_Mutation	MED12 Nonsense_Mutation p.W1688*	tcga-laml
+TCGA-AB-2917	MED12	Missense_Mutation	MED12 Missense_Mutation p.R961W	tcga-laml
+TCGA-AB-2976	MED14	Missense_Mutation	MED14 Missense_Mutation p.N1033S	tcga-laml
+TCGA-AB-2849	MED21	Missense_Mutation	MED21 Missense_Mutation p.I23T	tcga-laml
+TCGA-AB-2861	MEFV	Splice_Site	MEFV Splice_Site p.A538T	tcga-laml
+TCGA-AB-2874	MEFV	Missense_Mutation	MEFV Missense_Mutation p.R410H	tcga-laml
+TCGA-AB-2923	MEGF10	Missense_Mutation	MEGF10 Missense_Mutation p.W66L	tcga-laml
+TCGA-AB-2861	MEPE	Missense_Mutation	MEPE Missense_Mutation p.G456D	tcga-laml
+TCGA-AB-2983	METTL3	Missense_Mutation	METTL3 Missense_Mutation p.Q28R	tcga-laml
+TCGA-AB-2849	MEX3B	Missense_Mutation	MEX3B Missense_Mutation p.S402P	tcga-laml
+TCGA-AB-2820	MFN1	Missense_Mutation	MFN1 Missense_Mutation p.V158I	tcga-laml
+TCGA-AB-2821	MFSD6	Missense_Mutation	MFSD6 Missense_Mutation p.F76L	tcga-laml
+TCGA-AB-2950	MGA	Frame_Shift_Del	MGA Frame_Shift_Del p.C2339fs	tcga-laml
+TCGA-AB-2934	MGAT4C	Missense_Mutation	MGAT4C Missense_Mutation p.L257I	tcga-laml
+TCGA-AB-2854	MGAT5B	Missense_Mutation	MGAT5B Missense_Mutation p.R501W	tcga-laml
+TCGA-AB-2857	MICAL2	Missense_Mutation	MICAL2 Missense_Mutation p.T595R	tcga-laml
+TCGA-AB-3006	MIER3	Missense_Mutation	MIER3 Missense_Mutation p.R288G	tcga-laml
+TCGA-AB-2939	MLL2	Missense_Mutation	MLL2 Missense_Mutation p.L4374Q	tcga-laml
+TCGA-AB-2940	MLL3	Nonsense_Mutation	MLL3 Nonsense_Mutation p.E2793*	tcga-laml
+TCGA-AB-2897	MLLT4	Missense_Mutation	MLLT4 Missense_Mutation p.R1417H	tcga-laml
+TCGA-AB-2857	MMP25	Missense_Mutation	MMP25 Missense_Mutation p.H179Y	tcga-laml
+TCGA-AB-2860	MNDA	Missense_Mutation	MNDA Missense_Mutation p.V215M	tcga-laml
+TCGA-AB-2972	MORC3	Missense_Mutation	MORC3 Missense_Mutation p.L185P	tcga-laml
+TCGA-AB-2898	MPI	In_Frame_Del	MPI In_Frame_Del p.E156del	tcga-laml
+TCGA-AB-2996	MPL	Missense_Mutation	MPL Missense_Mutation p.H624D	tcga-laml
+TCGA-AB-2992	MPND	Missense_Mutation	MPND Missense_Mutation p.R246C	tcga-laml
+TCGA-AB-2885	MRE11A	Missense_Mutation	MRE11A Missense_Mutation p.Q477E	tcga-laml
+TCGA-AB-2927	MST1R	Missense_Mutation	MST1R Missense_Mutation p.R504H	tcga-laml
+TCGA-AB-2863	MTA2	Missense_Mutation	MTA2 Missense_Mutation p.Y283C	tcga-laml
+TCGA-AB-2922	MTA2	Missense_Mutation	MTA2 Missense_Mutation p.D289G	tcga-laml
+TCGA-AB-2827	MTMR3	Missense_Mutation	MTMR3 Missense_Mutation p.S208T	tcga-laml
+TCGA-AB-2885	MTMR8	Missense_Mutation	MTMR8 Missense_Mutation p.R138H	tcga-laml
+TCGA-AB-2971	MTMR8	Missense_Mutation	MTMR8 Missense_Mutation p.E644K	tcga-laml
+TCGA-AB-2805	MTUS2	Missense_Mutation	MTUS2 Missense_Mutation p.V570M	tcga-laml
+TCGA-AB-2968	MTUS2	Missense_Mutation	MTUS2 Missense_Mutation p.R918Q	tcga-laml
+TCGA-AB-2849	MUC16	Missense_Mutation	MUC16 Missense_Mutation p.S1240R	tcga-laml
+TCGA-AB-2860	MUC16	Missense_Mutation	MUC16 Missense_Mutation p.S8866L	tcga-laml
+TCGA-AB-2924	MUC16	Missense_Mutation	MUC16 Missense_Mutation p.S2367N	tcga-laml
+TCGA-AB-2844	MUC17	Missense_Mutation	MUC17 Missense_Mutation p.S4145P	tcga-laml
+TCGA-AB-2964	MUC5B	Missense_Mutation	MUC5B Missense_Mutation p.V4559A	tcga-laml
+TCGA-AB-2988	MUC5B	Missense_Mutation	MUC5B Missense_Mutation p.P3887T	tcga-laml
+TCGA-AB-2988	MUC5B	Missense_Mutation	MUC5B Missense_Mutation p.T4681I	tcga-laml
+TCGA-AB-2954	MUC6	Missense_Mutation	MUC6 Missense_Mutation p.L511P	tcga-laml
+TCGA-AB-2889	MXRA5	Missense_Mutation	MXRA5 Missense_Mutation p.H627Q	tcga-laml
+TCGA-AB-2916	MYB	Missense_Mutation	MYB Missense_Mutation p.W82R	tcga-laml
+TCGA-AB-2827	MYC	Missense_Mutation	MYC Missense_Mutation p.P59L	tcga-laml
+TCGA-AB-2991	MYCBP2	Missense_Mutation	MYCBP2 Missense_Mutation p.R2242C	tcga-laml
+TCGA-AB-3009	MYEOV	Missense_Mutation	MYEOV Missense_Mutation p.L307I	tcga-laml
+TCGA-AB-2876	MYF5	Missense_Mutation	MYF5 Missense_Mutation p.I21V	tcga-laml
+TCGA-AB-2988	MYH14	Missense_Mutation	MYH14 Missense_Mutation p.L1334V	tcga-laml
+TCGA-AB-2911	MYH15	Missense_Mutation	MYH15 Missense_Mutation p.A214T	tcga-laml
+TCGA-AB-2955	MYH6	Nonsense_Mutation	MYH6 Nonsense_Mutation p.Y109*	tcga-laml
+TCGA-AB-2875	MYLK	Missense_Mutation	MYLK Missense_Mutation p.L680I	tcga-laml
+TCGA-AB-2995	MYLK2	Missense_Mutation	MYLK2 Missense_Mutation p.V453L	tcga-laml
+TCGA-AB-3002	MYO1F	Splice_Site	MYO1F Splice_Site 	tcga-laml
+TCGA-AB-2876	MYO3A	Missense_Mutation	MYO3A Missense_Mutation p.R182Q	tcga-laml
+TCGA-AB-2813	MYO5B	Missense_Mutation	MYO5B Missense_Mutation p.N238S	tcga-laml
+TCGA-AB-2865	MYOC	Nonsense_Mutation	MYOC Nonsense_Mutation p.Y365*	tcga-laml
+TCGA-AB-2849	MYST4	Missense_Mutation	MYST4 Missense_Mutation p.H600Q	tcga-laml
+TCGA-AB-2877	N4BP1	Missense_Mutation	N4BP1 Missense_Mutation p.P765L	tcga-laml
+TCGA-AB-2915	NAA15	Nonsense_Mutation	NAA15 Nonsense_Mutation p.W258*	tcga-laml
+TCGA-AB-2986	NAE1	Missense_Mutation	NAE1 Missense_Mutation p.C121Y	tcga-laml
+TCGA-AB-2905	NAPA	Missense_Mutation	NAPA Missense_Mutation p.A202T	tcga-laml
+TCGA-AB-2809	NAPSA	Missense_Mutation	NAPSA Missense_Mutation p.V343I	tcga-laml
+TCGA-AB-2983	NAT8L	Missense_Mutation	NAT8L Missense_Mutation p.V188M	tcga-laml
+TCGA-AB-2905	NAV1	Missense_Mutation	NAV1 Missense_Mutation p.P1254A	tcga-laml
+TCGA-AB-2945	NBEAL1	Missense_Mutation	NBEAL1 Missense_Mutation p.M2145T	tcga-laml
+TCGA-AB-2862	NCCRP1	Missense_Mutation	NCCRP1 Missense_Mutation p.V269M	tcga-laml
+TCGA-AB-2904	NCKAP5	Missense_Mutation	NCKAP5 Missense_Mutation p.A191T	tcga-laml
+TCGA-AB-2949	NCOA3	Frame_Shift_Del	NCOA3 Frame_Shift_Del p.N462fs	tcga-laml
+TCGA-AB-3009	NCOA7	Missense_Mutation	NCOA7 Missense_Mutation p.K584E	tcga-laml
+TCGA-AB-2871	NEB	Missense_Mutation	NEB Missense_Mutation p.Q4574K	tcga-laml
+TCGA-AB-2922	NECAB2	Missense_Mutation	NECAB2 Missense_Mutation p.A220V	tcga-laml
+TCGA-AB-2920	NF1	Missense_Mutation	NF1 Missense_Mutation p.R1276Q	tcga-laml
+TCGA-AB-3009	NF1	Nonsense_Mutation	NF1 Nonsense_Mutation p.R1306*	tcga-laml
+TCGA-AB-3009	NFKBIL2	Missense_Mutation	NFKBIL2 Missense_Mutation p.T104M	tcga-laml
+TCGA-AB-2867	NID2	Missense_Mutation	NID2 Missense_Mutation p.S431L	tcga-laml
+TCGA-AB-2882	NIPSNAP1	Missense_Mutation	NIPSNAP1 Missense_Mutation p.K65R	tcga-laml
+TCGA-AB-2813	NKRF	Missense_Mutation	NKRF Missense_Mutation p.R477C	tcga-laml
+TCGA-AB-2921	NLRC4	Missense_Mutation	NLRC4 Missense_Mutation p.I811T	tcga-laml
+TCGA-AB-2931	NLRP11	Missense_Mutation	NLRP11 Missense_Mutation p.E201A	tcga-laml
+TCGA-AB-2963	NLRP8	Missense_Mutation	NLRP8 Missense_Mutation p.V508L	tcga-laml
+TCGA-AB-3009	NMNAT2	Missense_Mutation	NMNAT2 Missense_Mutation p.G282S	tcga-laml
+TCGA-AB-2872	NMUR2	Missense_Mutation	NMUR2 Missense_Mutation p.V140I	tcga-laml
+TCGA-AB-2949	NMUR2	Missense_Mutation	NMUR2 Missense_Mutation p.R41C	tcga-laml
+TCGA-AB-2861	NOMO2	Missense_Mutation	NOMO2 Missense_Mutation p.V738M	tcga-laml
+TCGA-AB-3011	NONO	Missense_Mutation	NONO Missense_Mutation p.R75S	tcga-laml
+TCGA-AB-2905	NOS1	Missense_Mutation	NOS1 Missense_Mutation p.E1158K	tcga-laml
+TCGA-AB-2850	NOTCH1	Missense_Mutation	NOTCH1 Missense_Mutation p.A1936T	tcga-laml
+TCGA-AB-2900	NOTCH2	Missense_Mutation	NOTCH2 Missense_Mutation p.I1698N	tcga-laml
+TCGA-AB-3005	NOTCH2NL	Nonsense_Mutation	NOTCH2NL Nonsense_Mutation p.R74*	tcga-laml
+TCGA-AB-2974	NOX3	Missense_Mutation	NOX3 Missense_Mutation p.G108R	tcga-laml
+TCGA-AB-2860	NPAS4	Missense_Mutation	NPAS4 Missense_Mutation p.D685G	tcga-laml
+TCGA-AB-2806	NPC1	Missense_Mutation	NPC1 Missense_Mutation p.G1103S	tcga-laml
+TCGA-AB-2802	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.I269fs	tcga-laml
+TCGA-AB-2802	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.I269fs	tcga-laml
+TCGA-AB-2812	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.W288fs	tcga-laml
+TCGA-AB-2824	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2825	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2835	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2839	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.-287fs	tcga-laml
+TCGA-AB-2848	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2859	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.W288fs	tcga-laml
+TCGA-AB-2869	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.W288fs	tcga-laml
+TCGA-AB-2879	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2896	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2900	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2913	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2915	NPM1	Missense_Mutation	NPM1 Missense_Mutation p.K263R	tcga-laml
+TCGA-AB-2924	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.W288fs	tcga-laml
+TCGA-AB-2945	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2947	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2963	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2965	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2967	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2972	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2974	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2976	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2981	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2984	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2986	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2987	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2988	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2989	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2990	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2992	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2993	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-3011	NPM1	Frame_Shift_Ins	NPM1 Frame_Shift_Ins p.WQ288fs	tcga-laml
+TCGA-AB-2904	NPNT	Missense_Mutation	NPNT Missense_Mutation p.T281S	tcga-laml
+TCGA-AB-2878	NR2E1	Missense_Mutation	NR2E1 Missense_Mutation p.M175I	tcga-laml
+TCGA-AB-2915	NR2E1	Missense_Mutation	NR2E1 Missense_Mutation p.V227F	tcga-laml
+TCGA-AB-2959	NRAP	Missense_Mutation	NRAP Missense_Mutation p.D1415E	tcga-laml
+TCGA-AB-2808	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G13D	tcga-laml
+TCGA-AB-2816	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G13D	tcga-laml
+TCGA-AB-2838	NRAS	Missense_Mutation	NRAS Missense_Mutation p.Q61H	tcga-laml
+TCGA-AB-2839	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G13D	tcga-laml
+TCGA-AB-2870	NRAS	Missense_Mutation	NRAS Missense_Mutation p.Q61K	tcga-laml
+TCGA-AB-2887	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G12D	tcga-laml
+TCGA-AB-2892	NRAS	Missense_Mutation	NRAS Missense_Mutation p.Q61K	tcga-laml
+TCGA-AB-2923	NRAS	Missense_Mutation	NRAS Missense_Mutation p.Q61R	tcga-laml
+TCGA-AB-2932	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G13D	tcga-laml
+TCGA-AB-2952	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G12D	tcga-laml
+TCGA-AB-2967	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G13D	tcga-laml
+TCGA-AB-2968	NRAS	Missense_Mutation	NRAS Missense_Mutation p.Q61H	tcga-laml
+TCGA-AB-2978	NRAS	Missense_Mutation	NRAS Missense_Mutation p.Q61P	tcga-laml
+TCGA-AB-2984	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G12D	tcga-laml
+TCGA-AB-2985	NRAS	Missense_Mutation	NRAS Missense_Mutation p.G12C	tcga-laml
+TCGA-AB-2931	NRCAM	Splice_Site	NRCAM Splice_Site p.A635V	tcga-laml
+TCGA-AB-2936	NRF1	Missense_Mutation	NRF1 Missense_Mutation p.R206W	tcga-laml
+TCGA-AB-3005	NRK	Missense_Mutation	NRK Missense_Mutation p.S1149P	tcga-laml
+TCGA-AB-2806	NRXN1	Missense_Mutation	NRXN1 Missense_Mutation p.A773T	tcga-laml
+TCGA-AB-2938	NRXN3	Missense_Mutation	NRXN3 Missense_Mutation p.E326G	tcga-laml
+TCGA-AB-2949	NRXN3	Missense_Mutation	NRXN3 Missense_Mutation p.M95V	tcga-laml
+TCGA-AB-2821	NTRK3	Missense_Mutation	NTRK3 Missense_Mutation p.I695T	tcga-laml
+TCGA-AB-2929	NTSR2	Missense_Mutation	NTSR2 Missense_Mutation p.A327V	tcga-laml
+TCGA-AB-3009	NUMA1	Frame_Shift_Ins	NUMA1 Frame_Shift_Ins p.C1367fs	tcga-laml
+TCGA-AB-2959	NUP93	Missense_Mutation	NUP93 Missense_Mutation p.L111M	tcga-laml
+TCGA-AB-2807	NXF3	Splice_Site	NXF3 Splice_Site 	tcga-laml
+TCGA-AB-2829	OBSCN	Missense_Mutation	OBSCN Missense_Mutation p.V3062G	tcga-laml
+TCGA-AB-2994	ODZ2	Missense_Mutation	ODZ2 Missense_Mutation p.G2542V	tcga-laml
+TCGA-AB-2807	ODZ3	Missense_Mutation	ODZ3 Missense_Mutation p.R1156H	tcga-laml
+TCGA-AB-2899	OIT3	Missense_Mutation	OIT3 Missense_Mutation p.D317N	tcga-laml
+TCGA-AB-2836	OLFML3	Missense_Mutation	OLFML3 Missense_Mutation p.S16L	tcga-laml
+TCGA-AB-2806	OPRM1	Missense_Mutation	OPRM1 Missense_Mutation p.D116Y	tcga-laml
+TCGA-AB-2813	OR11H12	Missense_Mutation	OR11H12 Missense_Mutation p.V98I	tcga-laml
+TCGA-AB-2897	OR11H12	Missense_Mutation	OR11H12 Missense_Mutation p.L307I	tcga-laml
+TCGA-AB-2806	OR13H1	Missense_Mutation	OR13H1 Missense_Mutation p.R298W	tcga-laml
+TCGA-AB-2813	OR13H1	Missense_Mutation	OR13H1 Missense_Mutation p.I15T	tcga-laml
+TCGA-AB-3002	OR1J2	Missense_Mutation	OR1J2 Missense_Mutation p.R20W	tcga-laml
+TCGA-AB-2847	OR2AG1	Missense_Mutation	OR2AG1 Missense_Mutation p.T131K	tcga-laml
+TCGA-AB-2828	OR2M2	Missense_Mutation	OR2M2 Missense_Mutation p.T239M	tcga-laml
+TCGA-AB-2867	OR2M3	Nonsense_Mutation	OR2M3 Nonsense_Mutation p.L256*	tcga-laml
+TCGA-AB-2916	OR2T10	Nonsense_Mutation	OR2T10 Nonsense_Mutation p.Y257*	tcga-laml
+TCGA-AB-2920	OR3A2	Missense_Mutation	OR3A2 Missense_Mutation p.R243Q	tcga-laml
+TCGA-AB-2806	OR4B1	Missense_Mutation	OR4B1 Missense_Mutation p.T36M	tcga-laml
+TCGA-AB-2976	OR4C15	Missense_Mutation	OR4C15 Missense_Mutation p.H296Y	tcga-laml
+TCGA-AB-2846	OR4Q3	Missense_Mutation	OR4Q3 Missense_Mutation p.I36V	tcga-laml
+TCGA-AB-2859	OR51A7	Missense_Mutation	OR51A7 Missense_Mutation p.L281W	tcga-laml
+TCGA-AB-2978	OR51L1	Missense_Mutation	OR51L1 Missense_Mutation p.A239T	tcga-laml
+TCGA-AB-2986	OR51S1	Missense_Mutation	OR51S1 Missense_Mutation p.R65H	tcga-laml
+TCGA-AB-2914	OR52D1	Nonsense_Mutation	OR52D1 Nonsense_Mutation p.E302*	tcga-laml
+TCGA-AB-2901	OR52E8	Missense_Mutation	OR52E8 Missense_Mutation p.S60G	tcga-laml
+TCGA-AB-2977	OR5AR1	Missense_Mutation	OR5AR1 Missense_Mutation p.E180K	tcga-laml
+TCGA-AB-2839	OR5AS1	Missense_Mutation	OR5AS1 Missense_Mutation p.S67Y	tcga-laml
+TCGA-AB-2964	OR5K3	Missense_Mutation	OR5K3 Missense_Mutation p.P271R	tcga-laml
+TCGA-AB-2978	OR5M1	Missense_Mutation	OR5M1 Missense_Mutation p.A33V	tcga-laml
+TCGA-AB-2923	OR5W2	Missense_Mutation	OR5W2 Missense_Mutation p.L144H	tcga-laml
+TCGA-AB-2874	OR6B2	Missense_Mutation	OR6B2 Missense_Mutation p.D299Y	tcga-laml
+TCGA-AB-2917	OR7D4	Missense_Mutation	OR7D4 Missense_Mutation p.I174F	tcga-laml
+TCGA-AB-2967	OR8A1	Missense_Mutation	OR8A1 Missense_Mutation p.A112T	tcga-laml
+TCGA-AB-2938	OR8B12	Missense_Mutation	OR8B12 Missense_Mutation p.Y258C	tcga-laml
+TCGA-AB-2949	ORAI1	Missense_Mutation	ORAI1 Missense_Mutation p.M106V	tcga-laml
+TCGA-AB-2807	OSBP2	Missense_Mutation	OSBP2 Missense_Mutation p.R332P	tcga-laml
+TCGA-AB-2991	OSTalpha	Missense_Mutation	OSTalpha Missense_Mutation p.T147M	tcga-laml
+TCGA-AB-2804	OTOA	Missense_Mutation	OTOA Missense_Mutation p.T760M	tcga-laml
+TCGA-AB-2867	OXA1L	Missense_Mutation	OXA1L Missense_Mutation p.F55V	tcga-laml
+TCGA-AB-3002	P2RY2	Missense_Mutation	P2RY2 Missense_Mutation p.R131L	tcga-laml
+TCGA-AB-2998	PA2G4	Missense_Mutation	PA2G4 Missense_Mutation p.A119T	tcga-laml
+TCGA-AB-2959	PABPC3	Missense_Mutation	PABPC3 Missense_Mutation p.L106V	tcga-laml
+TCGA-AB-2905	PAPPA2	Missense_Mutation	PAPPA2 Missense_Mutation p.P1599S	tcga-laml
+TCGA-AB-3005	PARD3	Missense_Mutation	PARD3 Missense_Mutation p.D1318E	tcga-laml
+TCGA-AB-2828	PARP14	Missense_Mutation	PARP14 Missense_Mutation p.H876D	tcga-laml
+TCGA-AB-2992	PARP2	Nonsense_Mutation	PARP2 Nonsense_Mutation p.R150*	tcga-laml
+TCGA-AB-2905	PARP6	Missense_Mutation	PARP6 Missense_Mutation p.R308S	tcga-laml
+TCGA-AB-2869	PAX3	Missense_Mutation	PAX3 Missense_Mutation p.R270H	tcga-laml
+TCGA-AB-2900	PCDH1	Missense_Mutation	PCDH1 Missense_Mutation p.F612S	tcga-laml
+TCGA-AB-2872	PCDH11X	Missense_Mutation	PCDH11X Missense_Mutation p.T617I	tcga-laml
+TCGA-AB-2898	PCDH15	Missense_Mutation	PCDH15 Missense_Mutation p.A1418T	tcga-laml
+TCGA-AB-2955	PCDHA1	Missense_Mutation	PCDHA1 Missense_Mutation p.A567T	tcga-laml
+TCGA-AB-3006	PCDHA4	Missense_Mutation	PCDHA4 Missense_Mutation p.S432L	tcga-laml
+TCGA-AB-2908	PCDHA8	Missense_Mutation	PCDHA8 Missense_Mutation p.P618T	tcga-laml
+TCGA-AB-2922	PCDHB1	Missense_Mutation	PCDHB1 Missense_Mutation p.V714I	tcga-laml
+TCGA-AB-2983	PCDHB11	Missense_Mutation	PCDHB11 Missense_Mutation p.S375P	tcga-laml
+TCGA-AB-2854	PCDHB16	Missense_Mutation	PCDHB16 Missense_Mutation p.T405M	tcga-laml
+TCGA-AB-2819	PCDHB3	Missense_Mutation	PCDHB3 Missense_Mutation p.P221L	tcga-laml
+TCGA-AB-2822	PCDHB6	Missense_Mutation	PCDHB6 Missense_Mutation p.D158E	tcga-laml
+TCGA-AB-2929	PCDHGA10	In_Frame_Del	PCDHGA10 In_Frame_Del p.E342del	tcga-laml
+TCGA-AB-3005	PCDHGA3	Missense_Mutation	PCDHGA3 Missense_Mutation p.R202H	tcga-laml
+TCGA-AB-2904	PCDHGA5	Missense_Mutation	PCDHGA5 Missense_Mutation p.G374V	tcga-laml
+TCGA-AB-3002	PCDHGC4	Missense_Mutation	PCDHGC4 Missense_Mutation p.P452A	tcga-laml
+TCGA-AB-2807	PCLO	Missense_Mutation	PCLO Missense_Mutation p.R4438H	tcga-laml
+TCGA-AB-2917	PDC	Missense_Mutation	PDC Missense_Mutation p.R59S	tcga-laml
+TCGA-AB-2874	PDCD2L	Missense_Mutation	PDCD2L Missense_Mutation p.I264T	tcga-laml
+TCGA-AB-2891	PDCD2L	Missense_Mutation	PDCD2L Missense_Mutation p.Y214C	tcga-laml
+TCGA-AB-2948	PDCL3	Frame_Shift_Ins	PDCL3 Frame_Shift_Ins p.P21fs	tcga-laml
+TCGA-AB-2987	PDGFRA	Missense_Mutation	PDGFRA Missense_Mutation p.G990R	tcga-laml
+TCGA-AB-2819	PDGFRB	Missense_Mutation	PDGFRB Missense_Mutation p.R604C	tcga-laml
+TCGA-AB-2989	PDK4	Missense_Mutation	PDK4 Missense_Mutation p.P271S	tcga-laml
+TCGA-AB-2959	PDS5B	Missense_Mutation	PDS5B Missense_Mutation p.T1188A	tcga-laml
+TCGA-AB-2993	PDXDC1	Missense_Mutation	PDXDC1 Missense_Mutation p.E421K	tcga-laml
+TCGA-AB-2920	PEAR1	Missense_Mutation	PEAR1 Missense_Mutation p.R77C	tcga-laml
+TCGA-AB-2803	PEX13	Frame_Shift_Del	PEX13 Frame_Shift_Del p.R159fs	tcga-laml
+TCGA-AB-2923	PGBD1	Missense_Mutation	PGBD1 Missense_Mutation p.N682S	tcga-laml
+TCGA-AB-2861	PGM3	Missense_Mutation	PGM3 Missense_Mutation p.D365E	tcga-laml
+TCGA-AB-2868	PHACTR1	Missense_Mutation	PHACTR1 Missense_Mutation p.L316R	tcga-laml
+TCGA-AB-2804	PHF6	Nonsense_Mutation	PHF6 Nonsense_Mutation p.E139*	tcga-laml
+TCGA-AB-2855	PHF6	Frame_Shift_Ins	PHF6 Frame_Shift_Ins p.-213fs	tcga-laml
+TCGA-AB-2912	PHF6	Frame_Shift_Ins	PHF6 Frame_Shift_Ins p.N23fs	tcga-laml
+TCGA-AB-2959	PHF6	Splice_Site	PHF6 Splice_Site 	tcga-laml
+TCGA-AB-2976	PHF6	Missense_Mutation	PHF6 Missense_Mutation p.C242Y	tcga-laml
+TCGA-AB-3009	PHF6	Missense_Mutation	PHF6 Missense_Mutation p.G287V	tcga-laml
+TCGA-AB-2897	PHIP	Missense_Mutation	PHIP Missense_Mutation p.W210C	tcga-laml
+TCGA-AB-2967	PHIP	Frame_Shift_Ins	PHIP Frame_Shift_Ins p.Y1316fs	tcga-laml
+TCGA-AB-2924	PHLPP1	Missense_Mutation	PHLPP1 Missense_Mutation p.G580R	tcga-laml
+TCGA-AB-2886	PI4KA	Missense_Mutation	PI4KA Missense_Mutation p.R908L	tcga-laml
+TCGA-AB-2938	PIK3CB	Missense_Mutation	PIK3CB Missense_Mutation p.M68I	tcga-laml
+TCGA-AB-2829	PIWIL4	Missense_Mutation	PIWIL4 Missense_Mutation p.A18P	tcga-laml
+TCGA-AB-2974	PKD2L1	Missense_Mutation	PKD2L1 Missense_Mutation p.E504K	tcga-laml
+TCGA-AB-2882	PKHD1	Missense_Mutation	PKHD1 Missense_Mutation p.V2897I	tcga-laml
+TCGA-AB-2865	PKHD1L1	Missense_Mutation	PKHD1L1 Missense_Mutation p.R413H	tcga-laml
+TCGA-AB-2904	PKHD1L1	Missense_Mutation	PKHD1L1 Missense_Mutation p.R3813K	tcga-laml
+TCGA-AB-2941	PKIB	Missense_Mutation	PKIB Missense_Mutation p.L52F	tcga-laml
+TCGA-AB-2877	PKNOX1	Missense_Mutation	PKNOX1 Missense_Mutation p.A351P	tcga-laml
+TCGA-AB-2921	PLA2G2D	Missense_Mutation	PLA2G2D Missense_Mutation p.R135W	tcga-laml
+TCGA-AB-2827	PLA2G4C	Missense_Mutation	PLA2G4C Missense_Mutation p.A58P	tcga-laml
+TCGA-AB-2955	PLA2G4D	Missense_Mutation	PLA2G4D Missense_Mutation p.T336I	tcga-laml
+TCGA-AB-2806	PLCE1	Missense_Mutation	PLCE1 Missense_Mutation p.A130S	tcga-laml
+TCGA-AB-2843	PLCE1	Missense_Mutation	PLCE1 Missense_Mutation p.L584I	tcga-laml
+TCGA-AB-2959	PLCE1	Missense_Mutation	PLCE1 Missense_Mutation p.M238T	tcga-laml
+TCGA-AB-2966	PLCE1	Missense_Mutation	PLCE1 Missense_Mutation p.H696N	tcga-laml
+TCGA-AB-2977	PLCH2	Missense_Mutation	PLCH2 Missense_Mutation p.A274V	tcga-laml
+TCGA-AB-2968	PLCZ1	Missense_Mutation	PLCZ1 Missense_Mutation p.L219F	tcga-laml
+TCGA-AB-2894	PLEC	Missense_Mutation	PLEC Missense_Mutation p.R4523C	tcga-laml
+TCGA-AB-2868	PLEKHG2	Missense_Mutation	PLEKHG2 Missense_Mutation p.S690F	tcga-laml
+TCGA-AB-2832	PLEKHH1	Missense_Mutation	PLEKHH1 Missense_Mutation p.P620S	tcga-laml
+TCGA-AB-2970	PLEKHH1	Missense_Mutation	PLEKHH1 Missense_Mutation p.A475T	tcga-laml
+TCGA-AB-2860	PLOD1	Missense_Mutation	PLOD1 Missense_Mutation p.D480N	tcga-laml
+TCGA-AB-2905	PLRG1	Missense_Mutation	PLRG1 Missense_Mutation p.E481K	tcga-laml
+TCGA-AB-2865	PLXNA4	Missense_Mutation	PLXNA4 Missense_Mutation p.E1113K	tcga-laml
+TCGA-AB-2886	PLXND1	Frame_Shift_Ins	PLXND1 Frame_Shift_Ins p.N675fs	tcga-laml
+TCGA-AB-2814	PMPCB	Missense_Mutation	PMPCB Missense_Mutation p.G82V	tcga-laml
+TCGA-AB-2912	POC1A	Missense_Mutation	POC1A Missense_Mutation p.V232M	tcga-laml
+TCGA-AB-2945	POLA2	Frame_Shift_Del	POLA2 Frame_Shift_Del p.IE24fs	tcga-laml
+TCGA-AB-2807	POLR2E	Nonsense_Mutation	POLR2E Nonsense_Mutation p.E134*	tcga-laml
+TCGA-AB-2870	POLR3B	Missense_Mutation	POLR3B Missense_Mutation p.T151M	tcga-laml
+TCGA-AB-2803	POM121C	Missense_Mutation	POM121C Missense_Mutation p.G930R	tcga-laml
+TCGA-AB-2807	POM121L12	Missense_Mutation	POM121L12 Missense_Mutation p.R159H	tcga-laml
+TCGA-AB-2819	POSTN	Missense_Mutation	POSTN Missense_Mutation p.R423C	tcga-laml
+TCGA-AB-2803	POU5F1	Missense_Mutation	POU5F1 Missense_Mutation p.N239K	tcga-laml
+TCGA-AB-2986	POU6F2	Nonsense_Mutation	POU6F2 Nonsense_Mutation p.Q196*	tcga-laml
+TCGA-AB-2924	PPAP2A	Missense_Mutation	PPAP2A Missense_Mutation p.Y221D	tcga-laml
+TCGA-AB-2827	PPIC	Missense_Mutation	PPIC Missense_Mutation p.G158S	tcga-laml
+TCGA-AB-2923	PPL	Missense_Mutation	PPL Missense_Mutation p.R1203W	tcga-laml
+TCGA-AB-2812	PPP1R3A	Missense_Mutation	PPP1R3A Missense_Mutation p.P454T	tcga-laml
+TCGA-AB-2875	PPP1R3A	Missense_Mutation	PPP1R3A Missense_Mutation p.H719R	tcga-laml
+TCGA-AB-2999	PPP1R9A	Missense_Mutation	PPP1R9A Missense_Mutation p.K751R	tcga-laml
+TCGA-AB-2864	PPP2R2B	Missense_Mutation	PPP2R2B Missense_Mutation p.R371C	tcga-laml
+TCGA-AB-2943	PPPDE2	Missense_Mutation	PPPDE2 Missense_Mutation p.S89Y	tcga-laml
+TCGA-AB-2849	PRAMEF16	Missense_Mutation	PRAMEF16 Missense_Mutation p.T391M	tcga-laml
+TCGA-AB-2849	PRAMEF2	Missense_Mutation	PRAMEF2 Missense_Mutation p.T246M	tcga-laml
+TCGA-AB-2865	PRAMEF2	Missense_Mutation	PRAMEF2 Missense_Mutation p.T190M	tcga-laml
+TCGA-AB-2895	PRDM16	Missense_Mutation	PRDM16 Missense_Mutation p.V588M	tcga-laml
+TCGA-AB-2859	PRDM9	Missense_Mutation	PRDM9 Missense_Mutation p.G530E	tcga-laml
+TCGA-AB-2978	PRKAA2	Nonsense_Mutation	PRKAA2 Nonsense_Mutation p.R227*	tcga-laml
+TCGA-AB-2938	PRKCG	Missense_Mutation	PRKCG Missense_Mutation p.R580W	tcga-laml
+TCGA-AB-2887	PRKD3	Missense_Mutation	PRKD3 Missense_Mutation p.D884G	tcga-laml
+TCGA-AB-2968	PRODH2	Nonsense_Mutation	PRODH2 Nonsense_Mutation p.W95*	tcga-laml
+TCGA-AB-2844	PRPF3	Missense_Mutation	PRPF3 Missense_Mutation p.I373T	tcga-laml
+TCGA-AB-2849	PRPF4B	Splice_Site	PRPF4B Splice_Site p.Y675Y	tcga-laml
+TCGA-AB-2904	PRPF8	Missense_Mutation	PRPF8 Missense_Mutation p.A687P	tcga-laml
+TCGA-AB-3001	PRPF8	Missense_Mutation	PRPF8 Missense_Mutation p.G1750E	tcga-laml
+TCGA-AB-3005	PRR21	Missense_Mutation	PRR21 Missense_Mutation p.R53W	tcga-laml
+TCGA-AB-2819	PRUNE2	Missense_Mutation	PRUNE2 Missense_Mutation p.R2151Q	tcga-laml
+TCGA-AB-2952	PRX	Missense_Mutation	PRX Missense_Mutation p.K421E	tcga-laml
+TCGA-AB-2844	PSME4	Missense_Mutation	PSME4 Missense_Mutation p.G1037C	tcga-laml
+TCGA-AB-2854	PSME4	Missense_Mutation	PSME4 Missense_Mutation p.L1446R	tcga-laml
+TCGA-AB-2832	PTAR1	Missense_Mutation	PTAR1 Missense_Mutation p.T161I	tcga-laml
+TCGA-AB-2802	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.D61N	tcga-laml
+TCGA-AB-2839	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.I545L	tcga-laml
+TCGA-AB-2855	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.P491L	tcga-laml
+TCGA-AB-2871	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.Q510L	tcga-laml
+TCGA-AB-2884	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.F71L	tcga-laml
+TCGA-AB-2885	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.G60V	tcga-laml
+TCGA-AB-2914	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.A72V	tcga-laml
+TCGA-AB-2963	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.Q510H	tcga-laml
+TCGA-AB-2972	PTPN11	Missense_Mutation	PTPN11 Missense_Mutation p.S502P	tcga-laml
+TCGA-AB-2878	PTPN14	Missense_Mutation	PTPN14 Missense_Mutation p.T1042M	tcga-laml
+TCGA-AB-2838	PTPN5	Missense_Mutation	PTPN5 Missense_Mutation p.Y265C	tcga-laml
+TCGA-AB-2987	PTPRE	Missense_Mutation	PTPRE Missense_Mutation p.L153Q	tcga-laml
+TCGA-AB-2906	PTPRG	Missense_Mutation	PTPRG Missense_Mutation p.H43D	tcga-laml
+TCGA-AB-3006	PTPRN	Missense_Mutation	PTPRN Missense_Mutation p.R350C	tcga-laml
+TCGA-AB-2833	PTPRT	Missense_Mutation	PTPRT Missense_Mutation p.R1414H	tcga-laml
+TCGA-AB-2885	PTPRT	Missense_Mutation	PTPRT Missense_Mutation p.A981T	tcga-laml
+TCGA-AB-2993	PTPRT	Missense_Mutation	PTPRT Missense_Mutation p.P1213L	tcga-laml
+TCGA-AB-2912	PUS1	Missense_Mutation	PUS1 Missense_Mutation p.N191I	tcga-laml
+TCGA-AB-2978	PXDNL	Missense_Mutation	PXDNL Missense_Mutation p.D851N	tcga-laml
+TCGA-AB-2838	PYGO2	Missense_Mutation	PYGO2 Missense_Mutation p.R356P	tcga-laml
+TCGA-AB-2899	QRICH2	Missense_Mutation	QRICH2 Missense_Mutation p.D1484V	tcga-laml
+TCGA-AB-2822	R3HDM1	Missense_Mutation	R3HDM1 Missense_Mutation p.S552N	tcga-laml
+TCGA-AB-2863	RAB11FIP1	Missense_Mutation	RAB11FIP1 Missense_Mutation p.A415T	tcga-laml
+TCGA-AB-2963	RAB17	Missense_Mutation	RAB17 Missense_Mutation p.T134M	tcga-laml
+TCGA-AB-2824	RAB23	Missense_Mutation	RAB23 Missense_Mutation p.Q171R	tcga-laml
+TCGA-AB-2989	RAB25	Missense_Mutation	RAB25 Missense_Mutation p.S41R	tcga-laml
+TCGA-AB-2818	RAD21	Splice_Site	RAD21 Splice_Site p.V49fs	tcga-laml
+TCGA-AB-2886	RAD21	Frame_Shift_Del	RAD21 Frame_Shift_Del p.E453fs	tcga-laml
+TCGA-AB-2967	RAD21	Frame_Shift_Ins	RAD21 Frame_Shift_Ins p.V284fs	tcga-laml
+TCGA-AB-2975	RAD21	Nonsense_Mutation	RAD21 Nonsense_Mutation p.L255*	tcga-laml
+TCGA-AB-2986	RAD21	Nonsense_Mutation	RAD21 Nonsense_Mutation p.E212*	tcga-laml
+TCGA-AB-2839	RALGAPA2	Missense_Mutation	RALGAPA2 Missense_Mutation p.Q343H	tcga-laml
+TCGA-AB-2886	RAP1B	Missense_Mutation	RAP1B Missense_Mutation p.G12E	tcga-laml
+TCGA-AB-2871	RAP1GDS1	Missense_Mutation	RAP1GDS1 Missense_Mutation p.A66T	tcga-laml
+TCGA-AB-2858	RAPGEF2	Nonsense_Mutation	RAPGEF2 Nonsense_Mutation p.E157*	tcga-laml
+TCGA-AB-2965	RASSF7	Missense_Mutation	RASSF7 Missense_Mutation p.A69S	tcga-laml
+TCGA-AB-2978	RASSF9	Missense_Mutation	RASSF9 Missense_Mutation p.H198N	tcga-laml
+TCGA-AB-2919	RBBP4	Missense_Mutation	RBBP4 Missense_Mutation p.E330K	tcga-laml
+TCGA-AB-2926	RBBP4	Missense_Mutation	RBBP4 Missense_Mutation p.E330K	tcga-laml
+TCGA-AB-2980	RBKS	Missense_Mutation	RBKS Missense_Mutation p.N114K	tcga-laml
+TCGA-AB-2872	RBM16	Missense_Mutation	RBM16 Missense_Mutation p.P1063T	tcga-laml
+TCGA-AB-2882	RBM16	Missense_Mutation	RBM16 Missense_Mutation p.G1111C	tcga-laml
+TCGA-AB-2986	RBM41	Missense_Mutation	RBM41 Missense_Mutation p.I362R	tcga-laml
+TCGA-AB-2849	RBM9	Missense_Mutation	RBM9 Missense_Mutation p.R76Q	tcga-laml
+TCGA-AB-3002	RBMX	Missense_Mutation	RBMX Missense_Mutation p.D5Y	tcga-laml
+TCGA-AB-2907	RCAN2	Missense_Mutation	RCAN2 Missense_Mutation p.N197K	tcga-laml
+TCGA-AB-2882	RCC2	Splice_Site	RCC2 Splice_Site p.G403S	tcga-laml
+TCGA-AB-2963	RFC1	Missense_Mutation	RFC1 Missense_Mutation p.T658A	tcga-laml
+TCGA-AB-2838	RFC3	Splice_Site	RFC3 Splice_Site p.R270R	tcga-laml
+TCGA-AB-2925	RFC3	Missense_Mutation	RFC3 Missense_Mutation p.T168P	tcga-laml
+TCGA-AB-2885	RFX3	Missense_Mutation	RFX3 Missense_Mutation p.E399K	tcga-laml
+TCGA-AB-2868	RFX4	Missense_Mutation	RFX4 Missense_Mutation p.G120R	tcga-laml
+TCGA-AB-2819	RGL1	Missense_Mutation	RGL1 Missense_Mutation p.R731C	tcga-laml
+TCGA-AB-2913	RGNEF	Missense_Mutation	RGNEF Missense_Mutation p.Q469K	tcga-laml
+TCGA-AB-2919	RIF1	Missense_Mutation	RIF1 Missense_Mutation p.H1144Q	tcga-laml
+TCGA-AB-2959	RIMS1	Missense_Mutation	RIMS1 Missense_Mutation p.R968C	tcga-laml
+TCGA-AB-2972	RIMS1	Missense_Mutation	RIMS1 Missense_Mutation p.R150W	tcga-laml
+TCGA-AB-2935	RIN2	Missense_Mutation	RIN2 Missense_Mutation p.R565C	tcga-laml
+TCGA-AB-2878	RIT1	Missense_Mutation	RIT1 Missense_Mutation p.M90I	tcga-laml
+TCGA-AB-2972	RNASEN	Missense_Mutation	RNASEN Missense_Mutation p.T1239S	tcga-laml
+TCGA-AB-2905	RNF111	Nonsense_Mutation	RNF111 Nonsense_Mutation p.Q605*	tcga-laml
+TCGA-AB-2863	RNF213	Missense_Mutation	RNF213 Missense_Mutation p.R2823Q	tcga-laml
+TCGA-AB-2937	RNF213	Missense_Mutation	RNF213 Missense_Mutation p.V3100L	tcga-laml
+TCGA-AB-2923	RNF25	Missense_Mutation	RNF25 Missense_Mutation p.P17T	tcga-laml
+TCGA-AB-3002	RP1	Missense_Mutation	RP1 Missense_Mutation p.A405T	tcga-laml
+TCGA-AB-2803	RPL32	Missense_Mutation	RPL32 Missense_Mutation p.R44S	tcga-laml
+TCGA-AB-2829	RPL4	Missense_Mutation	RPL4 Missense_Mutation p.R143H	tcga-laml
+TCGA-AB-2864	RPL6	Missense_Mutation	RPL6 Missense_Mutation p.E17K	tcga-laml
+TCGA-AB-2992	RPL9	Missense_Mutation	RPL9 Missense_Mutation p.T69A	tcga-laml
+TCGA-AB-2955	RPS3A	Missense_Mutation	RPS3A Missense_Mutation p.H5Y	tcga-laml
+TCGA-AB-2912	RPS6KA6	Missense_Mutation	RPS6KA6 Missense_Mutation p.P690S	tcga-laml
+TCGA-AB-3008	RSRC2	Missense_Mutation	RSRC2 Missense_Mutation p.R187T	tcga-laml
+TCGA-AB-2959	RTN4RL1	Missense_Mutation	RTN4RL1 Missense_Mutation p.V144I	tcga-laml
+TCGA-AB-3001	RUFY1	Missense_Mutation	RUFY1 Missense_Mutation p.L579V	tcga-laml
+TCGA-AB-2805	RUNX1	Nonsense_Mutation	RUNX1 Nonsense_Mutation p.R174*	tcga-laml
+TCGA-AB-2805	RUNX1	Frame_Shift_Ins	RUNX1 Frame_Shift_Ins p.S114fs	tcga-laml
+TCGA-AB-2807	RUNX1	In_Frame_Del	RUNX1 In_Frame_Del p.SG140del	tcga-laml
+TCGA-AB-2821	RUNX1	Frame_Shift_Ins	RUNX1 Frame_Shift_Ins p.D96fs	tcga-laml
+TCGA-AB-2850	RUNX1	Frame_Shift_Del	RUNX1 Frame_Shift_Del p.GGERSPPR393fs	tcga-laml
+TCGA-AB-2865	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.D171N	tcga-laml
+TCGA-AB-2865	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.S114L	tcga-laml
+TCGA-AB-2890	RUNX1	Nonsense_Mutation	RUNX1 Nonsense_Mutation p.R174*	tcga-laml
+TCGA-AB-2899	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.R135G	tcga-laml
+TCGA-AB-2907	RUNX1	Splice_Site	RUNX1 Splice_Site 	tcga-laml
+TCGA-AB-2912	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.R135K	tcga-laml
+TCGA-AB-2927	RUNX1	Nonsense_Mutation	RUNX1 Nonsense_Mutation p.R174*	tcga-laml
+TCGA-AB-2927	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.R135S	tcga-laml
+TCGA-AB-2933	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.R135G	tcga-laml
+TCGA-AB-2936	RUNX1	Nonsense_Mutation	RUNX1 Nonsense_Mutation p.R293*	tcga-laml
+TCGA-AB-2959	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.R174Q	tcga-laml
+TCGA-AB-2970	RUNX1	Missense_Mutation	RUNX1 Missense_Mutation p.P86L	tcga-laml
+TCGA-AB-2978	RUNX1	Nonsense_Mutation	RUNX1 Nonsense_Mutation p.R174*	tcga-laml
+TCGA-AB-3009	RUNX1	Frame_Shift_Ins	RUNX1 Frame_Shift_Ins p.G138fs	tcga-laml
+TCGA-AB-2881	RUNX1T1	Nonsense_Mutation	RUNX1T1 Nonsense_Mutation p.C268*	tcga-laml
+TCGA-AB-2860	RYR1	Missense_Mutation	RYR1 Missense_Mutation p.G2264S	tcga-laml
+TCGA-AB-2803	RYR3	Missense_Mutation	RYR3 Missense_Mutation p.V2842I	tcga-laml
+TCGA-AB-2901	RYR3	Missense_Mutation	RYR3 Missense_Mutation p.L3806Q	tcga-laml
+TCGA-AB-2877	SACS	Missense_Mutation	SACS Missense_Mutation p.T627M	tcga-laml
+TCGA-AB-2855	SAGE1	Missense_Mutation	SAGE1 Missense_Mutation p.D266N	tcga-laml
+TCGA-AB-2971	SAP130	Missense_Mutation	SAP130 Missense_Mutation p.T247I	tcga-laml
+TCGA-AB-2926	SBF2	Missense_Mutation	SBF2 Missense_Mutation p.R396H	tcga-laml
+TCGA-AB-2847	SCAND3	Missense_Mutation	SCAND3 Missense_Mutation p.A263V	tcga-laml
+TCGA-AB-2828	SCARA3	Missense_Mutation	SCARA3 Missense_Mutation p.S418N	tcga-laml
+TCGA-AB-2876	SCARA5	Missense_Mutation	SCARA5 Missense_Mutation p.R413H	tcga-laml
+TCGA-AB-2994	SCARB1	Missense_Mutation	SCARB1 Missense_Mutation p.E82K	tcga-laml
+TCGA-AB-2988	SCEL	Missense_Mutation	SCEL Missense_Mutation p.L657S	tcga-laml
+TCGA-AB-2830	SCML2	Missense_Mutation	SCML2 Missense_Mutation p.A47S	tcga-laml
+TCGA-AB-2857	SCN1A	Missense_Mutation	SCN1A Missense_Mutation p.I448V	tcga-laml
+TCGA-AB-2917	SCN1A	Missense_Mutation	SCN1A Missense_Mutation p.R500Q	tcga-laml
+TCGA-AB-2912	SCN3A	Missense_Mutation	SCN3A Missense_Mutation p.G479R	tcga-laml
+TCGA-AB-2900	SCTR	Missense_Mutation	SCTR Missense_Mutation p.R339H	tcga-laml
+TCGA-AB-2882	SDK1	Missense_Mutation	SDK1 Missense_Mutation p.V625M	tcga-laml
+TCGA-AB-2976	SDK2	Missense_Mutation	SDK2 Missense_Mutation p.P990T	tcga-laml
+TCGA-AB-2945	SDR42E1	Missense_Mutation	SDR42E1 Missense_Mutation p.G274S	tcga-laml
+TCGA-AB-2828	SECISBP2L	Missense_Mutation	SECISBP2L Missense_Mutation p.C643Y	tcga-laml
+TCGA-AB-2898	SEL1L2	Missense_Mutation	SEL1L2 Missense_Mutation p.G341E	tcga-laml
+TCGA-AB-2827	SELENBP1	Missense_Mutation	SELENBP1 Missense_Mutation p.E367K	tcga-laml
+TCGA-AB-2928	SEMA3A	Missense_Mutation	SEMA3A Missense_Mutation p.R613Q	tcga-laml
+TCGA-AB-2983	SEMA3A	Missense_Mutation	SEMA3A Missense_Mutation p.W366S	tcga-laml
+TCGA-AB-2870	SEMA4A	Missense_Mutation	SEMA4A Missense_Mutation p.H593R	tcga-laml
+TCGA-AB-2967	SEMA4A	Splice_Site	SEMA4A Splice_Site 	tcga-laml
+TCGA-AB-2869	SEMA6D	Missense_Mutation	SEMA6D Missense_Mutation p.R254C	tcga-laml
+TCGA-AB-2844	SENP7	Nonsense_Mutation	SENP7 Nonsense_Mutation p.R111*	tcga-laml
+TCGA-AB-2943	SERPINA12	Missense_Mutation	SERPINA12 Missense_Mutation p.S93N	tcga-laml
+TCGA-AB-2915	SERPINB12	Missense_Mutation	SERPINB12 Missense_Mutation p.R401K	tcga-laml
+TCGA-AB-2914	SERPINB4	Missense_Mutation	SERPINB4 Missense_Mutation p.A343V	tcga-laml
+TCGA-AB-2899	SETBP1	Missense_Mutation	SETBP1 Missense_Mutation p.G870S	tcga-laml
+TCGA-AB-2917	SETBP1	Missense_Mutation	SETBP1 Missense_Mutation p.D868N	tcga-laml
+TCGA-AB-2932	SETD2	Frame_Shift_Ins	SETD2 Frame_Shift_Ins p.E325fs	tcga-laml
+TCGA-AB-2929	SF3B1	Missense_Mutation	SF3B1 Missense_Mutation p.K700E	tcga-laml
+TCGA-AB-2850	SFRS2	In_Frame_Del	SFRS2 In_Frame_Del p.PPDSHHSR95del	tcga-laml
+TCGA-AB-2972	SFRS6	Missense_Mutation	SFRS6 Missense_Mutation p.W123R	tcga-laml
+TCGA-AB-2927	SH2B3	Missense_Mutation	SH2B3 Missense_Mutation p.L438H	tcga-laml
+TCGA-AB-2830	SH3BP4	Missense_Mutation	SH3BP4 Missense_Mutation p.V454M	tcga-laml
+TCGA-AB-2895	SH3TC2	Missense_Mutation	SH3TC2 Missense_Mutation p.R1012Q	tcga-laml
+TCGA-AB-3009	SHANK1	Missense_Mutation	SHANK1 Missense_Mutation p.D2102N	tcga-laml
+TCGA-AB-2999	SHQ1	Missense_Mutation	SHQ1 Missense_Mutation p.R269G	tcga-laml
+TCGA-AB-2964	SHROOM2	Nonsense_Mutation	SHROOM2 Nonsense_Mutation p.R1017*	tcga-laml
+TCGA-AB-2939	SI	Missense_Mutation	SI Missense_Mutation p.Y1292H	tcga-laml
+TCGA-AB-3001	SI	Missense_Mutation	SI Missense_Mutation p.T1342K	tcga-laml
+TCGA-AB-2938	SIDT2	Missense_Mutation	SIDT2 Missense_Mutation p.N712S	tcga-laml
+TCGA-AB-2966	SIGLEC1	Missense_Mutation	SIGLEC1 Missense_Mutation p.V302I	tcga-laml
+TCGA-AB-2908	SLAMF7	Missense_Mutation	SLAMF7 Missense_Mutation p.Y125C	tcga-laml
+TCGA-AB-3007	SLC12A1	Missense_Mutation	SLC12A1 Missense_Mutation p.A508T	tcga-laml
+TCGA-AB-2812	SLC12A3	Missense_Mutation	SLC12A3 Missense_Mutation p.L836F	tcga-laml
+TCGA-AB-2853	SLC13A1	Missense_Mutation	SLC13A1 Missense_Mutation p.A553S	tcga-laml
+TCGA-AB-2993	SLC15A1	Nonsense_Mutation	SLC15A1 Nonsense_Mutation p.W77*	tcga-laml
+TCGA-AB-2939	SLC16A14	Nonsense_Mutation	SLC16A14 Nonsense_Mutation p.R314*	tcga-laml
+TCGA-AB-2988	SLC17A3	Missense_Mutation	SLC17A3 Missense_Mutation p.L279F	tcga-laml
+TCGA-AB-2846	SLC17A7	Missense_Mutation	SLC17A7 Missense_Mutation p.P538L	tcga-laml
+TCGA-AB-2844	SLC18A1	Missense_Mutation	SLC18A1 Missense_Mutation p.R3Q	tcga-laml
+TCGA-AB-2820	SLC18A2	Missense_Mutation	SLC18A2 Missense_Mutation p.V141I	tcga-laml
+TCGA-AB-2839	SLC1A1	Missense_Mutation	SLC1A1 Missense_Mutation p.V309I	tcga-laml
+TCGA-AB-2992	SLC24A3	Missense_Mutation	SLC24A3 Missense_Mutation p.T269A	tcga-laml
+TCGA-AB-2927	SLC24A4	Splice_Site	SLC24A4 Splice_Site p.G160R	tcga-laml
+TCGA-AB-2925	SLC27A6	Missense_Mutation	SLC27A6 Missense_Mutation p.R333H	tcga-laml
+TCGA-AB-2997	SLC30A6	Missense_Mutation	SLC30A6 Missense_Mutation p.H356R	tcga-laml
+TCGA-AB-2998	SLC37A2	Missense_Mutation	SLC37A2 Missense_Mutation p.V471I	tcga-laml
+TCGA-AB-2813	SLC38A6	Missense_Mutation	SLC38A6 Missense_Mutation p.S313T	tcga-laml
+TCGA-AB-2896	SLC39A5	Frame_Shift_Ins	SLC39A5 Frame_Shift_Ins p.LG457fs	tcga-laml
+TCGA-AB-2829	SLC43A1	Missense_Mutation	SLC43A1 Missense_Mutation p.Y532C	tcga-laml
+TCGA-AB-2949	SLC4A3	Splice_Site	SLC4A3 Splice_Site 	tcga-laml
+TCGA-AB-2939	SLC6A20	Missense_Mutation	SLC6A20 Missense_Mutation p.R70W	tcga-laml
+TCGA-AB-2864	SLC6A9	Missense_Mutation	SLC6A9 Missense_Mutation p.N282Y	tcga-laml
+TCGA-AB-2917	SLC7A13	Missense_Mutation	SLC7A13 Missense_Mutation p.R151H	tcga-laml
+TCGA-AB-2899	SLC7A7	Missense_Mutation	SLC7A7 Missense_Mutation p.R506Q	tcga-laml
+TCGA-AB-2863	SLCO3A1	Missense_Mutation	SLCO3A1 Missense_Mutation p.C471W	tcga-laml
+TCGA-AB-2959	SLCO5A1	Missense_Mutation	SLCO5A1 Missense_Mutation p.C46Y	tcga-laml
+TCGA-AB-2927	SLFNL1	Missense_Mutation	SLFNL1 Missense_Mutation p.D198N	tcga-laml
+TCGA-AB-2874	SLITRK1	Missense_Mutation	SLITRK1 Missense_Mutation p.Q517K	tcga-laml
+TCGA-AB-2863	SLPI	Missense_Mutation	SLPI Missense_Mutation p.R84K	tcga-laml
+TCGA-AB-2858	SLTM	Missense_Mutation	SLTM Missense_Mutation p.L838P	tcga-laml
+TCGA-AB-2863	SMAD9	Missense_Mutation	SMAD9 Missense_Mutation p.H166Y	tcga-laml
+TCGA-AB-2842	SMARCA2	Missense_Mutation	SMARCA2 Missense_Mutation p.L753F	tcga-laml
+TCGA-AB-2822	SMC1A	Missense_Mutation	SMC1A Missense_Mutation p.A487G	tcga-laml
+TCGA-AB-2824	SMC1A	Missense_Mutation	SMC1A Missense_Mutation p.R816H	tcga-laml
+TCGA-AB-2844	SMC1A	Missense_Mutation	SMC1A Missense_Mutation p.R96H	tcga-laml
+TCGA-AB-2858	SMC1A	Missense_Mutation	SMC1A Missense_Mutation p.K1120E	tcga-laml
+TCGA-AB-2900	SMC1A	Splice_Site	SMC1A Splice_Site p.E855*	tcga-laml
+TCGA-AB-2963	SMC1A	Missense_Mutation	SMC1A Missense_Mutation p.I819N	tcga-laml
+TCGA-AB-2839	SMC3	Missense_Mutation	SMC3 Missense_Mutation p.T1174I	tcga-laml
+TCGA-AB-2851	SMC3	Nonsense_Mutation	SMC3 Nonsense_Mutation p.R254*	tcga-laml
+TCGA-AB-2853	SMC3	Missense_Mutation	SMC3 Missense_Mutation p.R661P	tcga-laml
+TCGA-AB-2908	SMC3	Missense_Mutation	SMC3 Missense_Mutation p.I1001V	tcga-laml
+TCGA-AB-2912	SMC3	Missense_Mutation	SMC3 Missense_Mutation p.R381Q	tcga-laml
+TCGA-AB-2950	SMC3	Splice_Site	SMC3 Splice_Site 	tcga-laml
+TCGA-AB-2993	SMC3	Missense_Mutation	SMC3 Missense_Mutation p.G662C	tcga-laml
+TCGA-AB-2844	SMC5	Missense_Mutation	SMC5 Missense_Mutation p.K525I	tcga-laml
+TCGA-AB-2806	SMEK1	Missense_Mutation	SMEK1 Missense_Mutation p.S546W	tcga-laml
+TCGA-AB-2874	SMG1	Missense_Mutation	SMG1 Missense_Mutation p.F2215L	tcga-laml
+TCGA-AB-2882	SMG1	Missense_Mutation	SMG1 Missense_Mutation p.R2336K	tcga-laml
+TCGA-AB-2966	SMG1	Missense_Mutation	SMG1 Missense_Mutation p.S2202T	tcga-laml
+TCGA-AB-2810	SMOC2	Missense_Mutation	SMOC2 Missense_Mutation p.R293Q	tcga-laml
+TCGA-AB-2864	SMURF2	Missense_Mutation	SMURF2 Missense_Mutation p.N105S	tcga-laml
+TCGA-AB-2956	SNCAIP	Missense_Mutation	SNCAIP Missense_Mutation p.E756K	tcga-laml
+TCGA-AB-2904	SNED1	Missense_Mutation	SNED1 Missense_Mutation p.L938H	tcga-laml
+TCGA-AB-2849	SNRNP200	Missense_Mutation	SNRNP200 Missense_Mutation p.Y102H	tcga-laml
+TCGA-AB-3005	SON	Missense_Mutation	SON Missense_Mutation p.M1024V	tcga-laml
+TCGA-AB-2914	SORCS3	Missense_Mutation	SORCS3 Missense_Mutation p.G326R	tcga-laml
+TCGA-AB-2990	SOS1	Missense_Mutation	SOS1 Missense_Mutation p.R552K	tcga-laml
+TCGA-AB-2994	SOX5	Missense_Mutation	SOX5 Missense_Mutation p.R657W	tcga-laml
+TCGA-AB-2945	SPACA1	Missense_Mutation	SPACA1 Missense_Mutation p.V76I	tcga-laml
+TCGA-AB-2843	SPAM1	Missense_Mutation	SPAM1 Missense_Mutation p.V369I	tcga-laml
+TCGA-AB-2867	SPATA21	Missense_Mutation	SPATA21 Missense_Mutation p.S113L	tcga-laml
+TCGA-AB-3001	SPATS2L	Missense_Mutation	SPATS2L Missense_Mutation p.S368I	tcga-laml
+TCGA-AB-2878	SPDYA	Missense_Mutation	SPDYA Missense_Mutation p.M6L	tcga-laml
+TCGA-AB-2870	SPEG	Nonsense_Mutation	SPEG Nonsense_Mutation p.R1684*	tcga-laml
+TCGA-AB-2849	SPEN	Nonsense_Mutation	SPEN Nonsense_Mutation p.W2501*	tcga-laml
+TCGA-AB-2868	SPEN	Missense_Mutation	SPEN Missense_Mutation p.Y650S	tcga-laml
+TCGA-AB-2900	SPEN	Missense_Mutation	SPEN Missense_Mutation p.T266R	tcga-laml
+TCGA-AB-2827	SPESP1	Missense_Mutation	SPESP1 Missense_Mutation p.R263Q	tcga-laml
+TCGA-AB-2904	SPG11	Missense_Mutation	SPG11 Missense_Mutation p.A8G	tcga-laml
+TCGA-AB-2949	SPHKAP	Missense_Mutation	SPHKAP Missense_Mutation p.P24L	tcga-laml
+TCGA-AB-2813	SPRR4	Missense_Mutation	SPRR4 Missense_Mutation p.R8W	tcga-laml
+TCGA-AB-2853	SPTLC2	Missense_Mutation	SPTLC2 Missense_Mutation p.I419V	tcga-laml
+TCGA-AB-2976	SRCRB4D	Missense_Mutation	SRCRB4D Missense_Mutation p.D422N	tcga-laml
+TCGA-AB-2832	SREBF2	Missense_Mutation	SREBF2 Missense_Mutation p.V554M	tcga-laml
+TCGA-AB-3012	SRRM2	Frame_Shift_Ins	SRRM2 Frame_Shift_Ins p.S724fs	tcga-laml
+TCGA-AB-2915	SSSCA1	In_Frame_Del	SSSCA1 In_Frame_Del p.L158del	tcga-laml
+TCGA-AB-2817	SSTR4	Missense_Mutation	SSTR4 Missense_Mutation p.V170M	tcga-laml
+TCGA-AB-2949	ST8SIA4	Missense_Mutation	ST8SIA4 Missense_Mutation p.H122R	tcga-laml
+TCGA-AB-2850	STAG2	Splice_Site	STAG2 Splice_Site 	tcga-laml
+TCGA-AB-2871	STAG2	Splice_Site	STAG2 Splice_Site 	tcga-laml
+TCGA-AB-2913	STAG2	Splice_Site	STAG2 Splice_Site 	tcga-laml
+TCGA-AB-2964	STAG2	Nonsense_Mutation	STAG2 Nonsense_Mutation p.Q801*	tcga-laml
+TCGA-AB-2972	STAG2	Nonsense_Mutation	STAG2 Nonsense_Mutation p.R614*	tcga-laml
+TCGA-AB-2978	STAG2	Nonsense_Mutation	STAG2 Nonsense_Mutation p.R1045*	tcga-laml
+TCGA-AB-2926	STC2	Frame_Shift_Ins	STC2 Frame_Shift_Ins p.G278fs	tcga-laml
+TCGA-AB-2877	STEAP1	Missense_Mutation	STEAP1 Missense_Mutation p.V42M	tcga-laml
+TCGA-AB-2809	STEAP2	Nonsense_Mutation	STEAP2 Nonsense_Mutation p.R175*	tcga-laml
+TCGA-AB-2908	STK32A	Nonsense_Mutation	STK32A Nonsense_Mutation p.R268*	tcga-laml
+TCGA-AB-2868	STK33	Splice_Site	STK33 Splice_Site p.V263L	tcga-laml
+TCGA-AB-2996	STK36	Missense_Mutation	STK36 Missense_Mutation p.Y1111C	tcga-laml
+TCGA-AB-2923	STRC	Missense_Mutation	STRC Missense_Mutation p.A147V	tcga-laml
+TCGA-AB-2983	STRN	Missense_Mutation	STRN Missense_Mutation p.M130K	tcga-laml
+TCGA-AB-2878	STT3B	Missense_Mutation	STT3B Missense_Mutation p.D127G	tcga-laml
+TCGA-AB-3007	STX3	Splice_Site	STX3 Splice_Site 	tcga-laml
+TCGA-AB-2833	STXBP5L	Missense_Mutation	STXBP5L Missense_Mutation p.R769C	tcga-laml
+TCGA-AB-2820	SUDS3	Missense_Mutation	SUDS3 Missense_Mutation p.A255D	tcga-laml
+TCGA-AB-2851	SULF1	Missense_Mutation	SULF1 Missense_Mutation p.R544C	tcga-laml
+TCGA-AB-2875	SULT1B1	Missense_Mutation	SULT1B1 Missense_Mutation p.E158K	tcga-laml
+TCGA-AB-3006	SULT1C2	Missense_Mutation	SULT1C2 Missense_Mutation p.P131L	tcga-laml
+TCGA-AB-2927	SUMO2	Frame_Shift_Ins	SUMO2 Frame_Shift_Ins p.I24fs	tcga-laml
+TCGA-AB-2989	SUPT5H	Missense_Mutation	SUPT5H Missense_Mutation p.R133P	tcga-laml
+TCGA-AB-2820	SUZ12	Missense_Mutation	SUZ12 Missense_Mutation p.R103Q	tcga-laml
+TCGA-AB-2949	SUZ12	Frame_Shift_Del	SUZ12 Frame_Shift_Del p.L308fs	tcga-laml
+TCGA-AB-3009	SUZ12	Missense_Mutation	SUZ12 Missense_Mutation p.G163D	tcga-laml
+TCGA-AB-2931	SYNE1	Missense_Mutation	SYNE1 Missense_Mutation p.R1835H	tcga-laml
+TCGA-AB-2941	SYNJ1	Missense_Mutation	SYNJ1 Missense_Mutation p.I189V	tcga-laml
+TCGA-AB-2843	SYT1	Missense_Mutation	SYT1 Missense_Mutation p.A19T	tcga-laml
+TCGA-AB-2822	SYT17	Missense_Mutation	SYT17 Missense_Mutation p.D385H	tcga-laml
+TCGA-AB-2978	SYTL4	Missense_Mutation	SYTL4 Missense_Mutation p.R517Q	tcga-laml
+TCGA-AB-2929	SYTL5	Missense_Mutation	SYTL5 Missense_Mutation p.G216S	tcga-laml
+TCGA-AB-2927	TACC2	Missense_Mutation	TACC2 Missense_Mutation p.T2115M	tcga-laml
+TCGA-AB-2841	TBC1D2	Missense_Mutation	TBC1D2 Missense_Mutation p.L593R	tcga-laml
+TCGA-AB-2838	TBC1D21	Missense_Mutation	TBC1D21 Missense_Mutation p.E181Q	tcga-laml
+TCGA-AB-3005	TBC1D4	Missense_Mutation	TBC1D4 Missense_Mutation p.V417I	tcga-laml
+TCGA-AB-2807	TBC1D8	Missense_Mutation	TBC1D8 Missense_Mutation p.E819A	tcga-laml
+TCGA-AB-2830	TBC1D8B	Missense_Mutation	TBC1D8B Missense_Mutation p.N335K	tcga-laml
+TCGA-AB-2802	TBX15	Missense_Mutation	TBX15 Missense_Mutation p.I165F	tcga-laml
+TCGA-AB-2895	TBX18	Missense_Mutation	TBX18 Missense_Mutation p.A325V	tcga-laml
+TCGA-AB-2899	TCEAL6	Missense_Mutation	TCEAL6 Missense_Mutation p.E45K	tcga-laml
+TCGA-AB-2936	TCEAL6	Nonsense_Mutation	TCEAL6 Nonsense_Mutation p.E75*	tcga-laml
+TCGA-AB-2862	TCEANC	Missense_Mutation	TCEANC Missense_Mutation p.T46A	tcga-laml
+TCGA-AB-2805	TCEB3B	Missense_Mutation	TCEB3B Missense_Mutation p.A187T	tcga-laml
+TCGA-AB-2862	TCERG1L	Missense_Mutation	TCERG1L Missense_Mutation p.F567L	tcga-laml
+TCGA-AB-2927	TCF4	Frame_Shift_Ins	TCF4 Frame_Shift_Ins p.Q609fs	tcga-laml
+TCGA-AB-2802	TCHHL1	Missense_Mutation	TCHHL1 Missense_Mutation p.Q879R	tcga-laml
+TCGA-AB-2872	TCL1A	Missense_Mutation	TCL1A Missense_Mutation p.R17H	tcga-laml
+TCGA-AB-2963	TCTE3	Missense_Mutation	TCTE3 Missense_Mutation p.R144H	tcga-laml
+TCGA-AB-2876	TDRD10	Missense_Mutation	TDRD10 Missense_Mutation p.R193H	tcga-laml
+TCGA-AB-2976	TEK	Missense_Mutation	TEK Missense_Mutation p.E990K	tcga-laml
+TCGA-AB-2855	TET1	Missense_Mutation	TET1 Missense_Mutation p.T1830I	tcga-laml
+TCGA-AB-2898	TET1	Missense_Mutation	TET1 Missense_Mutation p.P1040S	tcga-laml
+TCGA-AB-2822	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.S315fs	tcga-laml
+TCGA-AB-2830	TET2	Frame_Shift_Ins	TET2 Frame_Shift_Ins p.A1381fs	tcga-laml
+TCGA-AB-2830	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.K1439fs	tcga-laml
+TCGA-AB-2845	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.R1307fs	tcga-laml
+TCGA-AB-2865	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.Q947*	tcga-laml
+TCGA-AB-2865	TET2	Frame_Shift_Ins	TET2 Frame_Shift_Ins p.K1422fs	tcga-laml
+TCGA-AB-2865	TET2	Frame_Shift_Ins	TET2 Frame_Shift_Ins p.K1422fs	tcga-laml
+TCGA-AB-2873	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.H880fs	tcga-laml
+TCGA-AB-2876	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.Q481*	tcga-laml
+TCGA-AB-2879	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.I274fs	tcga-laml
+TCGA-AB-2879	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.R1216*	tcga-laml
+TCGA-AB-2908	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.R1216*	tcga-laml
+TCGA-AB-2923	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.R550*	tcga-laml
+TCGA-AB-2923	TET2	Frame_Shift_Ins	TET2 Frame_Shift_Ins p.Q958fs	tcga-laml
+TCGA-AB-2928	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.P1115fs	tcga-laml
+TCGA-AB-2928	TET2	Missense_Mutation	TET2 Missense_Mutation p.E1352V	tcga-laml
+TCGA-AB-2937	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.F125fs	tcga-laml
+TCGA-AB-2964	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.Q916*	tcga-laml
+TCGA-AB-2964	TET2	Missense_Mutation	TET2 Missense_Mutation p.P1889L	tcga-laml
+TCGA-AB-2965	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.P1316fs	tcga-laml
+TCGA-AB-2971	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.T1070fs	tcga-laml
+TCGA-AB-2971	TET2	Missense_Mutation	TET2 Missense_Mutation p.A1863D	tcga-laml
+TCGA-AB-2978	TET2	Splice_Site	TET2 Splice_Site 	tcga-laml
+TCGA-AB-2978	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.R1516*	tcga-laml
+TCGA-AB-2996	TET2	Frame_Shift_Del	TET2 Frame_Shift_Del p.R1354fs	tcga-laml
+TCGA-AB-2996	TET2	Missense_Mutation	TET2 Missense_Mutation p.H1868Y	tcga-laml
+TCGA-AB-3006	TET2	Nonsense_Mutation	TET2 Nonsense_Mutation p.R1452*	tcga-laml
+TCGA-AB-2854	TFAM	Missense_Mutation	TFAM Missense_Mutation p.R233H	tcga-laml
+TCGA-AB-2839	TGFBI	Missense_Mutation	TGFBI Missense_Mutation p.P612S	tcga-laml
+TCGA-AB-2906	THEG	Missense_Mutation	THEG Missense_Mutation p.C165S	tcga-laml
+TCGA-AB-2914	THOC5	Missense_Mutation	THOC5 Missense_Mutation p.L101R	tcga-laml
+TCGA-AB-2849	THRAP3	Missense_Mutation	THRAP3 Missense_Mutation p.R723H	tcga-laml
+TCGA-AB-2871	THRAP3	Nonsense_Mutation	THRAP3 Nonsense_Mutation p.R837*	tcga-laml
+TCGA-AB-2830	THRB	Missense_Mutation	THRB Missense_Mutation p.R338W	tcga-laml
+TCGA-AB-2872	TJAP1	Missense_Mutation	TJAP1 Missense_Mutation p.G27V	tcga-laml
+TCGA-AB-2908	TJP1	Missense_Mutation	TJP1 Missense_Mutation p.S1594P	tcga-laml
+TCGA-AB-2915	TLE6	Missense_Mutation	TLE6 Missense_Mutation p.A365G	tcga-laml
+TCGA-AB-2843	TLR4	Frame_Shift_Del	TLR4 Frame_Shift_Del p.FN304fs	tcga-laml
+TCGA-AB-3009	TM7SF4	Missense_Mutation	TM7SF4 Missense_Mutation p.R416C	tcga-laml
+TCGA-AB-2846	TM9SF4	Missense_Mutation	TM9SF4 Missense_Mutation p.V554I	tcga-laml
+TCGA-AB-2882	TMCO5A	Missense_Mutation	TMCO5A Missense_Mutation p.T266I	tcga-laml
+TCGA-AB-2923	TMEM104	Nonsense_Mutation	TMEM104 Nonsense_Mutation p.R204*	tcga-laml
+TCGA-AB-2887	TMEM108	Missense_Mutation	TMEM108 Missense_Mutation p.T552S	tcga-laml
+TCGA-AB-2887	TMEM18	Missense_Mutation	TMEM18 Missense_Mutation p.S9C	tcga-laml
+TCGA-AB-2979	TMEM198	Missense_Mutation	TMEM198 Missense_Mutation p.R263Q	tcga-laml
+TCGA-AB-2822	TMEM200A	Missense_Mutation	TMEM200A Missense_Mutation p.T172M	tcga-laml
+TCGA-AB-2822	TMEM231	Missense_Mutation	TMEM231 Missense_Mutation p.Y206C	tcga-laml
+TCGA-AB-2846	TMEM47	Missense_Mutation	TMEM47 Missense_Mutation p.R108Q	tcga-laml
+TCGA-AB-2871	TMEM55A	Missense_Mutation	TMEM55A Missense_Mutation p.G234R	tcga-laml
+TCGA-AB-2908	TMPRSS13	Missense_Mutation	TMPRSS13 Missense_Mutation p.D222N	tcga-laml
+TCGA-AB-2964	TMTC2	Missense_Mutation	TMTC2 Missense_Mutation p.A805T	tcga-laml
+TCGA-AB-2937	TMTC4	Missense_Mutation	TMTC4 Missense_Mutation p.R574W	tcga-laml
+TCGA-AB-2805	TNC	Missense_Mutation	TNC Missense_Mutation p.K1871E	tcga-laml
+TCGA-AB-2929	TNC	Missense_Mutation	TNC Missense_Mutation p.T1751I	tcga-laml
+TCGA-AB-2812	TNNC2	Missense_Mutation	TNNC2 Missense_Mutation p.L56M	tcga-laml
+TCGA-AB-2966	TOP3B	Missense_Mutation	TOP3B Missense_Mutation p.S27P	tcga-laml
+TCGA-AB-3012	TOP3B	Missense_Mutation	TOP3B Missense_Mutation p.V147M	tcga-laml
+TCGA-AB-2813	TP53	Missense_Mutation	TP53 Missense_Mutation p.C176Y	tcga-laml
+TCGA-AB-2820	TP53	Frame_Shift_Ins	TP53 Frame_Shift_Ins p.P223fs	tcga-laml
+TCGA-AB-2829	TP53	Missense_Mutation	TP53 Missense_Mutation p.R280G	tcga-laml
+TCGA-AB-2829	TP53	Splice_Site	TP53 Splice_Site 	tcga-laml
+TCGA-AB-2838	TP53	Splice_Site	TP53 Splice_Site p.T125T	tcga-laml
+TCGA-AB-2860	TP53	Frame_Shift_Ins	TP53 Frame_Shift_Ins p.M40fs	tcga-laml
+TCGA-AB-2868	TP53	Splice_Site	TP53 Splice_Site 	tcga-laml
+TCGA-AB-2878	TP53	Missense_Mutation	TP53 Missense_Mutation p.S215G	tcga-laml
+TCGA-AB-2878	TP53	Frame_Shift_Del	TP53 Frame_Shift_Del p.V173fs	tcga-laml
+TCGA-AB-2885	TP53	Missense_Mutation	TP53 Missense_Mutation p.H193Y	tcga-laml
+TCGA-AB-2904	TP53	Missense_Mutation	TP53 Missense_Mutation p.R337C	tcga-laml
+TCGA-AB-2908	TP53	Nonsense_Mutation	TP53 Nonsense_Mutation p.Q317*	tcga-laml
+TCGA-AB-2908	TP53	Missense_Mutation	TP53 Missense_Mutation p.C141W	tcga-laml
+TCGA-AB-2935	TP53	Missense_Mutation	TP53 Missense_Mutation p.R248Q	tcga-laml
+TCGA-AB-2938	TP53	Frame_Shift_Del	TP53 Frame_Shift_Del p.R342fs	tcga-laml
+TCGA-AB-2938	TP53	Missense_Mutation	TP53 Missense_Mutation p.H179R	tcga-laml
+TCGA-AB-2941	TP53	Missense_Mutation	TP53 Missense_Mutation p.I195S	tcga-laml
+TCGA-AB-2943	TP53	Missense_Mutation	TP53 Missense_Mutation p.R273C	tcga-laml
+TCGA-AB-2952	TP53	Missense_Mutation	TP53 Missense_Mutation p.E286G	tcga-laml
+TCGA-AB-3002	TP73	Missense_Mutation	TP73 Missense_Mutation p.P195L	tcga-laml
+TCGA-AB-2929	TPH1	Nonsense_Mutation	TPH1 Nonsense_Mutation p.G347*	tcga-laml
+TCGA-AB-2959	TPO	Missense_Mutation	TPO Missense_Mutation p.D162E	tcga-laml
+TCGA-AB-2851	TPRG1	Missense_Mutation	TPRG1 Missense_Mutation p.I258T	tcga-laml
+TCGA-AB-2997	TPTE2	Missense_Mutation	TPTE2 Missense_Mutation p.E339K	tcga-laml
+TCGA-AB-2844	TRA2B	Missense_Mutation	TRA2B Missense_Mutation p.R74G	tcga-laml
+TCGA-AB-3006	TRAM1L1	Missense_Mutation	TRAM1L1 Missense_Mutation p.V101E	tcga-laml
+TCGA-AB-2979	TRIM24	Missense_Mutation	TRIM24 Missense_Mutation p.R910C	tcga-laml
+TCGA-AB-2952	TRIM45	Missense_Mutation	TRIM45 Missense_Mutation p.A161T	tcga-laml
+TCGA-AB-2803	TRIM48	Missense_Mutation	TRIM48 Missense_Mutation p.T178N	tcga-laml
+TCGA-AB-2849	TRIO	Missense_Mutation	TRIO Missense_Mutation p.R131H	tcga-laml
+TCGA-AB-2916	TRIP4	Splice_Site	TRIP4 Splice_Site 	tcga-laml
+TCGA-AB-2817	TRNT1	Missense_Mutation	TRNT1 Missense_Mutation p.K416E	tcga-laml
+TCGA-AB-2930	TRO	Missense_Mutation	TRO Missense_Mutation p.A1152T	tcga-laml
+TCGA-AB-2877	TROAP	Missense_Mutation	TROAP Missense_Mutation p.R348H	tcga-laml
+TCGA-AB-3006	TRPC1	Missense_Mutation	TRPC1 Missense_Mutation p.I432T	tcga-laml
+TCGA-AB-2989	TRPC4AP	Missense_Mutation	TRPC4AP Missense_Mutation p.P5L	tcga-laml
+TCGA-AB-2879	TRPM3	Missense_Mutation	TRPM3 Missense_Mutation p.E903K	tcga-laml
+TCGA-AB-2882	TRPM3	Missense_Mutation	TRPM3 Missense_Mutation p.V891M	tcga-laml
+TCGA-AB-3011	TRPM4	Missense_Mutation	TRPM4 Missense_Mutation p.G998D	tcga-laml
+TCGA-AB-2818	TRPM8	Missense_Mutation	TRPM8 Missense_Mutation p.V67M	tcga-laml
+TCGA-AB-2810	TSHZ3	Missense_Mutation	TSHZ3 Missense_Mutation p.D241N	tcga-laml
+TCGA-AB-2886	TSKS	Missense_Mutation	TSKS Missense_Mutation p.R503C	tcga-laml
+TCGA-AB-2808	TSPAN2	Splice_Site	TSPAN2 Splice_Site p.T200M	tcga-laml
+TCGA-AB-3009	TSPYL5	Missense_Mutation	TSPYL5 Missense_Mutation p.E390D	tcga-laml
+TCGA-AB-2865	TTBK1	Missense_Mutation	TTBK1 Missense_Mutation p.D539G	tcga-laml
+TCGA-AB-2938	TTBK1	Missense_Mutation	TTBK1 Missense_Mutation p.K241N	tcga-laml
+TCGA-AB-2820	TTC26	Nonsense_Mutation	TTC26 Nonsense_Mutation p.G323*	tcga-laml
+TCGA-AB-3007	TTLL2	Missense_Mutation	TTLL2 Missense_Mutation p.A427T	tcga-laml
+TCGA-AB-2872	TTN	Missense_Mutation	TTN Missense_Mutation p.V3652I	tcga-laml
+TCGA-AB-2907	TTN	Missense_Mutation	TTN Missense_Mutation p.Y1029C	tcga-laml
+TCGA-AB-2925	TTN	Missense_Mutation	TTN Missense_Mutation p.V11661M	tcga-laml
+TCGA-AB-2927	TTN	Missense_Mutation	TTN Missense_Mutation p.D13814E	tcga-laml
+TCGA-AB-2993	TTN	Missense_Mutation	TTN Missense_Mutation p.E15190K	tcga-laml
+TCGA-AB-3009	TTN	In_Frame_Ins	TTN In_Frame_Ins p.15945_15945I>SL	tcga-laml
+TCGA-AB-2803	TUBA1A	Missense_Mutation	TUBA1A Missense_Mutation p.R390H	tcga-laml
+TCGA-AB-2820	TUBA3C	Missense_Mutation	TUBA3C Missense_Mutation p.A180V	tcga-laml
+TCGA-AB-2938	TUBA3C	Missense_Mutation	TUBA3C Missense_Mutation p.L227I	tcga-laml
+TCGA-AB-2830	TUBGCP6	Missense_Mutation	TUBGCP6 Missense_Mutation p.I361T	tcga-laml
+TCGA-AB-2972	TUFT1	Missense_Mutation	TUFT1 Missense_Mutation p.A214T	tcga-laml
+TCGA-AB-2861	TUSC3	Missense_Mutation	TUSC3 Missense_Mutation p.R63C	tcga-laml
+TCGA-AB-2807	TYRO3	Missense_Mutation	TYRO3 Missense_Mutation p.P185S	tcga-laml
+TCGA-AB-2821	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.Q157P	tcga-laml
+TCGA-AB-2843	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.S34F	tcga-laml
+TCGA-AB-2847	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.S34F	tcga-laml
+TCGA-AB-2861	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.S34Y	tcga-laml
+TCGA-AB-2882	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.S34Y	tcga-laml
+TCGA-AB-2912	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.S34F	tcga-laml
+TCGA-AB-2968	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.S34F	tcga-laml
+TCGA-AB-2996	U2AF1	Missense_Mutation	U2AF1 Missense_Mutation p.S34F	tcga-laml
+TCGA-AB-2932	UBE2R2	In_Frame_Del	UBE2R2 In_Frame_Del p.E223del	tcga-laml
+TCGA-AB-2899	UBN2	Missense_Mutation	UBN2 Missense_Mutation p.N1169S	tcga-laml
+TCGA-AB-2919	UBP1	Missense_Mutation	UBP1 Missense_Mutation p.P278H	tcga-laml
+TCGA-AB-2905	UGT1A10	Missense_Mutation	UGT1A10 Missense_Mutation p.P164S	tcga-laml
+TCGA-AB-2877	UNC45B	Missense_Mutation	UNC45B Missense_Mutation p.A198V	tcga-laml
+TCGA-AB-2810	UNC5B	Missense_Mutation	UNC5B Missense_Mutation p.P442S	tcga-laml
+TCGA-AB-2999	UNC5B	Missense_Mutation	UNC5B Missense_Mutation p.R755C	tcga-laml
+TCGA-AB-2814	UPF1	Missense_Mutation	UPF1 Missense_Mutation p.V331D	tcga-laml
+TCGA-AB-2912	UQCC	Missense_Mutation	UQCC Missense_Mutation p.E131D	tcga-laml
+TCGA-AB-2907	UQCR10	Missense_Mutation	UQCR10 Missense_Mutation p.T5K	tcga-laml
+TCGA-AB-2859	USP10	Frame_Shift_Del	USP10 Frame_Shift_Del p.P386fs	tcga-laml
+TCGA-AB-2877	USP11	Missense_Mutation	USP11 Missense_Mutation p.M774K	tcga-laml
+TCGA-AB-2898	USP24	Splice_Site	USP24 Splice_Site 	tcga-laml
+TCGA-AB-2826	USP34	Nonsense_Mutation	USP34 Nonsense_Mutation p.R2652*	tcga-laml
+TCGA-AB-2943	USP48	Nonsense_Mutation	USP48 Nonsense_Mutation p.E699*	tcga-laml
+TCGA-AB-2807	USP6	Splice_Site	USP6 Splice_Site p.D944N	tcga-laml
+TCGA-AB-2934	USP9X	Frame_Shift_Ins	USP9X Frame_Shift_Ins p.V853fs	tcga-laml
+TCGA-AB-2938	VARS2	Missense_Mutation	VARS2 Missense_Mutation p.E403K	tcga-laml
+TCGA-AB-2832	VASH1	Missense_Mutation	VASH1 Missense_Mutation p.S324F	tcga-laml
+TCGA-AB-2991	VCAM1	Missense_Mutation	VCAM1 Missense_Mutation p.V430M	tcga-laml
+TCGA-AB-2966	VCAN	Missense_Mutation	VCAN Missense_Mutation p.P858T	tcga-laml
+TCGA-AB-2965	VIPR1	Missense_Mutation	VIPR1 Missense_Mutation p.A31T	tcga-laml
+TCGA-AB-2949	VLDLR	Missense_Mutation	VLDLR Missense_Mutation p.P861R	tcga-laml
+TCGA-AB-3009	VPS13B	Missense_Mutation	VPS13B Missense_Mutation p.T787N	tcga-laml
+TCGA-AB-2871	VPS13C	Missense_Mutation	VPS13C Missense_Mutation p.I3049V	tcga-laml
+TCGA-AB-2854	VPS13D	Missense_Mutation	VPS13D Missense_Mutation p.S3898N	tcga-laml
+TCGA-AB-2859	VPS26B	Missense_Mutation	VPS26B Missense_Mutation p.A19G	tcga-laml
+TCGA-AB-2878	VPS72	Missense_Mutation	VPS72 Missense_Mutation p.D124H	tcga-laml
+TCGA-AB-2915	VWA3B	Frame_Shift_Ins	VWA3B Frame_Shift_Ins p.IK578fs	tcga-laml
+TCGA-AB-2924	VWCE	Frame_Shift_Del	VWCE Frame_Shift_Del p.T464fs	tcga-laml
+TCGA-AB-3001	WAC	Splice_Site	WAC Splice_Site 	tcga-laml
+TCGA-AB-3009	WAC	Frame_Shift_Ins	WAC Frame_Shift_Ins p.-87fs	tcga-laml
+TCGA-AB-2858	WAPAL	Missense_Mutation	WAPAL Missense_Mutation p.K27N	tcga-laml
+TCGA-AB-2937	WBSCR17	Nonsense_Mutation	WBSCR17 Nonsense_Mutation p.W405*	tcga-laml
+TCGA-AB-2904	WDR27	Missense_Mutation	WDR27 Missense_Mutation p.V712M	tcga-laml
+TCGA-AB-2915	WDR35	Missense_Mutation	WDR35 Missense_Mutation p.R470Q	tcga-laml
+TCGA-AB-2971	WEE1	Missense_Mutation	WEE1 Missense_Mutation p.E610K	tcga-laml
+TCGA-AB-2910	WEE2	Missense_Mutation	WEE2 Missense_Mutation p.Q521L	tcga-laml
+TCGA-AB-2861	WIPF1	Missense_Mutation	WIPF1 Missense_Mutation p.P399R	tcga-laml
+TCGA-AB-2907	WLS	Missense_Mutation	WLS Missense_Mutation p.P99R	tcga-laml
+TCGA-AB-2926	WNK1	Missense_Mutation	WNK1 Missense_Mutation p.R561S	tcga-laml
+TCGA-AB-2915	WNK3	Missense_Mutation	WNK3 Missense_Mutation p.R359Q	tcga-laml
+TCGA-AB-3011	WNK4	Missense_Mutation	WNK4 Missense_Mutation p.R669W	tcga-laml
+TCGA-AB-2822	WRN	Missense_Mutation	WRN Missense_Mutation p.M1171I	tcga-laml
+TCGA-AB-2822	WSCD1	Missense_Mutation	WSCD1 Missense_Mutation p.V520M	tcga-laml
+TCGA-AB-2846	WSCD2	Missense_Mutation	WSCD2 Missense_Mutation p.I131V	tcga-laml
+TCGA-AB-2839	WT1	Frame_Shift_Ins	WT1 Frame_Shift_Ins p.A170fs	tcga-laml
+TCGA-AB-2844	WT1	Frame_Shift_Ins	WT1 Frame_Shift_Ins p.S169fs	tcga-laml
+TCGA-AB-2846	WT1	Frame_Shift_Ins	WT1 Frame_Shift_Ins p.S169fs	tcga-laml
+TCGA-AB-2874	WT1	Missense_Mutation	WT1 Missense_Mutation p.R250W	tcga-laml
+TCGA-AB-2905	WT1	Frame_Shift_Ins	WT1 Frame_Shift_Ins p.T165fs	tcga-laml
+TCGA-AB-2913	WT1	Splice_Site	WT1 Splice_Site 	tcga-laml
+TCGA-AB-2919	WT1	Missense_Mutation	WT1 Missense_Mutation p.H253Y	tcga-laml
+TCGA-AB-2930	WT1	Frame_Shift_Ins	WT1 Frame_Shift_Ins p.V159fs	tcga-laml
+TCGA-AB-2970	WT1	Splice_Site	WT1 Splice_Site 	tcga-laml
+TCGA-AB-2976	WT1	Frame_Shift_Ins	WT1 Frame_Shift_Ins p.-169fs	tcga-laml
+TCGA-AB-2989	WT1	Frame_Shift_Del	WT1 Frame_Shift_Del p.Y190fs	tcga-laml
+TCGA-AB-3009	WT1	Frame_Shift_Ins	WT1 Frame_Shift_Ins p.-169fs	tcga-laml
+TCGA-AB-2932	XIRP1	Missense_Mutation	XIRP1 Missense_Mutation p.R673H	tcga-laml
+TCGA-AB-2885	XIRP2	Missense_Mutation	XIRP2 Missense_Mutation p.A3168T	tcga-laml
+TCGA-AB-2877	XKR4	Missense_Mutation	XKR4 Missense_Mutation p.L399M	tcga-laml
+TCGA-AB-2943	YEATS2	Missense_Mutation	YEATS2 Missense_Mutation p.S1175F	tcga-laml
+TCGA-AB-2946	ZBED4	Missense_Mutation	ZBED4 Missense_Mutation p.D151H	tcga-laml
+TCGA-AB-2935	ZBTB33	Missense_Mutation	ZBTB33 Missense_Mutation p.T10P	tcga-laml
+TCGA-AB-2959	ZBTB33	Missense_Mutation	ZBTB33 Missense_Mutation p.I77N	tcga-laml
+TCGA-AB-2910	ZBTB7B	Missense_Mutation	ZBTB7B Missense_Mutation p.E104K	tcga-laml
+TCGA-AB-2868	ZC3H18	Missense_Mutation	ZC3H18 Missense_Mutation p.R360G	tcga-laml
+TCGA-AB-2972	ZC3H18	Nonsense_Mutation	ZC3H18 Nonsense_Mutation p.R521*	tcga-laml
+TCGA-AB-2832	ZC3HC1	Missense_Mutation	ZC3HC1 Missense_Mutation p.A248T	tcga-laml
+TCGA-AB-2914	ZFC3H1	Missense_Mutation	ZFC3H1 Missense_Mutation p.I672V	tcga-laml
+TCGA-AB-2963	ZFHX3	Missense_Mutation	ZFHX3 Missense_Mutation p.G3681S	tcga-laml
+TCGA-AB-2937	ZFHX4	Missense_Mutation	ZFHX4 Missense_Mutation p.D1651H	tcga-laml
+TCGA-AB-2846	ZFP42	Missense_Mutation	ZFP42 Missense_Mutation p.G64R	tcga-laml
+TCGA-AB-2863	ZMYND10	Missense_Mutation	ZMYND10 Missense_Mutation p.L145R	tcga-laml
+TCGA-AB-2959	ZNF133	Missense_Mutation	ZNF133 Missense_Mutation p.S545A	tcga-laml
+TCGA-AB-2996	ZNF213	Missense_Mutation	ZNF213 Missense_Mutation p.R147Q	tcga-laml
+TCGA-AB-2935	ZNF229	Missense_Mutation	ZNF229 Missense_Mutation p.S474C	tcga-laml
+TCGA-AB-2907	ZNF236	Missense_Mutation	ZNF236 Missense_Mutation p.A154G	tcga-laml
+TCGA-AB-2955	ZNF254	Missense_Mutation	ZNF254 Missense_Mutation p.L49V	tcga-laml
+TCGA-AB-3002	ZNF260	Missense_Mutation	ZNF260 Missense_Mutation p.C362R	tcga-laml
+TCGA-AB-2807	ZNF311	Missense_Mutation	ZNF311 Missense_Mutation p.R345C	tcga-laml
+TCGA-AB-2907	ZNF324B	Missense_Mutation	ZNF324B Missense_Mutation p.G431S	tcga-laml
+TCGA-AB-2995	ZNF37A	Missense_Mutation	ZNF37A Missense_Mutation p.N123D	tcga-laml
+TCGA-AB-2832	ZNF394	Missense_Mutation	ZNF394 Missense_Mutation p.C530Y	tcga-laml
+TCGA-AB-2923	ZNF420	Nonsense_Mutation	ZNF420 Nonsense_Mutation p.R240*	tcga-laml
+TCGA-AB-2972	ZNF43	Missense_Mutation	ZNF43 Missense_Mutation p.G376D	tcga-laml
+TCGA-AB-2943	ZNF460	Missense_Mutation	ZNF460 Missense_Mutation p.Q368H	tcga-laml
+TCGA-AB-2990	ZNF462	Missense_Mutation	ZNF462 Missense_Mutation p.R1680C	tcga-laml
+TCGA-AB-3006	ZNF485	Missense_Mutation	ZNF485 Missense_Mutation p.H348Q	tcga-laml
+TCGA-AB-2832	ZNF486	Missense_Mutation	ZNF486 Missense_Mutation p.I185M	tcga-laml
+TCGA-AB-2817	ZNF502	Missense_Mutation	ZNF502 Missense_Mutation p.K433N	tcga-laml
+TCGA-AB-2813	ZNF518B	Missense_Mutation	ZNF518B Missense_Mutation p.L807I	tcga-laml
+TCGA-AB-2913	ZNF548	Missense_Mutation	ZNF548 Missense_Mutation p.T519A	tcga-laml
+TCGA-AB-2996	ZNF616	Missense_Mutation	ZNF616 Missense_Mutation p.L732I	tcga-laml
+TCGA-AB-2912	ZNF638	Missense_Mutation	ZNF638 Missense_Mutation p.D1742N	tcga-laml
+TCGA-AB-2926	ZNF642	Missense_Mutation	ZNF642 Missense_Mutation p.H457R	tcga-laml
+TCGA-AB-2913	ZNF646	Missense_Mutation	ZNF646 Missense_Mutation p.A875V	tcga-laml
+TCGA-AB-3009	ZNF677	Missense_Mutation	ZNF677 Missense_Mutation p.H537N	tcga-laml
+TCGA-AB-2806	ZNF687	Missense_Mutation	ZNF687 Missense_Mutation p.R554C	tcga-laml
+TCGA-AB-3006	ZNF687	Missense_Mutation	ZNF687 Missense_Mutation p.A363G	tcga-laml
+TCGA-AB-2965	ZNF689	Missense_Mutation	ZNF689 Missense_Mutation p.S190C	tcga-laml
+TCGA-AB-2964	ZNF75D	Missense_Mutation	ZNF75D Missense_Mutation p.E5G	tcga-laml
+TCGA-AB-2938	ZNF827	Frame_Shift_Del	ZNF827 Frame_Shift_Del p.Q427fs	tcga-laml
+TCGA-AB-2928	ZNF99	Missense_Mutation	ZNF99 Missense_Mutation p.A14T	tcga-laml
+TCGA-AB-2849	ZPBP	Missense_Mutation	ZPBP Missense_Mutation p.G305A	tcga-laml

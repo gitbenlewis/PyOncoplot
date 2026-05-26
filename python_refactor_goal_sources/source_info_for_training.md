@@ -9,7 +9,8 @@ gallery plots used by `pyoncoplot`.
 python_refactor_goal_sources/
   config.yaml                      config-driven named gallery runs
   recreate_gallery.py              gallery renderer and CLI
-  generate_synthetic_inputs.py     deterministic synthetic input generator
+  generate_synthetic_inputs.py     deterministic synthetic input generator for non-fuc fixtures
+  fuc_sources/                     copied fuc example scripts, rebuild helper, and manifest
   source_info_for_training.md      this source map
   goal_plots/                      immutable numbered source/reference plots
   syntheitic_goal_data/            deterministic TSV/JSON inputs
@@ -30,7 +31,7 @@ their current spelling intentionally.
 - Existing plots without a reliable public source are kept with
   `source_status: unresolved`; new imported plots require a public source URL.
 - Clean generated counterparts are configured in `config.yaml` as
-  `gen.goal_plot_1.png` through `gen.goal_plot_21.png`.
+  `gen.goal_plot_1.png` through `gen.goal_plot_22.png`.
 
 ## Source Sections
 
@@ -40,7 +41,7 @@ Goal plots are numbered by source family:
 | --- | --- | --- |
 | `goal_plot_1.png` - `goal_plot_14.png` | ggoncoplot/R | ggoncoplot README, paper, package, and multimodal examples |
 | `goal_plot_15.png` - `goal_plot_17.png` | other R-based paper | Published oncoplot-style figures from non-ggoncoplot papers |
-| `goal_plot_18.png` - `goal_plot_21.png` | Python/fuc | fuc tutorial and structural-variation examples |
+| `goal_plot_18.png` - `goal_plot_22.png` | Python/fuc | fuc tutorial and structural-variation examples |
 
 ## Generated Counterparts
 
@@ -67,6 +68,7 @@ Goal plots are numbered by source family:
 | `goal_plot_19.png` | `gen.goal_plot_19.png` | Python/fuc | AML metadata oncoplot, unsorted |
 | `goal_plot_20.png` | `gen.goal_plot_20.png` | Python/fuc | AML metadata oncoplot, sorted |
 | `goal_plot_21.png` | `gen.goal_plot_21.png` | Python/fuc | structural-variation panel |
+| `goal_plot_22.png` | `gen.goal_plot_22.png` | Python/fuc | AML metadata oncoplot, survival-filtered |
 
 ## Goal Plot Source Table
 
@@ -93,26 +95,34 @@ Goal plots are numbered by source family:
 | `goal_plot_19.png` | resolved | `previous example_oncoplots/customized_oncoplot_1.png` | `customized_oncoplot_1.png` | fuc tutorials, Create customized oncoplots | https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html | fuc documentation by Seung-been Steven Lee; original license not bundled here | 1080 x 720 | `1589f9f9cc3899fb88738ea401f560c69b8f6ea648c44551f07bf7cd31885359` | preserved existing PNG | Customized oncoplot with annotations. |
 | `goal_plot_20.png` | resolved | `previous example_oncoplots/customized_oncoplot_2.png` | `customized_oncoplot_2.png` | fuc tutorials, Create customized oncoplots | https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html | fuc documentation by Seung-been Steven Lee; original license not bundled here | 1080 x 720 | `c838ebc206baa7ee3548472884fa1ce7c7baecbac1115803d757713cb8f33660` | preserved existing PNG | Customized oncoplot with sorted annotations. |
 | `goal_plot_21.png` | resolved | `previous example_oncoplots/vcf_sv.png` | `vcf_sv.png` | fuc tutorials and Biostars VCF structural-variation example | https://www.biostars.org/p/9493544/ | fuc tutorial example by Seung-been Steven Lee; Biostars post attribution to sbstevenlee | 1296 x 864 | `266ef3e2747c7e8227202418f9b9469083b00bddb5747dfef0dfdeb77d08d7e7` | preserved existing PNG | Also shown in fuc tutorials at https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html. |
+| `goal_plot_22.png` | resolved | `python_refactor_goal_sources/fuc_sources/customized_oncoplot_3.py` | `customized_oncoplot_3.png` | fuc tutorials, Create customized oncoplots | https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html | fuc documentation by Seung-been Steven Lee; original license not bundled here | 1080 x 720 | `6e6f19675709e97c08f5c9e1326f96046775f73ab9b170c5dee7f5d2a9d97f85` | renamed user-provided PNG to numbered source plot | Customized oncoplot filtered to `Overall_Survival_Status == 1`. |
 
-## Synthetic Inputs
+## Gallery Inputs
 
 | Family | Files |
 | --- | --- |
-| AML | `aml_mutations.tsv`, `aml_metadata.tsv`, `aml_tmb.tsv`, `aml_palette.json` |
+| AML/fuc | `aml_mutations.tsv`, `aml_metadata.tsv`, `aml_tmb.tsv`, `aml_palette.json`, `aml_gallery_params.json` |
 | BRCA | `brca_mutations.tsv`, `brca_metadata.tsv`, `brca_tmb.tsv`, `brca_palette.json` |
 | CSSC | `cssc_mutations.tsv`, `cssc_tmb.tsv`, `cssc_palette.json` |
 | GBM | `gbm_clinical_tracks.tsv`, `gbm_events.tsv`, `gbm_palette.json` |
-| SV | `sv_depth.tsv`, `sv_allele_fraction.tsv`, `sv_gene_models.tsv` |
+| SV/fuc | `sv_depth.tsv`, `sv_allele_fraction.tsv`, `sv_gene_models.tsv` |
 | ggoncoplot README | `ggoncoplot_readme_mutations.tsv`, `ggoncoplot_readme_metadata.tsv`, `ggoncoplot_readme_tmb.tsv`, `ggoncoplot_readme_palette.json` |
 | Multimodal paper | `paper_multimodal_samples.tsv`, `paper_multimodal_points.tsv`, `paper_multimodal_events.tsv`, `paper_multimodal_clinical.tsv`, `paper_multimodal_selection.tsv`, `paper_multimodal_palette.json` |
 | Comparison table | `ggoncoplot_comparison_table.tsv` |
 
 ## Regeneration Commands
 
-Regenerate deterministic synthetic input data:
+Regenerate deterministic synthetic input data for the non-fuc examples:
 
 ```bash
 python3 python_refactor_goal_sources/generate_synthetic_inputs.py
+```
+
+Regenerate compact fuc-backed AML/SV fixtures after downloading the upstream
+`fuc-data` files listed in `fuc_sources/manifest.json`:
+
+```bash
+python3 python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py --source-dir /path/to/fuc-data
 ```
 
 Render clean generated plots:

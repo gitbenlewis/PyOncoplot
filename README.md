@@ -93,19 +93,22 @@ python3 python_refactor_goal_sources/recreate_gallery.py
 ```
 
 Generated files are written to `python_refactor_goal_sources/generated_plots/clean/` as
-`gen.goal_plot_1.png` through `gen.goal_plot_21.png`, ordered by source family:
+`gen.goal_plot_1.png` through `gen.goal_plot_22.png`, ordered by source family:
 ggoncoplot/R examples first, other R-based paper examples next, and Python/fuc
 examples last. The original reference images remain untouched. Gallery runs are configured in
 `python_refactor_goal_sources/config.yaml` under `gallery_params.plot_runs`.
-The gallery uses deterministic synthetic inputs stored in `python_refactor_goal_sources/syntheitic_goal_data/`; regenerate those fixtures
-with:
+The gallery uses deterministic TSV/JSON inputs stored in `python_refactor_goal_sources/syntheitic_goal_data/`.
+Regenerate non-fuc synthetic fixtures with:
 
 ```bash
 python3 python_refactor_goal_sources/generate_synthetic_inputs.py
 ```
 
-The AML metadata gallery outputs in `generated_plots/clean/gen.goal_plot_19.png` and
-`generated_plots/clean/gen.goal_plot_20.png` are treated as the approved clean baseline.
+Regenerate fuc-backed AML/SV fixtures with `python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py`
+after downloading the upstream fuc-data files listed in `python_refactor_goal_sources/fuc_sources/manifest.json`.
+The AML metadata gallery outputs in `generated_plots/clean/gen.goal_plot_19.png`,
+`generated_plots/clean/gen.goal_plot_20.png`, and `generated_plots/clean/gen.goal_plot_22.png`
+are treated as the approved clean baseline.
 BRCA-specific reference-like variants and side-by-side comparison sheets can be
 rendered separately:
 
