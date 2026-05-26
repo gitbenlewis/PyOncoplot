@@ -145,66 +145,12 @@ gallery_params:
       legend: [0.850, 0.130, 0.130, 0.760]
 
   plot_runs:
-    aml_basic:
-      run: true
-      renderer: aml_basic
-      style: clean
-      output_name: gen.goal_plot_1.png
-      goal_plot: goal_plot_1.png
-      expected_size: [1080, 720]
-      feature_axes_min: 3
-      params:
-        include_genes: *aml_genes
-        oncoplot: *aml_oncoplot
-        options: *aml_basic_options
-        save: {dpi: 120}
-
-    aml_metadata_unsorted:
-      run: true
-      renderer: aml_metadata
-      style: clean
-      output_name: gen.goal_plot_2.png
-      goal_plot: goal_plot_2.png
-      expected_size: [1080, 720]
-      clean_only: true
-      feature_axes_min: 4
-      params:
-        include_genes: *aml_genes
-        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
-        metadata_sort_cols:
-        metadata_sort_by: alphabetical
-        metadata_sort_desc: false
-        title: gen.goal_plot_2.py
-        oncoplot: *aml_oncoplot
-        options: *aml_metadata_options
-        save: {dpi: 120}
-
-    aml_metadata_sorted:
-      run: true
-      renderer: aml_metadata
-      style: clean
-      output_name: gen.goal_plot_3.png
-      goal_plot: goal_plot_3.png
-      expected_size: [1080, 720]
-      clean_only: true
-      feature_axes_min: 4
-      params:
-        include_genes: *aml_genes
-        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
-        metadata_sort_cols: [FAB_classification]
-        metadata_sort_by: alphabetical
-        metadata_sort_desc: false
-        title: gen.goal_plot_3.py
-        oncoplot: *aml_oncoplot
-        options: *aml_metadata_options
-        save: {dpi: 120}
-
     brca_large:
       run: true
       renderer: brca_large
       style: clean
-      output_name: gen.goal_plot_4.png
-      goal_plot: goal_plot_4.png
+      output_name: gen.goal_plot_1.png
+      goal_plot: goal_plot_1.png
       expected_size: [3600, 1800]
       feature_axes_min: 5
       params: &brca_large_params
@@ -224,88 +170,12 @@ gallery_params:
         mutation_legend_limit: 9
         save: {dpi: 120}
 
-    brca_compact_complex:
-      run: true
-      renderer: brca_compact_complex
-      style: clean
-      output_name: gen.goal_plot_5.png
-      goal_plot: goal_plot_5.png
-      expected_size: [850, 683]
-      feature_axes_min: 4
-      params: &brca_compact_params
-        include_genes: *brca_compact_genes
-        metadata_cols: [Subtype, ER_status, PR_status, HER2_status, Age, Menopause, LN_stage, Grade, TNM_stage, Histological_type]
-        metadata_sort_cols: [Subtype, ER_status]
-        metadata_sort_by: [alphabetical, alphabetical]
-        metadata_sort_desc: [false, true]
-        oncoplot: *brca_compact_oncoplot
-        options: *brca_compact_options
-        save: {dpi: 100}
-
-    cssc_compact:
-      run: true
-      renderer: cssc_compact
-      style: clean
-      output_name: gen.goal_plot_6.png
-      goal_plot: goal_plot_6.png
-      expected_size: [1400, 700]
-      feature_axes_min: 4
-      params:
-        samples: *cssc_samples
-        genes: *cssc_genes
-        figure_size: [14, 7]
-        axes:
-          tmb: [0.060, 0.835, 0.655, 0.135]
-          main: [0.060, 0.335, 0.655, 0.480]
-          bar: [0.830, 0.335, 0.060, 0.480]
-          legend: [0.895, 0.355, 0.100, 0.360]
-        tmb_ymax_min: 15
-        bar_xlim: [0, 30]
-        bar_xticks: [0, 10, 20, 30]
-        save: {dpi: 100}
-
-    gbm_clinical_molecular:
-      run: true
-      renderer: gbm_clinical_molecular
-      style: clean
-      output_name: gen.goal_plot_7.png
-      goal_plot: goal_plot_7.png
-      expected_size: [1080, 436]
-      feature_axes_min: 3
-      params:
-        tracks: *gbm_tracks
-        genes: *gbm_genes
-        figure_size: [10.8, 4.36]
-        axes:
-          tracks: [0.185, 0.690, 0.760, 0.285]
-          main: [0.185, 0.155, 0.760, 0.505]
-          legend: [0.100, 0.015, 0.800, 0.120]
-        footer_text: "G-SAM pairs = 147 (122 >= 15%, 25 < 15%)"
-        legend_entries:
-          [Classical, Mesenchymal, Proneural, "No / wildtype / biopsy", "Yes / stable / resection", "NA / Beva: random trial", "Gained / increased / female", "Lost / decreased / male"]
-        save: {dpi: 100}
-
-    sv_panel:
-      run: true
-      renderer: sv_panel
-      style: clean
-      output_name: gen.goal_plot_8.png
-      goal_plot: goal_plot_8.png
-      expected_size: [1296, 864]
-      feature_axes_min: 6
-      params:
-        samples: [NA18973, NA10831, NA19109]
-        figure_size: [12.96, 8.64]
-        depth_ylim: [-15, 120]
-        allele_ylim: [-0.12, 1.1]
-        save: {dpi: 100}
-
     ggoncoplot_readme_small:
       run: true
       renderer: readme_oncoplot
       style: clean
-      output_name: gen.goal_plot_9.png
-      goal_plot: goal_plot_9.png
+      output_name: gen.goal_plot_2.png
+      goal_plot: goal_plot_2.png
       expected_size: [672, 480]
       feature_axes_min: 1
       params:
@@ -328,8 +198,8 @@ gallery_params:
       run: true
       renderer: readme_oncoplot
       style: clean
-      output_name: gen.goal_plot_10.png
-      goal_plot: goal_plot_10.png
+      output_name: gen.goal_plot_3.png
+      goal_plot: goal_plot_3.png
       expected_size: [7200, 3000]
       feature_axes_min: 1
       params:
@@ -352,8 +222,8 @@ gallery_params:
       run: true
       renderer: readme_oncoplot
       style: clean
-      output_name: gen.goal_plot_11.png
-      goal_plot: goal_plot_11.png
+      output_name: gen.goal_plot_4.png
+      goal_plot: goal_plot_4.png
       expected_size: [7200, 3600]
       feature_axes_min: 3
       params:
@@ -383,8 +253,8 @@ gallery_params:
       run: true
       renderer: readme_oncoplot
       style: clean
-      output_name: gen.goal_plot_12.png
-      goal_plot: goal_plot_12.png
+      output_name: gen.goal_plot_5.png
+      goal_plot: goal_plot_5.png
       expected_size: [7200, 3600]
       feature_axes_min: 4
       params:
@@ -420,8 +290,8 @@ gallery_params:
       run: true
       renderer: package_mark
       style: clean
-      output_name: gen.goal_plot_13.png
-      goal_plot: goal_plot_13.png
+      output_name: gen.goal_plot_6.png
+      goal_plot: goal_plot_6.png
       expected_size: [125, 144]
       feature_axes_min: 1
       params:
@@ -433,8 +303,8 @@ gallery_params:
       run: true
       renderer: interactive_snapshot
       style: clean
-      output_name: gen.goal_plot_14.png
-      goal_plot: goal_plot_14.png
+      output_name: gen.goal_plot_7.png
+      goal_plot: goal_plot_7.png
       expected_size: [1566, 1036]
       feature_axes_min: 3
       params:
@@ -447,8 +317,8 @@ gallery_params:
       run: true
       renderer: comparison_table
       style: clean
-      output_name: gen.goal_plot_15.png
-      goal_plot: goal_plot_15.png
+      output_name: gen.goal_plot_8.png
+      goal_plot: goal_plot_8.png
       expected_size: [800, 533]
       feature_axes_min: 1
       params:
@@ -462,8 +332,8 @@ gallery_params:
       run: true
       renderer: comparison_table
       style: clean
-      output_name: gen.goal_plot_16.png
-      goal_plot: goal_plot_16.png
+      output_name: gen.goal_plot_9.png
+      goal_plot: goal_plot_9.png
       expected_size: [800, 513]
       feature_axes_min: 1
       params:
@@ -477,8 +347,8 @@ gallery_params:
       run: true
       renderer: lasso_scatter
       style: clean
-      output_name: gen.goal_plot_17.png
-      goal_plot: goal_plot_17.png
+      output_name: gen.goal_plot_10.png
+      goal_plot: goal_plot_10.png
       expected_size: [1408, 922]
       feature_axes_min: 1
       params:
@@ -490,8 +360,8 @@ gallery_params:
       run: true
       renderer: multimodal_panel
       style: clean
-      output_name: gen.goal_plot_18.png
-      goal_plot: goal_plot_18.png
+      output_name: gen.goal_plot_11.png
+      goal_plot: goal_plot_11.png
       expected_size: [7620, 5204]
       feature_axes_min: 4
       params:
@@ -508,8 +378,8 @@ gallery_params:
       run: true
       renderer: multimodal_panel
       style: clean
-      output_name: gen.goal_plot_19.png
-      goal_plot: goal_plot_19.png
+      output_name: gen.goal_plot_12.png
+      goal_plot: goal_plot_12.png
       expected_size: [7620, 5204]
       feature_axes_min: 4
       params:
@@ -526,8 +396,8 @@ gallery_params:
       run: true
       renderer: multimodal_panel
       style: clean
-      output_name: gen.goal_plot_20.png
-      goal_plot: goal_plot_20.png
+      output_name: gen.goal_plot_13.png
+      goal_plot: goal_plot_13.png
       expected_size: [2281, 1520]
       feature_axes_min: 4
       params:
@@ -544,8 +414,8 @@ gallery_params:
       run: true
       renderer: gbm_clinical_molecular
       style: clean
-      output_name: gen.goal_plot_21.png
-      goal_plot: goal_plot_21.png
+      output_name: gen.goal_plot_14.png
+      goal_plot: goal_plot_14.png
       expected_size: [864, 432]
       feature_axes_min: 3
       params:
@@ -561,14 +431,144 @@ gallery_params:
           [Classical, Mesenchymal, Proneural, "No / wildtype / biopsy", "Yes / stable / resection", "NA / Beva: random trial", "Gained / increased / female", "Lost / decreased / male"]
         save: {dpi: 100}
 
+    brca_compact_complex:
+      run: true
+      renderer: brca_compact_complex
+      style: clean
+      output_name: gen.goal_plot_15.png
+      goal_plot: goal_plot_15.png
+      expected_size: [850, 683]
+      feature_axes_min: 4
+      params: &brca_compact_params
+        include_genes: *brca_compact_genes
+        metadata_cols: [Subtype, ER_status, PR_status, HER2_status, Age, Menopause, LN_stage, Grade, TNM_stage, Histological_type]
+        metadata_sort_cols: [Subtype, ER_status]
+        metadata_sort_by: [alphabetical, alphabetical]
+        metadata_sort_desc: [false, true]
+        oncoplot: *brca_compact_oncoplot
+        options: *brca_compact_options
+        save: {dpi: 100}
+
+    cssc_compact:
+      run: true
+      renderer: cssc_compact
+      style: clean
+      output_name: gen.goal_plot_16.png
+      goal_plot: goal_plot_16.png
+      expected_size: [1400, 700]
+      feature_axes_min: 4
+      params:
+        samples: *cssc_samples
+        genes: *cssc_genes
+        figure_size: [14, 7]
+        axes:
+          tmb: [0.060, 0.835, 0.655, 0.135]
+          main: [0.060, 0.335, 0.655, 0.480]
+          bar: [0.830, 0.335, 0.060, 0.480]
+          legend: [0.895, 0.355, 0.100, 0.360]
+        tmb_ymax_min: 15
+        bar_xlim: [0, 30]
+        bar_xticks: [0, 10, 20, 30]
+        save: {dpi: 100}
+
+    gbm_clinical_molecular:
+      run: true
+      renderer: gbm_clinical_molecular
+      style: clean
+      output_name: gen.goal_plot_17.png
+      goal_plot: goal_plot_17.png
+      expected_size: [1080, 436]
+      feature_axes_min: 3
+      params:
+        tracks: *gbm_tracks
+        genes: *gbm_genes
+        figure_size: [10.8, 4.36]
+        axes:
+          tracks: [0.185, 0.690, 0.760, 0.285]
+          main: [0.185, 0.155, 0.760, 0.505]
+          legend: [0.100, 0.015, 0.800, 0.120]
+        footer_text: "G-SAM pairs = 147 (122 >= 15%, 25 < 15%)"
+        legend_entries:
+          [Classical, Mesenchymal, Proneural, "No / wildtype / biopsy", "Yes / stable / resection", "NA / Beva: random trial", "Gained / increased / female", "Lost / decreased / male"]
+        save: {dpi: 100}
+
+    aml_basic:
+      run: true
+      renderer: aml_basic
+      style: clean
+      output_name: gen.goal_plot_18.png
+      goal_plot: goal_plot_18.png
+      expected_size: [1080, 720]
+      feature_axes_min: 3
+      params:
+        include_genes: *aml_genes
+        oncoplot: *aml_oncoplot
+        options: *aml_basic_options
+        save: {dpi: 120}
+
+    aml_metadata_unsorted:
+      run: true
+      renderer: aml_metadata
+      style: clean
+      output_name: gen.goal_plot_19.png
+      goal_plot: goal_plot_19.png
+      expected_size: [1080, 720]
+      clean_only: true
+      feature_axes_min: 4
+      params:
+        include_genes: *aml_genes
+        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+        metadata_sort_cols:
+        metadata_sort_by: alphabetical
+        metadata_sort_desc: false
+        title: gen.goal_plot_19.py
+        oncoplot: *aml_oncoplot
+        options: *aml_metadata_options
+        save: {dpi: 120}
+
+    aml_metadata_sorted:
+      run: true
+      renderer: aml_metadata
+      style: clean
+      output_name: gen.goal_plot_20.png
+      goal_plot: goal_plot_20.png
+      expected_size: [1080, 720]
+      clean_only: true
+      feature_axes_min: 4
+      params:
+        include_genes: *aml_genes
+        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+        metadata_sort_cols: [FAB_classification]
+        metadata_sort_by: alphabetical
+        metadata_sort_desc: false
+        title: gen.goal_plot_20.py
+        oncoplot: *aml_oncoplot
+        options: *aml_metadata_options
+        save: {dpi: 120}
+
+    sv_panel:
+      run: true
+      renderer: sv_panel
+      style: clean
+      output_name: gen.goal_plot_21.png
+      goal_plot: goal_plot_21.png
+      expected_size: [1296, 864]
+      feature_axes_min: 6
+      params:
+        samples: [NA18973, NA10831, NA19109]
+        figure_size: [12.96, 8.64]
+        depth_ylim: [-15, 120]
+        allele_ylim: [-0.12, 1.1]
+        save: {dpi: 100}
+
   comparison_runs:
     brca_large:
       run: true
       clean_preset: brca_large
-      output_name: compare.goal_plot_4.png
+      output_name: compare.goal_plot_1.png
       expected_size: [1240, 398]
     brca_compact_complex:
       run: true
       clean_preset: brca_compact_complex
-      output_name: compare.goal_plot_5.png
+      output_name: compare.goal_plot_15.png
       expected_size: [1240, 398]

@@ -1,6 +1,6 @@
 # Structural Variation Panel
 
-The structural-variation panel recreates `gen.goal_plot_8.png` from synthetic depth,
+The structural-variation panel recreates `gen.goal_plot_21.png` from synthetic depth,
 allele-fraction, and gene-model inputs.
 
 It is gallery-specific and is not rendered through `oncoplot()`, because it is a
@@ -15,7 +15,7 @@ python3 python_refactor_goal_sources/recreate_gallery.py --preset sv_panel
 Output:
 
 ```text
-python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_8.png
+python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_21.png
 ```
 
 ## Inputs
@@ -54,4 +54,3 @@ python_refactor_goal_sources/syntheitic_goal_data/sv_gene_models.tsv
 | `start` | interval start |
 | `end` | interval end |
 | `strand` | gene strand |
-

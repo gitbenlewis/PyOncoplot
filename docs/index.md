@@ -59,7 +59,7 @@ result = oncoplot(
     backend="matplotlib",
     draw_gene_bar=True,
 )
-result.save("gen.goal_plot_1.png", dpi=120)
+result.save("oncoplot.png", dpi=120)
 ```
 
 ## Documentation Map
@@ -75,4 +75,3 @@ result.save("gen.goal_plot_1.png", dpi=120)
 | [Rendering Backends](rendering-backends.md) | Plotly vs Matplotlib behavior |
 | [Gallery](gallery.md) | deterministic synthetic examples |
 | [Troubleshooting](troubleshooting.md) | common errors and fixes |
-

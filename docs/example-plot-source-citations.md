@@ -20,16 +20,16 @@ Local source files reviewed:
 
 | Goal plots | Example family | Read/cite first | Source URL |
 | --- | --- | --- | --- |
-| `goal_plot_1.png` - `goal_plot_3.png` | AML/fuc oncoplot tutorial examples | Lee, fuc tutorials | https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html |
-| `goal_plot_4.png` | ggoncoplot paper Figure 1, TCGA BRCA | El-Kamand et al. 2025; Goldman et al. 2020; Ellrott et al. 2018; TCGA Research Network | https://doi.org/10.21105/joss.07390 |
-| `goal_plot_5.png` | Chinese breast tumor oncoplot | Zhang et al. 2019 | https://pmc.ncbi.nlm.nih.gov/articles/PMC6526269/ |
-| `goal_plot_6.png` | Metastatic cutaneous squamous cell carcinoma alteration matrix | Thind et al. 2022 | https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.919118/full |
-| `goal_plot_7.png` | Glioblastoma clinical/molecular panel | Hoogstrate et al. 2023 | https://www.sciencedirect.com/science/article/pii/S1535610823000478 |
-| `goal_plot_8.png` | fuc structural-variation VCF tutorial example | Lee, fuc tutorials; Biostars post linked in the source map | https://www.biostars.org/p/9493544/ |
-| `goal_plot_9.png` - `goal_plot_14.png` | ggoncoplot README/pkgdown examples and package assets | El-Kamand et al. 2025; ggoncoplot documentation | https://selkamand.github.io/ggoncoplot/ |
-| `goal_plot_15.png` - `goal_plot_16.png` | ggoncoplot package comparison figure/table | El-Kamand et al. 2025; Gu 2022; Mayakonda et al. 2018; Skidmore et al. 2016 | https://doi.org/10.21105/joss.07390 |
-| `goal_plot_17.png` - `goal_plot_20.png` | ggoncoplot multimodal linked-selection figures | El-Kamand et al. 2025; Goldman et al. 2020; Ellrott et al. 2018; TCGA Research Network | https://www.theoj.org/joss-papers/joss.07390/10.21105.joss.07390.pdf |
-| `goal_plot_21.png` | ggoncoplot GBM paper asset | El-Kamand et al. 2025; TCGA/MC3-derived GBM test data | https://github.com/selkamand/ggoncoplot/tree/main/paper |
+| `goal_plot_1.png` | ggoncoplot paper Figure 1, TCGA BRCA | El-Kamand et al. 2025; Goldman et al. 2020; Ellrott et al. 2018; TCGA Research Network | https://doi.org/10.21105/joss.07390 |
+| `goal_plot_2.png` - `goal_plot_7.png` | ggoncoplot README/pkgdown examples and package assets | El-Kamand et al. 2025; ggoncoplot documentation | https://selkamand.github.io/ggoncoplot/ |
+| `goal_plot_8.png` - `goal_plot_9.png` | ggoncoplot package comparison figure/table | El-Kamand et al. 2025; Gu 2022; Mayakonda et al. 2018; Skidmore et al. 2016 | https://doi.org/10.21105/joss.07390 |
+| `goal_plot_10.png` - `goal_plot_13.png` | ggoncoplot multimodal linked-selection figures | El-Kamand et al. 2025; Goldman et al. 2020; Ellrott et al. 2018; TCGA Research Network | https://www.theoj.org/joss-papers/joss.07390/10.21105.joss.07390.pdf |
+| `goal_plot_14.png` | ggoncoplot GBM paper asset | El-Kamand et al. 2025; TCGA/MC3-derived GBM test data | https://github.com/selkamand/ggoncoplot/tree/main/paper |
+| `goal_plot_15.png` | Chinese breast tumor oncoplot | Zhang et al. 2019 | https://pmc.ncbi.nlm.nih.gov/articles/PMC6526269/ |
+| `goal_plot_16.png` | Metastatic cutaneous squamous cell carcinoma alteration matrix | Thind et al. 2022 | https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2022.919118/full |
+| `goal_plot_17.png` | Glioblastoma clinical/molecular panel | Hoogstrate et al. 2023 | https://www.sciencedirect.com/science/article/pii/S1535610823000478 |
+| `goal_plot_18.png` - `goal_plot_20.png` | AML/fuc oncoplot tutorial examples | Lee, fuc tutorials | https://sbslee-fuc.readthedocs.io/en/latest/tutorials.html |
+| `goal_plot_21.png` | fuc structural-variation VCF tutorial example | Lee, fuc tutorials; Biostars post linked in the source map | https://www.biostars.org/p/9493544/ |
 
 ## Directly Used Papers
 
@@ -73,7 +73,7 @@ locations for several imported reference images.
 ## Supporting Visualization References
 
 These papers are cited by the ggoncoplot paper and are useful background for the
-comparison-table examples (`goal_plot_15.png` and `goal_plot_16.png`), but they
+comparison-table examples (`goal_plot_8.png` and `goal_plot_9.png`), but they
 are not themselves the source images.
 
 1. Gu Z. Complex heatmap visualization. iMeta. 2022;1(3):e43. doi:10.1002/imt2.43. https://doi.org/10.1002/imt2.43

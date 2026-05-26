@@ -14,8 +14,8 @@ python3 python_refactor_goal_sources/recreate_gallery.py --preset brca_compact_c
 Outputs:
 
 ```text
-python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_4.png
-python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_5.png
+python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_1.png
+python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_15.png
 ```
 
 ## Render Comparison Sheets

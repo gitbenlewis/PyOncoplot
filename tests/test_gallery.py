@@ -183,9 +183,9 @@ def test_gallery_config_loads_and_declares_enabled_runs():
     clean_names = [preset.output_name for preset in GALLERY_PRESETS.values()]
     assert clean_names == [f"gen.goal_plot_{index}.png" for index in range(1, 22)]
     comparison_runs = GALLERY_CONFIG["comparison_runs"]
-    assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_4.png"
+    assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_1.png"
     assert comparison_runs["brca_large"]["expected_size"] == [1240, 398]
-    assert comparison_runs["brca_compact_complex"]["output_name"] == "compare.goal_plot_5.png"
+    assert comparison_runs["brca_compact_complex"]["output_name"] == "compare.goal_plot_15.png"
     assert comparison_runs["brca_compact_complex"]["expected_size"] == [1240, 398]
 
 
@@ -273,7 +273,7 @@ def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):
 
 
 def test_new_gallery_outputs_are_generated_not_copied(rendered_clean_gallery):
-    for index in range(9, 22):
+    for index in range(1, 22):
         preset = next(preset for preset in GALLERY_PRESETS.values() if preset.output_name == f"gen.goal_plot_{index}.png")
         output = rendered_clean_gallery / preset.output_name
         goal = GOAL_PLOTS / f"goal_plot_{index}.png"
@@ -281,7 +281,7 @@ def test_new_gallery_outputs_are_generated_not_copied(rendered_clean_gallery):
 
 
 def test_new_gallery_outputs_have_expected_broad_features(rendered_clean_gallery):
-    for index in (10, 11, 12, 14, 15, 17, 20, 21):
+    for index in (3, 4, 5, 7, 8, 10, 13, 14):
         preset = next(preset for preset in GALLERY_PRESETS.values() if preset.output_name == f"gen.goal_plot_{index}.png")
         output = rendered_clean_gallery / preset.output_name
         with Image.open(output) as image:
@@ -322,8 +322,8 @@ def test_accepted_aml_metadata_outputs_remain_clean_only_and_featureful(tmp_path
 
 def test_brca_comparison_sheet_smoke(tmp_path):
     for name, output_name in {
-        "brca_large": "compare.goal_plot_4.png",
-        "brca_compact_complex": "compare.goal_plot_5.png",
+        "brca_large": "compare.goal_plot_1.png",
+        "brca_compact_complex": "compare.goal_plot_15.png",
     }.items():
         output = render_preset(name, tmp_path, style="comparison")
         assert output.exists()
