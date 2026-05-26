@@ -13,7 +13,7 @@ python_refactor_goal_sources/
   source_info_for_training.md      this source map
   goal_plots/                      immutable numbered source/reference plots
   syntheitic_goal_data/            deterministic TSV/JSON inputs
-  generated_plots/                 disposable generated outputs, ignored by git
+  generated_plots/                 tracked generated outputs for gallery review
   ggoncoplot/                      cloned R reference implementation
 ```
 
@@ -24,7 +24,8 @@ their current spelling intentionally.
 
 - `goal_plots/` is immutable source/reference material.
 - Generated images must never be written to `goal_plots/`.
-- `generated_plots/` is disposable output and ignored by git.
+- `generated_plots/` stores reviewed generated outputs and is tracked when plots
+  are intentionally updated.
 - All source reference plots are PNG files named `goal_plot_N.png`.
 - Existing plots without a reliable public source are kept with
   `source_status: unresolved`; new imported plots require a public source URL.
@@ -108,12 +109,6 @@ Render clean generated plots:
 
 ```bash
 python3 python_refactor_goal_sources/recreate_gallery.py --style clean
-```
-
-Render BRCA reference-like plots:
-
-```bash
-python3 python_refactor_goal_sources/recreate_gallery.py --style reference_like
 ```
 
 Render a BRCA comparison sheet:

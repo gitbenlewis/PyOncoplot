@@ -66,6 +66,36 @@ def _legend_title(value: object, options: OncoplotOptions) -> str:
     return options.prettify_function(text) if options.prettify_legend_titles else text
 
 
+def _left_margin_for_metadata(
+    prepared: PreparedOncoplotData,
+    options: OncoplotOptions,
+    *,
+    draw_metadata: bool,
+    fig_width: float,
+) -> float:
+    if not draw_metadata or not prepared.metadata_cols:
+        return 0.08
+
+    labels = [_legend_title(column, options) for column in prepared.metadata_cols]
+    max_label_len = max((len(label) for label in labels), default=0)
+    label_width_inches = max_label_len * options.font_size_metadata / 72 * 0.62
+    margin = 0.04 + label_width_inches / max(fig_width, 1)
+    return min(0.30, max(0.14, margin))
+
+
+def _legend_stack_step(
+    handle_count: int,
+    fontsize: float,
+    *,
+    figure_height: float,
+    include_title: bool = True,
+    max_step: float = 0.34,
+) -> float:
+    line_count = handle_count + (1 if include_title else 0)
+    line_height = fontsize / 72 / max(figure_height, 1) * 1.35
+    return min(max_step, 0.025 + line_height * line_count)
+
+
 def _should_show_tmb_legend(
     prepared: PreparedOncoplotData,
     options: OncoplotOptions,
@@ -484,10 +514,14 @@ def _add_static_legends(
     large_figure = options.width >= 1600 or options.height >= 1200
     mutation_base = 10 if large_figure else 8
     metadata_base = 9 if large_figure else 7
-    mutation_fontsize = _legend_font_size(mutation_base, options.font_size_genes)
-    mutation_title_fontsize = mutation_fontsize + 1
-    metadata_fontsize = _legend_font_size(metadata_base, options.font_size_metadata, scale=0.85)
-    metadata_title_fontsize = metadata_fontsize + 1
+    mutation_scale = 1.2 if large_figure else 0.75
+    metadata_scale = 1.2 if large_figure else 0.85
+    title_padding = 4 if large_figure else 1
+    figure_height = figure.get_figheight()
+    mutation_fontsize = _legend_font_size(mutation_base, options.font_size_genes, scale=mutation_scale)
+    mutation_title_fontsize = mutation_fontsize + title_padding
+    metadata_fontsize = _legend_font_size(metadata_base, options.font_size_metadata, scale=metadata_scale)
+    metadata_title_fontsize = metadata_fontsize + title_padding
     if options.show_legend and mutation_handles and options.mutation_legend_position == "bottom":
         figure.legend(
             handles=mutation_handles,
@@ -529,7 +563,7 @@ def _add_static_legends(
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
-        right_y -= min(0.30, 0.08 + 0.025 * len(mutation_handles))
+        right_y -= _legend_stack_step(len(mutation_handles), mutation_fontsize, figure_height=figure_height)
     if options.show_legend and tmb_handles and options.mutation_legend_position == "right":
         figure.legend(
             handles=tmb_handles,
@@ -543,7 +577,7 @@ def _add_static_legends(
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
         )
-        right_y -= min(0.30, 0.08 + 0.025 * len(tmb_handles))
+        right_y -= _legend_stack_step(len(tmb_handles), mutation_fontsize, figure_height=figure_height)
 
     if not options.show_metadata_legends or not metadata_legends:
         return
@@ -585,7 +619,7 @@ def _add_static_legends(
             handlelength=options.metadata_legend_key_size,
             handleheight=options.metadata_legend_key_size,
         )
-        y -= min(0.26, 0.05 + 0.022 * len(handles))
+        y -= _legend_stack_step(len(handles), metadata_fontsize, figure_height=figure_height)
         if y < 0.05:
             break
 
@@ -661,6 +695,9 @@ def render_matplotlib_oncoplot(
     _draw_main(axes["main"], prepared, palette, options)
     if draw_gene_bar and "gene_bar" in axes:
         _draw_gene_bar(axes["gene_bar"], prepared, palette, options)
+        if draw_metadata and options.metadata_position == "bottom" and options.show_gene_bar_axis:
+            axes["gene_bar"].xaxis.tick_top()
+            axes["gene_bar"].xaxis.set_label_position("top")
 
     mutation_handles = []
     if options.show_legend and options.mutation_legend_position != "none":
@@ -676,8 +713,8 @@ def render_matplotlib_oncoplot(
     )
     _add_static_legends(figure, mutation_handles, tmb_handles, metadata_legends, options)
     figure.subplots_adjust(
-        left=0.14 if draw_metadata else 0.08,
-        right=0.72 if has_right_legend else 0.98,
+        left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
+        right=0.70 if has_right_legend else 0.98,
         top=0.92,
         bottom=0.18 if has_bottom_legend else 0.08,
         hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),

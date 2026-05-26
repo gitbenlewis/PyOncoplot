@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Union
@@ -27,6 +28,12 @@ REPO_ROOT = GOAL_SOURCE_ROOT.parent
 CONFIG_PATH = GOAL_SOURCE_ROOT / "config.yaml"
 GOAL_PLOTS = GOAL_SOURCE_ROOT / "goal_plots"
 INPUTS = GOAL_SOURCE_ROOT / "syntheitic_goal_data"
+
+MULTIMODAL_REFERENCE_OUTPUT_WIDTH = 2281
+MULTIMODAL_POINT_SIZE = 170
+MULTIMODAL_SELECTED_POINT_SIZE = 340
+MULTIMODAL_SELECTED_LINEWIDTH = 1.9
+MULTIMODAL_MAX_MARKER_SCALE = 3.0
 
 
 def _deep_merge(base: Mapping[str, Any], override: Mapping[str, Any]) -> dict[str, Any]:
@@ -56,7 +63,6 @@ GALLERY_CONFIG = _load_config()
 OUTPUT_DIRS = GALLERY_CONFIG.get("output_dirs", {})
 GENERATED_ROOT = GOAL_SOURCE_ROOT / "generated_plots"
 CLEAN_OUT = _resolve_repo_path(OUTPUT_DIRS.get("clean", GENERATED_ROOT / "clean"))
-REFERENCE_LIKE_OUT = _resolve_repo_path(OUTPUT_DIRS.get("reference_like", GENERATED_ROOT / "reference_like"))
 COMPARISON_OUT = _resolve_repo_path(OUTPUT_DIRS.get("comparison", GENERATED_ROOT / "comparison"))
 OUT = CLEAN_OUT
 
@@ -156,17 +162,6 @@ class GalleryPreset:
     feature_axes_min: int = 1
 
 
-@dataclass(frozen=True)
-class GalleryVariant:
-    name: str
-    output_name: str
-    renderer: Callable[..., None]
-    expected_size: tuple[int, int]
-    goal_plot: str
-    params: Mapping[str, Any]
-    run: bool = True
-
-
 def _read_tsv(name: str) -> pd.DataFrame:
     return pd.read_csv(INPUTS / name, sep="\t")
 
@@ -192,6 +187,30 @@ def _save_dpi(params: Mapping[str, Any], default: int = 120) -> int:
     return int(save_params.get("dpi", default))
 
 
+def _output_width(params: Mapping[str, Any], dpi: int) -> float:
+    figure_size = params.get("figure_size", [1, 1])
+    return float(figure_size[0]) * dpi
+
+
+def _multimodal_marker_style(params: Mapping[str, Any], dpi: int) -> dict[str, float]:
+    output_width = _output_width(params, dpi)
+    scale = min(MULTIMODAL_MAX_MARKER_SCALE, max(1.0, output_width / MULTIMODAL_REFERENCE_OUTPUT_WIDTH))
+    return {
+        "point_size": MULTIMODAL_POINT_SIZE * scale**2,
+        "selected_point_size": MULTIMODAL_SELECTED_POINT_SIZE * scale**2,
+        "edge_linewidth": 0.35 * scale,
+        "selected_linewidth": MULTIMODAL_SELECTED_LINEWIDTH * scale,
+    }
+
+
+def _multimodal_title_font_size(params: Mapping[str, Any], dpi: int) -> float:
+    return max(14, min(52, _output_width(params, dpi) / 160))
+
+
+def _multimodal_panel_title_font_size(params: Mapping[str, Any], dpi: int) -> float:
+    return max(9, min(30, _output_width(params, dpi) / 280))
+
+
 def _options_from_params(params: Mapping[str, Any]) -> OncoplotOptions:
     options = params.get("options", {})
     if isinstance(options, OncoplotOptions):
@@ -199,6 +218,10 @@ def _options_from_params(params: Mapping[str, Any]) -> OncoplotOptions:
     if not isinstance(options, Mapping):
         raise TypeError("gallery options must be a mapping or OncoplotOptions instance.")
     return OncoplotOptions(**dict(options))
+
+
+def _readme_title_font_size(options: OncoplotOptions) -> float:
+    return max(14, options.font_size_genes * 1.25)
 
 
 def _axes_from_params(params: Mapping[str, Any], required: Sequence[str]) -> dict[str, Sequence[float]]:
@@ -482,10 +505,10 @@ def render_aml_metadata(
 
 
 def render_brca_large(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
-    render_brca_large_reference_like(output_path, params=params, **kwargs)
+    _render_brca_large_static(output_path, params=params, **kwargs)
 
 
-def render_brca_large_reference_like(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
+def _render_brca_large_static(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
 
@@ -635,10 +658,6 @@ def render_brca_compact_complex(output_path: Path, *, params: Optional[Mapping[s
     }
     result = oncoplot(params=oncoplot_params)
     _save_exact(result, output_path, dpi=_save_dpi(merged, default=100))
-
-
-def render_brca_compact_reference_like(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
-    render_brca_compact_complex(output_path, params=params, **kwargs)
 
 
 def render_cssc_compact(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
@@ -846,7 +865,12 @@ def render_readme_oncoplot(output_path: Path, *, params: Optional[Mapping[str, A
     }
     result = oncoplot(params=oncoplot_params)
     if merged.get("title"):
-        result.figure.suptitle(str(merged["title"]), y=0.985, fontweight="bold")
+        result.figure.suptitle(
+            str(merged["title"]),
+            y=0.985,
+            fontsize=_readme_title_font_size(render_options),
+            fontweight="bold",
+        )
     dpi = _save_dpi(merged, default=120)
     result.figure.set_size_inches(render_options.width / dpi, render_options.height / dpi, forward=True)
     _save_exact(result, output_path, dpi=dpi)
@@ -872,7 +896,7 @@ def render_package_mark(output_path: Path, *, params: Optional[Mapping[str, Any]
     ax.add_patch(Circle((0.24, 0.86), 0.055, facecolor="#4DAF4A", edgecolor="#1F1F1F", linewidth=0.8))
     ax.add_patch(Circle((0.40, 0.86), 0.055, facecolor="#377EB8", edgecolor="#1F1F1F", linewidth=0.8))
     ax.add_patch(Circle((0.56, 0.86), 0.055, facecolor="#E41A1C", edgecolor="#1F1F1F", linewidth=0.8))
-    ax.text(0.50, 0.075, str(merged.get("title", "ggoncoplot")), ha="center", va="center", fontsize=9, weight="bold")
+    ax.text(0.50, 0.075, str(merged.get("title", "Pyoncoplot")), ha="center", va="center", fontsize=9, weight="bold")
     fig.savefig(output_path, dpi=dpi)
     plt.close(fig)
 
@@ -1021,6 +1045,9 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
     merged = merge_params(params, allowed_keys=MULTIMODAL_KEYS, context="multimodal panel gallery", **kwargs)
     _samples, points, events, clinical, selection, palette = _load_multimodal()
     dpi = _save_dpi(merged, default=100)
+    marker_style = _multimodal_marker_style(merged, dpi)
+    title_font_size = _multimodal_title_font_size(merged, dpi)
+    panel_title_font_size = _multimodal_panel_title_font_size(merged, dpi)
     genes = list(merged["genes"])
     tracks = list(merged.get("tracks", ["PR_status", "ER_status", "HER2_status", "Classification"]))
     selected_samples = set(points.loc[points["selected"], "sample"].astype(str))
@@ -1036,18 +1063,33 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
 
     for ax, prefix, title in [(ax_tsne, "tsne", "Expression t-SNE"), (ax_umap, "umap", "Methylation UMAP")]:
         for classification, group in points.groupby("classification", sort=False):
-            ax.scatter(group[f"{prefix}_x"], group[f"{prefix}_y"], s=12, color=palette.get(str(classification), "#999999"), alpha=0.72, edgecolor="none")
+            ax.scatter(
+                group[f"{prefix}_x"],
+                group[f"{prefix}_y"],
+                s=marker_style["point_size"],
+                color=palette.get(str(classification), "#999999"),
+                alpha=0.78,
+                edgecolor="white",
+                linewidth=marker_style["edge_linewidth"],
+            )
         selected = points[points["selected"]]
-        ax.scatter(selected[f"{prefix}_x"], selected[f"{prefix}_y"], s=30, facecolor="none", edgecolor=palette["Selected"], linewidth=1.0)
+        ax.scatter(
+            selected[f"{prefix}_x"],
+            selected[f"{prefix}_y"],
+            s=marker_style["selected_point_size"],
+            facecolor="none",
+            edgecolor=palette["Selected"],
+            linewidth=marker_style["selected_linewidth"],
+        )
         if prefix == "tsne" and merged.get("show_lasso", False):
             ax.add_patch(Polygon(selection[["x", "y"]].to_numpy(), closed=True, fill=False, edgecolor=palette["Selected"], linewidth=1.8, linestyle="--"))
-        ax.set_title(title, fontsize=9, weight="bold")
+        ax.set_title(title, fontsize=panel_title_font_size, weight="bold")
         ax.set_xticks([])
         ax.set_yticks([])
         ax.grid(True, color="#EFEFEF", linewidth=0.4)
 
     _draw_multimodal_oncoplot(ax_main, events, ordered_samples, genes, palette, selected_samples)
-    ax_main.set_title("Linked oncoplot", fontsize=9, weight="bold")
+    ax_main.set_title("Linked oncoplot", fontsize=panel_title_font_size, weight="bold")
 
     clinical_indexed = clinical.set_index("sample")
     ax_clinical.set_xlim(0, len(ordered_samples))
@@ -1070,7 +1112,12 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
         ax_legend.add_patch(Rectangle((0.0, y_cursor - 0.035), 0.07, 0.04, facecolor=palette.get(label, "#999999"), edgecolor="#333333", linewidth=0.3))
         ax_legend.text(0.09, y_cursor - 0.015, label, fontsize=11, va="center")
         y_cursor -= 0.10
-    fig.suptitle(str(merged.get("title", "Multimodal sample selection")), fontsize=12, weight="bold", y=0.985)
+    fig.suptitle(
+        str(merged.get("title", "Multimodal sample selection")),
+        fontsize=title_font_size,
+        weight="bold",
+        y=0.985,
+    )
     fig.savefig(output_path, dpi=dpi)
     plt.close(fig)
 
@@ -1079,9 +1126,7 @@ RENDERERS: Dict[str, Callable[..., None]] = {
     "aml_basic": render_aml_basic,
     "aml_metadata": render_aml_metadata,
     "brca_large": render_brca_large,
-    "brca_large_reference_like": render_brca_large_reference_like,
     "brca_compact_complex": render_brca_compact_complex,
-    "brca_compact_reference_like": render_brca_compact_reference_like,
     "cssc_compact": render_cssc_compact,
     "gbm_clinical_molecular": render_gbm_clinical_molecular,
     "sv_panel": render_sv_panel,
@@ -1141,52 +1186,14 @@ def _build_gallery_presets() -> Dict[str, GalleryPreset]:
     return presets
 
 
-def _build_reference_like_presets() -> Dict[str, GalleryVariant]:
-    presets: Dict[str, GalleryVariant] = {}
-    for name, run_config in CONFIGURED_RUNS.items():
-        if run_config.get("style") != "reference_like":
-            continue
-        presets[name] = GalleryVariant(
-            name=name,
-            output_name=run_config["output_name"],
-            renderer=_renderer_from_config(name, run_config),
-            expected_size=tuple(run_config["expected_size"]),
-            goal_plot=run_config["goal_plot"],
-            params=run_config.get("params", {}),
-            run=bool(run_config.get("run", False)),
-        )
-    return presets
-
-
 GALLERY_PRESETS = _build_gallery_presets()
-REFERENCE_LIKE_PRESETS = _build_reference_like_presets()
-
-
-def _resolve_reference_like_name(name: str) -> str:
-    if name in REFERENCE_LIKE_PRESETS:
-        return name
-    candidate = f"{name}_reference_like"
-    if candidate in REFERENCE_LIKE_PRESETS:
-        return candidate
-    available = ", ".join(sorted(REFERENCE_LIKE_PRESETS))
-    raise ValueError(f"Unknown reference-like gallery preset {name!r}. Available presets: {available}")
-
-
-def _render_variant(variant: GalleryVariant, out_dir: Path) -> Path:
-    out_dir.mkdir(parents=True, exist_ok=True)
-    output_path = out_dir / variant.output_name
-    variant.renderer(output_path, params=variant.params)
-    return output_path
 
 
 def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean") -> Path:
-    if style == "reference_like":
-        variant = REFERENCE_LIKE_PRESETS[_resolve_reference_like_name(name)]
-        return _render_variant(variant, out_dir or REFERENCE_LIKE_OUT)
     if style == "comparison":
         return render_brca_comparison_sheet(name, out_dir or COMPARISON_OUT)
     if style != "clean":
-        raise ValueError("style must be one of: clean, reference_like, comparison.")
+        raise ValueError("style must be one of: clean, comparison.")
 
     if name not in GALLERY_PRESETS:
         available = ", ".join(sorted(GALLERY_PRESETS))
@@ -1201,43 +1208,40 @@ def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean
 
 def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> Path:
     comparison_config = GALLERY_CONFIG.get("comparison_runs", {})
-    base_name = name.replace("_reference_like", "")
+    base_name = name
     if base_name not in comparison_config:
         if base_name == "brca_compact":
             base_name = "brca_compact_complex"
-        elif base_name == "brca_large_reference_like":
-            base_name = "brca_large"
     if base_name not in comparison_config:
         raise ValueError("Comparison sheets are only available for configured BRCA gallery presets.")
     run_config = _deep_merge(GALLERY_CONFIG.get("default_params", {}), comparison_config[base_name])
     clean_name = run_config["clean_preset"]
-    reference_name = run_config["reference_like_preset"]
     clean_preset = GALLERY_PRESETS[clean_name]
-    reference_variant = REFERENCE_LIKE_PRESETS[reference_name]
     out_dir = out_dir or COMPARISON_OUT
     out_dir.mkdir(parents=True, exist_ok=True)
-    work_dir = out_dir / "_sources"
-    clean_path = render_preset(clean_name, work_dir / "clean", style="clean")
-    reference_like_path = render_preset(reference_name, work_dir / "reference_like", style="reference_like")
-    original_path = GOAL_PLOTS / clean_preset.goal_plot
     output_path = out_dir / run_config["output_name"]
 
-    labels = ["Original reference", "Clean generated", "Reference-like generated"]
-    paths = [original_path, clean_path, reference_like_path]
-    thumb_width = 620
-    thumb_height = 360
-    label_height = 38
-    canvas = Image.new("RGB", (thumb_width * 3, thumb_height + label_height), "white")
-    draw = ImageDraw.Draw(canvas)
-    for index, (label, path) in enumerate(zip(labels, paths)):
-        if path.exists():
-            image = Image.open(path).convert("RGB")
-            image.thumbnail((thumb_width - 20, thumb_height - 20), Image.Resampling.LANCZOS)
-            x = index * thumb_width + (thumb_width - image.width) // 2
-            y = label_height + (thumb_height - image.height) // 2
-            canvas.paste(image, (x, y))
-        draw.text((index * thumb_width + 12, 10), label, fill="black")
-    canvas.save(output_path)
+    with tempfile.TemporaryDirectory(prefix="pyoncoplot_compare_") as temporary_dir:
+        work_dir = Path(temporary_dir)
+        clean_path = render_preset(clean_name, work_dir / "clean", style="clean")
+        original_path = GOAL_PLOTS / clean_preset.goal_plot
+        labels = ["Original reference", "Clean generated"]
+        paths = [original_path, clean_path]
+        thumb_width = 620
+        thumb_height = 360
+        label_height = 38
+        canvas = Image.new("RGB", (thumb_width * len(paths), thumb_height + label_height), "white")
+        draw = ImageDraw.Draw(canvas)
+        for index, (label, path) in enumerate(zip(labels, paths)):
+            if path.exists():
+                with Image.open(path) as source_image:
+                    image = source_image.convert("RGB")
+                image.thumbnail((thumb_width - 20, thumb_height - 20), Image.Resampling.LANCZOS)
+                x = index * thumb_width + (thumb_width - image.width) // 2
+                y = label_height + (thumb_height - image.height) // 2
+                canvas.paste(image, (x, y))
+            draw.text((index * thumb_width + 12, 10), label, fill="black")
+        canvas.save(output_path)
     return output_path
 
 
@@ -1248,27 +1252,14 @@ def _selected_clean_presets(names: Optional[Sequence[str]]) -> list[str]:
     for name in names:
         if name in GALLERY_PRESETS:
             selected.append(name)
-        elif name.endswith("_reference_like"):
-            selected.append(name.removesuffix("_reference_like"))
         else:
             raise ValueError(f"Unknown gallery preset {name!r}.")
     return selected
 
 
-def _selected_reference_presets(names: Optional[Sequence[str]]) -> list[str]:
-    if not names:
-        return [name for name, preset in REFERENCE_LIKE_PRESETS.items() if preset.run]
-    selected = []
-    for name in names:
-        if name in GALLERY_PRESETS and GALLERY_PRESETS[name].clean_only:
-            continue
-        selected.append(_resolve_reference_like_name(name))
-    return selected
-
-
 def main(argv: Optional[Sequence[str]] = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--style", choices=["clean", "reference_like", "comparison", "both"], default="clean")
+    parser.add_argument("--style", choices=["clean", "comparison", "both"], default="clean")
     parser.add_argument("--preset", action="append", help="Preset name to render. May be supplied more than once.")
     parser.add_argument("--out-dir", type=Path, help="Override the output directory for the selected style.")
     args = parser.parse_args(argv)
@@ -1278,12 +1269,6 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         for name in _selected_clean_presets(args.preset):
             render_preset(name, clean_out, style="clean")
         print(f"Wrote clean gallery images to {clean_out}")
-
-    if args.style in {"reference_like", "both"}:
-        reference_out = args.out_dir if args.style == "reference_like" and args.out_dir else REFERENCE_LIKE_OUT
-        for name in _selected_reference_presets(args.preset):
-            render_preset(name, reference_out, style="reference_like")
-        print(f"Wrote reference-like gallery images to {reference_out}")
 
     if args.style in {"comparison", "both"}:
         comparison_out = args.out_dir if args.style == "comparison" and args.out_dir else COMPARISON_OUT

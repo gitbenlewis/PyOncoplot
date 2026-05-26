@@ -456,6 +456,60 @@ def test_metadata_prettification_applies_to_both_backends_without_mutating_custo
     assert all(legend.get_title().get_text() == "" for legend in hidden_title_result.figure.legends)
 
 
+def test_matplotlib_metadata_margin_expands_for_long_row_labels():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "days_to_last_followup": [120, 340, 560],
+        }
+    )
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["days_to_last_followup"],
+        backend="matplotlib",
+        options=OncoplotOptions(
+            width=1080,
+            height=720,
+            font_size_metadata=8,
+            metadata_position="bottom",
+            metadata_numeric_plot_type="bar",
+        ),
+    )
+
+    assert result.figure.subplotpars.left >= 0.19
+
+
+def test_matplotlib_gene_bar_axis_moves_above_bottom_metadata():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "group": ["A", "B", "A"],
+        }
+    )
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        draw_gene_bar=True,
+        backend="matplotlib",
+        options=OncoplotOptions(
+            metadata_position="bottom",
+            show_gene_bar_axis=True,
+        ),
+    )
+    gene_bar_axis = result.figure.axes[1]
+
+    assert gene_bar_axis.xaxis.get_ticks_position() == "top"
+    assert gene_bar_axis.xaxis.get_label_position() == "top"
+
+
 def test_custom_tmb_sample_column_order_renders_in_both_backends():
     tmb = pd.DataFrame(
         {
@@ -746,6 +800,41 @@ def test_matplotlib_static_legend_text_scales_with_plot_fonts():
     assert mutation_legend.get_title().get_fontsize() >= 25
     assert metadata_legend.get_texts()[0].get_fontsize() >= 20
     assert metadata_legend.get_title().get_fontsize() >= 21
+
+
+def test_matplotlib_large_figure_legend_text_matches_export_scale():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "clinical_group": ["A", "B", "A"],
+            "er_status": ["Positive", "Negative", "Positive"],
+            "pr_status": ["Positive", "Negative", "Negative"],
+            "her2_status": ["Negative", "Negative", "Positive"],
+        }
+    )
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["clinical_group", "er_status", "pr_status", "her2_status"],
+        backend="matplotlib",
+        options=OncoplotOptions(
+            width=7200,
+            height=3600,
+            font_size_genes=34,
+            font_size_metadata=24,
+            mutation_legend_position="right",
+            metadata_legend_position="right",
+            show_metadata_legends=True,
+        ),
+    )
+    legend_by_title = {legend.get_title().get_text(): legend for legend in result.figure.legends}
+
+    assert legend_by_title["Mutation Type"].get_texts()[0].get_fontsize() >= 40
+    assert legend_by_title["Clinical Group"].get_texts()[0].get_fontsize() >= 28
+    assert {"Clinical Group", "Er Status", "Pr Status", "Her2 Status"}.issubset(legend_by_title)
 
 
 def test_metadata_max_levels_validation_applies_to_renderers():

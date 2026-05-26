@@ -18,20 +18,14 @@ python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_4.png
 python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_5.png
 ```
 
-## Render Reference-Like Variants
+## Render Comparison Sheets
 
 ```bash
-python3 python_refactor_goal_sources/recreate_gallery.py --style reference_like --preset brca_large
+python3 python_refactor_goal_sources/recreate_gallery.py --style comparison --preset brca_large
 ```
 
-The large reference-like variant emphasizes:
-
-- wider matrix usage across the canvas.
-- larger left gene labels.
-- stacked top burden bars.
-- right-side recurrence bars with percentages.
-- bottom metadata tracks.
-- a full right legend column.
+Comparison sheets place the original source image beside the clean generated
+image for a quick visual check.
 
 ## Inputs
 
@@ -52,4 +46,3 @@ python_refactor_goal_sources/recreate_gallery.py
 
 Use this file as a recipe for larger Matplotlib layouts that are too bespoke for
 the core `oncoplot()` API.
-

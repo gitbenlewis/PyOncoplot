@@ -1,7 +1,6 @@
 gallery_params:
   output_dirs:
     clean: python_refactor_goal_sources/generated_plots/clean
-    reference_like: python_refactor_goal_sources/generated_plots/reference_like
     comparison: python_refactor_goal_sources/generated_plots/comparison
 
   input_files:
@@ -322,7 +321,7 @@ gallery_params:
           show_metadata_legends: false
           font_size_genes: 8
           tile_linewidth: 0.08
-        title: "ggoncoplot"
+        title: "Pyoncoplot"
         save: {dpi: 120}
 
     ggoncoplot_readme_basic:
@@ -346,7 +345,7 @@ gallery_params:
           show_metadata_legends: false
           font_size_genes: 38
           tile_linewidth: 0.03
-        title: "Basic ggoncoplot example"
+        title: "Pyoncoplot"
         save: {dpi: 120}
 
     ggoncoplot_readme_marginal:
@@ -377,7 +376,7 @@ gallery_params:
           font_size_tmb_axis: 24
           font_size_gene_bar_axis: 24
           tile_linewidth: 0.03
-        title: "ggoncoplot with marginal bars"
+        title: "Pyoncoplot"
         save: {dpi: 120}
 
     ggoncoplot_readme_metadata:
@@ -414,7 +413,7 @@ gallery_params:
           font_size_genes: 34
           font_size_metadata: 24
           tile_linewidth: 0.03
-        title: "ggoncoplot with clinical metadata"
+        title: "Pyoncoplot"
         save: {dpi: 120}
 
     ggoncoplot_package_mark:
@@ -427,7 +426,7 @@ gallery_params:
       feature_axes_min: 1
       params:
         figure_size: [1.25, 1.44]
-        title: "ggoncoplot"
+        title: "Pyoncoplot"
         save: {dpi: 100}
 
     ggoncoplot_interactive_snapshot:
@@ -562,34 +561,14 @@ gallery_params:
           [Classical, Mesenchymal, Proneural, "No / wildtype / biopsy", "Yes / stable / resection", "NA / Beva: random trial", "Gained / increased / female", "Lost / decreased / male"]
         save: {dpi: 100}
 
-    brca_large_reference_like:
-      run: true
-      renderer: brca_large_reference_like
-      style: reference_like
-      output_name: gen.goal_plot_4.png
-      goal_plot: goal_plot_4.png
-      expected_size: [3600, 1800]
-      params: *brca_large_params
-
-    brca_compact_reference_like:
-      run: true
-      renderer: brca_compact_reference_like
-      style: reference_like
-      output_name: gen.goal_plot_5.png
-      goal_plot: goal_plot_5.png
-      expected_size: [850, 683]
-      params: *brca_compact_params
-
   comparison_runs:
     brca_large:
       run: true
       clean_preset: brca_large
-      reference_like_preset: brca_large_reference_like
       output_name: compare.goal_plot_4.png
-      expected_size: [1860, 398]
+      expected_size: [1240, 398]
     brca_compact_complex:
       run: true
       clean_preset: brca_compact_complex
-      reference_like_preset: brca_compact_reference_like
       output_name: compare.goal_plot_5.png
-      expected_size: [1860, 398]
+      expected_size: [1240, 398]

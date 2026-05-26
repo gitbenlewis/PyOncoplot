@@ -35,27 +35,14 @@ Synthetic inputs are checked in under:
 python_refactor_goal_sources/syntheitic_goal_data/
 ```
 
-## BRCA Reference-Like Variants
-
-The default gallery style is `clean`. BRCA also has reference-like variants for
-closer comparison with the large original examples.
-
-```bash
-python3 python_refactor_goal_sources/recreate_gallery.py --style reference_like --preset brca_large
-python3 python_refactor_goal_sources/recreate_gallery.py --style reference_like --preset brca_compact_complex
-```
-
-Outputs are written to:
-
-```text
-python_refactor_goal_sources/generated_plots/reference_like/
-```
-
 ## BRCA Comparison Sheets
 
 ```bash
 python3 python_refactor_goal_sources/recreate_gallery.py --style comparison --preset brca_large
 ```
+
+Comparison sheets contain two panels: the original source image and the clean
+generated image.
 
 Outputs are written to:
 

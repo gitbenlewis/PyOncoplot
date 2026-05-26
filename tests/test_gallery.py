@@ -14,8 +14,17 @@ from python_refactor_goal_sources.recreate_gallery import (
     GENERATED_ROOT,
     GOAL_PLOTS,
     INPUTS,
-    REFERENCE_LIKE_PRESETS,
+    MULTIMODAL_MAX_MARKER_SCALE,
+    MULTIMODAL_POINT_SIZE,
+    MULTIMODAL_REFERENCE_OUTPUT_WIDTH,
+    MULTIMODAL_SELECTED_LINEWIDTH,
+    MULTIMODAL_SELECTED_POINT_SIZE,
     _load_brca,
+    _multimodal_marker_style,
+    _multimodal_panel_title_font_size,
+    _multimodal_title_font_size,
+    _options_from_params,
+    _readme_title_font_size,
     _sample_order_by_mutation_rank,
     _weighted_row_starts,
     render_preset,
@@ -173,11 +182,11 @@ def test_gallery_config_loads_and_declares_enabled_runs():
 
     clean_names = [preset.output_name for preset in GALLERY_PRESETS.values()]
     assert clean_names == [f"gen.goal_plot_{index}.png" for index in range(1, 22)]
-    assert REFERENCE_LIKE_PRESETS["brca_large_reference_like"].output_name == "gen.goal_plot_4.png"
-    assert REFERENCE_LIKE_PRESETS["brca_compact_reference_like"].output_name == "gen.goal_plot_5.png"
     comparison_runs = GALLERY_CONFIG["comparison_runs"]
     assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_4.png"
+    assert comparison_runs["brca_large"]["expected_size"] == [1240, 398]
     assert comparison_runs["brca_compact_complex"]["output_name"] == "compare.goal_plot_5.png"
+    assert comparison_runs["brca_compact_complex"]["expected_size"] == [1240, 398]
 
 
 def test_brca_large_gallery_sample_order_uses_mutation_rank():
@@ -215,6 +224,42 @@ def test_brca_large_age_years_metadata_row_is_double_height():
     assert all(row_heights[column] == 1.0 for column in columns if column != "Age_years")
     assert total_height == len(columns) + 1
     assert row_starts["Age_years"] == len(columns) - 1
+
+
+def test_multimodal_gallery_points_are_large_enough_for_exported_pngs():
+    assert MULTIMODAL_POINT_SIZE >= 64
+    assert MULTIMODAL_SELECTED_POINT_SIZE >= 140
+    assert MULTIMODAL_SELECTED_LINEWIDTH >= 1.8
+
+    reference_style = _multimodal_marker_style(
+        {"figure_size": [MULTIMODAL_REFERENCE_OUTPUT_WIDTH / 100, 15.2]},
+        dpi=100,
+    )
+    large_style = _multimodal_marker_style({"figure_size": [76.2, 52.04]}, dpi=100)
+    assert reference_style["point_size"] == MULTIMODAL_POINT_SIZE
+    assert large_style["point_size"] == MULTIMODAL_POINT_SIZE * MULTIMODAL_MAX_MARKER_SCALE**2
+    assert large_style["selected_point_size"] == MULTIMODAL_SELECTED_POINT_SIZE * MULTIMODAL_MAX_MARKER_SCALE**2
+
+
+def test_gallery_titles_use_python_branding_and_scale_for_large_exports():
+    small_options = _options_from_params(GALLERY_PRESETS["ggoncoplot_readme_small"].params)
+    large_options = _options_from_params(GALLERY_PRESETS["ggoncoplot_readme_basic"].params)
+    configured_titles = {
+        name: str(preset.params["title"])
+        for name, preset in GALLERY_PRESETS.items()
+        if "title" in preset.params
+    }
+
+    assert configured_titles["ggoncoplot_readme_small"] == "Pyoncoplot"
+    assert configured_titles["ggoncoplot_readme_basic"] == "Pyoncoplot"
+    assert configured_titles["ggoncoplot_readme_marginal"] == "Pyoncoplot"
+    assert configured_titles["ggoncoplot_readme_metadata"] == "Pyoncoplot"
+    assert configured_titles["ggoncoplot_package_mark"] == "Pyoncoplot"
+    assert not any("ggoncoplot" in title.lower() for title in configured_titles.values())
+    assert _readme_title_font_size(small_options) == 14
+    assert _readme_title_font_size(large_options) >= 47
+    assert _multimodal_title_font_size({"figure_size": [76.2, 52.04]}, dpi=100) >= 47
+    assert _multimodal_panel_title_font_size({"figure_size": [76.2, 52.04]}, dpi=100) >= 27
 
 
 def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):
@@ -274,22 +319,15 @@ def test_accepted_aml_metadata_outputs_remain_clean_only_and_featureful(tmp_path
                 extrema = cropped.getextrema()
                 assert extrema[0] != extrema[1]
 
-        with pytest.raises(ValueError):
-            render_preset(name, tmp_path, style="reference_like")
-
-
-def test_reference_like_brca_presets_write_expected_dimensions(tmp_path):
-    assert "brca_large_reference_like" in REFERENCE_LIKE_PRESETS
-    output = render_preset("brca_large", tmp_path, style="reference_like")
-    assert output.name == "gen.goal_plot_4.png"
-    with Image.open(output) as image:
-        assert image.size == REFERENCE_LIKE_PRESETS["brca_large_reference_like"].expected_size
-
 
 def test_brca_comparison_sheet_smoke(tmp_path):
-    output = render_preset("brca_large", tmp_path, style="comparison")
-    assert output.exists()
-    assert output.name == "compare.goal_plot_4.png"
-    assert output.stat().st_size > 0
-    with Image.open(output) as image:
-        assert image.size[0] > image.size[1]
+    for name, output_name in {
+        "brca_large": "compare.goal_plot_4.png",
+        "brca_compact_complex": "compare.goal_plot_5.png",
+    }.items():
+        output = render_preset(name, tmp_path, style="comparison")
+        assert output.exists()
+        assert output.name == output_name
+        assert output.stat().st_size > 0
+        with Image.open(output) as image:
+            assert image.size == (1240, 398)

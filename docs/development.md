@@ -41,11 +41,10 @@ python_refactor_goal_sources/syntheitic_goal_data/
 
 ```bash
 python3 python_refactor_goal_sources/recreate_gallery.py
-python3 python_refactor_goal_sources/recreate_gallery.py --style reference_like
 python3 python_refactor_goal_sources/recreate_gallery.py --style comparison --preset brca_large
 ```
 
-Generated image folders are ignored by git.
+Generated gallery images are tracked when intentionally updated.
 
 ## Adding A Gallery Preset
 
