@@ -7,3 +7,7 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+
+# Gallery outputs are tracked so docs and reviews can show rendered examples.
+!python_refactor_goal_sources/generated_plots/
+!python_refactor_goal_sources/generated_plots/**/*.png
