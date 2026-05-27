@@ -210,6 +210,22 @@ def _validate_metadata(
     return out
 
 
+def _metadata_columns_list(metadata_cols: Sequence[str]) -> List[str]:
+    if isinstance(metadata_cols, str):
+        return [metadata_cols]
+    return list(metadata_cols)
+
+
+def _derive_metadata_from_data(
+    data: pd.DataFrame,
+    metadata_sample_col: str,
+    metadata_cols: Sequence[str],
+) -> pd.DataFrame:
+    columns = unique_preserve_order([metadata_sample_col] + _metadata_columns_list(metadata_cols))
+    check_valid_dataframe_columns(data, columns)
+    return data.copy().loc[:, columns].drop_duplicates()
+
+
 def _validate_pathway(
     pathway: Optional[pd.DataFrame],
     pathway_gene_col: Optional[str],
@@ -689,6 +705,8 @@ def prepare_oncoplot_data(
     )
 
     data = _validate_mutation_inputs(data, gene_col, sample_col, mutation_type_col, tooltip_col)
+    if metadata is None and metadata_cols is not None:
+        metadata = _derive_metadata_from_data(data, metadata_sample_col, metadata_cols)
     metadata = _validate_metadata(metadata, metadata_sample_col)
     pathway_df, _pathway_col = _validate_pathway(pathway, pathway_gene_col, gene_col)
 
@@ -796,7 +814,7 @@ def prepare_oncoplot_data(
         if metadata_cols is None:
             metadata_cols_out = [column for column in metadata_out.columns if column != "Sample"]
         else:
-            metadata_cols_out = list(metadata_cols)
+            metadata_cols_out = _metadata_columns_list(metadata_cols)
             check_valid_dataframe_columns(metadata_out, metadata_cols_out)
 
     if total_samples == "any_mutations":

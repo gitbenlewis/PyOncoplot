@@ -45,6 +45,27 @@ oncoplot(
 )
 ```
 
+## Metadata Columns in Mutation Data
+
+If sample-level metadata columns already live in the mutation table, you can omit
+`metadata` and pass `metadata_cols` directly:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata_cols=["Subtype", "Age_years"],
+)
+```
+
+`pyoncoplot` derives the metadata table from the mutation data by keeping the
+sample identifier plus the requested metadata columns, then dropping exact
+duplicate rows. Each sample still needs one consistent metadata value per
+requested column; conflicting values for the same sample raise the usual
+duplicate metadata identifier error.
+
 ## Metadata Filtering
 
 By default, `metadata_require_mutations=True`, so metadata rows whose samples do

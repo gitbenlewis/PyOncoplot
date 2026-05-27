@@ -98,6 +98,44 @@ def test_prepare_oncoplot_data_validates_empty_ids_and_metadata_duplicates():
         prepare_oncoplot_data(df, gene_col="gene", sample_col="sample", metadata=metadata)
 
 
+def test_prepare_oncoplot_data_derives_metadata_from_mutation_data():
+    df = mutation_df()
+    df["clinical_group"] = df["sample"].map({"S1": "A", "S2": "B", "S3": "A", "S4": "C", "S5": "B"})
+    df["purity"] = df["sample"].map({"S1": 0.72, "S2": 0.61, "S3": 0.83, "S4": 0.55, "S5": 0.68})
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata_cols=["clinical_group", "purity"],
+        show_all_samples=True,
+    )
+
+    assert prepared.metadata is not None
+    assert prepared.metadata_cols == ["clinical_group", "purity"]
+    assert list(prepared.metadata.columns) == ["Sample", "clinical_group", "purity"]
+    assert prepared.metadata["Sample"].astype(str).tolist() == prepared.samples
+    assert len(prepared.metadata) == df["sample"].nunique()
+    assert prepared.metadata_tracks is not None
+    assert [track.column for track in prepared.metadata_tracks] == ["clinical_group", "purity"]
+    assert [track.kind for track in prepared.metadata_tracks] == ["categorical", "numeric"]
+
+
+def test_prepare_oncoplot_data_rejects_conflicting_derived_metadata_values():
+    df = mutation_df()
+    df["clinical_group"] = "A"
+    df.loc[1, "clinical_group"] = "B"
+
+    with pytest.raises(ValueError, match="unique"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            metadata_cols=["clinical_group"],
+        )
+
+
 def test_ampersand_delimited_so_terms_are_rejected():
     df = pd.DataFrame(
         {
