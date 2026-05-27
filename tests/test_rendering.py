@@ -1608,6 +1608,7 @@ def test_numeric_metadata_supports_per_column_continuous_colormaps():
     assert [axis.get_title() for axis in matplotlib_colorbars] == ["Score", "Purity"]
     assert [axis.get_ylabel() for axis in matplotlib_colorbars] == ["", ""]
     assert all(axis.get_position().height > axis.get_position().width for axis in matplotlib_colorbars)
+    assert all(axis.get_position().x0 > 0.80 for axis in matplotlib_colorbars)
     assert [text.get_text() for text in matplotlib_colorbars[0].get_yticklabels() if text.get_text()] == ["0", "1"]
     assert expected_score_zero in axis_colormap_colors(matplotlib_colorbars[0], 0.0)
     assert expected_score_mid in axis_colormap_colors(matplotlib_colorbars[0], 0.5)

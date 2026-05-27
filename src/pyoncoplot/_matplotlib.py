@@ -41,6 +41,9 @@ MATPLOTLIB_RENDER_DEFAULTS: dict[str, Any] = {
     "draw_tmb_bar": False,
 }
 
+RIGHT_LEGEND_LEFT = 0.74
+RIGHT_LEGEND_RIGHT = 0.98
+
 
 @dataclass(frozen=True)
 class _MetadataLegendSpec:
@@ -245,6 +248,10 @@ def _metadata_has_right_legends(
     if not _metadata_colorbar_is_horizontal(options):
         return True
     return any(not legend.is_numeric for legend in metadata_legends)
+
+
+def _centered_right_legend_x(width: float) -> float:
+    return RIGHT_LEGEND_LEFT + max(0.0, (RIGHT_LEGEND_RIGHT - RIGHT_LEGEND_LEFT - width) / 2)
 
 
 def _should_show_tmb_legend(
@@ -1204,7 +1211,7 @@ def _add_static_legends(
             _add_numeric_metadata_colorbar(
                 figure,
                 legend,
-                [0.74, max(0.05, y - height), width, height],
+                [_centered_right_legend_x(width), max(0.05, y - height), width, height],
                 "vertical",
                 options,
                 metadata_fontsize,
