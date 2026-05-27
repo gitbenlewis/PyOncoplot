@@ -151,6 +151,8 @@ oncoplot(
 Mutation palettes still control stacked gene bars when `draw_gene_bar=True`.
 Use `options={"gene_bar_mode": "percent"}` for a normalized mutation-type
 composition bar beside each gene.
+Matplotlib renders continuous variant-value colorbars horizontally by default
+to keep their labels readable in static figures.
 
 For multi-row main grids, each `variant_value` row can define its own continuous
 palette:

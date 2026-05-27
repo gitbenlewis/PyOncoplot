@@ -255,6 +255,7 @@ def test_matplotlib_continuous_variant_heatmap_and_save(tmp_path):
     colorbar_axis = matplotlib_colorbar_axes(result.figure, "Vaf")[0]
     assert colorbar_axis.get_title() == "Vaf"
     assert colorbar_axis.get_ylabel() == ""
+    assert colorbar_axis.get_position().width > colorbar_axis.get_position().height
 
 
 def test_matplotlib_multi_row_main_grid_and_colorbars(tmp_path):
@@ -278,6 +279,7 @@ def test_matplotlib_multi_row_main_grid_and_colorbars(tmp_path):
     colorbar_axes = matplotlib_colorbar_axes(result.figure, "Vaf", "Vaf Abs")
     assert [axis.get_title() for axis in colorbar_axes] == ["Vaf", "Vaf Abs"]
     assert all(axis.get_ylabel() == "" for axis in colorbar_axes)
+    assert all(axis.get_position().width > axis.get_position().height for axis in colorbar_axes)
 
 
 def test_matplotlib_gene_bar_percent_mode_normalizes_each_gene():

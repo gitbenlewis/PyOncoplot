@@ -349,10 +349,19 @@ def _add_variant_value_colorbar(
     from matplotlib.cm import ScalarMappable
     from matplotlib.colors import Normalize
 
-    cmin, cmax, _tick_values, _tick_labels = _numeric_colorbar_bounds(min_value, max_value)
+    cmin, cmax, tick_values, tick_labels = _numeric_colorbar_bounds(min_value, max_value)
     mappable = ScalarMappable(norm=Normalize(vmin=cmin, vmax=cmax), cmap=colormap)
     mappable.set_array([])
-    colorbar = ax.figure.colorbar(mappable, ax=ax, fraction=0.025, pad=0.012)
+    colorbar = ax.figure.colorbar(
+        mappable,
+        ax=ax,
+        orientation="horizontal",
+        fraction=0.06,
+        pad=0.08,
+        aspect=30,
+        ticks=tick_values,
+    )
+    colorbar.ax.set_xticklabels(tick_labels)
     colorbar.ax.set_title(title, fontsize=options.font_size_metadata, pad=max(2, options.font_size_metadata * 0.35))
     colorbar.ax.tick_params(labelsize=options.font_size_metadata)
 
@@ -1343,10 +1352,12 @@ def render_matplotlib_oncoplot(
         and options.show_legend
         and options.mutation_legend_position != "none"
     )
+    if variant_colorbar_active:
+        bottom_margin = max(bottom_margin, 0.14)
     _add_static_legends(figure, mutation_handles, tmb_handles, metadata_legends, options)
     figure.subplots_adjust(
         left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
-        right=0.70 if has_right_legend else (0.88 if variant_colorbar_active else 0.98),
+        right=0.70 if has_right_legend else 0.98,
         top=0.92,
         bottom=bottom_margin,
         hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
