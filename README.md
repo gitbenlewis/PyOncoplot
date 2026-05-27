@@ -95,6 +95,24 @@ params = {
 result = oncoplot(params=params, top_n=10)
 ```
 
+When you want to keep the unpacked `**params` style and override a key that may
+already be present, merge first:
+
+```python
+from pyoncoplot import merge_oncoplot_params
+
+merged = merge_oncoplot_params(params, top_n=10)
+result = oncoplot(**merged)
+```
+
+For one-off calls, `ChainMap` is also valid as long as overrides come first:
+
+```python
+from collections import ChainMap
+
+result = oncoplot(**ChainMap({"top_n": 10}, params))
+```
+
 For a static Matplotlib backend:
 
 ```python

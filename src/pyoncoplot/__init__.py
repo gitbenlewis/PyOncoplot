@@ -1,6 +1,6 @@
 """Pythonic oncoplots for mutation-level cohort data."""
 
-from ._api import oncoplot
+from ._api import merge_oncoplot_params, oncoplot
 from ._data import (
     PreparedOncoplotData,
     check_valid_dataframe_columns,
@@ -53,6 +53,7 @@ __all__ = [
     "load_oncoplot_params",
     "magma_greyzero",
     "make_greyzero_colormap",
+    "merge_oncoplot_params",
     "oncoplot",
     "plasma_greyzero",
     "prepare_oncoplot_data",

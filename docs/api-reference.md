@@ -56,6 +56,28 @@ result = oncoplot(params=params, top_n=20)
 
 Here `top_n=20` overrides any `params["top_n"]` value.
 
+If you need to keep the unpacked `**params` call style while overriding a key
+that may already be in the dictionary, merge first:
+
+```python
+from pyoncoplot import merge_oncoplot_params, oncoplot
+
+merged = merge_oncoplot_params(params, options={"width": 1000, "height": 600})
+result = oncoplot(**merged)
+```
+
+`collections.ChainMap` also works for lightweight one-off calls. Put overrides
+first because the first mapping wins:
+
+```python
+from collections import ChainMap
+
+result = oncoplot(**ChainMap({"options": {"width": 1000, "height": 600}}, params))
+```
+
+Avoid `oncoplot(options=..., **params)` when `params` may contain `"options"`;
+Python raises a duplicate keyword error before `oncoplot()` can merge values.
+
 YAML configs can be loaded directly:
 
 ```python
@@ -126,6 +148,16 @@ oncoplot(
     tmb_type_order=["clonal", "subclonal"],
 )
 ```
+
+## `merge_oncoplot_params`
+
+```python
+merge_oncoplot_params(params=None, *, params_key=None, **overrides)
+```
+
+Return a plain dictionary of oncoplot parameters with explicit overrides taking
+precedence. It accepts the same mapping or YAML config path forms as
+`oncoplot(params=...)`, including `params_key` for nested YAML mappings.
 
 ## `OncoplotResult`
 

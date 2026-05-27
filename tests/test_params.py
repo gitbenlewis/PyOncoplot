@@ -1,7 +1,15 @@
+from collections import ChainMap
+
 import pandas as pd
 import pytest
 
-from pyoncoplot import OncoplotOptions, load_oncoplot_params, oncoplot, prepare_oncoplot_data
+from pyoncoplot import (
+    OncoplotOptions,
+    load_oncoplot_params,
+    merge_oncoplot_params,
+    oncoplot,
+    prepare_oncoplot_data,
+)
 from pyoncoplot._matplotlib import render_matplotlib_oncoplot
 from pyoncoplot._params import merge_params
 from pyoncoplot._plotly import render_plotly_oncoplot
@@ -57,6 +65,77 @@ def test_oncoplot_params_matches_explicit_kwargs_and_allows_override():
     assert from_params.prepared_data.genes == explicit.prepared_data.genes
     assert from_params.prepared_data.samples == explicit.prepared_data.samples
     assert from_params.backend == "matplotlib"
+
+
+def test_oncoplot_params_options_can_be_overridden_with_params_argument():
+    result = oncoplot(
+        params={
+            "data": small_df(),
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "backend": "plotly",
+            "options": {"width": 400, "height": 300},
+        },
+        options={"width": 720, "height": 460},
+    )
+
+    assert result.figure.layout.width == 720
+    assert result.figure.layout.height == 460
+
+
+def test_merge_oncoplot_params_supports_unpacked_kwargs_override():
+    merged = merge_oncoplot_params(
+        {
+            "data": small_df(),
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "top_n": 1,
+            "backend": "plotly",
+            "options": {"width": 400, "height": 300},
+        },
+        top_n=2,
+        options={"width": 750, "height": 500},
+    )
+
+    result = oncoplot(**merged)
+
+    assert merged["options"] == {"width": 750, "height": 500}
+    assert len(result.prepared_data.genes) == 2
+    assert result.figure.layout.width == 750
+
+
+def test_oncoplot_accepts_unpacked_params_without_overrides():
+    result = oncoplot(
+        **{
+            "data": small_df(),
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "backend": "plotly",
+            "options": {"width": 680, "height": 420},
+        }
+    )
+
+    assert result.figure.layout.width == 680
+    assert result.figure.layout.height == 420
+
+
+def test_chainmap_supports_unpacked_params_with_overrides():
+    params = {
+        "data": small_df(),
+        "gene_col": "gene",
+        "sample_col": "sample",
+        "mutation_type_col": "type",
+        "backend": "plotly",
+        "options": {"width": 400, "height": 300},
+    }
+
+    result = oncoplot(**ChainMap({"options": {"width": 760, "height": 510}}, params))
+
+    assert result.figure.layout.width == 760
+    assert result.figure.layout.height == 510
 
 
 def test_oncoplot_params_accept_data_and_metadata_paths(tmp_path):

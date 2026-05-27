@@ -130,6 +130,43 @@ def _palette_for_data(
     return mutation_palette, None
 
 
+def _load_supplied_oncoplot_params(
+    params: Optional[Union[Mapping[str, Any], str, os.PathLike]],
+    *,
+    params_key: Optional[str],
+) -> Any:
+    if params_key is not None and params is None:
+        raise TypeError("params_key can only be used when params is a YAML config path.")
+    if params_key is not None and isinstance(params, Mapping):
+        raise TypeError("params_key can only be used when params is a YAML config path.")
+    if isinstance(params, (str, os.PathLike)):
+        return load_oncoplot_params(params, key=params_key)
+    if params is None:
+        return {}
+    if isinstance(params, Mapping):
+        return materialize_table_params(params, base_dir=Path.cwd())
+    return params
+
+
+def merge_oncoplot_params(
+    params: Optional[Union[Mapping[str, Any], str, os.PathLike]] = None,
+    *,
+    params_key: Optional[str] = None,
+    **overrides: Any,
+) -> dict[str, Any]:
+    """Merge reusable oncoplot params with explicit overrides.
+
+    Use this helper when you need an unpacked keyword dictionary, such as
+    ``oncoplot(**merge_oncoplot_params(params, options=options))``. Python
+    raises before ``oncoplot`` runs for calls like ``oncoplot(options=...,
+    **params)`` when ``params`` already contains ``"options"``.
+    """
+
+    supplied_params = _load_supplied_oncoplot_params(params, params_key=params_key)
+    supplied = merge_params(supplied_params, allowed_keys=ONCOPLOT_PARAM_KEYS, context="oncoplot", **overrides)
+    return materialize_table_params(supplied, base_dir=Path.cwd())
+
+
 def oncoplot(
     data: Optional[Union[pd.DataFrame, str, os.PathLike]] = None,
     *,
@@ -143,19 +180,7 @@ def oncoplot(
     `gene_col`, `sample_col`, `mutation_type_col`, `top_n`, and friends.
     """
 
-    if params_key is not None and params is None:
-        raise TypeError("params_key can only be used when params is a YAML config path.")
-    if params_key is not None and isinstance(params, Mapping):
-        raise TypeError("params_key can only be used when params is a YAML config path.")
-    if isinstance(params, (str, os.PathLike)):
-        supplied_params = load_oncoplot_params(params, key=params_key)
-    elif params is None:
-        supplied_params = {}
-    elif isinstance(params, Mapping):
-        supplied_params = materialize_table_params(params, base_dir=Path.cwd())
-    else:
-        supplied_params = params
-
+    supplied_params = _load_supplied_oncoplot_params(params, params_key=params_key)
     supplied = merge_params(supplied_params, allowed_keys=ONCOPLOT_PARAM_KEYS, context="oncoplot", **kwargs)
     supplied = materialize_table_params(supplied, base_dir=Path.cwd())
     merged = {**ONCOPLOT_DEFAULTS, **supplied}
