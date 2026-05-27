@@ -501,7 +501,7 @@ def _draw_metadata(
             continue
 
         levels = [str(value) for value in pd.unique(values.dropna())]
-        column_palette = categorical_metadata_palette(palette_spec, column)
+        column_palette = categorical_metadata_palette(palette_spec, column, levels)
         for level_index, level in enumerate(levels):
             column_palette.setdefault(level, options.metadata_default_colors[level_index % len(options.metadata_default_colors)])
         for col_index, sample in enumerate(prepared.samples):

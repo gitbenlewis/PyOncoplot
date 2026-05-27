@@ -14,15 +14,84 @@ def metadata_palette_spec(metadata_palette: Optional[Mapping[str, Any]], column:
     return metadata_palette.get(str(column))
 
 
-def categorical_metadata_palette(spec: Any, column: object) -> dict[str, Any]:
+def _resolve_named_metadata_palette(spec: str, column: object, kind: str) -> Any:
+    from matplotlib import colormaps
+
+    from . import palettes as pyoncoplot_palettes
+
+    if spec in getattr(pyoncoplot_palettes, "__all__", ()):
+        return getattr(pyoncoplot_palettes, spec)
+
+    try:
+        return colormaps.get_cmap(spec)
+    except ValueError as exc:
+        raise ValueError(
+            f"Unknown metadata palette {spec!r} for {kind} metadata column {str(column)!r}."
+        ) from exc
+
+
+def _sequence_colors(spec: Any, column: object, kind: str) -> list[Any]:
+    colors = list(spec)
+    if not colors:
+        raise ValueError(
+            f"metadata_palette entry for {kind} metadata column {str(column)!r} "
+            "must include at least one color."
+        )
+    return colors
+
+
+def _coerce_categorical_colors(spec: Any, column: object, level_count: int) -> list[str]:
+    from matplotlib.colors import Colormap, ListedColormap, to_hex
+
+    if isinstance(spec, str):
+        spec = _resolve_named_metadata_palette(spec, column, "categorical")
+
+    if isinstance(spec, ListedColormap) and getattr(spec, "colors", None) is not None:
+        return [
+            to_hex(color, keep_alpha=False)
+            for color in _sequence_colors(spec.colors, column, "categorical")
+        ]
+
+    if isinstance(spec, Colormap):
+        if level_count <= 0:
+            return []
+        if level_count == 1:
+            return [to_hex(spec(0.0), keep_alpha=False)]
+        return [
+            to_hex(spec(index / (level_count - 1)), keep_alpha=False)
+            for index in range(level_count)
+        ]
+
+    if isinstance(spec, Sequence) and not isinstance(spec, (bytes, bytearray, str)):
+        return [
+            to_hex(color, keep_alpha=False)
+            for color in _sequence_colors(spec, column, "categorical")
+        ]
+
+    raise ValueError(
+        f"metadata_palette entry for categorical metadata column {str(column)!r} "
+        "must be a mapping, palette name, matplotlib colormap, or sequence of colors."
+    )
+
+
+def categorical_metadata_palette(
+    spec: Any,
+    column: object,
+    levels: Sequence[object] = (),
+) -> dict[str, Any]:
     if spec is None:
         return {}
-    if not isinstance(spec, Mapping):
-        raise ValueError(
-            f"metadata_palette entry for categorical metadata column {str(column)!r} "
-            "must be a mapping of category values to colors."
-        )
-    return {str(level): color for level, color in spec.items()}
+    if isinstance(spec, Mapping):
+        return {str(level): color for level, color in spec.items()}
+
+    level_names = [str(level) for level in levels]
+    colors = _coerce_categorical_colors(spec, column, len(level_names))
+    if not level_names:
+        return {}
+    return {
+        level: colors[index % len(colors)]
+        for index, level in enumerate(level_names)
+    }
 
 
 def numeric_metadata_colormap_spec(spec: Any) -> Any:
@@ -33,7 +102,6 @@ def numeric_metadata_colormap_spec(spec: Any) -> Any:
 
 def _coerce_continuous_colormap(spec: Any, column: object):
     try:
-        from matplotlib import colormaps
         from matplotlib.colors import Colormap, LinearSegmentedColormap
     except ImportError as exc:
         raise ImportError("Continuous metadata colormaps require the 'matplotlib' package.") from exc
@@ -42,12 +110,10 @@ def _coerce_continuous_colormap(spec: Any, column: object):
         return spec
 
     if isinstance(spec, str):
-        try:
-            return colormaps.get_cmap(spec)
-        except ValueError as exc:
-            raise ValueError(
-                f"Unknown colormap {spec!r} for numeric metadata column {str(column)!r}."
-            ) from exc
+        return _coerce_continuous_colormap(
+            _resolve_named_metadata_palette(spec, column, "numeric"),
+            column,
+        )
 
     if isinstance(spec, Sequence) and not isinstance(spec, (bytes, bytearray, str)):
         colors = list(spec)

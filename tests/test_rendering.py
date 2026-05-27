@@ -5,7 +5,7 @@ import pytest
 from matplotlib import colormaps
 from matplotlib.colors import LinearSegmentedColormap, to_hex
 
-from pyoncoplot import Iridescent, OncoplotOptions, oncoplot
+from pyoncoplot import Iridescent, OncoplotOptions, oncoplot, tol_colors
 
 
 def small_df():
@@ -1002,6 +1002,73 @@ def test_metadata_fallback_palette_wraps_for_many_categories():
     assert legend_colors["Group: C3"] == "#222222"
 
 
+def test_categorical_metadata_palette_string_names_render_in_both_backends():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    expected_a = to_hex(tol_colors[0]).lower()
+    expected_b = to_hex(tol_colors[1]).lower()
+
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        metadata_palette={"group": "tol_colors"},
+        backend="plotly",
+    )
+    legend_colors = {
+        trace.name: trace.marker.color
+        for trace in plotly_result.figure.data
+        if str(getattr(trace, "legendgroup", "")).startswith("metadata:")
+    }
+    assert legend_colors["Group: A"] == expected_a
+    assert legend_colors["Group: B"] == expected_b
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        metadata_palette={"group": "tol_colors"},
+        backend="matplotlib",
+    )
+    patch_colors = {
+        to_hex(patch.get_facecolor()).lower()
+        for axis in matplotlib_result.figure.axes
+        for patch in axis.patches
+    }
+    assert expected_a in patch_colors
+    assert expected_b in patch_colors
+
+
+def test_categorical_metadata_palette_accepts_matplotlib_colormap_names():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    dark2 = colormaps.get_cmap("Dark2")
+    expected_a = to_hex(dark2.colors[0]).lower()
+    expected_b = to_hex(dark2.colors[1]).lower()
+
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        metadata_palette={"group": "Dark2"},
+        backend="plotly",
+    )
+    legend_colors = {
+        trace.name: trace.marker.color
+        for trace in result.figure.data
+        if str(getattr(trace, "legendgroup", "")).startswith("metadata:")
+    }
+    assert legend_colors["Group: A"] == expected_a
+    assert legend_colors["Group: B"] == expected_b
+
+
 def test_numeric_metadata_supports_per_column_continuous_colormaps():
     metadata = pd.DataFrame(
         {
@@ -1010,7 +1077,7 @@ def test_numeric_metadata_supports_per_column_continuous_colormaps():
             "purity": [0.0, 0.5, 1.0],
         }
     )
-    metadata_palette = {"score": "viridis_greyzero", "purity": Iridescent}
+    metadata_palette = {"score": "viridis_greyzero", "purity": "Iridescent"}
     expected_score_zero = "#808080"
     expected_score_mid = to_hex(colormaps.get_cmap("viridis_greyzero")(0.5))
     expected_purity_mid = to_hex(LinearSegmentedColormap.from_list("iridescent_test", Iridescent)(0.5))
@@ -1068,6 +1135,40 @@ def test_numeric_metadata_supports_per_column_continuous_colormaps():
     assert expected_score_zero in patch_colors
     assert expected_score_mid in patch_colors
     assert expected_purity_mid in patch_colors
+
+
+def test_metadata_palette_unknown_names_raise_clear_errors():
+    categorical_metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    with pytest.raises(
+        ValueError,
+        match="Unknown metadata palette 'no_such_palette' for categorical metadata column 'group'",
+    ):
+        oncoplot(
+            small_df(),
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            metadata=categorical_metadata,
+            metadata_cols=["group"],
+            metadata_palette={"group": "no_such_palette"},
+            backend="plotly",
+        )
+
+    numeric_metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "score": [0.0, 0.5, 1.0]})
+    with pytest.raises(
+        ValueError,
+        match="Unknown metadata palette 'no_such_palette' for numeric metadata column 'score'",
+    ):
+        oncoplot(
+            small_df(),
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            metadata=numeric_metadata,
+            metadata_cols=["score"],
+            metadata_palette={"score": "no_such_palette"},
+            backend="plotly",
+        )
 
 
 def test_plotly_numeric_metadata_colorbars_follow_metadata_legend_options():

@@ -20,16 +20,7 @@ metadata["FAB_classification"] = metadata["FAB_classification"].astype(str)
 metadata["Overall_Survival_Status"] = metadata["Overall_Survival_Status"].astype(str)
 
 metadata_palette = {
-    "FAB_classification": {
-        "M0": "#1B9E77",
-        "M1": "#D95F02",
-        "M2": "#7570B3",
-        "M3": "#E7298A",
-        "M4": "#66A61E",
-        "M5": "#E6AB02",
-        "M6": "#A6761D",
-        "M7": "#666666",
-    },
+    "FAB_classification": "tol_colors",
     "Overall_Survival_Status": {"0": "#FDB7B4", "1": "#BBD7EA"},
 }
 

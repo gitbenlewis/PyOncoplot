@@ -484,15 +484,15 @@ def _add_metadata_strip(
                     numeric_metadata_colorscale(colorbar_spec, col_name),
                 )
             )
-        level_map = (
-            {}
-            if is_numeric
-            else _metadata_color_map(
+        if is_numeric:
+            level_map = {}
+        else:
+            categorical_levels = [str(value) for value in pd.unique(values_by_sample.dropna())]
+            level_map = _metadata_color_map(
                 values_by_sample.astype("object"),
                 options,
-                supplied=categorical_metadata_palette(palette_spec, col_name),
+                supplied=categorical_metadata_palette(palette_spec, col_name, categorical_levels),
             )
-        )
         for sample in prepared.samples:
             value = values_by_sample.get(sample, np.nan)
             row_text.append(f"{display_col}: {_metadata_value_label(value, options)}")

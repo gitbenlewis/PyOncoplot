@@ -33,19 +33,14 @@ consequence before plotting.
 
 ## Metadata Palette
 
-Metadata palettes are nested mappings:
+Metadata palettes map metadata columns to explicit category mappings, named
+palettes, or numeric colormaps:
 
 ```python
 metadata_palette = {
-    "FAB_classification": {
-        "M0": "#1B9E77",
-        "M1": "#D95F02",
-        "M2": "#7570B3",
-    },
-    "Overall_Survival_Status": {
-        "0": "#FDB7B4",
-        "1": "#BBD7EA",
-    },
+    "FAB_classification": "tol_colors",
+    "Overall_Survival_Status": "Iridescent",
+    "Mean VAF%": "viridis_greyzero",
 }
 ```
 
@@ -63,21 +58,24 @@ oncoplot(
 )
 ```
 
-Categorical levels not listed in the metadata palette receive fallback colors.
-When a metadata track has more categories than fallback colors, the fallback
-colors wrap around from the first color again.
+Categorical palette names are case-sensitive. PyOncoplot first resolves names
+from `pyoncoplot.palettes`, such as `tol_colors` and `Iridescent`, then falls
+back to Matplotlib colormap names such as `"Dark2"`. Named palettes and color
+sequences assign colors in observed category order. Finite color lists wrap
+around from the first color again when a track has more categories than colors.
+
+You can still pass explicit category mappings. Categorical levels not listed in
+an explicit metadata palette receive fallback colors.
 
 For numeric metadata, `metadata_palette` can specify a true continuous colormap
-per column. Use a Matplotlib colormap name such as `"viridis"` or a sequence of
-colors such as `Iridescent`:
+per column. Use a Matplotlib colormap name such as `"viridis"`, a PyOncoplot
+palette name such as `"Iridescent"`, or a sequence of colors:
 
 ```python
-from pyoncoplot import Iridescent
-
 metadata_palette = {
     "CAF%": "viridis_greyzero",
     "Mean VAF%": "magma",
-    "Tumor purity": Iridescent,
+    "Tumor purity": "Iridescent",
 }
 
 oncoplot(
