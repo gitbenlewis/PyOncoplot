@@ -135,13 +135,15 @@ when `gene_bar_scale_breaks` is not supplied.
 | --- | --- | --- |
 | `metadata_na_marker` | `"!"` | legend label for missing metadata |
 | `metadata_na_marker_size` | `7` | visible NA marker text size |
-| `metadata_max_levels` | `12` | maximum categorical levels allowed per metadata track |
+| `metadata_max_levels` | `40` | maximum categorical levels allowed per metadata track |
 | `metadata_numeric_plot_type` | `"heatmap"` | `"heatmap"` or `"bar"` |
 | `metadata_legend_orientation_heatmap` | `"vertical"` | orientation hint for numeric heatmap legends |
 | `metadata_default_colors` | color sequence | fallback metadata colors |
 
-`metadata_numeric_plot_type="bar"`, metadata legend row/column controls, and
-`metadata_legend_orientation_heatmap` are Matplotlib/static metadata controls.
+Categorical metadata tracks reuse `metadata_default_colors` from the beginning
+when there are more levels than fallback colors. `metadata_numeric_plot_type="bar"`,
+metadata legend row/column controls, and `metadata_legend_orientation_heatmap`
+are Matplotlib/static metadata controls.
 Plotly renders compact metadata heatmaps and categorical metadata legend entries
 that fit its interactive model.
 

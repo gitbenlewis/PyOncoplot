@@ -913,6 +913,44 @@ def test_metadata_max_levels_validation_applies_to_renderers():
         )
 
 
+def test_metadata_fallback_palette_wraps_for_many_categories():
+    samples = [f"S{i:02d}" for i in range(1, 10)]
+    mutations = pd.DataFrame(
+        {
+            "sample": samples,
+            "gene": ["TP53"] * len(samples),
+            "type": ["Missense_Mutation"] * len(samples),
+        }
+    )
+    metadata = pd.DataFrame(
+        {
+            "sample": samples,
+            "group": [f"C{i}" for i in range(len(samples))],
+        }
+    )
+
+    result = oncoplot(
+        mutations,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="plotly",
+        options=OncoplotOptions(metadata_default_colors=("#111111", "#222222")),
+    )
+
+    legend_colors = {
+        trace.name: trace.marker.color
+        for trace in result.figure.data
+        if str(getattr(trace, "legendgroup", "")).startswith("metadata:")
+    }
+    assert legend_colors["Group: C0"] == "#111111"
+    assert legend_colors["Group: C1"] == "#222222"
+    assert legend_colors["Group: C2"] == "#111111"
+    assert legend_colors["Group: C3"] == "#222222"
+
+
 def test_matplotlib_pathway_strip_and_metadata_na_marker_render():
     metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", None, "B"]})
     pathway = pd.DataFrame({"gene": ["TP53", "PTEN"], "pathway": ["Cell cycle", "PI3K"]})

@@ -64,6 +64,8 @@ oncoplot(
 ```
 
 Categorical levels not listed in the metadata palette receive fallback colors.
+When a metadata track has more categories than fallback colors, the fallback
+colors wrap around from the first color again.
 
 ## TMB Palette
 
