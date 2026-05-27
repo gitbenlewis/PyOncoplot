@@ -116,6 +116,26 @@ def _font_options(size: float, options: OncoplotOptions) -> Dict[str, object]:
     return {"size": size, "family": options.font_family}
 
 
+def _category_range(length: int) -> list[float]:
+    return [-0.5, max(length - 0.5, 0.5)]
+
+
+def _sample_axis_options(prepared: PreparedOncoplotData) -> Dict[str, object]:
+    return {
+        "categoryorder": "array",
+        "categoryarray": list(prepared.samples),
+        "range": _category_range(len(prepared.samples)),
+    }
+
+
+def _gene_axis_options(prepared: PreparedOncoplotData) -> Dict[str, object]:
+    return {
+        "categoryorder": "array",
+        "categoryarray": list(reversed(prepared.genes)),
+        "range": _category_range(len(prepared.genes)),
+    }
+
+
 def _validate_metadata_levels(prepared: PreparedOncoplotData, options: OncoplotOptions) -> None:
     for track in prepared.metadata_tracks or []:
         if track.kind == "categorical" and len(track.levels) > options.metadata_max_levels:
@@ -178,13 +198,19 @@ def _add_tmb_bar(
         tmb_color_palette = tmb_palette or palette
         for tmb_type, group in tmb.groupby(type_col, dropna=False, sort=False):
             color = tmb_color_palette.get(str(tmb_type), options.unspecified_mutation_color)
-            sample_values = group[sample_col].astype(str).tolist()
-            values = group[value_col].astype(float).tolist()
+            sample_values = list(prepared.samples)
+            values_by_sample = (
+                group.groupby(sample_col, observed=False)[value_col]
+                .sum()
+                .reindex(sample_values, fill_value=0)
+            )
+            values = values_by_sample.astype(float).tolist()
             tmb_label = _legend_label(tmb_type, options)
             fig.add_trace(
                 go.Bar(
                     x=sample_values,
                     y=values,
+                    width=1,
                     name=f"TMB: {tmb_label}",
                     legendgroup="tmb",
                     marker_color=color,
@@ -223,6 +249,7 @@ def _add_tmb_bar(
             go.Bar(
                 x=prepared.samples,
                 y=y_values,
+                width=1,
                 marker_color="#4D4D4D",
                 customdata=customdata,
                 hovertemplate="Sample: %{x}<br>TMB: %{customdata.tmb}<extra></extra>",
@@ -246,7 +273,7 @@ def _add_tmb_bar(
         fig.update_yaxes(tickformat=".1e", row=row, col=col)
     if not options.show_tmb_axis:
         fig.update_yaxes(showticklabels=False, showline=False, ticks="", row=row, col=col)
-    fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)
+    fig.update_xaxes(**_sample_axis_options(prepared), showticklabels=False, ticks="", row=row, col=col)
 
 
 def _metadata_color_map(
@@ -385,6 +412,7 @@ def _add_metadata_strip(
         col=col,
     )
     fig.update_xaxes(
+        **_sample_axis_options(prepared),
         showticklabels=options.show_sample_ids,
         tickfont=_font_options(options.font_size_samples, options),
         row=row,
@@ -495,11 +523,10 @@ def _add_main_tiles(
                 col=col,
             )
 
-    fig.update_yaxes(categoryorder="array", categoryarray=list(reversed(prepared.genes)), row=row, col=col)
+    fig.update_yaxes(**_gene_axis_options(prepared), row=row, col=col)
     fig.update_yaxes(tickfont=_font_options(options.font_size_genes, options), row=row, col=col)
     fig.update_xaxes(
-        categoryorder="array",
-        categoryarray=prepared.samples,
+        **_sample_axis_options(prepared),
         tickfont=_font_options(options.font_size_samples, options),
         row=row,
         col=col,
@@ -578,6 +605,7 @@ def _add_gene_bar(
                 x=counts.values,
                 y=prepared.genes,
                 orientation="h",
+                width=1,
                 marker_color=color,
                 hovertext=hover,
                 customdata=[
@@ -625,8 +653,7 @@ def _add_gene_bar(
         )
         fig.update_xaxes(range=[0, max(label_x.max(), max_total) * 1.08], row=row, col=col)
     fig.update_yaxes(
-        categoryorder="array",
-        categoryarray=list(reversed(prepared.genes)),
+        **_gene_axis_options(prepared),
         showticklabels=False,
         row=row,
         col=col,

@@ -303,7 +303,7 @@ def _draw_tmb(
         return []
     _plt, _ListedColormap, _GridSpec, Patch, _Rectangle = _require_matplotlib()
     sample_col = prepared.tmb_sample_col
-    x_positions = np.arange(len(prepared.samples))
+    x_positions = np.arange(len(prepared.samples)) + 0.5
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb and prepared.tmb_type_col is not None
     show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked, mutation_palette, tmb_palette)
     handles: List[object] = []
@@ -334,7 +334,7 @@ def _draw_tmb(
         if options.log10_transform_tmb:
             values = np.log10(np.maximum(values, 1))
         ax.bar(x_positions, values, color="#4D4D4D", width=1.0, linewidth=0)
-    ax.set_xlim(-0.5, len(prepared.samples) - 0.5)
+    ax.set_xlim(0, len(prepared.samples))
     ax.set_xticks([])
     if options.show_tmb_y_label:
         axis_label = prepared.tmb_value_col

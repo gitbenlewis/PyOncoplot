@@ -704,6 +704,67 @@ def test_plotly_tmb_and_metadata_font_sizes_are_applied():
     assert tmb_result.figure.layout.yaxis.title.font.size == 14
 
 
+def test_plotly_bar_axes_share_matrix_category_extents():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_gene_bar=True,
+        draw_tmb_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+    samples = result.prepared_data.samples
+    genes = result.prepared_data.genes
+    sample_range = (-0.5, len(samples) - 0.5)
+    gene_range = (-0.5, len(genes) - 0.5)
+
+    assert list(result.figure.layout.xaxis.categoryarray) == samples
+    assert tuple(result.figure.layout.xaxis.range) == sample_range
+    assert list(result.figure.layout.xaxis2.categoryarray) == samples
+    assert tuple(result.figure.layout.xaxis2.range) == sample_range
+    assert list(result.figure.layout.yaxis2.categoryarray) == list(reversed(genes))
+    assert tuple(result.figure.layout.yaxis2.range) == gene_range
+    assert list(result.figure.layout.yaxis3.categoryarray) == list(reversed(genes))
+    assert tuple(result.figure.layout.yaxis3.range) == gene_range
+
+    tmb_bars = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "bar" and trace.orientation is None
+    ]
+    gene_bars = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "bar" and trace.orientation == "h"
+    ]
+    assert tmb_bars and gene_bars
+    assert all(trace.width == 1 for trace in tmb_bars)
+    assert all(trace.width == 1 for trace in gene_bars)
+
+
+def test_matplotlib_tmb_axis_uses_matrix_sample_boundaries():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        backend="matplotlib",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+    tmb_axis = result.figure.axes[0]
+    main_axis = result.figure.axes[1]
+    n_samples = len(result.prepared_data.samples)
+
+    assert tmb_axis.get_xlim() == main_axis.get_xlim() == (0.0, float(n_samples))
+    assert tmb_axis.patches
+    assert {round(patch.get_width(), 6) for patch in tmb_axis.patches} == {1.0}
+    assert min(round(patch.get_x(), 6) for patch in tmb_axis.patches) == 0.0
+    assert max(round(patch.get_x() + patch.get_width(), 6) for patch in tmb_axis.patches) == float(n_samples)
+
+
 def test_multi_hit_color_applies_to_defaults_and_explicit_palette_wins():
     data = pd.DataFrame(
         {

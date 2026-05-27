@@ -47,13 +47,38 @@ result = oncoplot(
     gene_col="gene",
     sample_col="sample",
     mutation_type_col="mutation_type",
+    backend="plotly",
     top_n=10,
     draw_gene_bar=True,
     draw_tmb_bar=True,
 )
+```
 
+In a Jupyter notebook, render the result in a cell with any of these:
+
+```python
+result.figure
+```
+
+```python
+result.show()
+```
+
+```python
+from IPython.display import display
+
+display(result.figure)
+```
+
+Save the interactive Plotly result as standalone HTML:
+
+```python
 result.save("oncoplot.html")
 ```
+
+Plotly backend screenshot:
+
+![Pyoncoplot Plotly backend example](python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_7.png)
 
 The same call can be made from a reusable parameter dictionary; explicit
 keywords override dictionary values:
@@ -70,9 +95,11 @@ params = {
 result = oncoplot(params=params, top_n=10)
 ```
 
-For a static image:
+For a static Matplotlib backend:
 
 ```python
+from IPython.display import display
+
 result = oncoplot(
     mutations,
     gene_col="gene",
@@ -80,9 +107,16 @@ result = oncoplot(
     mutation_type_col="mutation_type",
     backend="matplotlib",
     draw_gene_bar=True,
+    draw_tmb_bar=True,
 )
+
+display(result.figure)
 result.save("oncoplot.png", dpi=120)
 ```
+
+Matplotlib backend screenshot:
+
+![Pyoncoplot Matplotlib backend example](python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_18.png)
 
 ## Recreate the Example Gallery
 
@@ -106,14 +140,9 @@ python3 python_refactor_goal_sources/generate_synthetic_inputs.py
 
 Regenerate fuc-backed AML/SV fixtures with `python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py`
 after downloading the upstream fuc-data files listed in `python_refactor_goal_sources/fuc_sources/manifest.json`.
-The AML metadata gallery outputs in `generated_plots/clean/gen.goal_plot_19.png`,
-`generated_plots/clean/gen.goal_plot_20.png`, and `generated_plots/clean/gen.goal_plot_22.png`
-are treated as the approved clean baseline.
-BRCA-specific reference-like variants and side-by-side comparison sheets can be
-rendered separately:
+Side-by-side comparison sheets can be rendered separately:
 
 ```bash
-python3 python_refactor_goal_sources/recreate_gallery.py --style reference_like --preset brca_large
 python3 python_refactor_goal_sources/recreate_gallery.py --style comparison --preset brca_large
 ```
 
