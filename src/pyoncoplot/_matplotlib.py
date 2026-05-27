@@ -353,7 +353,7 @@ def _add_variant_value_colorbar(
     mappable = ScalarMappable(norm=Normalize(vmin=cmin, vmax=cmax), cmap=colormap)
     mappable.set_array([])
     colorbar = ax.figure.colorbar(mappable, ax=ax, fraction=0.025, pad=0.012)
-    colorbar.set_label(title, fontsize=options.font_size_metadata)
+    colorbar.ax.set_title(title, fontsize=options.font_size_metadata, pad=max(2, options.font_size_metadata * 0.35))
     colorbar.ax.tick_params(labelsize=options.font_size_metadata)
 
 
@@ -557,7 +557,6 @@ def _draw_main(
     continuous_cmap = None
     continuous_norm = None
     if prepared.variant_value_col is not None:
-        from matplotlib.cm import ScalarMappable
         from matplotlib.colors import Normalize
 
         min_value = prepared.variant_value_min if prepared.variant_value_min is not None else 0.0
@@ -569,11 +568,14 @@ def _draw_main(
         continuous_cmap = coerce_continuous_colormap(variant_value_palette, prepared.variant_value_col)
         continuous_norm = Normalize(vmin=float(min_value), vmax=float(max_value))
         if options.show_legend and options.mutation_legend_position != "none":
-            mappable = ScalarMappable(norm=continuous_norm, cmap=continuous_cmap)
-            mappable.set_array([])
-            colorbar = ax.figure.colorbar(mappable, ax=ax, fraction=0.025, pad=0.012)
-            colorbar.set_label(_legend_title(prepared.variant_value_col, options), fontsize=options.font_size_metadata)
-            colorbar.ax.tick_params(labelsize=options.font_size_metadata)
+            _add_variant_value_colorbar(
+                ax,
+                continuous_cmap,
+                float(min_value),
+                float(max_value),
+                _legend_title(prepared.variant_value_col, options),
+                options,
+            )
     n_genes = len(prepared.genes)
     n_samples = len(prepared.samples)
     pathway_width = 0.95 if prepared.pathway_groups else 0
