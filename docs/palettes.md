@@ -152,6 +152,27 @@ Mutation palettes still control stacked gene bars when `draw_gene_bar=True`.
 Use `options={"gene_bar_mode": "percent"}` for a normalized mutation-type
 composition bar beside each gene.
 
+For multi-row main grids, each `variant_value` row can define its own continuous
+palette:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    main_grid_rows=[
+        {"kind": "mutation_type", "label": "Variant type"},
+        {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %", "palette": "viridis"},
+        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma"},
+    ],
+)
+```
+
+Set `variant_value_scale="shared"` to use one shared range and colorbar across
+all continuous rows. Shared scaling uses the top-level `variant_value_palette`,
+so row-level palettes are intentionally rejected in that mode.
+
 PyOncoplot also exports reusable color cycles and ramps from
 `pyoncoplot.palettes`: `tol_colors`, `Iridescent`, `vega_10`,
 `vega_10_scanpy`, `vega_20`, `vega_20_scanpy`, `default_20`, `zeileis_28`,

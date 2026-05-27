@@ -120,6 +120,66 @@ def test_prepare_oncoplot_data_aggregates_variant_values_for_collapsed_tiles():
         assert prepared.variant_value_max is not None
 
 
+def test_prepare_oncoplot_data_builds_multi_row_main_grid_tracks():
+    df = mutation_df()
+    df["vaf_pct"] = [12, 42, 20, 35, 51, 62, 25, 15]
+    df["vaf_abs"] = [0.12, 0.42, 0.20, 0.35, 0.51, 0.62, 0.25, 0.15]
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        tooltip_col="tooltip",
+        include_genes=["TP53", "EGFR"],
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf_pct", "label": "VAF %", "agg": "mean"},
+            {"kind": "variant_value", "column": "vaf_abs", "label": "VAF abs", "agg": "max"},
+        ],
+    )
+
+    assert prepared.main_grid_mode == "expanded"
+    assert prepared.variant_value_col is None
+    assert len(prepared.main_grid_rows) == len(prepared.genes) * 3
+    assert prepared.main_grid_rows["Label"].drop_duplicates().tolist() == ["Variant type", "VAF %", "VAF abs"]
+
+    tp53_s1 = prepared.main_grid_tiles[
+        (prepared.main_grid_tiles["Sample"] == "S1") & (prepared.main_grid_tiles["Gene"] == "TP53")
+    ].sort_values("TrackIndex")
+    assert tp53_s1["Kind"].tolist() == ["mutation_type", "variant_value", "variant_value"]
+    assert tp53_s1.iloc[0]["MutationType"] == "Multi_Hit"
+    assert tp53_s1.iloc[1]["VariantValue"] == pytest.approx(27.0)
+    assert tp53_s1.iloc[2]["VariantValue"] == pytest.approx(0.42)
+
+
+def test_prepare_oncoplot_data_variant_value_cols_convenience_and_shared_scale():
+    df = mutation_df()
+    df["vaf_pct"] = [12, 42, 20, 35, 51, 62, 25, 15]
+    df["delta_vaf_pct"] = [-5, 8, 2, 1, -3, 4, 7, 9]
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        include_genes=["TP53", "EGFR"],
+        variant_value_cols=["vaf_pct", "delta_vaf_pct"],
+        variant_value_scale="shared",
+    )
+
+    assert prepared.variant_value_cols == ["vaf_pct", "delta_vaf_pct"]
+    assert prepared.main_grid_rows["Label"].drop_duplicates().tolist() == [
+        "Variant type",
+        "vaf_pct",
+        "delta_vaf_pct",
+    ]
+    value_rows = prepared.main_grid_rows[prepared.main_grid_rows["Kind"] == "variant_value"]
+    assert set(value_rows["VariantValueMin"].dropna()) == {1.0}
+    assert set(value_rows["VariantValueMax"].dropna()) == {42.0}
+    assert set(value_rows["ScaleGroup"]) == {"variant_value_shared"}
+
+
 def test_prepare_oncoplot_data_validates_variant_value_inputs():
     df = mutation_df()
     df["vaf"] = [0.12, 0.42, 0.20, 0.35, 0.51, 0.62, 0.25, 0.15]
@@ -155,6 +215,38 @@ def test_prepare_oncoplot_data_validates_variant_value_inputs():
             mutation_type_col="type",
             include_genes=["TP53"],
             variant_value_col="vaf",
+        )
+
+    with pytest.raises(ValueError, match="variant_value_scale"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            variant_value_cols=["vaf"],
+            variant_value_scale="global",
+        )
+
+    with pytest.raises(ValueError, match="Row-level palettes"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            main_grid_rows=[
+                {"kind": "variant_value", "column": "vaf", "palette": "magma"},
+            ],
+            variant_value_scale="shared",
+        )
+
+    with pytest.raises(ValueError, match="cannot be combined"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            variant_value_col="vaf",
+            variant_value_cols=["vaf"],
         )
 
 

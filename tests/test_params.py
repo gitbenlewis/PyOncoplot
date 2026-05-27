@@ -22,6 +22,7 @@ def small_df():
             "gene": ["TP53", "EGFR", "PTEN"],
             "type": ["Missense_Mutation", "Frame_Shift_Del", "Nonsense_Mutation"],
             "vaf": [0.25, 0.50, 0.75],
+            "vaf_abs": [0.025, 0.050, 0.075],
         }
     )
 
@@ -103,6 +104,32 @@ def test_oncoplot_params_accept_variant_value_heatmap_arguments():
     assert result.prepared_data.variant_value_col == "vaf"
     assert result.prepared_data.variant_value_agg == "max"
     assert result.figure.layout.width == 720
+
+
+def test_oncoplot_params_accept_multi_row_main_grid_arguments():
+    result = oncoplot(
+        params={
+            "data": small_df(),
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "main_grid_rows": [
+                {"kind": "mutation_type", "label": "Variant type"},
+                {"kind": "variant_value", "column": "vaf", "label": "VAF"},
+                {"kind": "variant_value", "column": "vaf_abs", "label": "VAF abs", "palette": "magma"},
+            ],
+            "variant_value_scale": "per_column",
+            "backend": "plotly",
+        }
+    )
+
+    assert result.prepared_data.main_grid_mode == "expanded"
+    assert result.prepared_data.main_grid_rows["Label"].drop_duplicates().tolist() == [
+        "Variant type",
+        "VAF",
+        "VAF abs",
+    ]
+    assert result.prepared_data.main_grid_tiles["Kind"].tolist()
 
 
 def test_merge_oncoplot_params_supports_unpacked_kwargs_override():
@@ -231,8 +258,8 @@ datasets:
       gene_col: gene
       sample_col: sample
       mutation_type_col: type
-      variant_value_col: vaf
-      variant_value_agg: max
+      variant_value_cols: [vaf, vaf_abs]
+      variant_value_scale: shared
       backend: plotly
       top_n: 1
 """,
@@ -245,7 +272,8 @@ datasets:
 
     assert len(result.prepared_data.genes) == 2
     assert result.prepared_data.metadata is not None
-    assert result.prepared_data.variant_value_col == "vaf"
+    assert result.prepared_data.variant_value_cols == ["vaf", "vaf_abs"]
+    assert result.prepared_data.main_grid_mode == "expanded"
 
 
 def test_table_read_spec_passes_read_csv_kwargs(tmp_path):

@@ -99,6 +99,25 @@ result = oncoplot(
 )
 ```
 
+Show mutation type and multiple numeric variant values as separate rows under
+each gene:
+
+```python
+result = oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    main_grid_rows=[
+        {"kind": "mutation_type", "label": "Variant type"},
+        {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %"},
+        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma"},
+    ],
+    draw_gene_bar=True,
+    backend="plotly",
+)
+```
+
 The same call can be made from a reusable parameter dictionary; explicit
 keywords override dictionary values:
 

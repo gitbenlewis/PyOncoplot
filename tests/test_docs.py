@@ -154,6 +154,8 @@ def test_docs_cover_remaining_parity_corrections():
     assert "Core Arguments" in api_reference
     assert "`PreparedOncoplotData` Fields" in api_reference
     assert "`tmb_sample_col`, `tmb_value_col`, `tmb_type_col`" in api_reference
+    assert "main_grid_rows" in api_reference
+    assert "variant_value_cols" in api_reference
     assert "Save Behavior" in api_reference
 
     rendering_backends = (DOCS / "rendering-backends.md").read_text(encoding="utf-8")

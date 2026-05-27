@@ -15,6 +15,7 @@ def small_df():
             "gene": ["TP53", "EGFR", "TP53", "PTEN"],
             "type": ["Missense_Mutation", "Frame_Shift_Del", "Nonsense_Mutation", "Splice_Site"],
             "vaf": [0.34, 0.21, 0.67, 0.48],
+            "vaf_abs": [0.034, 0.021, 0.067, 0.048],
         }
     )
 
@@ -90,6 +91,84 @@ def test_plotly_continuous_variant_heatmap_and_gene_bar_legend():
     assert "Vaf" in main_heatmap.colorbar.title.text
     assert gene_bar_traces
     assert any(trace.showlegend is True for trace in gene_bar_traces)
+
+
+def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf", "label": "VAF %"},
+            {"kind": "variant_value", "column": "vaf_abs", "label": "VAF abs", "palette": "magma"},
+        ],
+        draw_gene_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(width=760, height=500),
+    )
+
+    main_heatmaps = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+    ]
+    mutation_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "scatter" and getattr(trace, "mode", "") == "markers"
+    ]
+    gene_bar_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "bar" and trace.orientation == "h"
+    ]
+
+    assert result.prepared_data.main_grid_mode == "expanded"
+    assert len(result.prepared_data.main_grid_rows) == len(result.prepared_data.genes) * 3
+    assert len(main_heatmaps) == 2
+    assert {trace.colorbar.title.text for trace in main_heatmaps} == {"VAF %", "VAF Abs"}
+    tp53_s1_payload = next(
+        payload
+        for trace in main_heatmaps
+        for row in trace.customdata
+        for payload in row
+        if payload.get("sample") == "S1"
+        and payload.get("gene") == "TP53"
+        and payload.get("variant_value_column") == "vaf"
+    )
+    assert tp53_s1_payload["variant_value"] == pytest.approx(0.34)
+    assert mutation_traces
+    assert any(trace.showlegend is True for trace in mutation_traces)
+    assert gene_bar_traces
+
+
+def test_plotly_variant_value_cols_shared_scale_uses_one_colorbar():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_cols=["vaf", "vaf_abs"],
+        variant_value_scale="shared",
+        backend="plotly",
+        options=OncoplotOptions(width=760, height=500),
+    )
+
+    main_heatmaps = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+    ]
+    assert len(main_heatmaps) == 1
+    assert main_heatmaps[0].showscale is True
+    assert main_heatmaps[0].zmin == pytest.approx(0.021)
+    assert main_heatmaps[0].zmax == pytest.approx(0.67)
 
 
 def test_plotly_gene_bar_percent_mode_normalizes_each_gene():
@@ -174,6 +253,27 @@ def test_matplotlib_continuous_variant_heatmap_and_save(tmp_path):
     assert output.stat().st_size > 0
     assert len(result.figure.axes) >= 2
     assert any(axis.get_ylabel() == "Vaf" for axis in result.figure.axes)
+
+
+def test_matplotlib_multi_row_main_grid_and_colorbars(tmp_path):
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_cols=["vaf", "vaf_abs"],
+        draw_gene_bar=True,
+        backend="matplotlib",
+        options=OncoplotOptions(width=760, height=500),
+    )
+    output = tmp_path / "multi-row-oncoplot.png"
+    result.save(str(output), dpi=90)
+
+    assert output.exists()
+    assert output.stat().st_size > 0
+    assert result.prepared_data.main_grid_mode == "expanded"
+    assert len(result.prepared_data.main_grid_rows) == len(result.prepared_data.genes) * 3
+    assert matplotlib_colorbar_axes(result.figure, "Vaf", "Vaf Abs")
 
 
 def test_matplotlib_gene_bar_percent_mode_normalizes_each_gene():

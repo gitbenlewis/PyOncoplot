@@ -294,6 +294,254 @@ def _validate_metadata_levels(prepared: PreparedOncoplotData, options: OncoplotO
             )
 
 
+def _has_expanded_main_grid(prepared: PreparedOncoplotData) -> bool:
+    return prepared.main_grid_mode == "expanded" and prepared.main_grid_rows is not None
+
+
+def _main_grid_has_mutation_rows(prepared: PreparedOncoplotData) -> bool:
+    if _has_expanded_main_grid(prepared):
+        rows = prepared.main_grid_rows
+        return bool(rows is not None and not rows.empty and (rows["Kind"] == "mutation_type").any())
+    return prepared.variant_value_col is None
+
+
+def _main_grid_has_continuous_rows(prepared: PreparedOncoplotData) -> bool:
+    if _has_expanded_main_grid(prepared):
+        rows = prepared.main_grid_rows
+        return bool(rows is not None and not rows.empty and (rows["Kind"] == "variant_value").any())
+    return prepared.variant_value_col is not None
+
+
+def _main_grid_gene_centers(prepared: PreparedOncoplotData) -> dict[str, float]:
+    rows = prepared.main_grid_rows
+    if rows is None or rows.empty:
+        return {gene: index + 0.5 for index, gene in enumerate(prepared.genes)}
+    centers = {}
+    for gene, group in rows.groupby("Gene", sort=False, observed=False):
+        centers[str(gene)] = (float(group["RowIndex"].min()) + float(group["RowIndex"].max()) + 1) / 2
+    return centers
+
+
+def _continuous_track_groups(prepared: PreparedOncoplotData) -> list[tuple[str, pd.DataFrame]]:
+    rows = prepared.main_grid_rows
+    if rows is None or rows.empty:
+        return []
+    track_rows = (
+        rows[rows["Kind"] == "variant_value"]
+        .sort_values("TrackIndex", kind="mergesort")
+        .drop_duplicates("TrackId")
+    )
+    if track_rows.empty:
+        return []
+    if prepared.variant_value_scale == "shared":
+        return [("variant_value_shared", track_rows)]
+    return [(str(track_id), group) for track_id, group in track_rows.groupby("TrackId", sort=False)]
+
+
+def _add_variant_value_colorbar(
+    ax,
+    colormap,
+    min_value: float,
+    max_value: float,
+    title: str,
+    options: OncoplotOptions,
+) -> None:
+    from matplotlib.cm import ScalarMappable
+    from matplotlib.colors import Normalize
+
+    cmin, cmax, _tick_values, _tick_labels = _numeric_colorbar_bounds(min_value, max_value)
+    mappable = ScalarMappable(norm=Normalize(vmin=cmin, vmax=cmax), cmap=colormap)
+    mappable.set_array([])
+    colorbar = ax.figure.colorbar(mappable, ax=ax, fraction=0.025, pad=0.012)
+    colorbar.set_label(title, fontsize=options.font_size_metadata)
+    colorbar.ax.tick_params(labelsize=options.font_size_metadata)
+
+
+def _is_missing_palette_spec(value: object) -> bool:
+    return value is None or (isinstance(value, float) and pd.isna(value))
+
+
+def _draw_expanded_main(
+    ax,
+    prepared: PreparedOncoplotData,
+    palette: Mapping[str, str],
+    variant_value_palette: object,
+    options: OncoplotOptions,
+) -> None:
+    _plt, _ListedColormap, _GridSpec, _Patch, Rectangle = _require_matplotlib()
+    rows = prepared.main_grid_rows
+    tiles = prepared.main_grid_tiles
+    if rows is None:
+        return
+    n_rows = len(rows)
+    n_samples = len(prepared.samples)
+    track_count = int(rows["TrackId"].nunique()) if not rows.empty else 1
+    pathway_width = 0.95 if prepared.pathway_groups else 0
+    subrow_label_width = 0.95 if track_count > 1 else 0
+    ax.set_xlim(-(pathway_width + subrow_label_width), n_samples)
+    ax.set_ylim(0, n_rows)
+    ax.invert_yaxis()
+    ax.set_facecolor(options.background_color)
+
+    for row_index in range(n_rows):
+        for sample_index, _sample in enumerate(prepared.samples):
+            ax.add_patch(
+                Rectangle(
+                    (sample_index, row_index),
+                    options.tile_width,
+                    options.tile_height,
+                    facecolor=options.background_color,
+                    edgecolor="white",
+                    linewidth=options.tile_linewidth,
+                )
+            )
+
+    continuous_groups = _continuous_track_groups(prepared)
+    continuous_maps: dict[str, tuple[object, object]] = {}
+    if continuous_groups and tiles is not None and not tiles.empty:
+        from matplotlib.colors import Normalize
+
+        continuous_tiles = tiles[tiles["Kind"] == "variant_value"]
+        for _group_id, track_rows in continuous_groups:
+            track_ids = set(track_rows["TrackId"].astype(str))
+            group_tiles = continuous_tiles[continuous_tiles["TrackId"].astype(str).isin(track_ids)]
+            if group_tiles.empty:
+                continue
+            min_value = float(group_tiles["VariantValueMin"].dropna().iloc[0])
+            max_value = float(group_tiles["VariantValueMax"].dropna().iloc[0])
+            cmin, cmax, _tick_values, _tick_labels = _numeric_colorbar_bounds(min_value, max_value)
+            first_track = track_rows.iloc[0]
+            if prepared.variant_value_scale == "shared":
+                palette_spec = variant_value_palette
+                title = (
+                    "Variant value"
+                    if track_rows["TrackId"].nunique() > 1
+                    else _legend_title(first_track["Label"], options)
+                )
+            else:
+                palette_spec = first_track["VariantValuePalette"]
+                if _is_missing_palette_spec(palette_spec):
+                    palette_spec = variant_value_palette
+                title = _legend_title(first_track["Label"], options)
+            cmap = coerce_continuous_colormap(palette_spec, first_track["VariantValueColumn"])
+            norm = Normalize(vmin=cmin, vmax=cmax)
+            for track_id in track_ids:
+                continuous_maps[track_id] = (cmap, norm)
+            if options.show_legend and options.mutation_legend_position != "none":
+                _add_variant_value_colorbar(ax, cmap, min_value, max_value, title, options)
+
+    sample_pos = {sample: index for index, sample in enumerate(prepared.samples)}
+    if tiles is not None and not tiles.empty:
+        for _index, tile in tiles.iterrows():
+            sample = str(tile["Sample"])
+            if sample not in sample_pos:
+                continue
+            row_index = int(tile["RowIndex"])
+            if tile["Kind"] == "variant_value":
+                cmap, norm = continuous_maps[str(tile["TrackId"])]
+                color = cmap(norm(float(tile["VariantValue"])))
+            else:
+                mutation_type = tile["MutationType"]
+                color = (
+                    options.unspecified_mutation_color
+                    if pd.isna(mutation_type)
+                    else palette.get(str(mutation_type), options.unspecified_mutation_color)
+                )
+            ax.add_patch(
+                Rectangle(
+                    (sample_pos[sample], row_index),
+                    options.tile_width,
+                    options.tile_height,
+                    facecolor=color,
+                    edgecolor="white",
+                    linewidth=options.tile_linewidth,
+                )
+            )
+
+    for _gene, group in rows.groupby("Gene", sort=False, observed=False):
+        ax.hlines(
+            [float(group["RowIndex"].min()), float(group["RowIndex"].max()) + 1],
+            xmin=0,
+            xmax=n_samples,
+            colors="#666666",
+            linewidth=options.row_separator_linewidth,
+            alpha=0.75,
+        )
+
+    if track_count > 1:
+        label_x = -0.08
+        for _index, row_spec in rows.sort_values("RowIndex", kind="mergesort").iterrows():
+            ax.text(
+                label_x,
+                float(row_spec["RowIndex"]) + 0.5,
+                _legend_title(row_spec["Label"], options),
+                ha="right",
+                va="center",
+                fontsize=max(7, options.font_size_genes * 0.72),
+                color="#555555",
+                clip_on=False,
+            )
+
+    if prepared.pathway_groups:
+        for group in prepared.pathway_groups:
+            group_rows = rows[rows["Gene"].astype(str).isin(group.genes)]
+            if group_rows.empty:
+                continue
+            start = float(group_rows["RowIndex"].min())
+            end = float(group_rows["RowIndex"].max()) + 1
+            ax.add_patch(
+                Rectangle(
+                    (-(pathway_width + subrow_label_width), start),
+                    pathway_width,
+                    end - start,
+                    facecolor=options.pathway_background_color,
+                    edgecolor=options.pathway_outline_color,
+                    linewidth=max(0.4, options.row_separator_linewidth),
+                    clip_on=False,
+                )
+            )
+            ax.text(
+                -(pathway_width + subrow_label_width) + pathway_width / 2,
+                start + (end - start) / 2,
+                group.name,
+                ha="center",
+                va="center",
+                rotation=options.pathway_text_angle,
+                color=options.pathway_text_color,
+                fontsize=max(7, options.font_size_genes * 0.75),
+                clip_on=False,
+            )
+            ax.hlines(
+                [start, end],
+                xmin=-(pathway_width + subrow_label_width),
+                xmax=n_samples,
+                colors=options.pathway_outline_color,
+                linewidth=max(0.4, options.row_separator_linewidth),
+                alpha=0.85,
+            )
+
+    gene_centers = _main_grid_gene_centers(prepared)
+    ax.set_yticks([gene_centers[gene] for gene in prepared.genes if gene in gene_centers])
+    ax.set_yticklabels([gene for gene in prepared.genes if gene in gene_centers], fontsize=options.font_size_genes)
+    for label in ax.get_yticklabels():
+        label.update(_font_kwargs(options.gene_font_style))
+    if options.show_sample_ids:
+        ax.set_xticks(np.arange(n_samples) + 0.5)
+        ax.set_xticklabels(prepared.samples, rotation=options.sample_id_angle, fontsize=options.font_size_samples)
+        if options.sample_id_position == "top":
+            ax.xaxis.tick_top()
+            ax.xaxis.set_label_position("top")
+        else:
+            ax.xaxis.tick_bottom()
+            ax.xaxis.set_label_position("bottom")
+        for label in ax.get_xticklabels():
+            label.update(_font_kwargs(options.sample_font_style))
+    else:
+        ax.set_xticks([])
+    ax.set_xlabel(options.x_label if options.show_x_label else "", fontsize=options.font_size_x_label)
+    ax.set_ylabel(options.y_label if options.show_y_label else "", fontsize=options.font_size_y_label)
+
+
 def _draw_main(
     ax,
     prepared: PreparedOncoplotData,
@@ -302,6 +550,10 @@ def _draw_main(
     options: OncoplotOptions,
 ):
     _plt, _ListedColormap, _GridSpec, _Patch, Rectangle = _require_matplotlib()
+    if _has_expanded_main_grid(prepared):
+        _draw_expanded_main(ax, prepared, palette, variant_value_palette, options)
+        return
+
     continuous_cmap = None
     continuous_norm = None
     if prepared.variant_value_col is not None:
@@ -431,7 +683,21 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
     tiles = prepared.tiles
     if tiles.empty:
         return
-    y_positions = np.arange(len(prepared.genes)) + 0.5
+    expanded = _has_expanded_main_grid(prepared)
+    if expanded:
+        gene_centers = _main_grid_gene_centers(prepared)
+        y_positions = np.array([gene_centers[gene] for gene in prepared.genes], dtype=float)
+        row_counts = (
+            prepared.main_grid_rows.groupby("Gene", sort=False, observed=False)["RowIndex"].nunique()
+            if prepared.main_grid_rows is not None and not prepared.main_grid_rows.empty
+            else pd.Series(1, index=prepared.genes)
+        )
+        bar_heights = np.array([max(0.75, float(row_counts.get(gene, 1)) * 0.84) for gene in prepared.genes])
+        y_limit = len(prepared.main_grid_rows) if prepared.main_grid_rows is not None else len(prepared.genes)
+    else:
+        y_positions = np.arange(len(prepared.genes)) + 0.5
+        bar_heights = 0.85
+        y_limit = len(prepared.genes)
     left = np.zeros(len(prepared.genes))
     mutation_groups = [
         (mutation_type, tiles[tiles["MutationType"].astype(str) == mutation_type])
@@ -448,7 +714,7 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
         else:
             values = counts
         color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
-        ax.barh(y_positions, values, left=left, height=0.85, color=color)
+        ax.barh(y_positions, values, left=left, height=bar_heights, color=color)
         left = left + values
     if options.show_gene_bar_labels:
         totals = total_counts
@@ -467,7 +733,7 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
         ax.set_xlim(0, max(left.max() * (1 + options.gene_bar_label_padding + 0.08), left.max() + 1))
     elif options.gene_bar_mode == "percent":
         ax.set_xlim(0, 100)
-    ax.set_ylim(0, len(prepared.genes))
+    ax.set_ylim(0, y_limit)
     ax.invert_yaxis()
     ax.set_yticks([])
     if options.show_gene_bar_axis:
@@ -483,8 +749,15 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
         ax.set_xticks([])
     if prepared.pathway_groups:
         for group in prepared.pathway_groups:
+            if expanded and prepared.main_grid_rows is not None:
+                group_rows = prepared.main_grid_rows[
+                    prepared.main_grid_rows["Gene"].astype(str).isin(group.genes)
+                ]
+                boundaries = [float(group_rows["RowIndex"].min()), float(group_rows["RowIndex"].max()) + 1]
+            else:
+                boundaries = [group.start, group.end + 1]
             ax.hlines(
-                [group.start, group.end + 1],
+                boundaries,
                 xmin=0,
                 xmax=max(left.max(), 1),
                 colors=options.pathway_outline_color,
@@ -988,7 +1261,12 @@ def render_matplotlib_oncoplot(
         rows.append(("metadata", max(1, len(prepared.metadata_cols or []))))
     if draw_tmb_bar:
         rows.append(("tmb", 1.2))
-    rows.append(("main", max(3, len(prepared.genes) * 0.55)))
+    main_row_count = (
+        len(prepared.main_grid_rows)
+        if _has_expanded_main_grid(prepared) and prepared.main_grid_rows is not None
+        else len(prepared.genes)
+    )
+    rows.append(("main", max(3, main_row_count * 0.55)))
     if options.metadata_position == "bottom" and draw_metadata:
         rows.append(("metadata", max(1, len(prepared.metadata_cols or []))))
 
@@ -1014,7 +1292,7 @@ def render_matplotlib_oncoplot(
             axes["gene_bar"] = figure.add_subplot(grid[row_index, 1])
 
     tmb_handles = []
-    mutation_legend_visible = prepared.variant_value_col is None or draw_gene_bar
+    mutation_legend_visible = _main_grid_has_mutation_rows(prepared) or draw_gene_bar
     if draw_tmb_bar and "tmb" in axes:
         tmb_handles = _draw_tmb(
             axes["tmb"],
@@ -1038,7 +1316,7 @@ def render_matplotlib_oncoplot(
     if (
         options.show_legend
         and options.mutation_legend_position != "none"
-        and (prepared.variant_value_col is None or draw_gene_bar)
+        and (_main_grid_has_mutation_rows(prepared) or draw_gene_bar)
     ):
         mutation_handles = [
             Patch(color=palette.get(name, options.unspecified_mutation_color), label=_legend_label(name, options))
@@ -1059,7 +1337,7 @@ def render_matplotlib_oncoplot(
         or _metadata_has_right_legends(metadata_legends, options)
     )
     variant_colorbar_active = (
-        prepared.variant_value_col is not None
+        _main_grid_has_continuous_rows(prepared)
         and options.show_legend
         and options.mutation_legend_position != "none"
     )

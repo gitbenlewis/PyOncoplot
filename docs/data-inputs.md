@@ -22,7 +22,7 @@ Required mutation table fields:
 | sample identifier | `sample_col` | yes | cannot be missing or empty |
 | gene identifier | `gene_col` | yes | cannot be missing or empty |
 | mutation type | `mutation_type_col` | no | required for mutation-specific colors |
-| variant value | `variant_value_col` | no | numeric value used for continuous main-grid coloring |
+| variant value | `variant_value_col`, `variant_value_cols`, `main_grid_rows` | no | numeric values used for continuous main-grid coloring |
 | tooltip text | `tooltip_col` | no | defaults to `sample_col` when omitted |
 
 ## Example Mutation Table
@@ -52,6 +52,37 @@ When `variant_value_col` is supplied, collapsed sample/gene tiles also aggregate
 that numeric column. Use `variant_value_agg` to choose `"max"` (default),
 `"mean"`, `"median"`, or `"min"`. Missing values in displayed variants are
 rejected so heatmap colors are deterministic.
+
+Multiple numeric variant values can be plotted as separate subrows under each
+gene. The concise form keeps mutation type visible first and then adds one row
+per value column:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    variant_value_cols=["VAF_pct", "VAF_abs"],
+)
+```
+
+Use `main_grid_rows` for custom labels, per-row aggregation, or per-row
+palettes:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    main_grid_rows=[
+        {"kind": "mutation_type", "label": "Variant type"},
+        {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %"},
+        {"kind": "variant_value", "column": "deltaVAF_pct", "label": "delta VAF %", "agg": "mean"},
+    ],
+)
+```
 
 ## Gene Selection
 

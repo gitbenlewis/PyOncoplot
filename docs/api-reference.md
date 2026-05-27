@@ -116,7 +116,7 @@ datasets:
 | --- | --- |
 | `data` | mutation-level `pandas.DataFrame` or CSV/TSV path |
 | `gene_col`, `sample_col` | required column names for gene and sample identifiers |
-| `mutation_type_col` | optional mutation category column used for tile colors and legends unless `variant_value_col` colors the main grid |
+| `mutation_type_col` | optional mutation category column used for tile colors and legends unless a continuous-only main grid is requested |
 | `tooltip_col` | optional tooltip text column; defaults to `sample_col` |
 | `include_genes`, `ignore_genes`, `top_n` | choose the displayed gene panel |
 | `draw_gene_bar`, `draw_tmb_bar` | add recurrence and mutation burden side panels |
@@ -127,7 +127,8 @@ datasets:
 | `sample_order`, `metadata_sort_cols` | explicit or metadata-driven sample sorting |
 | `mutation_type_order`, `metadata_category_orders`, `tmb_type_order` | categorical level order for colors, stacks, and legends |
 | `tmb_data` | optional 2- or 3-column custom TMB table |
-| `variant_value_col`, `variant_value_agg` | optional numeric variant column for continuous main-grid coloring and the collapse rule for multi-hit tiles |
+| `variant_value_col`, `variant_value_cols`, `variant_value_agg` | optional numeric variant column or columns for continuous main-grid coloring and the collapse rule for multi-hit tiles |
+| `main_grid_rows`, `variant_value_scale` | expanded main-grid row specifications and per-column/shared continuous color scaling |
 | `backend`, `interactive` | choose Plotly or Matplotlib rendering |
 | `copy_on_click` | Plotly clipboard payload behavior |
 | `options` | `OncoplotOptions` instance or mapping for visual controls |
@@ -170,6 +171,30 @@ oncoplot(
 
 `variant_value_agg` controls how multiple rows for the same sample/gene tile are
 collapsed and can be `"max"`, `"mean"`, `"median"`, or `"min"`.
+
+Use `main_grid_rows` when the main heatmap should show mutation type and one or
+more continuous variant tracks as separate subrows for each gene:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    main_grid_rows=[
+        {"kind": "mutation_type", "label": "Variant type"},
+        {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %", "agg": "max"},
+        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma"},
+    ],
+    draw_gene_bar=True,
+)
+```
+
+For the common case, `variant_value_cols=["VAF_pct", "VAF_abs"]` expands to a
+mutation-type row followed by one row per numeric value column. Set
+`variant_value_scale="shared"` to use one shared min/max and colorbar across all
+continuous rows; the default `"per_column"` gives each continuous row its own
+range and colorbar.
 
 ## `merge_oncoplot_params`
 
@@ -241,6 +266,8 @@ print(prepared.tiles.head())
 | `mutation_counts`, `tmb_totals`, `tmb_type_counts` | summary tables for testing, debugging, and downstream inspection |
 | `mutation_type_levels`, `tmb_type_levels` | resolved categorical order used by renderers |
 | `variant_value_col`, `variant_value_agg`, `variant_value_min`, `variant_value_max` | continuous tile-coloring metadata when `variant_value_col` is supplied |
+| `variant_value_cols`, `variant_value_scale` | multi-row continuous variant track inputs and scale mode |
+| `main_grid_rows`, `main_grid_tiles`, `main_grid_mode` | renderer-neutral expanded main-grid row and tile tables |
 
 ## `identify_top_genes`
 

@@ -68,6 +68,11 @@ class PreparedOncoplotData:
     variant_value_agg: Optional[str] = None
     variant_value_min: Optional[float] = None
     variant_value_max: Optional[float] = None
+    variant_value_cols: Optional[List[str]] = None
+    variant_value_scale: str = "per_column"
+    main_grid_rows: Optional[pd.DataFrame] = None
+    main_grid_tiles: Optional[pd.DataFrame] = None
+    main_grid_mode: str = "legacy"
 
 
 def _is_dataframe(value: Any) -> bool:
@@ -202,12 +207,194 @@ def _coerce_variant_value_agg(variant_value_agg: str) -> str:
     return agg
 
 
-def _validate_variant_value_column(data: pd.DataFrame, variant_value_col: Optional[str]) -> None:
-    if variant_value_col is None:
+def _coerce_variant_value_scale(variant_value_scale: str) -> str:
+    scale = str(variant_value_scale).lower()
+    if scale not in {"per_column", "shared"}:
+        raise ValueError("variant_value_scale must be either 'per_column' or 'shared'.")
+    return scale
+
+
+def _coerce_variant_value_cols(variant_value_cols: Optional[Sequence[str]]) -> Optional[List[str]]:
+    if variant_value_cols is None:
+        return None
+    if isinstance(variant_value_cols, (str, bytes, bytearray)):
+        raise TypeError("variant_value_cols must be a sequence of column names, not a string.")
+    cols = [str(column) for column in variant_value_cols]
+    if not cols:
+        raise ValueError("variant_value_cols must contain at least one column name when supplied.")
+    duplicates = [column for column in unique_preserve_order(cols) if cols.count(column) > 1]
+    if duplicates:
+        raise ValueError(f"variant_value_cols cannot contain duplicate columns: {', '.join(duplicates)}")
+    return cols
+
+
+def _validate_variant_value_columns(
+    data: pd.DataFrame,
+    variant_value_cols: Optional[Sequence[str]],
+    *,
+    label: str = "variant value column",
+) -> None:
+    if not variant_value_cols:
         return
-    check_valid_dataframe_columns(data, [variant_value_col])
-    if not pd.api.types.is_numeric_dtype(data[variant_value_col]):
-        raise ValueError(f"variant_value_col must reference a numeric column: {variant_value_col}")
+    check_valid_dataframe_columns(data, list(variant_value_cols))
+    for column in variant_value_cols:
+        if not pd.api.types.is_numeric_dtype(data[column]):
+            raise ValueError(f"{label} must reference numeric columns: {column}")
+
+
+def _default_track_label(column: object) -> str:
+    return str(column)
+
+
+def _normalise_main_grid_tracks(
+    main_grid_rows: Optional[Sequence[Mapping[str, object]]],
+    variant_value_cols: Optional[Sequence[str]],
+    *,
+    mutation_type_col: Optional[str],
+    variant_value_col: Optional[str],
+    variant_value_agg: str,
+    variant_value_scale: str,
+) -> tuple[List[dict[str, object]], str]:
+    if main_grid_rows is not None and variant_value_cols is not None:
+        raise ValueError("Please specify either main_grid_rows or variant_value_cols, not both.")
+    if variant_value_col is not None and (main_grid_rows is not None or variant_value_cols is not None):
+        raise ValueError("variant_value_col cannot be combined with main_grid_rows or variant_value_cols.")
+
+    tracks: List[dict[str, object]] = []
+    mode = "legacy"
+
+    if main_grid_rows is not None:
+        if isinstance(main_grid_rows, Mapping) or isinstance(main_grid_rows, (str, bytes, bytearray)):
+            raise TypeError("main_grid_rows must be a sequence of row-spec mappings.")
+        allowed_keys = {"kind", "label", "column", "agg", "palette"}
+        for index, raw_spec in enumerate(main_grid_rows):
+            if not isinstance(raw_spec, Mapping):
+                raise TypeError("Each main_grid_rows entry must be a mapping.")
+            unknown = set(raw_spec) - allowed_keys
+            if unknown:
+                raise ValueError(f"Unknown main_grid_rows keys: {', '.join(sorted(unknown))}")
+            kind = str(raw_spec.get("kind", "")).lower()
+            if kind not in {"mutation_type", "variant_value"}:
+                raise ValueError("main_grid_rows entries must have kind 'mutation_type' or 'variant_value'.")
+            if kind == "mutation_type":
+                if "column" in raw_spec:
+                    raise ValueError("main_grid_rows mutation_type entries cannot define a column.")
+                label = str(raw_spec.get("label") or "Variant type")
+                tracks.append(
+                    {
+                        "TrackId": f"row{index}",
+                        "TrackIndex": index,
+                        "Kind": "mutation_type",
+                        "Label": label,
+                        "VariantValueColumn": None,
+                        "VariantValueAgg": None,
+                        "VariantValuePalette": None,
+                        "VariantValueKey": None,
+                    }
+                )
+                continue
+            if "column" not in raw_spec or raw_spec.get("column") in (None, ""):
+                raise ValueError("main_grid_rows variant_value entries must define a column.")
+            agg = _coerce_variant_value_agg(str(raw_spec.get("agg", variant_value_agg)))
+            palette = raw_spec.get("palette")
+            if variant_value_scale == "shared" and palette is not None:
+                raise ValueError("Row-level palettes are not supported when variant_value_scale='shared'.")
+            column = str(raw_spec["column"])
+            tracks.append(
+                {
+                    "TrackId": f"row{index}",
+                    "TrackIndex": index,
+                    "Kind": "variant_value",
+                    "Label": str(raw_spec.get("label") or _default_track_label(column)),
+                    "VariantValueColumn": column,
+                    "VariantValueAgg": agg,
+                    "VariantValuePalette": palette,
+                    "VariantValueKey": None,
+                }
+            )
+        if not tracks:
+            raise ValueError("main_grid_rows must contain at least one row specification.")
+        return tracks, "expanded"
+
+    if variant_value_cols is not None:
+        mode = "expanded"
+        track_index = 0
+        if mutation_type_col is not None:
+            tracks.append(
+                {
+                    "TrackId": "row0",
+                    "TrackIndex": track_index,
+                    "Kind": "mutation_type",
+                    "Label": "Variant type",
+                    "VariantValueColumn": None,
+                    "VariantValueAgg": None,
+                    "VariantValuePalette": None,
+                    "VariantValueKey": None,
+                }
+            )
+            track_index += 1
+        for column in variant_value_cols:
+            tracks.append(
+                {
+                    "TrackId": f"row{track_index}",
+                    "TrackIndex": track_index,
+                    "Kind": "variant_value",
+                    "Label": _default_track_label(column),
+                    "VariantValueColumn": str(column),
+                    "VariantValueAgg": variant_value_agg,
+                    "VariantValuePalette": None,
+                    "VariantValueKey": None,
+                }
+            )
+            track_index += 1
+        return tracks, mode
+
+    if variant_value_col is not None:
+        return [
+            {
+                "TrackId": "row0",
+                "TrackIndex": 0,
+                "Kind": "variant_value",
+                "Label": _default_track_label(variant_value_col),
+                "VariantValueColumn": str(variant_value_col),
+                "VariantValueAgg": variant_value_agg,
+                "VariantValuePalette": None,
+                "VariantValueKey": None,
+            }
+        ], "legacy"
+
+    return [
+        {
+            "TrackId": "row0",
+            "TrackIndex": 0,
+            "Kind": "mutation_type",
+            "Label": "Variant type",
+            "VariantValueColumn": None,
+            "VariantValueAgg": None,
+            "VariantValuePalette": None,
+            "VariantValueKey": None,
+        }
+    ], "legacy"
+
+
+def _assign_variant_value_keys(
+    tracks: Sequence[Mapping[str, object]],
+) -> tuple[List[dict[str, object]], List[dict[str, object]]]:
+    keyed_tracks = [dict(track) for track in tracks]
+    value_specs: List[dict[str, object]] = []
+    key_by_column_agg: dict[tuple[str, str], str] = {}
+    for track in keyed_tracks:
+        if track["Kind"] != "variant_value":
+            continue
+        column = str(track["VariantValueColumn"])
+        agg = str(track["VariantValueAgg"])
+        key = key_by_column_agg.get((column, agg))
+        if key is None:
+            key = f"VariantValue__{len(value_specs)}"
+            key_by_column_agg[(column, agg)] = key
+            value_specs.append({"column": column, "agg": agg, "key": key})
+        track["VariantValueKey"] = key
+    return keyed_tracks, value_specs
 
 
 def _validate_metadata(
@@ -448,10 +635,12 @@ def _collapse_mutations(
     sample_col: str,
     mutation_type_col: Optional[str],
     tooltip_col: str,
-    variant_value_col: Optional[str],
-    variant_value_agg: str,
+    variant_value_specs: Optional[Sequence[Mapping[str, object]]] = None,
+    legacy_variant_value_key: Optional[str] = None,
 ) -> pd.DataFrame:
     rows = []
+    variant_value_specs = list(variant_value_specs or [])
+    value_columns = [str(spec["key"]) for spec in variant_value_specs]
     for (sample, gene), group in data.groupby([sample_col, gene_col], sort=False, dropna=False):
         tooltip_values = unique_preserve_order(group[tooltip_col].astype(str).tolist())
         mutation_count = len(group)
@@ -465,9 +654,15 @@ def _collapse_mutations(
         tooltip = "<br>".join(tooltip_values)
         if tooltip_col != sample_col:
             tooltip = f"<strong>{sample}</strong><br>{tooltip}"
-        variant_value = np.nan
-        if variant_value_col is not None:
-            variant_value = float(getattr(group[variant_value_col], variant_value_agg)())
+        aggregated_values = {
+            str(spec["key"]): float(getattr(group[str(spec["column"])], str(spec["agg"]))())
+            for spec in variant_value_specs
+        }
+        variant_value = (
+            aggregated_values.get(legacy_variant_value_key, np.nan)
+            if legacy_variant_value_key is not None
+            else np.nan
+        )
         rows.append(
             {
                 "Sample": str(sample),
@@ -476,12 +671,177 @@ def _collapse_mutations(
                 "MutationCount": mutation_count,
                 "VariantValue": variant_value,
                 "Tooltip": tooltip,
+                **aggregated_values,
             }
         )
     return pd.DataFrame(
         rows,
-        columns=["Sample", "Gene", "MutationType", "MutationCount", "VariantValue", "Tooltip"],
+        columns=["Sample", "Gene", "MutationType", "MutationCount", "VariantValue", "Tooltip"] + value_columns,
     )
+
+
+def _empty_main_grid_rows() -> pd.DataFrame:
+    return pd.DataFrame(
+        columns=[
+            "RowId",
+            "RowIndex",
+            "Gene",
+            "GeneIndex",
+            "TrackId",
+            "TrackIndex",
+            "Kind",
+            "Label",
+            "VariantValueColumn",
+            "VariantValueAgg",
+            "VariantValuePalette",
+            "VariantValueKey",
+            "VariantValueMin",
+            "VariantValueMax",
+            "ScaleGroup",
+        ]
+    )
+
+
+def _empty_main_grid_tiles() -> pd.DataFrame:
+    return pd.DataFrame(
+        columns=[
+            "Sample",
+            "Gene",
+            "MutationType",
+            "MutationCount",
+            "Tooltip",
+            "RowId",
+            "RowIndex",
+            "GeneIndex",
+            "TrackId",
+            "TrackIndex",
+            "Kind",
+            "Label",
+            "VariantValueColumn",
+            "VariantValueAgg",
+            "VariantValuePalette",
+            "VariantValue",
+            "VariantValueMin",
+            "VariantValueMax",
+            "ScaleGroup",
+        ]
+    )
+
+
+def _variant_track_ranges(
+    tiles: pd.DataFrame,
+    tracks: Sequence[Mapping[str, object]],
+    variant_value_scale: str,
+) -> dict[str, tuple[Optional[float], Optional[float], str]]:
+    ranges: dict[str, tuple[Optional[float], Optional[float], str]] = {}
+    variant_tracks = [track for track in tracks if track["Kind"] == "variant_value"]
+    if not variant_tracks:
+        return ranges
+
+    shared_values: List[float] = []
+    if variant_value_scale == "shared" and not tiles.empty:
+        for track in variant_tracks:
+            key = str(track["VariantValueKey"])
+            if key in tiles:
+                shared_values.extend(tiles[key].astype(float).tolist())
+    shared_min = float(np.min(shared_values)) if shared_values else None
+    shared_max = float(np.max(shared_values)) if shared_values else None
+
+    for track in variant_tracks:
+        track_id = str(track["TrackId"])
+        if variant_value_scale == "shared":
+            ranges[track_id] = (shared_min, shared_max, "variant_value_shared")
+            continue
+        key = str(track["VariantValueKey"])
+        if tiles.empty or key not in tiles:
+            ranges[track_id] = (None, None, track_id)
+            continue
+        values = tiles[key].astype(float)
+        ranges[track_id] = (float(values.min()), float(values.max()), track_id)
+    return ranges
+
+
+def _build_main_grid_rows(
+    genes: Sequence[str],
+    tracks: Sequence[Mapping[str, object]],
+    tiles: pd.DataFrame,
+    variant_value_scale: str,
+) -> pd.DataFrame:
+    if not genes or not tracks:
+        return _empty_main_grid_rows()
+    ranges = _variant_track_ranges(tiles, tracks, variant_value_scale)
+    rows = []
+    row_index = 0
+    for gene_index, gene in enumerate(genes):
+        for track in tracks:
+            track_id = str(track["TrackId"])
+            value_min, value_max, scale_group = ranges.get(track_id, (None, None, ""))
+            rows.append(
+                {
+                    "RowId": f"{gene}::{track_id}",
+                    "RowIndex": row_index,
+                    "Gene": str(gene),
+                    "GeneIndex": gene_index,
+                    "TrackId": track_id,
+                    "TrackIndex": int(track["TrackIndex"]),
+                    "Kind": str(track["Kind"]),
+                    "Label": str(track["Label"]),
+                    "VariantValueColumn": track["VariantValueColumn"],
+                    "VariantValueAgg": track["VariantValueAgg"],
+                    "VariantValuePalette": track["VariantValuePalette"],
+                    "VariantValueKey": track["VariantValueKey"],
+                    "VariantValueMin": value_min,
+                    "VariantValueMax": value_max,
+                    "ScaleGroup": scale_group,
+                }
+            )
+            row_index += 1
+    return pd.DataFrame(rows, columns=_empty_main_grid_rows().columns)
+
+
+def _build_main_grid_tiles(
+    tiles: pd.DataFrame,
+    tracks: Sequence[Mapping[str, object]],
+    main_grid_rows: pd.DataFrame,
+) -> pd.DataFrame:
+    if tiles.empty or main_grid_rows.empty or not tracks:
+        return _empty_main_grid_tiles()
+    rows_by_gene = {
+        str(gene): group.sort_values("TrackIndex", kind="mergesort")
+        for gene, group in main_grid_rows.groupby("Gene", sort=False, observed=False)
+    }
+    rows = []
+    for _tile_index, tile in tiles.iterrows():
+        gene = str(tile["Gene"])
+        for _row_index, row_spec in rows_by_gene.get(gene, pd.DataFrame()).iterrows():
+            variant_value = np.nan
+            if row_spec["Kind"] == "variant_value":
+                key = row_spec["VariantValueKey"]
+                variant_value = float(tile[str(key)])
+            rows.append(
+                {
+                    "Sample": str(tile["Sample"]),
+                    "Gene": gene,
+                    "MutationType": tile["MutationType"],
+                    "MutationCount": int(tile["MutationCount"]),
+                    "Tooltip": str(tile["Tooltip"]),
+                    "RowId": str(row_spec["RowId"]),
+                    "RowIndex": int(row_spec["RowIndex"]),
+                    "GeneIndex": int(row_spec["GeneIndex"]),
+                    "TrackId": str(row_spec["TrackId"]),
+                    "TrackIndex": int(row_spec["TrackIndex"]),
+                    "Kind": str(row_spec["Kind"]),
+                    "Label": str(row_spec["Label"]),
+                    "VariantValueColumn": row_spec["VariantValueColumn"],
+                    "VariantValueAgg": row_spec["VariantValueAgg"],
+                    "VariantValuePalette": row_spec["VariantValuePalette"],
+                    "VariantValue": variant_value,
+                    "VariantValueMin": row_spec["VariantValueMin"],
+                    "VariantValueMax": row_spec["VariantValueMax"],
+                    "ScaleGroup": row_spec["ScaleGroup"],
+                }
+            )
+    return pd.DataFrame(rows, columns=_empty_main_grid_tiles().columns)
 
 
 def _metadata_sort_order(
@@ -713,7 +1073,10 @@ def prepare_oncoplot_data(
     tmb_data: Optional[pd.DataFrame] = None,
     prepare_tmb: bool = False,
     variant_value_col: Optional[str] = None,
+    variant_value_cols: Optional[Sequence[str]] = None,
     variant_value_agg: str = "max",
+    variant_value_scale: str = "per_column",
+    main_grid_rows: Optional[Sequence[Mapping[str, object]]] = None,
     verbose: bool = False,
 ) -> PreparedOncoplotData:
     """Validate and transform mutation-level data into oncoplot-ready tables."""
@@ -730,6 +1093,30 @@ def prepare_oncoplot_data(
     metadata_category_orders = _coerce_metadata_category_orders(metadata_category_orders)
     tmb_type_explicit_order = _coerce_category_order(tmb_type_order, "tmb_type_order")
     variant_value_agg = _coerce_variant_value_agg(variant_value_agg)
+    variant_value_scale = _coerce_variant_value_scale(variant_value_scale)
+    variant_value_cols = _coerce_variant_value_cols(variant_value_cols)
+    main_grid_tracks, main_grid_mode = _normalise_main_grid_tracks(
+        main_grid_rows,
+        variant_value_cols,
+        mutation_type_col=mutation_type_col,
+        variant_value_col=variant_value_col,
+        variant_value_agg=variant_value_agg,
+        variant_value_scale=variant_value_scale,
+    )
+    main_grid_tracks, variant_value_specs = _assign_variant_value_keys(main_grid_tracks)
+    variant_value_columns = unique_preserve_order(
+        [str(spec["column"]) for spec in variant_value_specs]
+    )
+    legacy_variant_value_key = next(
+        (
+            str(track["VariantValueKey"])
+            for track in main_grid_tracks
+            if track["Kind"] == "variant_value"
+            and variant_value_col is not None
+            and str(track["VariantValueColumn"]) == str(variant_value_col)
+        ),
+        None,
+    )
     mutation_type_categorical_order = (
         _categorical_dtype_levels(data[mutation_type_col])
         if _is_dataframe(data) and mutation_type_col is not None and mutation_type_col in data.columns
@@ -737,7 +1124,7 @@ def prepare_oncoplot_data(
     )
 
     data = _validate_mutation_inputs(data, gene_col, sample_col, mutation_type_col, tooltip_col)
-    _validate_variant_value_column(data, variant_value_col)
+    _validate_variant_value_columns(data, variant_value_columns, label="variant value column")
     if metadata is None and metadata_cols is not None:
         metadata = _derive_metadata_from_data(data, metadata_sample_col, metadata_cols)
     metadata = _validate_metadata(metadata, metadata_sample_col)
@@ -764,13 +1151,26 @@ def prepare_oncoplot_data(
         )
 
     selected_rows = data[data[gene_col].isin(genes)].copy()
-    if variant_value_col is not None and selected_rows[variant_value_col].isna().any():
-        raise ValueError(f"variant_value_col cannot contain missing values in displayed variants: {variant_value_col}")
+    missing_variant_value_cols = [
+        column for column in variant_value_columns if selected_rows[column].isna().any()
+    ]
+    if missing_variant_value_cols:
+        if variant_value_col is not None and missing_variant_value_cols == [str(variant_value_col)]:
+            raise ValueError(
+                f"variant_value_col cannot contain missing values in displayed variants: {variant_value_col}"
+            )
+        raise ValueError(
+            "variant value columns cannot contain missing values in displayed variants: "
+            + ", ".join(missing_variant_value_cols)
+        )
     rank_values = list(range(len(genes), 0, -1))
     if selected_rows.empty:
         sample_scores = pd.Series(dtype="int64")
         samples_with_selected_mutations: List[str] = []
-        tiles = pd.DataFrame(columns=["Sample", "Gene", "MutationType", "MutationCount", "VariantValue", "Tooltip"])
+        tiles = pd.DataFrame(
+            columns=["Sample", "Gene", "MutationType", "MutationCount", "VariantValue", "Tooltip"]
+            + [str(spec["key"]) for spec in variant_value_specs]
+        )
     else:
         sample_scores = selected_rows.groupby(sample_col)[gene_col].apply(
             lambda values: score_sample_by_gene_rank(values.astype(str), genes, rank_values)
@@ -784,8 +1184,8 @@ def prepare_oncoplot_data(
             sample_col,
             mutation_type_col,
             tooltip_col,
-            variant_value_col,
-            variant_value_agg,
+            variant_value_specs,
+            legacy_variant_value_key,
         )
 
     samples_with_any_mutations = unique_preserve_order(data[sample_col].astype(str))
@@ -908,6 +1308,13 @@ def prepare_oncoplot_data(
         variant_values = tiles["VariantValue"].astype(float)
         variant_value_min = float(variant_values.min())
         variant_value_max = float(variant_values.max())
+    main_grid_rows_out = _build_main_grid_rows(
+        genes,
+        main_grid_tracks,
+        tiles,
+        variant_value_scale,
+    )
+    main_grid_tiles_out = _build_main_grid_tiles(tiles, main_grid_tracks, main_grid_rows_out)
 
     return PreparedOncoplotData(
         tiles=tiles.reset_index(drop=True),
@@ -943,4 +1350,9 @@ def prepare_oncoplot_data(
         variant_value_agg=variant_value_agg if variant_value_col is not None else None,
         variant_value_min=variant_value_min,
         variant_value_max=variant_value_max,
+        variant_value_cols=variant_value_cols,
+        variant_value_scale=variant_value_scale,
+        main_grid_rows=main_grid_rows_out,
+        main_grid_tiles=main_grid_tiles_out,
+        main_grid_mode=main_grid_mode,
     )
