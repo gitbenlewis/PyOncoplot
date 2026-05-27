@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 import yaml
 from PIL import Image
+from pyoncoplot import load_oncoplot_params
 
 from python_refactor_goal_sources.recreate_gallery import (
     CONFIG_PATH,
@@ -76,6 +77,26 @@ REQUIRED_FIXTURES = {
     "paper_multimodal_clinical.tsv": {"sample", "Classification", "PR_status", "ER_status", "HER2_status"},
     "paper_multimodal_selection.tsv": {"vertex", "x", "y"},
     "ggoncoplot_comparison_table.tsv": {"package", "tidy input", "interactive", "linked selection", "metadata", "auto palette", "notes"},
+}
+
+ONCOPLOT_CONFIG_RUNS = {
+    "ggoncoplot_readme_small",
+    "ggoncoplot_readme_basic",
+    "ggoncoplot_readme_marginal",
+    "ggoncoplot_readme_metadata",
+    "brca_compact_complex",
+    "aml_basic",
+    "aml_metadata_unsorted",
+    "aml_metadata_sorted",
+    "aml_metadata_survival",
+}
+
+ONCOPLOT_CONFIG_RUNS_WITH_METADATA = {
+    "ggoncoplot_readme_metadata",
+    "brca_compact_complex",
+    "aml_metadata_unsorted",
+    "aml_metadata_sorted",
+    "aml_metadata_survival",
 }
 
 
@@ -193,6 +214,42 @@ def test_gallery_config_loads_and_declares_enabled_runs():
     assert comparison_runs["brca_large"]["expected_size"] == [1240, 398]
     assert comparison_runs["brca_compact_complex"]["output_name"] == "compare.goal_plot_15.png"
     assert comparison_runs["brca_compact_complex"]["expected_size"] == [1240, 398]
+
+
+def test_oncoplot_gallery_runs_use_yaml_table_sources():
+    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    runs = config["gallery_params"]["plot_runs"]
+    legacy_top_level_keys = {
+        "include_genes",
+        "include_genes_key",
+        "metadata_cols",
+        "metadata_sort_cols",
+        "metadata_sort_by",
+        "metadata_sort_desc",
+        "options",
+        "sample_order_key",
+    }
+
+    for name in ONCOPLOT_CONFIG_RUNS:
+        params = runs[name]["params"]
+        oncoplot_params = params["oncoplot"]
+        assert not (legacy_top_level_keys & set(params)), name
+        assert isinstance(oncoplot_params["data"], dict), name
+        assert oncoplot_params["data"]["path"].startswith("syntheitic_goal_data/"), name
+        assert oncoplot_params["data"]["sep"] == "\t", name
+        assert isinstance(oncoplot_params["tmb_data"], dict), name
+        assert "palette" in oncoplot_params, name
+        assert "options" in oncoplot_params, name
+        if name in ONCOPLOT_CONFIG_RUNS_WITH_METADATA:
+            assert isinstance(oncoplot_params["metadata"], dict), name
+            assert oncoplot_params["metadata"]["path"].startswith("syntheitic_goal_data/"), name
+            assert "metadata_palette" in oncoplot_params, name
+
+        loaded = load_oncoplot_params(CONFIG_PATH, key=f"gallery_params.plot_runs.{name}.params.oncoplot")
+        assert isinstance(loaded["data"], pd.DataFrame), name
+        assert isinstance(loaded["tmb_data"], pd.DataFrame), name
+        if name in ONCOPLOT_CONFIG_RUNS_WITH_METADATA:
+            assert isinstance(loaded["metadata"], pd.DataFrame), name
 
 
 def test_brca_large_gallery_sample_order_uses_mutation_rank():

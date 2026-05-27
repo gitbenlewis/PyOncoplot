@@ -49,9 +49,105 @@ gallery_params:
       dpi: 120
 
   shared:
+    aml_mutations_source: &aml_mutations_source {path: syntheitic_goal_data/aml_mutations.tsv, sep: "\t"}
+    aml_metadata_source: &aml_metadata_source
+      path: syntheitic_goal_data/aml_metadata.tsv
+      sep: "\t"
+      dtype:
+        FAB_classification: str
+        Overall_Survival_Status: str
+    aml_tmb_source: &aml_tmb_source {path: syntheitic_goal_data/aml_tmb.tsv, sep: "\t"}
+    brca_mutations_source: &brca_mutations_source {path: syntheitic_goal_data/brca_mutations.tsv, sep: "\t"}
+    brca_metadata_source: &brca_metadata_source {path: syntheitic_goal_data/brca_metadata.tsv, sep: "\t"}
+    brca_tmb_source: &brca_tmb_source {path: syntheitic_goal_data/brca_tmb.tsv, sep: "\t"}
+    readme_mutations_source: &readme_mutations_source {path: syntheitic_goal_data/ggoncoplot_readme_mutations.tsv, sep: "\t"}
+    readme_metadata_source: &readme_metadata_source {path: syntheitic_goal_data/ggoncoplot_readme_metadata.tsv, sep: "\t"}
+    readme_tmb_source: &readme_tmb_source {path: syntheitic_goal_data/ggoncoplot_readme_tmb.tsv, sep: "\t"}
+    aml_palette: &aml_palette
+      Frame_Shift_Del: "#1f77b4"
+      Frame_Shift_Ins: "#9467bd"
+      In_Frame_Del: "#bcbd22"
+      In_Frame_Ins: "#d62728"
+      Missense_Mutation: "#2ca02c"
+      Multi_Hit: "#000000"
+      Nonsense_Mutation: "#17becf"
+      Nonstop_Mutation: "#e377c2"
+      Splice_Site: "#ff7f0e"
+      Translation_Start_Site: "#8c564b"
+    brca_palette: &brca_palette
+      "3'UTR": "#F2C16B"
+      "5'UTR": "#F2C16B"
+      Frame_Shift_Del: "#1F77B4"
+      Frame_Shift_Ins: "#9467BD"
+      Intron: "#F2C16B"
+      Missense_Mutation: "#2CA02C"
+      Multi_Hit: "#000000"
+      Nonsense_Mutation: "#17BECF"
+      Silent: "#F2C16B"
+      Splice_Site: "#FF7F0E"
+    readme_palette: &readme_palette
+      Multi_Hit: "#111111"
+      frameshift: "#377EB8"
+      inframe: "#984EA3"
+      missense: "#4DAF4A"
+      nonsense: "#E41A1C"
+      silent: "#BDBDBD"
+      splice: "#FF7F00"
+    aml_metadata_palette: &aml_metadata_palette
+      FAB_classification:
+        M0: "#1B9E77"
+        M1: "#D95F02"
+        M2: "#7570B3"
+        M3: "#E7298A"
+        M4: "#66A61E"
+        M5: "#E6AB02"
+        M6: "#A6761D"
+        M7: "#666666"
+      Overall_Survival_Status: {"0": "#FDB7B4", "1": "#BBD7EA"}
+      cluster:
+        FLT3/NPM1: "#1B9E77"
+        DNMT3A/TET2: "#D95F02"
+        IDH: "#7570B3"
+        TP53/CEBPA: "#E7298A"
+    brca_metadata_palette: &brca_metadata_palette
+      Subtype:
+        HR+/HER2-: "#E41A1C"
+        HR-/HER2+: "#377EB8"
+        HR+/HER2+: "#F781BF"
+        HR-/HER2-: "#A65628"
+      ER_status: {Positive: "#4DAF4A", Negative: "#FFFFFF"}
+      PR_status: {Positive: "#4DAF4A", Negative: "#FFFFFF"}
+      HER2_status: {Positive: "#377EB8", Negative: "#FFFFFF"}
+      Age: {"<=50": "#3366CC", ">50": "#99CCFF"}
+      Menopause: {Premenopausal: "#D95F02", Postmenopausal: "#F2C16B"}
+      LN_stage: {Positive: "#6A00D4", Negative: "#FFFFFF"}
+      Grade: {I: "#B7F7C0", II: "#66C2A5", III: "#4D8F77", Unknown: "#CFCFCF"}
+      TNM_stage: {I: "#B7F7C0", II: "#7DDB82", III: "#4DAF4A", IV: "#1B7837"}
+      Histological_type:
+        Infiltrating Ductal Carcinoma: "#7B61B4"
+        Infiltrating Lobular Carcinoma: "#D6B3E6"
+        Others: "#B8DE6F"
+      Classification:
+        Ambiguous: "#D9D9D9"
+        Not Triple Negative: "#FF1A1A"
+        Triple Negative: "#000000"
+    readme_metadata_palette: &readme_metadata_palette
+      Subtype: {Luminal: "#4DAF4A", Basal: "#E41A1C", HER2: "#377EB8", Normal-like: "#984EA3"}
+      ER_status: {Positive: "#4DAF4A", Negative: "#FFFFFF"}
+      PR_status: {Positive: "#4DAF4A", Negative: "#FFFFFF"}
+      HER2_status: {Positive: "#377EB8", Negative: "#FFFFFF"}
     aml_genes: &aml_genes
       [FLT3, DNMT3A, NPM1, IDH2, IDH1, TET2, RUNX1, NRAS, TP53, CEBPA]
+    aml_survival_genes: &aml_survival_genes
+      [DNMT3A, FLT3, NPM1, TP53, IDH2, RUNX1, IDH1, TET2, NRAS, CEBPA]
+    aml_waterfall_sample_order: &aml_waterfall_sample_order
+      [TCGA-AB-2945, TCGA-AB-2965, TCGA-AB-2825, TCGA-AB-2869, TCGA-AB-2947, TCGA-AB-2974, TCGA-AB-2981, TCGA-AB-2993, TCGA-AB-2934, TCGA-AB-2928, TCGA-AB-2830, TCGA-AB-2816, TCGA-AB-2818, TCGA-AB-2851, TCGA-AB-2853, TCGA-AB-2895, TCGA-AB-2925, TCGA-AB-2931, TCGA-AB-2879, TCGA-AB-2900, TCGA-AB-2812, TCGA-AB-2913, TCGA-AB-2915, TCGA-AB-2924, TCGA-AB-2963, TCGA-AB-2976, TCGA-AB-2986, TCGA-AB-2877, TCGA-AB-2926, TCGA-AB-3006, TCGA-AB-2970, TCGA-AB-2870, TCGA-AB-2880, TCGA-AB-2814, TCGA-AB-2834, TCGA-AB-2836, TCGA-AB-2840, TCGA-AB-2871, TCGA-AB-2875, TCGA-AB-2906, TCGA-AB-2909, TCGA-AB-2910, TCGA-AB-2918, TCGA-AB-2921, TCGA-AB-2922, TCGA-AB-2930, TCGA-AB-2942, TCGA-AB-2957, TCGA-AB-2980, TCGA-AB-2994, TCGA-AB-2998, TCGA-AB-3007, TCGA-AB-2802, TCGA-AB-2839, TCGA-AB-2967, TCGA-AB-2824, TCGA-AB-2859, TCGA-AB-2896, TCGA-AB-2987, TCGA-AB-2988, TCGA-AB-2864, TCGA-AB-2891, TCGA-AB-2898, TCGA-AB-2966, TCGA-AB-2822, TCGA-AB-2887, TCGA-AB-2863, TCGA-AB-2867, TCGA-AB-2884, TCGA-AB-2919, TCGA-AB-2949, TCGA-AB-2908, TCGA-AB-2873, TCGA-AB-2912, TCGA-AB-2968, TCGA-AB-2938, TCGA-AB-2955, TCGA-AB-2809, TCGA-AB-2833, TCGA-AB-2861, TCGA-AB-2916, TCGA-AB-2975, TCGA-AB-2984, TCGA-AB-2990, TCGA-AB-2992, TCGA-AB-3011, TCGA-AB-2835, TCGA-AB-2848, TCGA-AB-2972, TCGA-AB-2989, TCGA-AB-2821, TCGA-AB-2805, TCGA-AB-2807, TCGA-AB-2850, TCGA-AB-2907, TCGA-AB-2936, TCGA-AB-2959, TCGA-AB-2874, TCGA-AB-2810, TCGA-AB-2826, TCGA-AB-2866, TCGA-AB-2948, TCGA-AB-2973, TCGA-AB-3002, TCGA-AB-2901, TCGA-AB-2977, TCGA-AB-2978, TCGA-AB-2865, TCGA-AB-2923, TCGA-AB-2845, TCGA-AB-2876, TCGA-AB-2937, TCGA-AB-2964, TCGA-AB-2971, TCGA-AB-2996, TCGA-AB-2890, TCGA-AB-2899, TCGA-AB-2927, TCGA-AB-2933, TCGA-AB-3009, TCGA-AB-2952, TCGA-AB-2838, TCGA-AB-2808, TCGA-AB-2892, TCGA-AB-2932, TCGA-AB-2985, TCGA-AB-2813, TCGA-AB-2820, TCGA-AB-2829, TCGA-AB-2860, TCGA-AB-2868, TCGA-AB-2878, TCGA-AB-2885, TCGA-AB-2904, TCGA-AB-2935, TCGA-AB-2941, TCGA-AB-2943, TCGA-AB-2940, TCGA-AB-2979, TCGA-AB-3000, TCGA-AB-3008]
+    aml_sorted_sample_order: &aml_sorted_sample_order
+      [TCGA-AB-2913, TCGA-AB-2909, TCGA-AB-2949, TCGA-AB-2936, TCGA-AB-2814, TCGA-AB-2922, TCGA-AB-2822, TCGA-AB-2805, TCGA-AB-2907, TCGA-AB-2959, TCGA-AB-2890, TCGA-AB-2820, TCGA-AB-2885, TCGA-AB-2904, TCGA-AB-2934, TCGA-AB-2879, TCGA-AB-2877, TCGA-AB-2871, TCGA-AB-2898, TCGA-AB-2919, TCGA-AB-2984, TCGA-AB-2990, TCGA-AB-3011, TCGA-AB-2964, TCGA-AB-2979, TCGA-AB-2928, TCGA-AB-2853, TCGA-AB-2895, TCGA-AB-2900, TCGA-AB-2963, TCGA-AB-2976, TCGA-AB-2926, TCGA-AB-3006, TCGA-AB-2870, TCGA-AB-2880, TCGA-AB-2918, TCGA-AB-2988, TCGA-AB-2864, TCGA-AB-2891, TCGA-AB-2887, TCGA-AB-2863, TCGA-AB-2884, TCGA-AB-2992, TCGA-AB-2821, TCGA-AB-2807, TCGA-AB-2866, TCGA-AB-2865, TCGA-AB-2937, TCGA-AB-2927, TCGA-AB-2952, TCGA-AB-2943, TCGA-AB-3008, TCGA-AB-2869, TCGA-AB-2875, TCGA-AB-2874, TCGA-AB-2901, TCGA-AB-2978, TCGA-AB-2876, TCGA-AB-2996, TCGA-AB-2808, TCGA-AB-3000, TCGA-AB-2818, TCGA-AB-2931, TCGA-AB-2812, TCGA-AB-2915, TCGA-AB-2986, TCGA-AB-2930, TCGA-AB-2839, TCGA-AB-2859, TCGA-AB-2966, TCGA-AB-2867, TCGA-AB-2908, TCGA-AB-2955, TCGA-AB-2975, TCGA-AB-2972, TCGA-AB-2989, TCGA-AB-2850, TCGA-AB-2810, TCGA-AB-3002, TCGA-AB-2977, TCGA-AB-2845, TCGA-AB-2838, TCGA-AB-2878, TCGA-AB-2940, TCGA-AB-2906, TCGA-AB-2980, TCGA-AB-2994, TCGA-AB-3007, TCGA-AB-2840, TCGA-AB-2998, TCGA-AB-2809, TCGA-AB-2947, TCGA-AB-2924, TCGA-AB-2942, TCGA-AB-2957, TCGA-AB-2967, TCGA-AB-2916, TCGA-AB-2892, TCGA-AB-2945, TCGA-AB-2965, TCGA-AB-2993, TCGA-AB-2830, TCGA-AB-2816, TCGA-AB-2970, TCGA-AB-2834, TCGA-AB-2836, TCGA-AB-2921, TCGA-AB-2802, TCGA-AB-2912, TCGA-AB-2968, TCGA-AB-2833, TCGA-AB-2848, TCGA-AB-2826, TCGA-AB-2948, TCGA-AB-2973, TCGA-AB-2923, TCGA-AB-2971, TCGA-AB-2899, TCGA-AB-2933, TCGA-AB-3009, TCGA-AB-2813, TCGA-AB-2935, TCGA-AB-2981, TCGA-AB-2873, TCGA-AB-2835, TCGA-AB-2932, TCGA-AB-2825, TCGA-AB-2974, TCGA-AB-2851, TCGA-AB-2925, TCGA-AB-2910, TCGA-AB-2824, TCGA-AB-2896, TCGA-AB-2987, TCGA-AB-2861, TCGA-AB-2985, TCGA-AB-2829, TCGA-AB-2938, TCGA-AB-2860, TCGA-AB-2868, TCGA-AB-2941]
+    aml_survival_sample_order: &aml_survival_sample_order
+      [TCGA-AB-2945, TCGA-AB-2965, TCGA-AB-2825, TCGA-AB-2974, TCGA-AB-2993, TCGA-AB-2928, TCGA-AB-2830, TCGA-AB-2816, TCGA-AB-2818, TCGA-AB-2851, TCGA-AB-2853, TCGA-AB-2895, TCGA-AB-2925, TCGA-AB-2931, TCGA-AB-2802, TCGA-AB-2839, TCGA-AB-2824, TCGA-AB-2859, TCGA-AB-2896, TCGA-AB-2987, TCGA-AB-2988, TCGA-AB-2908, TCGA-AB-2938, TCGA-AB-2864, TCGA-AB-2891, TCGA-AB-2966, TCGA-AB-2912, TCGA-AB-2822, TCGA-AB-2887, TCGA-AB-2863, TCGA-AB-2867, TCGA-AB-2884, TCGA-AB-2968, TCGA-AB-2955, TCGA-AB-2809, TCGA-AB-2833, TCGA-AB-2861, TCGA-AB-2975, TCGA-AB-2900, TCGA-AB-2812, TCGA-AB-2915, TCGA-AB-2963, TCGA-AB-2976, TCGA-AB-2986, TCGA-AB-2970, TCGA-AB-2926, TCGA-AB-3006, TCGA-AB-2870, TCGA-AB-2880, TCGA-AB-2814, TCGA-AB-2834, TCGA-AB-2836, TCGA-AB-2840, TCGA-AB-2910, TCGA-AB-2918, TCGA-AB-2921, TCGA-AB-2922, TCGA-AB-2930, TCGA-AB-2998, TCGA-AB-2992, TCGA-AB-2848, TCGA-AB-2972, TCGA-AB-2989, TCGA-AB-2952, TCGA-AB-2838, TCGA-AB-2813, TCGA-AB-2820, TCGA-AB-2829, TCGA-AB-2860, TCGA-AB-2868, TCGA-AB-2878, TCGA-AB-2885, TCGA-AB-2904, TCGA-AB-2935, TCGA-AB-2941, TCGA-AB-2943, TCGA-AB-2821, TCGA-AB-2805, TCGA-AB-2807, TCGA-AB-2850, TCGA-AB-2907, TCGA-AB-2959, TCGA-AB-2810, TCGA-AB-2826, TCGA-AB-2866, TCGA-AB-2948, TCGA-AB-2973, TCGA-AB-3002, TCGA-AB-2865, TCGA-AB-2890, TCGA-AB-2899, TCGA-AB-2927, TCGA-AB-2933, TCGA-AB-3009, TCGA-AB-2977, TCGA-AB-2923, TCGA-AB-2845, TCGA-AB-2937, TCGA-AB-2971, TCGA-AB-2985, TCGA-AB-2940, TCGA-AB-3008]
     aml_oncoplot: &aml_oncoplot
+      data: *aml_mutations_source
       gene_col: gene
       sample_col: sample
       mutation_type_col: mutation_type
@@ -60,6 +156,9 @@ gallery_params:
       draw_tmb_bar: true
       show_all_samples: false
       backend: matplotlib
+      palette: *aml_palette
+      tmb_data: *aml_tmb_source
+      tmb_palette: *aml_palette
     aml_basic_options: &aml_basic_options
       width: 1080
       height: 720
@@ -93,6 +192,7 @@ gallery_params:
     brca_compact_genes: &brca_compact_genes
       [TP53, PIK3CA, ERBB2, MYC, GATA3, FGFR1, CCND1, MAP3K1, NF1, AKT1, FOXA1, CDH1, BRCA2, EGFR, PTEN, AKT3, BRCA1, BRAF, RB1, PIK3R1, FGFR2, MAP2K4, KMT2C, ZFHX4]
     brca_compact_oncoplot: &brca_compact_oncoplot
+      data: *brca_mutations_source
       gene_col: gene
       sample_col: sample
       mutation_type_col: mutation_type
@@ -101,6 +201,11 @@ gallery_params:
       draw_tmb_bar: true
       show_all_samples: true
       backend: matplotlib
+      palette: *brca_palette
+      tmb_data: *brca_tmb_source
+      tmb_palette: *brca_palette
+      metadata: *brca_metadata_source
+      metadata_palette: *brca_metadata_palette
     brca_compact_options: &brca_compact_options
       width: 1020
       height: 820
@@ -130,12 +235,16 @@ gallery_params:
     readme_genes: &readme_genes
       [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN, KMT2C, NF1, ERBB2, BRCA1, RB1, EGFR]
     readme_oncoplot: &readme_oncoplot
+      data: *readme_mutations_source
       gene_col: gene
       sample_col: sample
       mutation_type_col: mutation_type
       tooltip_col: tooltip
       show_all_samples: true
       backend: matplotlib
+      palette: *readme_palette
+      tmb_data: *readme_tmb_source
+      tmb_palette: *readme_palette
     paper_multimodal_genes: &paper_multimodal_genes
       [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN, NF1, BRCA1, RB1, EGFR]
     paper_multimodal_axes: &paper_multimodal_axes
@@ -180,18 +289,18 @@ gallery_params:
       expected_size: [672, 480]
       feature_axes_min: 1
       params:
-        include_genes: [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN]
         oncoplot:
           <<: *readme_oncoplot
+          include_genes: [PIK3CA, TP53, CDH1, GATA3, MAP3K1, PTEN]
           draw_gene_bar: false
           draw_tmb_bar: false
-        options:
-          width: 672
-          height: 480
-          mutation_legend_position: bottom
-          show_metadata_legends: false
-          font_size_genes: 8
-          tile_linewidth: 0.08
+          options:
+            width: 672
+            height: 480
+            mutation_legend_position: bottom
+            show_metadata_legends: false
+            font_size_genes: 8
+            tile_linewidth: 0.08
         title: "Pyoncoplot"
         save: {dpi: 120}
 
@@ -204,18 +313,18 @@ gallery_params:
       expected_size: [7200, 3000]
       feature_axes_min: 1
       params:
-        include_genes: *readme_genes
         oncoplot:
           <<: *readme_oncoplot
+          include_genes: *readme_genes
           draw_gene_bar: false
           draw_tmb_bar: false
-        options:
-          width: 7200
-          height: 3000
-          mutation_legend_position: bottom
-          show_metadata_legends: false
-          font_size_genes: 38
-          tile_linewidth: 0.03
+          options:
+            width: 7200
+            height: 3000
+            mutation_legend_position: bottom
+            show_metadata_legends: false
+            font_size_genes: 38
+            tile_linewidth: 0.03
         title: "Pyoncoplot"
         save: {dpi: 120}
 
@@ -228,25 +337,25 @@ gallery_params:
       expected_size: [7200, 3600]
       feature_axes_min: 3
       params:
-        include_genes: *readme_genes
         oncoplot:
           <<: *readme_oncoplot
+          include_genes: *readme_genes
           draw_gene_bar: true
           draw_tmb_bar: true
-        options:
-          width: 7200
-          height: 3600
-          show_tmb_y_label: true
-          show_gene_bar_axis: true
-          log10_transform_tmb: false
-          mutation_legend_position: bottom
-          show_metadata_legends: false
-          gene_bar_width_ratio: 0.12
-          tmb_height_ratio: 0.12
-          font_size_genes: 38
-          font_size_tmb_axis: 24
-          font_size_gene_bar_axis: 24
-          tile_linewidth: 0.03
+          options:
+            width: 7200
+            height: 3600
+            show_tmb_y_label: true
+            show_gene_bar_axis: true
+            log10_transform_tmb: false
+            mutation_legend_position: bottom
+            show_metadata_legends: false
+            gene_bar_width_ratio: 0.12
+            tmb_height_ratio: 0.12
+            font_size_genes: 38
+            font_size_tmb_axis: 24
+            font_size_gene_bar_axis: 24
+            tile_linewidth: 0.03
         title: "Pyoncoplot"
         save: {dpi: 120}
 
@@ -259,31 +368,33 @@ gallery_params:
       expected_size: [7200, 3600]
       feature_axes_min: 4
       params:
-        include_genes: *readme_genes
-        metadata_cols: [Subtype, ER_status, PR_status, HER2_status, TMB_score]
-        metadata_sort_cols: [Subtype]
-        metadata_sort_by: alphabetical
-        metadata_sort_desc: false
         oncoplot:
           <<: *readme_oncoplot
+          include_genes: *readme_genes
+          metadata: *readme_metadata_source
+          metadata_cols: [Subtype, ER_status, PR_status, HER2_status, TMB_score]
+          metadata_palette: *readme_metadata_palette
+          metadata_sort_cols: [Subtype]
+          metadata_sort_by: alphabetical
+          metadata_sort_desc: false
           draw_gene_bar: true
           draw_tmb_bar: true
-        options:
-          width: 7200
-          height: 3600
-          show_tmb_y_label: true
-          show_gene_bar_axis: true
-          log10_transform_tmb: false
-          mutation_legend_position: right
-          metadata_legend_position: right
-          show_metadata_legends: true
-          metadata_numeric_plot_type: bar
-          metadata_height_ratio: 0.18
-          gene_bar_width_ratio: 0.12
-          tmb_height_ratio: 0.11
-          font_size_genes: 34
-          font_size_metadata: 24
-          tile_linewidth: 0.03
+          options:
+            width: 7200
+            height: 3600
+            show_tmb_y_label: true
+            show_gene_bar_axis: true
+            log10_transform_tmb: false
+            mutation_legend_position: right
+            metadata_legend_position: right
+            show_metadata_legends: true
+            metadata_numeric_plot_type: bar
+            metadata_height_ratio: 0.18
+            gene_bar_width_ratio: 0.12
+            tmb_height_ratio: 0.11
+            font_size_genes: 34
+            font_size_metadata: 24
+            tile_linewidth: 0.03
         title: "Pyoncoplot"
         save: {dpi: 120}
 
@@ -441,13 +552,14 @@ gallery_params:
       expected_size: [850, 683]
       feature_axes_min: 4
       params: &brca_compact_params
-        include_genes: *brca_compact_genes
-        metadata_cols: [Subtype, ER_status, PR_status, HER2_status, Age, Menopause, LN_stage, Grade, TNM_stage, Histological_type]
-        metadata_sort_cols: [Subtype, ER_status]
-        metadata_sort_by: [alphabetical, alphabetical]
-        metadata_sort_desc: [false, true]
-        oncoplot: *brca_compact_oncoplot
-        options: *brca_compact_options
+        oncoplot:
+          <<: *brca_compact_oncoplot
+          include_genes: *brca_compact_genes
+          metadata_cols: [Subtype, ER_status, PR_status, HER2_status, Age, Menopause, LN_stage, Grade, TNM_stage, Histological_type]
+          metadata_sort_cols: [Subtype, ER_status]
+          metadata_sort_by: [alphabetical, alphabetical]
+          metadata_sort_desc: [false, true]
+          options: *brca_compact_options
         save: {dpi: 100}
 
     cssc_compact:
@@ -502,10 +614,11 @@ gallery_params:
       expected_size: [1080, 720]
       feature_axes_min: 3
       params:
-        include_genes_key: full_top_genes
-        sample_order_key: waterfall_sample_order
-        oncoplot: *aml_oncoplot
-        options: *aml_basic_options
+        oncoplot:
+          <<: *aml_oncoplot
+          include_genes: *aml_genes
+          sample_order: *aml_waterfall_sample_order
+          options: *aml_basic_options
         save: {dpi: 120}
 
     aml_metadata_unsorted:
@@ -518,15 +631,18 @@ gallery_params:
       clean_only: true
       feature_axes_min: 4
       params:
-        include_genes_key: full_top_genes
-        sample_order_key: waterfall_sample_order
-        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
-        metadata_sort_cols:
-        metadata_sort_by: alphabetical
-        metadata_sort_desc: false
         title: customized_oncoplot_1.py
-        oncoplot: *aml_oncoplot
-        options: *aml_metadata_options
+        oncoplot:
+          <<: *aml_oncoplot
+          include_genes: *aml_genes
+          sample_order: *aml_waterfall_sample_order
+          metadata: *aml_metadata_source
+          metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+          metadata_palette: *aml_metadata_palette
+          metadata_sort_cols:
+          metadata_sort_by: alphabetical
+          metadata_sort_desc: false
+          options: *aml_metadata_options
         save: {dpi: 120}
 
     aml_metadata_sorted:
@@ -539,15 +655,18 @@ gallery_params:
       clean_only: true
       feature_axes_min: 4
       params:
-        include_genes_key: full_top_genes
-        sample_order_key: sorted_sample_order
-        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
-        metadata_sort_cols:
-        metadata_sort_by: alphabetical
-        metadata_sort_desc: false
         title: customized_oncoplot_2.py
-        oncoplot: *aml_oncoplot
-        options: *aml_metadata_options
+        oncoplot:
+          <<: *aml_oncoplot
+          include_genes: *aml_genes
+          sample_order: *aml_sorted_sample_order
+          metadata: *aml_metadata_source
+          metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+          metadata_palette: *aml_metadata_palette
+          metadata_sort_cols:
+          metadata_sort_by: alphabetical
+          metadata_sort_desc: false
+          options: *aml_metadata_options
         save: {dpi: 120}
 
     sv_panel:
@@ -575,18 +694,21 @@ gallery_params:
       clean_only: true
       feature_axes_min: 4
       params:
-        include_genes_key: survival_top_genes
-        sample_order_key: survival_filtered_sample_order
         metadata_filter:
           column: Overall_Survival_Status
           value: "1"
-        metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
-        metadata_sort_cols:
-        metadata_sort_by: alphabetical
-        metadata_sort_desc: false
         title: customized_oncoplot_3.py
-        oncoplot: *aml_oncoplot
-        options: *aml_metadata_options
+        oncoplot:
+          <<: *aml_oncoplot
+          include_genes: *aml_survival_genes
+          sample_order: *aml_survival_sample_order
+          metadata: *aml_metadata_source
+          metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+          metadata_palette: *aml_metadata_palette
+          metadata_sort_cols:
+          metadata_sort_by: alphabetical
+          metadata_sort_desc: false
+          options: *aml_metadata_options
         save: {dpi: 120}
 
   comparison_runs:

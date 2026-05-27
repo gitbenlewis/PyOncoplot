@@ -18,7 +18,7 @@ import pandas as pd
 from PIL import Image, ImageDraw
 import yaml
 
-from pyoncoplot import OncoplotOptions, oncoplot
+from pyoncoplot import OncoplotOptions, load_oncoplot_params, oncoplot
 from pyoncoplot._data import score_sample_by_gene_rank
 from pyoncoplot._params import merge_params
 
@@ -173,12 +173,14 @@ def _read_palette(name: str) -> Dict[str, str]:
     return json.loads((INPUTS / name).read_text(encoding="utf-8"))
 
 
-def _read_json(name: str) -> Dict[str, Any]:
-    return json.loads((INPUTS / name).read_text(encoding="utf-8"))
-
-
 def _input_file(family: str, key: str) -> str:
     return str(GALLERY_CONFIG["input_files"][family][key])
+
+
+def _load_run_oncoplot_params(run_name: Optional[str]) -> dict[str, Any]:
+    if not run_name:
+        raise ValueError("Config-backed gallery oncoplot renderers require a run_name.")
+    return load_oncoplot_params(CONFIG_PATH, key=f"gallery_params.plot_runs.{run_name}.params.oncoplot")
 
 
 def _save_exact(result, output_path: Path, dpi: int = 120) -> None:
@@ -219,7 +221,11 @@ def _multimodal_panel_title_font_size(params: Mapping[str, Any], dpi: int) -> fl
 
 
 def _options_from_params(params: Mapping[str, Any]) -> OncoplotOptions:
-    options = params.get("options", {})
+    options = params.get("options")
+    if options is None and isinstance(params.get("oncoplot"), Mapping):
+        options = params["oncoplot"].get("options")
+    if options is None:
+        options = {}
     if isinstance(options, OncoplotOptions):
         return options
     if not isinstance(options, Mapping):
@@ -239,28 +245,6 @@ def _axes_from_params(params: Mapping[str, Any], required: Sequence[str]) -> dic
     if missing:
         raise ValueError(f"Missing configured axes: {', '.join(missing)}.")
     return dict(axes)
-
-
-def _aml_metadata_palette() -> Mapping[str, Mapping[str, str]]:
-    return {
-        "FAB_classification": {
-            "M0": "#1B9E77",
-            "M1": "#D95F02",
-            "M2": "#7570B3",
-            "M3": "#E7298A",
-            "M4": "#66A61E",
-            "M5": "#E6AB02",
-            "M6": "#A6761D",
-            "M7": "#666666",
-        },
-        "Overall_Survival_Status": {"0": "#FDB7B4", "1": "#BBD7EA"},
-        "cluster": {
-            "FLT3/NPM1": "#1B9E77",
-            "DNMT3A/TET2": "#D95F02",
-            "IDH": "#7570B3",
-            "TP53/CEBPA": "#E7298A",
-        },
-    }
 
 
 def _brca_metadata_palette() -> Mapping[str, Mapping[str, str]]:
@@ -292,28 +276,6 @@ def _brca_metadata_palette() -> Mapping[str, Mapping[str, str]]:
     }
 
 
-def _load_aml():
-    mutations = _read_tsv(_input_file("aml", "mutations"))
-    metadata = _read_tsv(_input_file("aml", "metadata"))
-    metadata["FAB_classification"] = metadata["FAB_classification"].astype(str)
-    metadata["Overall_Survival_Status"] = metadata["Overall_Survival_Status"].astype(str)
-    tmb = _read_tsv(_input_file("aml", "tmb"))
-    palette = _read_palette(_input_file("aml", "palette"))
-    return mutations, metadata, tmb, palette
-
-
-def _load_aml_gallery_params() -> Mapping[str, Any]:
-    return _read_json(_input_file("aml", "gallery_params"))
-
-
-def _resolve_aml_sequence(params: Mapping[str, Any], key_name: str, fallback_key: str) -> Sequence[str]:
-    if key_name in params and params[key_name] is not None:
-        return list(params[key_name])
-    gallery_params = _load_aml_gallery_params()
-    source_key = str(params.get(f"{key_name}_key", fallback_key))
-    return list(gallery_params[source_key])
-
-
 def _filter_aml_inputs(
     mutations: pd.DataFrame,
     metadata: pd.DataFrame,
@@ -333,14 +295,27 @@ def _filter_aml_inputs(
     )
 
 
-def _aml_run_inputs(params: Mapping[str, Any]) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Mapping[str, str], Sequence[str], Sequence[str]]:
-    mutations, metadata, tmb, palette = _load_aml()
-    mutations, metadata, tmb = _filter_aml_inputs(mutations, metadata, tmb, params.get("metadata_filter"))
-    include_genes = _resolve_aml_sequence(params, "include_genes", "full_top_genes")
-    sample_order = _resolve_aml_sequence(params, "sample_order", "waterfall_sample_order")
+def _filter_aml_oncoplot_params(
+    oncoplot_params: Mapping[str, Any],
+    filter_params: Optional[Mapping[str, Any]],
+) -> dict[str, Any]:
+    if not filter_params:
+        return dict(oncoplot_params)
+    filtered = dict(oncoplot_params)
+    mutations, metadata, tmb = _filter_aml_inputs(
+        filtered["data"],
+        filtered["metadata"],
+        filtered["tmb_data"],
+        filter_params,
+    )
     selected_samples = set(metadata["sample"].astype(str))
-    sample_order = [sample for sample in sample_order if sample in selected_samples]
-    return mutations, metadata, tmb, palette, include_genes, sample_order
+    sample_order = filtered.get("sample_order")
+    if sample_order is not None:
+        filtered["sample_order"] = [sample for sample in sample_order if str(sample) in selected_samples]
+    filtered["data"] = mutations
+    filtered["metadata"] = metadata
+    filtered["tmb_data"] = tmb
+    return filtered
 
 
 def _load_brca():
@@ -420,15 +395,6 @@ def _load_comparison_table():
     return _read_tsv(_input_file("comparison_table", "table"))
 
 
-def _readme_metadata_palette() -> Mapping[str, Mapping[str, str]]:
-    return {
-        "Subtype": {"Luminal": "#4DAF4A", "Basal": "#E41A1C", "HER2": "#377EB8", "Normal-like": "#984EA3"},
-        "ER_status": {"Positive": "#4DAF4A", "Negative": "#FFFFFF"},
-        "PR_status": {"Positive": "#4DAF4A", "Negative": "#FFFFFF"},
-        "HER2_status": {"Positive": "#377EB8", "Negative": "#FFFFFF"},
-    }
-
-
 def _group_events(events: pd.DataFrame, sample_col: str = "sample", gene_col: str = "gene", type_col: str = "alteration") -> dict[tuple[str, str], list[str]]:
     grouped: dict[tuple[str, str], list[str]] = {}
     for row in events.itertuples(index=False):
@@ -504,19 +470,9 @@ def _weighted_row_starts(columns: Sequence[str], weights: Mapping[str, float]) -
     return row_starts, row_heights, y_cursor
 
 
-def render_aml_basic(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
+def render_aml_basic(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml_basic gallery", **kwargs)
-    mutations, _metadata, tmb, palette, include_genes, sample_order = _aml_run_inputs(merged)
-    oncoplot_params = {
-        **dict(merged.get("oncoplot", {})),
-        "data": mutations,
-        "include_genes": include_genes,
-        "palette": palette,
-        "sample_order": sample_order,
-        "tmb_data": tmb,
-        "tmb_palette": palette,
-        "options": _options_from_params(merged),
-    }
+    oncoplot_params = _load_run_oncoplot_params(run_name)
     result = oncoplot(params=oncoplot_params)
     _save_exact(result, output_path, dpi=_save_dpi(merged, default=120))
 
@@ -526,29 +482,20 @@ def render_aml_metadata(
     sort_metadata: bool = False,
     *,
     params: Optional[Mapping[str, Any]] = None,
+    run_name: Optional[str] = None,
     **kwargs: Any,
 ) -> None:
     extra_kwargs = dict(kwargs)
     if sort_metadata:
         extra_kwargs.setdefault("metadata_sort_cols", ["FAB_classification"])
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml metadata gallery", **extra_kwargs)
-    mutations, metadata, tmb, palette, include_genes, sample_order = _aml_run_inputs(merged)
-    oncoplot_params = {
-        **dict(merged.get("oncoplot", {})),
-        "data": mutations,
-        "include_genes": include_genes,
-        "palette": palette,
-        "sample_order": sample_order,
-        "tmb_data": tmb,
-        "tmb_palette": palette,
-        "metadata": metadata,
-        "metadata_cols": merged["metadata_cols"],
-        "metadata_palette": _aml_metadata_palette(),
-        "metadata_sort_cols": merged.get("metadata_sort_cols"),
-        "metadata_sort_by": merged.get("metadata_sort_by", "alphabetical"),
-        "metadata_sort_desc": merged.get("metadata_sort_desc", False),
-        "options": _options_from_params(merged),
-    }
+    oncoplot_params = _filter_aml_oncoplot_params(
+        _load_run_oncoplot_params(run_name),
+        merged.get("metadata_filter"),
+    )
+    if sort_metadata:
+        oncoplot_params["metadata_sort_cols"] = extra_kwargs["metadata_sort_cols"]
+        oncoplot_params.pop("sample_order", None)
     result = oncoplot(params=oncoplot_params)
     result.figure.suptitle(str(merged.get("title", output_path.stem + ".py")), fontweight="bold", y=0.98)
     _save_exact(result, output_path, dpi=_save_dpi(merged, default=120))
@@ -688,25 +635,9 @@ def _render_brca_large_static(output_path: Path, *, params: Optional[Mapping[str
     plt.close(fig)
 
 
-def render_brca_compact_complex(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
+def render_brca_compact_complex(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="brca compact gallery", **kwargs)
-    mutations, metadata, tmb, palette = _load_brca()
-    oncoplot_params = {
-        **dict(merged.get("oncoplot", {})),
-        "data": mutations,
-        "include_genes": merged["include_genes"],
-        "palette": palette,
-        "tmb_data": tmb,
-        "tmb_palette": palette,
-        "metadata": metadata,
-        "metadata_cols": merged["metadata_cols"],
-        "metadata_palette": _brca_metadata_palette(),
-        "metadata_sort_cols": merged.get("metadata_sort_cols"),
-        "metadata_sort_by": merged.get("metadata_sort_by"),
-        "metadata_sort_desc": merged.get("metadata_sort_desc"),
-        "options": _options_from_params(merged),
-    }
-    result = oncoplot(params=oncoplot_params)
+    result = oncoplot(params=_load_run_oncoplot_params(run_name))
     _save_exact(result, output_path, dpi=_save_dpi(merged, default=100))
 
 
@@ -896,25 +827,10 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
     plt.close(fig)
 
 
-def render_readme_oncoplot(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
+def render_readme_oncoplot(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=README_ONCOPLOT_KEYS, context="readme oncoplot gallery", **kwargs)
-    mutations, metadata, tmb, palette = _load_readme()
-    render_options = _options_from_params(merged)
-    oncoplot_params = {
-        **dict(merged.get("oncoplot", {})),
-        "data": mutations,
-        "include_genes": merged["include_genes"],
-        "palette": palette,
-        "tmb_data": tmb,
-        "tmb_palette": palette,
-        "metadata": metadata,
-        "metadata_cols": merged.get("metadata_cols"),
-        "metadata_palette": _readme_metadata_palette(),
-        "metadata_sort_cols": merged.get("metadata_sort_cols"),
-        "metadata_sort_by": merged.get("metadata_sort_by", "alphabetical"),
-        "metadata_sort_desc": merged.get("metadata_sort_desc", False),
-        "options": render_options,
-    }
+    oncoplot_params = _load_run_oncoplot_params(run_name)
+    render_options = _options_from_params(oncoplot_params)
     result = oncoplot(params=oncoplot_params)
     if merged.get("title"):
         result.figure.suptitle(
@@ -1190,6 +1106,13 @@ RENDERERS: Dict[str, Callable[..., None]] = {
     "multimodal_panel": render_multimodal_panel,
 }
 
+CONFIG_BACKED_ONCOPLOT_RENDERERS = {
+    render_aml_basic,
+    render_aml_metadata,
+    render_brca_compact_complex,
+    render_readme_oncoplot,
+}
+
 
 def _configured_runs() -> dict[str, dict[str, Any]]:
     defaults = GALLERY_CONFIG.get("default_params", {})
@@ -1254,7 +1177,10 @@ def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean
     out_dir.mkdir(parents=True, exist_ok=True)
     preset = GALLERY_PRESETS[name]
     output_path = out_dir / preset.output_name
-    preset.renderer(output_path, params=preset.params)
+    if preset.renderer in CONFIG_BACKED_ONCOPLOT_RENDERERS:
+        preset.renderer(output_path, params=preset.params, run_name=name)
+    else:
+        preset.renderer(output_path, params=preset.params)
     return output_path
 
 
