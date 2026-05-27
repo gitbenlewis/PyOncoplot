@@ -45,6 +45,9 @@ ONCOPLOT_PARAM_KEYS = {
     "metadata_sort_cols",
     "metadata_sort_desc",
     "metadata_sort_by",
+    "mutation_type_order",
+    "metadata_category_orders",
+    "tmb_type_order",
     "tmb_data",
     "tmb_palette",
     "backend",
@@ -77,6 +80,9 @@ ONCOPLOT_DEFAULTS: dict[str, Any] = {
     "metadata_sort_cols": None,
     "metadata_sort_desc": True,
     "metadata_sort_by": "frequency",
+    "mutation_type_order": None,
+    "metadata_category_orders": None,
+    "tmb_type_order": None,
     "tmb_data": None,
     "tmb_palette": None,
     "backend": "plotly",
@@ -92,7 +98,9 @@ def _palette_for_data(
     tmb_palette: Optional[Mapping[str, str]],
     options: OncoplotOptions,
 ) -> tuple[Mapping[str, str], Optional[Mapping[str, str]]]:
-    mutation_types = prepared.tiles["MutationType"] if not prepared.tiles.empty else []
+    mutation_types = prepared.mutation_type_levels or (
+        prepared.tiles["MutationType"] if not prepared.tiles.empty else []
+    )
     if prepared.mutation_type_col is None:
         mutation_palette = {}
     elif palette is None:
@@ -110,7 +118,7 @@ def _palette_for_data(
         and not options.log10_transform_tmb
     )
     if render_stacked_tmb:
-        tmb_terms = prepared.tmb[prepared.tmb_type_col]
+        tmb_terms = prepared.tmb_type_levels or prepared.tmb[prepared.tmb_type_col]
         source_palette = mutation_palette if tmb_palette is None else tmb_palette
         try:
             return mutation_palette, assert_palette_is_sensible(source_palette, tmb_terms)
@@ -194,6 +202,9 @@ def oncoplot(
         metadata_sort_cols=merged["metadata_sort_cols"],
         metadata_sort_desc=merged["metadata_sort_desc"],
         metadata_sort_by=merged["metadata_sort_by"],
+        mutation_type_order=merged["mutation_type_order"],
+        metadata_category_orders=merged["metadata_category_orders"],
+        tmb_type_order=merged["tmb_type_order"],
         tmb_data=merged["tmb_data"],
         prepare_tmb=merged["draw_tmb_bar"],
         verbose=merged["verbose"],

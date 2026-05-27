@@ -19,7 +19,7 @@ from ._metadata_colors import (
 )
 from ._options import OncoplotOptions, coerce_options
 from ._params import merge_params
-from ._utils import as_percent
+from ._utils import as_percent, reorder_by_priority
 
 
 PLOTLY_RENDER_PARAM_KEYS = {
@@ -68,6 +68,68 @@ def _metadata_value_label(value: object, options: OncoplotOptions) -> str:
     return options.prettify_function(text) if options.prettify_legend_values else text
 
 
+def _ordered_levels(
+    levels: Optional[Sequence[object]],
+    order_source: Optional[str],
+    palette: Optional[Mapping[str, object]] = None,
+) -> list[str]:
+    level_names = [str(level) for level in levels or []]
+    if order_source == "observed" and isinstance(palette, Mapping):
+        return reorder_by_priority(level_names, [str(level) for level in palette])
+    return level_names
+
+
+def _metadata_track(prepared: PreparedOncoplotData, column: object):
+    column_name = str(column)
+    for track in prepared.metadata_tracks or []:
+        if track.column == column_name:
+            return track
+    return None
+
+
+def _metadata_levels(
+    prepared: PreparedOncoplotData,
+    column: object,
+    values: pd.Series,
+    palette_spec: object,
+) -> list[str]:
+    track = _metadata_track(prepared, column)
+    if track is None:
+        return [str(value) for value in pd.unique(values.dropna())]
+    return _ordered_levels(track.levels, track.level_order_source, palette_spec if isinstance(palette_spec, Mapping) else None)
+
+
+def _mutation_levels(prepared: PreparedOncoplotData, palette: Mapping[str, str]) -> list[str]:
+    if prepared.mutation_type_levels:
+        levels = _ordered_levels(
+            prepared.mutation_type_levels,
+            prepared.mutation_type_order_source,
+            palette,
+        )
+    else:
+        levels = [str(value) for value in pd.unique(prepared.tiles["MutationType"].dropna())]
+    observed = set(prepared.tiles["MutationType"].dropna().astype(str))
+    return [level for level in levels if level in observed]
+
+
+def _tmb_levels(
+    prepared: PreparedOncoplotData,
+    palette: Mapping[str, str],
+) -> list[str]:
+    if prepared.tmb is None or prepared.tmb_type_col is None:
+        return []
+    if prepared.tmb_type_levels:
+        levels = _ordered_levels(
+            prepared.tmb_type_levels,
+            prepared.tmb_type_order_source,
+            palette,
+        )
+    else:
+        levels = [str(value) for value in pd.unique(prepared.tmb[prepared.tmb_type_col].dropna())]
+    observed = set(prepared.tmb[prepared.tmb_type_col].dropna().astype(str))
+    return [level for level in levels if level in observed]
+
+
 def _should_show_tmb_legend(
     prepared: PreparedOncoplotData,
     options: OncoplotOptions,
@@ -86,7 +148,7 @@ def _should_show_tmb_legend(
     if prepared.tmb is None or prepared.tmb_type_col is None or prepared.tiles.empty:
         return show
 
-    tmb_categories = [
+    tmb_categories = prepared.tmb_type_levels or [
         str(value)
         for value in pd.unique(prepared.tmb[prepared.tmb_type_col])
         if not pd.isna(value)
@@ -219,7 +281,8 @@ def _add_tmb_bar(
 
     if render_stacked:
         tmb_color_palette = tmb_palette or palette
-        for tmb_type, group in tmb.groupby(type_col, dropna=False, sort=False):
+        for tmb_type in _tmb_levels(prepared, tmb_color_palette):
+            group = tmb[tmb[type_col].astype(str) == tmb_type]
             color = tmb_color_palette.get(str(tmb_type), options.unspecified_mutation_color)
             sample_values = list(prepared.samples)
             values_by_sample = (
@@ -300,17 +363,19 @@ def _add_tmb_bar(
 
 
 def _metadata_color_map(
-    values: pd.Series,
+    levels: Sequence[object],
     options: OncoplotOptions,
     supplied: Optional[Mapping[str, str]] = None,
 ) -> Dict[str, str]:
-    levels = [str(value) for value in pd.unique(values.dropna())]
+    level_names = [str(value) for value in levels]
     mapping = {
         level: options.metadata_default_colors[index % len(options.metadata_default_colors)]
-        for index, level in enumerate(levels)
+        for index, level in enumerate(level_names)
     }
     if supplied:
-        mapping.update({str(level): color for level, color in supplied.items()})
+        for level, color in supplied.items():
+            if str(level) in mapping:
+                mapping[str(level)] = color
     return mapping
 
 
@@ -487,9 +552,9 @@ def _add_metadata_strip(
         if is_numeric:
             level_map = {}
         else:
-            categorical_levels = [str(value) for value in pd.unique(values_by_sample.dropna())]
+            categorical_levels = _metadata_levels(prepared, col_name, values_by_sample, palette_spec)
             level_map = _metadata_color_map(
-                values_by_sample.astype("object"),
+                categorical_levels,
                 options,
                 supplied=categorical_metadata_palette(palette_spec, col_name, categorical_levels),
             )
@@ -609,9 +674,9 @@ def _add_main_tiles(
 
     tiles = prepared.tiles
     if not tiles.empty:
-        mutation_values = [value for value in pd.unique(tiles["MutationType"]) if not pd.isna(value)]
+        mutation_values = _mutation_levels(prepared, palette)
         for mutation_type in mutation_values:
-            group = tiles[tiles["MutationType"] == mutation_type]
+            group = tiles[tiles["MutationType"].astype(str) == mutation_type]
             color = palette.get(str(mutation_type), options.unspecified_mutation_color)
             customdata = [
                 _custom_payload(
@@ -744,7 +809,15 @@ def _add_gene_bar(
 
     total_counts = tiles.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0)
     denominator = max(prepared.total_samples, 1)
-    for mutation_type, group in tiles.groupby("MutationType", dropna=False, sort=False):
+    mutation_groups = [
+        (mutation_type, tiles[tiles["MutationType"].astype(str) == mutation_type])
+        for mutation_type in _mutation_levels(prepared, palette)
+    ]
+    unspecified = tiles[tiles["MutationType"].isna()]
+    if not unspecified.empty:
+        mutation_groups.append((np.nan, unspecified))
+
+    for mutation_type, group in mutation_groups:
         counts = group.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0)
         mutation_label = _legend_label(mutation_type, options)
         hover = [

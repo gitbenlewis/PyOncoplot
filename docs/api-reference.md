@@ -103,10 +103,29 @@ datasets:
 | `metadata_require_mutations`, `show_all_samples` | sample inclusion controls |
 | `pathway`, `pathway_gene_col` | pathway grouping input |
 | `sample_order`, `metadata_sort_cols` | explicit or metadata-driven sample sorting |
+| `mutation_type_order`, `metadata_category_orders`, `tmb_type_order` | categorical level order for colors, stacks, and legends |
 | `tmb_data` | optional 2- or 3-column custom TMB table |
 | `backend`, `interactive` | choose Plotly or Matplotlib rendering |
 | `copy_on_click` | Plotly clipboard payload behavior |
 | `options` | `OncoplotOptions` instance or mapping for visual controls |
+
+Categorical order controls apply to both Plotly and Matplotlib. If an explicit
+order is not supplied, pandas categorical dtype order is used when present;
+otherwise palette mapping order and then observed data order are used.
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    metadata_cols=["clinical_group"],
+    mutation_type_order=["Nonsense", "Missense", "Silent"],
+    metadata_category_orders={"clinical_group": ["low", "intermediate", "high"]},
+    tmb_type_order=["clonal", "subclonal"],
+)
+```
 
 ## `OncoplotResult`
 
@@ -166,6 +185,7 @@ print(prepared.tiles.head())
 | `tmb_sample_col`, `tmb_value_col`, `tmb_type_col` | resolved TMB sample, numeric value, and optional subtype columns |
 | `tmb_render_stacked`, `tmb_is_custom` | flags used by renderers to decide stacked TMB behavior |
 | `mutation_counts`, `tmb_totals`, `tmb_type_counts` | summary tables for testing, debugging, and downstream inspection |
+| `mutation_type_levels`, `tmb_type_levels` | resolved categorical order used by renderers |
 
 ## `identify_top_genes`
 

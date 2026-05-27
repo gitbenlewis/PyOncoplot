@@ -166,6 +166,129 @@ def test_metadata_sorting_and_tmb_preparation():
     assert prepared.metadata_tracks[0].levels == ["A", "B", "C"]
 
 
+def test_category_levels_follow_pandas_categorical_dtype_order():
+    data = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "gene": ["TP53", "TP53", "TP53"],
+            "type": pd.Categorical(
+                ["beta_type", "alpha_type", "gamma_type"],
+                categories=["gamma_type", "beta_type", "alpha_type", "unused_type"],
+                ordered=True,
+            ),
+        }
+    )
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "group": pd.Categorical(
+                ["late", "early", "middle"],
+                categories=["early", "middle", "late", "unused"],
+                ordered=True,
+            ),
+        }
+    )
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "tmb_type": pd.Categorical(
+                ["subclonal", "clonal", "subclonal"],
+                categories=["clonal", "subclonal", "unused"],
+                ordered=True,
+            ),
+            "mutations": [2, 5, 3],
+        }
+    )
+
+    prepared = prepare_oncoplot_data(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        tmb_data=tmb,
+        prepare_tmb=True,
+        show_all_samples=True,
+    )
+
+    assert prepared.mutation_type_levels == ["gamma_type", "beta_type", "alpha_type"]
+    assert prepared.mutation_type_order_source == "categorical"
+    assert prepared.metadata_tracks is not None
+    assert prepared.metadata_tracks[0].levels == ["early", "middle", "late"]
+    assert prepared.metadata_tracks[0].level_order_source == "categorical"
+    assert prepared.tmb_type_levels == ["clonal", "subclonal"]
+    assert prepared.tmb_type_order_source == "categorical"
+    assert list(prepared.tmb_type_counts.columns) == ["clonal", "subclonal"]
+
+
+def test_explicit_category_orders_prepend_present_levels_and_append_missing_observed_levels():
+    data = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "gene": ["TP53", "TP53", "TP53"],
+            "type": ["beta_type", "alpha_type", "gamma_type"],
+        }
+    )
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["B", "A", "C"]})
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "tmb_type": ["Beta", "Alpha", "Gamma"],
+            "mutations": [2, 5, 3],
+        }
+    )
+
+    prepared = prepare_oncoplot_data(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        mutation_type_order=["gamma_type", "beta_type", "unused_type"],
+        metadata_category_orders={"group": ["C", "B", "unused"]},
+        tmb_type_order=["Gamma", "Alpha", "unused"],
+        tmb_data=tmb,
+        prepare_tmb=True,
+        show_all_samples=True,
+    )
+
+    assert prepared.mutation_type_levels == ["gamma_type", "beta_type", "alpha_type"]
+    assert prepared.metadata_tracks is not None
+    assert prepared.metadata_tracks[0].levels == ["C", "B", "A"]
+    assert prepared.tmb_type_levels == ["Gamma", "Alpha", "Beta"]
+
+
+def test_explicit_category_orders_reject_duplicates():
+    with pytest.raises(ValueError, match="mutation_type_order"):
+        prepare_oncoplot_data(
+            mutation_df(),
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            mutation_type_order=["A", "A"],
+        )
+
+    with pytest.raises(ValueError, match="metadata_category_orders"):
+        prepare_oncoplot_data(
+            mutation_df(),
+            gene_col="gene",
+            sample_col="sample",
+            metadata=pd.DataFrame({"sample": ["S1"], "group": ["A"]}),
+            metadata_category_orders={"group": ["A", "A"]},
+        )
+
+    with pytest.raises(ValueError, match="tmb_type_order"):
+        prepare_oncoplot_data(
+            mutation_df(),
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            tmb_type_order=["A", "A"],
+        )
+
+
 def test_custom_tmb_sample_column_does_not_need_to_be_first():
     tmb = pd.DataFrame(
         {

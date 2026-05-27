@@ -61,11 +61,38 @@ oncoplot(
 Categorical palette names are case-sensitive. PyOncoplot first resolves names
 from `pyoncoplot.palettes`, such as `tol_colors` and `Iridescent`, then falls
 back to Matplotlib colormap names such as `"Dark2"`. Named palettes and color
-sequences assign colors in observed category order. Finite color lists wrap
+sequences assign colors in resolved category order. Finite color lists wrap
 around from the first color again when a track has more categories than colors.
 
 You can still pass explicit category mappings. Categorical levels not listed in
 an explicit metadata palette receive fallback colors.
+
+Category order controls which fallback color each level receives and how legend
+entries are ordered. Use pandas categorical dtype order or pass explicit order
+arguments:
+
+```python
+metadata["FAB_classification"] = pd.Categorical(
+    metadata["FAB_classification"],
+    categories=["M0", "M1", "M2"],
+    ordered=True,
+)
+
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    metadata_cols=["FAB_classification"],
+    metadata_category_orders={"FAB_classification": ["M2", "M1", "M0"]},
+)
+```
+
+Explicit order wins over pandas categorical dtype order. Levels not present in
+the displayed data are ignored, and observed levels missing from the explicit
+order are appended in observed order. If neither is supplied, explicit palette
+mapping key order is used before observed data order.
 
 For numeric metadata, `metadata_palette` can specify a true continuous colormap
 per column. Use a Matplotlib colormap name such as `"viridis"`, a PyOncoplot
@@ -136,6 +163,8 @@ Palette coverage for custom TMB categories is required only when stacked subtype
 bars are rendered with `log10_transform_tmb=False`. If those categories are not
 covered by `tmb_palette` or by the mutation palette fallback, `pyoncoplot`
 raises a clear error instead of drawing uncolored bars.
+Use `tmb_type_order` to control stacked TMB color assignment and legend order;
+use `mutation_type_order` for the main mutation tile legend.
 
 Default-generated mutation palettes use `OncoplotOptions.multi_hit_color` for
 `Multi_Hit`. An explicit `palette={"Multi_Hit": ...}` entry takes precedence.

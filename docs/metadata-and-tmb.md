@@ -97,6 +97,33 @@ options = OncoplotOptions(metadata_numeric_plot_type="bar")
 Use `"bar"` for continuous values where relative magnitude matters, such as age
 or follow-up days. Use `"heatmap"` for compact display.
 
+## Categorical Metadata Order
+
+Categorical metadata order controls fallback color assignment and legend order
+in both Plotly and Matplotlib. PyOncoplot respects pandas categorical dtype
+order, or you can pass `metadata_category_orders` directly:
+
+```python
+metadata["Subtype"] = pd.Categorical(
+    metadata["Subtype"],
+    categories=["Luminal", "Basal", "HER2"],
+    ordered=True,
+)
+
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    metadata_cols=["Subtype"],
+    metadata_category_orders={"Subtype": ["Basal", "HER2", "Luminal"]},
+)
+```
+
+Explicit order wins over dtype order. Unused levels are ignored, and observed
+levels missing from the explicit list are appended in observed order.
+
 ## TMB Inference
 
 When `draw_tmb_bar=True` and no `tmb_data` is supplied, TMB is inferred from the
@@ -145,3 +172,19 @@ bars to sample totals and emit a `UserWarning`. Custom TMB categories need
 `tmb_palette` coverage only when stacked subtype bars are
 rendered with `log10_transform_tmb=False`, unless they are already present in
 the mutation palette fallback.
+
+Use `tmb_type_order` to control typed TMB stack and legend order:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    draw_tmb_bar=True,
+    tmb_data=tmb,
+    tmb_palette={"clonal": "#222222", "subclonal": "#999999"},
+    tmb_type_order=["clonal", "subclonal"],
+    options=OncoplotOptions(log10_transform_tmb=False),
+)
+```

@@ -81,10 +81,13 @@ def categorical_metadata_palette(
 ) -> dict[str, Any]:
     if spec is None:
         return {}
-    if isinstance(spec, Mapping):
-        return {str(level): color for level, color in spec.items()}
-
     level_names = [str(level) for level in levels]
+    if isinstance(spec, Mapping):
+        supplied = {str(level): color for level, color in spec.items()}
+        if level_names:
+            return {level: supplied[level] for level in level_names if level in supplied}
+        return supplied
+
     colors = _coerce_categorical_colors(spec, column, len(level_names))
     if not level_names:
         return {}

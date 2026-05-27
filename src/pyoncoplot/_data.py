@@ -33,6 +33,7 @@ class MetadataTrackInfo:
     value_min: Optional[float] = None
     value_max: Optional[float] = None
     missing_samples: Optional[List[str]] = None
+    level_order_source: Optional[str] = None
 
 
 @dataclass
@@ -59,6 +60,10 @@ class PreparedOncoplotData:
     tmb_totals: Optional[pd.Series] = None
     tmb_type_counts: Optional[pd.DataFrame] = None
     metadata_tracks: Optional[List[MetadataTrackInfo]] = None
+    mutation_type_levels: Optional[List[str]] = None
+    mutation_type_order_source: Optional[str] = None
+    tmb_type_levels: Optional[List[str]] = None
+    tmb_type_order_source: Optional[str] = None
 
 
 def _is_dataframe(value: Any) -> bool:
@@ -71,6 +76,64 @@ def _empty_or_missing_mask(series: pd.Series) -> pd.Series:
 
 def _as_str_series(series: pd.Series) -> pd.Series:
     return series.astype("string").astype(object)
+
+
+def _observed_category_levels(values: Iterable[object]) -> List[str]:
+    series = pd.Series(list(values), dtype="object")
+    series = series[~series.isna()]
+    return [str(value) for value in pd.unique(series)]
+
+
+def _categorical_dtype_levels(series: Optional[pd.Series]) -> Optional[List[str]]:
+    if series is None or not isinstance(series.dtype, pd.CategoricalDtype):
+        return None
+    return [str(value) for value in series.cat.categories]
+
+
+def _coerce_category_order(order: Optional[Sequence[object]], label: str) -> Optional[List[str]]:
+    if order is None:
+        return None
+    if isinstance(order, (str, bytes, bytearray)):
+        raise TypeError(f"{label} must be a sequence of category values, not a string.")
+    levels = [str(value) for value in order]
+    duplicates = [level for level in unique_preserve_order(levels) if levels.count(level) > 1]
+    if duplicates:
+        raise ValueError(f"{label} cannot contain duplicate values: {', '.join(duplicates)}")
+    return levels
+
+
+def _coerce_metadata_category_orders(
+    orders: Optional[Mapping[str, Sequence[object]]],
+) -> dict[str, List[str]]:
+    if orders is None:
+        return {}
+    if not isinstance(orders, Mapping):
+        raise TypeError("metadata_category_orders must be a mapping of column name to category order.")
+    return {
+        str(column): _coerce_category_order(order, f"metadata_category_orders[{str(column)!r}]") or []
+        for column, order in orders.items()
+    }
+
+
+def _resolve_category_levels(
+    values: Iterable[object],
+    *,
+    explicit_order: Optional[Sequence[object]] = None,
+    categorical_order: Optional[Sequence[object]] = None,
+) -> tuple[List[str], str]:
+    observed = _observed_category_levels(values)
+    if not observed:
+        return [], "observed"
+
+    if explicit_order is not None:
+        priority = [str(value) for value in explicit_order]
+        return reorder_by_priority(observed, priority), "explicit"
+
+    if categorical_order is not None:
+        priority = [str(value) for value in categorical_order]
+        return reorder_by_priority(observed, priority), "categorical"
+
+    return observed, "observed"
 
 
 def check_valid_dataframe_columns(data: pd.DataFrame, columns: Sequence[str]) -> None:
@@ -419,7 +482,8 @@ def _prepare_tmb_data(
     sample_col: str,
     mutation_type_col: Optional[str],
     tmb_data: Optional[pd.DataFrame],
-) -> tuple[Optional[pd.DataFrame], Optional[str], Optional[str], Optional[str], bool]:
+) -> tuple[Optional[pd.DataFrame], Optional[str], Optional[str], Optional[str], bool, Optional[List[str]]]:
+    type_category_order = None
     if tmb_data is not None:
         if not _is_dataframe(tmb_data):
             raise TypeError("tmb_data must be a pandas DataFrame.")
@@ -439,6 +503,8 @@ def _prepare_tmb_data(
             raise ValueError("tmb_data sample column cannot contain duplicates when no type column is supplied.")
         type_candidates = [column for column in tmb_data.columns if column not in {sample_col, value_col}]
         type_col = type_candidates[0] if type_candidates else "__tmb_type"
+        if type_col in tmb_data.columns:
+            type_category_order = _categorical_dtype_levels(tmb_data[type_col])
         out = tmb_data.copy()
         out[sample_col] = _as_str_series(out[sample_col])
         if type_col not in out.columns:
@@ -467,7 +533,7 @@ def _prepare_tmb_data(
     out[sample_col] = pd.Categorical(out[sample_col].astype(str), categories=list(samples_to_show), ordered=True)
     out = out.sort_values(sample_col, kind="mergesort")
     render_stacked = not out[type_col].isna().all()
-    return out, sample_col, value_col, type_col, render_stacked
+    return out, sample_col, value_col, type_col, render_stacked, type_category_order
 
 
 def _custom_tmb_sample_ids(tmb_data: Optional[pd.DataFrame], sample_col: str) -> List[str]:
@@ -500,6 +566,7 @@ def _summarise_tmb(
     value_col: Optional[str],
     type_col: Optional[str],
     samples: Sequence[str],
+    type_levels: Optional[Sequence[str]] = None,
 ) -> tuple[Optional[pd.Series], Optional[pd.DataFrame]]:
     if tmb is None or sample_col is None or value_col is None:
         return None, None
@@ -523,6 +590,8 @@ def _summarise_tmb(
         .reindex(samples, fill_value=0)
         .astype(float)
     )
+    if type_levels is not None:
+        type_counts = type_counts.reindex(columns=list(type_levels), fill_value=0)
     return totals, type_counts
 
 
@@ -530,10 +599,12 @@ def _summarise_metadata_tracks(
     metadata: Optional[pd.DataFrame],
     metadata_cols: Optional[Sequence[str]],
     samples: Sequence[str],
+    metadata_category_orders: Optional[Mapping[str, Sequence[object]]] = None,
 ) -> Optional[List[MetadataTrackInfo]]:
     if metadata is None or not metadata_cols:
         return None
     metadata_by_sample = metadata.set_index("Sample")
+    explicit_orders = _coerce_metadata_category_orders(metadata_category_orders)
     tracks: List[MetadataTrackInfo] = []
     for column in metadata_cols:
         values = metadata_by_sample[column].reindex(samples)
@@ -544,18 +615,24 @@ def _summarise_metadata_tracks(
                     column=str(column),
                     kind="numeric",
                     levels=[],
+                    level_order_source=None,
                     value_min=float(values.min(skipna=True)) if values.notna().any() else None,
                     value_max=float(values.max(skipna=True)) if values.notna().any() else None,
                     missing_samples=missing_samples,
                 )
             )
             continue
-        levels = [str(value) for value in pd.unique(values.dropna())]
+        levels, level_order_source = _resolve_category_levels(
+            values,
+            explicit_order=explicit_orders.get(str(column)),
+            categorical_order=_categorical_dtype_levels(values),
+        )
         tracks.append(
             MetadataTrackInfo(
                 column=str(column),
                 kind="categorical",
                 levels=levels,
+                level_order_source=level_order_source,
                 missing_samples=missing_samples,
             )
         )
@@ -585,6 +662,9 @@ def prepare_oncoplot_data(
     metadata_sort_cols: Optional[Sequence[str]] = None,
     metadata_sort_desc: Any = True,
     metadata_sort_by: Any = "frequency",
+    mutation_type_order: Optional[Sequence[object]] = None,
+    metadata_category_orders: Optional[Mapping[str, Sequence[object]]] = None,
+    tmb_type_order: Optional[Sequence[object]] = None,
     tmb_data: Optional[pd.DataFrame] = None,
     prepare_tmb: bool = False,
     verbose: bool = False,
@@ -598,6 +678,15 @@ def prepare_oncoplot_data(
         raise ValueError("total_samples must be one of: any_mutations, all, oncoplot.")
     if sample_order is not None and metadata_sort_cols is not None:
         raise ValueError("Please specify either sample_order or metadata_sort_cols, not both.")
+
+    mutation_type_explicit_order = _coerce_category_order(mutation_type_order, "mutation_type_order")
+    metadata_category_orders = _coerce_metadata_category_orders(metadata_category_orders)
+    tmb_type_explicit_order = _coerce_category_order(tmb_type_order, "tmb_type_order")
+    mutation_type_categorical_order = (
+        _categorical_dtype_levels(data[mutation_type_col])
+        if _is_dataframe(data) and mutation_type_col is not None and mutation_type_col in data.columns
+        else None
+    )
 
     data = _validate_mutation_inputs(data, gene_col, sample_col, mutation_type_col, tooltip_col)
     metadata = _validate_metadata(metadata, metadata_sample_col)
@@ -681,6 +770,15 @@ def prepare_oncoplot_data(
     tiles["Sample"] = pd.Categorical(tiles["Sample"], categories=samples_to_show, ordered=True)
     tiles["Gene"] = pd.Categorical(tiles["Gene"], categories=genes, ordered=True)
     tiles = tiles.sort_values(["Gene", "Sample"], kind="mergesort")
+    if mutation_type_col is None:
+        mutation_type_levels: List[str] = []
+        mutation_type_order_source = None
+    else:
+        mutation_type_levels, mutation_type_order_source = _resolve_category_levels(
+            tiles["MutationType"] if not tiles.empty else [],
+            explicit_order=mutation_type_explicit_order,
+            categorical_order=mutation_type_categorical_order,
+        )
 
     pathway_by_gene, pathway_groups = _pathway_summary(genes, pathway_df)
     if pathway_by_gene is not None and not tiles.empty:
@@ -709,15 +807,40 @@ def prepare_oncoplot_data(
         n_total_samples = len(pd.unique(tiles["Sample"].astype(str))) if not tiles.empty else 0
 
     tmb, tmb_sample_col, tmb_value_col, tmb_type_col, tmb_render_stacked = (None, None, None, None, False)
+    tmb_type_category_order = None
+    tmb_type_levels: List[str] = []
+    tmb_type_order_source = None
     if prepare_tmb:
-        tmb, tmb_sample_col, tmb_value_col, tmb_type_col, tmb_render_stacked = _prepare_tmb_data(
+        (
+            tmb,
+            tmb_sample_col,
+            tmb_value_col,
+            tmb_type_col,
+            tmb_render_stacked,
+            tmb_type_category_order,
+        ) = _prepare_tmb_data(
             data=data,
             samples_to_show=samples_to_show,
             sample_col=sample_col,
             mutation_type_col=mutation_type_col,
             tmb_data=tmb_data,
         )
-    tmb_totals, tmb_type_counts = _summarise_tmb(tmb, tmb_sample_col, tmb_value_col, tmb_type_col, samples_to_show)
+        if tmb_data is None:
+            tmb_type_category_order = mutation_type_categorical_order
+        if tmb is not None and tmb_type_col is not None and not tmb[tmb_type_col].isna().all():
+            tmb_type_levels, tmb_type_order_source = _resolve_category_levels(
+                tmb[tmb_type_col],
+                explicit_order=tmb_type_explicit_order,
+                categorical_order=tmb_type_category_order,
+            )
+    tmb_totals, tmb_type_counts = _summarise_tmb(
+        tmb,
+        tmb_sample_col,
+        tmb_value_col,
+        tmb_type_col,
+        samples_to_show,
+        tmb_type_levels,
+    )
 
     return PreparedOncoplotData(
         tiles=tiles.reset_index(drop=True),
@@ -739,5 +862,14 @@ def prepare_oncoplot_data(
         mutation_counts=_summarise_mutation_counts(tiles),
         tmb_totals=tmb_totals,
         tmb_type_counts=tmb_type_counts,
-        metadata_tracks=_summarise_metadata_tracks(metadata_out, metadata_cols_out, samples_to_show),
+        metadata_tracks=_summarise_metadata_tracks(
+            metadata_out,
+            metadata_cols_out,
+            samples_to_show,
+            metadata_category_orders,
+        ),
+        mutation_type_levels=mutation_type_levels,
+        mutation_type_order_source=mutation_type_order_source,
+        tmb_type_levels=tmb_type_levels,
+        tmb_type_order_source=tmb_type_order_source,
     )

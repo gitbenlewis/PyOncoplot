@@ -1002,6 +1002,226 @@ def test_metadata_fallback_palette_wraps_for_many_categories():
     assert legend_colors["Group: C3"] == "#222222"
 
 
+def test_metadata_categorical_order_controls_fallback_colors_and_legends_in_both_backends():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "group": pd.Categorical(
+                ["B", "A", "B"],
+                categories=["A", "B", "C"],
+                ordered=True,
+            ),
+        }
+    )
+    options = OncoplotOptions(
+        metadata_default_colors=("#111111", "#222222"),
+        mutation_legend_position="none",
+    )
+
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="plotly",
+        options=options,
+    )
+    plotly_legend = [
+        trace
+        for trace in plotly_result.figure.data
+        if str(getattr(trace, "legendgroup", "")).startswith("metadata:")
+    ]
+    assert [trace.name for trace in plotly_legend] == ["Group: A", "Group: B"]
+    assert [trace.marker.color for trace in plotly_legend] == ["#111111", "#222222"]
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="matplotlib",
+        options=options,
+    )
+    metadata_legend = next(legend for legend in matplotlib_result.figure.legends if legend.get_title().get_text() == "Group")
+    assert [text.get_text() for text in metadata_legend.get_texts()] == ["A", "B"]
+    legend_handles = getattr(metadata_legend, "legend_handles", None)
+    if legend_handles is None:
+        legend_handles = metadata_legend.legendHandles
+    assert [to_hex(handle.get_facecolor()).lower() for handle in legend_handles] == [
+        "#111111",
+        "#222222",
+    ]
+
+
+def test_metadata_palette_mapping_order_is_used_when_no_explicit_or_dtype_order():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["B", "A", "B"]})
+    metadata_palette = {"group": {"A": "#111111", "B": "#222222"}}
+
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        metadata_palette=metadata_palette,
+        backend="plotly",
+        options=OncoplotOptions(mutation_legend_position="none"),
+    )
+
+    metadata_legend = [
+        trace
+        for trace in result.figure.data
+        if str(getattr(trace, "legendgroup", "")).startswith("metadata:")
+    ]
+    assert [trace.name for trace in metadata_legend] == ["Group: A", "Group: B"]
+    assert [trace.marker.color for trace in metadata_legend] == ["#111111", "#222222"]
+
+
+def test_mutation_type_order_controls_legend_order_in_both_backends():
+    data = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "gene": ["TP53", "TP53", "TP53"],
+            "type": ["beta_type", "alpha_type", "gamma_type"],
+        }
+    )
+    order = ["gamma_type", "alpha_type"]
+
+    plotly_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        mutation_type_order=order,
+        backend="plotly",
+    )
+    mutation_traces = [
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(trace, "customdata", None)
+        and isinstance(trace.customdata[0], dict)
+        and trace.customdata[0].get("role") == "main_tile"
+    ]
+    assert [trace.name for trace in mutation_traces] == ["Gamma Type", "Alpha Type", "Beta Type"]
+    assert [trace.marker.color for trace in mutation_traces] == ["#A6CEE3", "#1F78B4", "#B2DF8A"]
+
+    matplotlib_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        mutation_type_order=order,
+        backend="matplotlib",
+        options=OncoplotOptions(mutation_legend_position="right"),
+    )
+    mutation_legend = next(
+        legend for legend in matplotlib_result.figure.legends if legend.get_title().get_text() == "Mutation Type"
+    )
+    assert [text.get_text() for text in mutation_legend.get_texts()] == [
+        "Gamma Type",
+        "Alpha Type",
+        "Beta Type",
+    ]
+
+
+def test_mutation_palette_mapping_order_is_used_when_no_explicit_or_dtype_order():
+    data = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "gene": ["TP53", "TP53", "TP53"],
+            "type": ["beta_type", "alpha_type", "gamma_type"],
+        }
+    )
+    palette = {
+        "gamma_type": "#333333",
+        "alpha_type": "#111111",
+        "beta_type": "#222222",
+    }
+
+    plotly_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        palette=palette,
+        backend="plotly",
+    )
+    mutation_traces = [
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(trace, "customdata", None)
+        and isinstance(trace.customdata[0], dict)
+        and trace.customdata[0].get("role") == "main_tile"
+    ]
+    assert [trace.name for trace in mutation_traces] == ["Gamma Type", "Alpha Type", "Beta Type"]
+
+    matplotlib_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        palette=palette,
+        backend="matplotlib",
+        options=OncoplotOptions(mutation_legend_position="right"),
+    )
+    mutation_legend = next(
+        legend for legend in matplotlib_result.figure.legends if legend.get_title().get_text() == "Mutation Type"
+    )
+    assert [text.get_text() for text in mutation_legend.get_texts()] == [
+        "Gamma Type",
+        "Alpha Type",
+        "Beta Type",
+    ]
+
+
+def test_tmb_type_order_controls_stacked_trace_and_legend_order():
+    tmb = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "tmb_type": ["Beta", "Alpha", "Beta"],
+            "mutations": [2, 5, 3],
+        }
+    )
+    tmb_palette = {"Beta": "#222222", "Alpha": "#111111"}
+
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        tmb_palette=tmb_palette,
+        tmb_type_order=["Alpha", "Beta"],
+        backend="plotly",
+        options=OncoplotOptions(log10_transform_tmb=False, mutation_legend_position="right"),
+    )
+    tmb_traces = [
+        trace for trace in plotly_result.figure.data if getattr(trace, "legendgroup", "") == "tmb"
+    ]
+    assert [trace.name for trace in tmb_traces] == ["TMB: Alpha", "TMB: Beta"]
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_tmb_bar=True,
+        tmb_data=tmb,
+        tmb_palette=tmb_palette,
+        tmb_type_order=["Alpha", "Beta"],
+        backend="matplotlib",
+        options=OncoplotOptions(log10_transform_tmb=False, mutation_legend_position="right"),
+    )
+    tmb_legend = next(legend for legend in matplotlib_result.figure.legends if legend.get_title().get_text() == "TMB Type")
+    assert [text.get_text() for text in tmb_legend.get_texts()] == ["Alpha", "Beta"]
+
+
 def test_categorical_metadata_palette_string_names_render_in_both_backends():
     metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
     expected_a = to_hex(tol_colors[0]).lower()
