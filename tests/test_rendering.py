@@ -14,6 +14,7 @@ def small_df():
             "sample": ["S1", "S1", "S2", "S3"],
             "gene": ["TP53", "EGFR", "TP53", "PTEN"],
             "type": ["Missense_Mutation", "Frame_Shift_Del", "Nonsense_Mutation", "Splice_Site"],
+            "vaf": [0.34, 0.21, 0.67, 0.48],
         }
     )
 
@@ -36,6 +37,92 @@ def test_plotly_render_and_html_clipboard():
     assert "plotly" in html.lower()
 
 
+def test_plotly_continuous_variant_heatmap_and_gene_bar_legend():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_col="vaf",
+        draw_gene_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(width=700, height=450),
+    )
+
+    main_heatmap = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+    )
+    gene_bar_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "bar" and trace.orientation == "h"
+    ]
+
+    assert main_heatmap.showscale is True
+    tp53_s1_payload = next(
+        payload
+        for row in main_heatmap.customdata
+        for payload in row
+        if payload.get("sample") == "S1" and payload.get("gene") == "TP53"
+    )
+    assert tp53_s1_payload["variant_value"] == pytest.approx(0.34)
+    assert "Vaf" in main_heatmap.colorbar.title.text
+    assert gene_bar_traces
+    assert any(trace.showlegend is True for trace in gene_bar_traces)
+
+
+def test_plotly_gene_bar_percent_mode_normalizes_each_gene():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_gene_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(width=700, height=450, gene_bar_mode="percent"),
+    )
+    gene_bar_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "bar" and trace.orientation == "h"
+    ]
+    totals_by_gene = {gene: 0.0 for gene in result.prepared_data.genes}
+    for trace in gene_bar_traces:
+        for gene, value in zip(trace.y, trace.x):
+            totals_by_gene[str(gene)] += float(value)
+
+    assert all(total == pytest.approx(100.0) for total in totals_by_gene.values())
+    assert result.figure.layout.xaxis2.title.text == "Mutation Type (%)"
+
+
+def test_plotly_gene_bar_count_mode_uses_sample_counts_by_default():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_gene_bar=True,
+        backend="plotly",
+        options=OncoplotOptions(width=700, height=450),
+    )
+    gene_bar_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "bar" and trace.orientation == "h"
+    ]
+    totals_by_gene = {gene: 0.0 for gene in result.prepared_data.genes}
+    for trace in gene_bar_traces:
+        for gene, value in zip(trace.y, trace.x):
+            totals_by_gene[str(gene)] += float(value)
+
+    assert totals_by_gene == {"EGFR": 1.0, "PTEN": 1.0, "TP53": 2.0}
+    assert result.figure.layout.xaxis2.title.text == "Samples"
+
+
 def test_matplotlib_render_and_save(tmp_path):
     result = oncoplot(
         small_df(),
@@ -51,6 +138,45 @@ def test_matplotlib_render_and_save(tmp_path):
     result.save(str(output), dpi=90)
     assert output.exists()
     assert output.stat().st_size > 0
+
+
+def test_matplotlib_continuous_variant_heatmap_and_save(tmp_path):
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_col="vaf",
+        backend="matplotlib",
+        options=OncoplotOptions(width=700, height=450),
+    )
+    output = tmp_path / "continuous-oncoplot.png"
+    result.save(str(output), dpi=90)
+
+    assert output.exists()
+    assert output.stat().st_size > 0
+    assert len(result.figure.axes) >= 2
+    assert any(axis.get_ylabel() == "Vaf" for axis in result.figure.axes)
+
+
+def test_matplotlib_gene_bar_percent_mode_normalizes_each_gene():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        draw_gene_bar=True,
+        backend="matplotlib",
+        options=OncoplotOptions(width=700, height=450, gene_bar_mode="percent"),
+    )
+    gene_bar_axis = result.figure.axes[1]
+    widths_by_y = {}
+    for patch in gene_bar_axis.patches:
+        y_key = round(patch.get_y(), 3)
+        widths_by_y[y_key] = widths_by_y.get(y_key, 0.0) + float(patch.get_width())
+
+    assert all(width == pytest.approx(100.0) for width in widths_by_y.values())
+    assert gene_bar_axis.get_xlabel() == "Mutation Type (%)"
 
 
 def test_matplotlib_gallery_features_smoke():

@@ -22,6 +22,7 @@ Required mutation table fields:
 | sample identifier | `sample_col` | yes | cannot be missing or empty |
 | gene identifier | `gene_col` | yes | cannot be missing or empty |
 | mutation type | `mutation_type_col` | no | required for mutation-specific colors |
+| variant value | `variant_value_col` | no | numeric value used for continuous main-grid coloring |
 | tooltip text | `tooltip_col` | no | defaults to `sample_col` when omitted |
 
 ## Example Mutation Table
@@ -46,6 +47,11 @@ cell, even if the repeated rows have the same mutation type.
 
 The tooltip content is aggregated so the original mutation-level evidence is not
 lost in interactive output.
+
+When `variant_value_col` is supplied, collapsed sample/gene tiles also aggregate
+that numeric column. Use `variant_value_agg` to choose `"max"` (default),
+`"mean"`, `"median"`, or `"min"`. Missing values in displayed variants are
+rejected so heatmap colors are deterministic.
 
 ## Gene Selection
 

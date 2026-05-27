@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 import warnings
 from dataclasses import dataclass
-from typing import Any, List, Mapping, Optional, Sequence
+from typing import Any, Iterable, List, Mapping, Optional, Sequence
 
 import numpy as np
 import pandas as pd
@@ -64,6 +64,10 @@ class PreparedOncoplotData:
     mutation_type_order_source: Optional[str] = None
     tmb_type_levels: Optional[List[str]] = None
     tmb_type_order_source: Optional[str] = None
+    variant_value_col: Optional[str] = None
+    variant_value_agg: Optional[str] = None
+    variant_value_min: Optional[float] = None
+    variant_value_max: Optional[float] = None
 
 
 def _is_dataframe(value: Any) -> bool:
@@ -188,6 +192,22 @@ def _validate_mutation_inputs(
                 f"Examples: {examples}"
             )
     return out
+
+
+def _coerce_variant_value_agg(variant_value_agg: str) -> str:
+    allowed = {"max", "mean", "median", "min"}
+    agg = str(variant_value_agg).lower()
+    if agg not in allowed:
+        raise ValueError("variant_value_agg must be one of: max, mean, median, min.")
+    return agg
+
+
+def _validate_variant_value_column(data: pd.DataFrame, variant_value_col: Optional[str]) -> None:
+    if variant_value_col is None:
+        return
+    check_valid_dataframe_columns(data, [variant_value_col])
+    if not pd.api.types.is_numeric_dtype(data[variant_value_col]):
+        raise ValueError(f"variant_value_col must reference a numeric column: {variant_value_col}")
 
 
 def _validate_metadata(
@@ -428,6 +448,8 @@ def _collapse_mutations(
     sample_col: str,
     mutation_type_col: Optional[str],
     tooltip_col: str,
+    variant_value_col: Optional[str],
+    variant_value_agg: str,
 ) -> pd.DataFrame:
     rows = []
     for (sample, gene), group in data.groupby([sample_col, gene_col], sort=False, dropna=False):
@@ -443,16 +465,23 @@ def _collapse_mutations(
         tooltip = "<br>".join(tooltip_values)
         if tooltip_col != sample_col:
             tooltip = f"<strong>{sample}</strong><br>{tooltip}"
+        variant_value = np.nan
+        if variant_value_col is not None:
+            variant_value = float(getattr(group[variant_value_col], variant_value_agg)())
         rows.append(
             {
                 "Sample": str(sample),
                 "Gene": str(gene),
                 "MutationType": mutation_type,
                 "MutationCount": mutation_count,
+                "VariantValue": variant_value,
                 "Tooltip": tooltip,
             }
         )
-    return pd.DataFrame(rows, columns=["Sample", "Gene", "MutationType", "MutationCount", "Tooltip"])
+    return pd.DataFrame(
+        rows,
+        columns=["Sample", "Gene", "MutationType", "MutationCount", "VariantValue", "Tooltip"],
+    )
 
 
 def _metadata_sort_order(
@@ -683,6 +712,8 @@ def prepare_oncoplot_data(
     tmb_type_order: Optional[Sequence[object]] = None,
     tmb_data: Optional[pd.DataFrame] = None,
     prepare_tmb: bool = False,
+    variant_value_col: Optional[str] = None,
+    variant_value_agg: str = "max",
     verbose: bool = False,
 ) -> PreparedOncoplotData:
     """Validate and transform mutation-level data into oncoplot-ready tables."""
@@ -698,6 +729,7 @@ def prepare_oncoplot_data(
     mutation_type_explicit_order = _coerce_category_order(mutation_type_order, "mutation_type_order")
     metadata_category_orders = _coerce_metadata_category_orders(metadata_category_orders)
     tmb_type_explicit_order = _coerce_category_order(tmb_type_order, "tmb_type_order")
+    variant_value_agg = _coerce_variant_value_agg(variant_value_agg)
     mutation_type_categorical_order = (
         _categorical_dtype_levels(data[mutation_type_col])
         if _is_dataframe(data) and mutation_type_col is not None and mutation_type_col in data.columns
@@ -705,6 +737,7 @@ def prepare_oncoplot_data(
     )
 
     data = _validate_mutation_inputs(data, gene_col, sample_col, mutation_type_col, tooltip_col)
+    _validate_variant_value_column(data, variant_value_col)
     if metadata is None and metadata_cols is not None:
         metadata = _derive_metadata_from_data(data, metadata_sample_col, metadata_cols)
     metadata = _validate_metadata(metadata, metadata_sample_col)
@@ -731,11 +764,13 @@ def prepare_oncoplot_data(
         )
 
     selected_rows = data[data[gene_col].isin(genes)].copy()
+    if variant_value_col is not None and selected_rows[variant_value_col].isna().any():
+        raise ValueError(f"variant_value_col cannot contain missing values in displayed variants: {variant_value_col}")
     rank_values = list(range(len(genes), 0, -1))
     if selected_rows.empty:
         sample_scores = pd.Series(dtype="int64")
         samples_with_selected_mutations: List[str] = []
-        tiles = pd.DataFrame(columns=["Sample", "Gene", "MutationType", "MutationCount", "Tooltip"])
+        tiles = pd.DataFrame(columns=["Sample", "Gene", "MutationType", "MutationCount", "VariantValue", "Tooltip"])
     else:
         sample_scores = selected_rows.groupby(sample_col)[gene_col].apply(
             lambda values: score_sample_by_gene_rank(values.astype(str), genes, rank_values)
@@ -743,7 +778,15 @@ def prepare_oncoplot_data(
         samples_with_selected_mutations = (
             sample_scores.sort_values(ascending=False, kind="mergesort").index.astype(str).tolist()
         )
-        tiles = _collapse_mutations(selected_rows, gene_col, sample_col, mutation_type_col, tooltip_col)
+        tiles = _collapse_mutations(
+            selected_rows,
+            gene_col,
+            sample_col,
+            mutation_type_col,
+            tooltip_col,
+            variant_value_col,
+            variant_value_agg,
+        )
 
     samples_with_any_mutations = unique_preserve_order(data[sample_col].astype(str))
     samples_with_metadata = (
@@ -859,6 +902,12 @@ def prepare_oncoplot_data(
         samples_to_show,
         tmb_type_levels,
     )
+    variant_value_min = None
+    variant_value_max = None
+    if variant_value_col is not None and not tiles.empty:
+        variant_values = tiles["VariantValue"].astype(float)
+        variant_value_min = float(variant_values.min())
+        variant_value_max = float(variant_values.max())
 
     return PreparedOncoplotData(
         tiles=tiles.reset_index(drop=True),
@@ -890,4 +939,8 @@ def prepare_oncoplot_data(
         mutation_type_order_source=mutation_type_order_source,
         tmb_type_levels=tmb_type_levels,
         tmb_type_order_source=tmb_type_order_source,
+        variant_value_col=variant_value_col,
+        variant_value_agg=variant_value_agg if variant_value_col is not None else None,
+        variant_value_min=variant_value_min,
+        variant_value_max=variant_value_max,
     )

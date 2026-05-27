@@ -80,6 +80,25 @@ Plotly backend screenshot:
 
 ![Pyoncoplot Plotly backend example](python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_7.png)
 
+Color the main grid by a continuous variant-level value, such as VAF, while
+keeping mutation-type stacks in the optional gene bar:
+
+```python
+mutations["vaf"] = [0.32, 0.18, 0.61, 0.44]
+
+result = oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    variant_value_col="vaf",
+    variant_value_agg="max",
+    variant_value_palette="viridis",
+    draw_gene_bar=True,
+    backend="plotly",
+)
+```
+
 The same call can be made from a reusable parameter dictionary; explicit
 keywords override dictionary values:
 

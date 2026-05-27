@@ -110,6 +110,7 @@ Matplotlib/static-layout oriented.
 | --- | --- | --- |
 | `log10_transform_tmb` | `True` | log-transform TMB values |
 | `scientific_tmb` | `False` | use scientific TMB labels where supported |
+| `gene_bar_mode` | `"counts"` | `"counts"` for recurrence-width bars or `"percent"` for 100% mutation-type composition bars |
 | `show_gene_bar_labels` | `False` | show recurrence percentage labels |
 | `gene_bar_label_round` | `0` | rounding for recurrence labels |
 | `gene_bar_label_padding` | `0.24` | extra x-axis room for gene-bar percentage labels |
@@ -119,6 +120,8 @@ Matplotlib/static-layout oriented.
 
 In Plotly, `gene_bar_scale_n_breaks` is passed through as an `nticks` request
 when `gene_bar_scale_breaks` is not supplied.
+`gene_bar_mode="percent"` keeps the same mutation-type colors but normalizes
+each gene's stacked bar to 100%.
 
 ## Pathways
 

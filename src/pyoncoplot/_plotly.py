@@ -12,6 +12,7 @@ import pandas as pd
 from ._data import PreparedOncoplotData
 from ._metadata_colors import (
     categorical_metadata_palette,
+    continuous_colorscale,
     metadata_palette_spec,
     numeric_metadata_colorscale,
     numeric_metadata_colormap_spec,
@@ -27,6 +28,7 @@ PLOTLY_RENDER_PARAM_KEYS = {
     "palette",
     "tmb_palette",
     "metadata_palette",
+    "variant_value_palette",
     "options",
     "draw_gene_bar",
     "draw_tmb_bar",
@@ -36,6 +38,7 @@ PLOTLY_RENDER_PARAM_KEYS = {
 PLOTLY_RENDER_DEFAULTS: dict[str, Any] = {
     "tmb_palette": None,
     "metadata_palette": None,
+    "variant_value_palette": "viridis",
     "draw_gene_bar": False,
     "draw_tmb_bar": False,
     "copy_on_click": "sample",
@@ -136,6 +139,7 @@ def _should_show_tmb_legend(
     render_stacked: bool,
     mutation_palette: Optional[Mapping[str, str]] = None,
     tmb_palette: Optional[Mapping[str, str]] = None,
+    mutation_legend_visible: bool = True,
 ) -> bool:
     show = bool(
         prepared.tmb_is_custom
@@ -146,6 +150,8 @@ def _should_show_tmb_legend(
     if not show or mutation_palette is None:
         return show
     if prepared.tmb is None or prepared.tmb_type_col is None or prepared.tiles.empty:
+        return show
+    if not mutation_legend_visible:
         return show
 
     tmb_categories = prepared.tmb_type_levels or [
@@ -257,6 +263,7 @@ def _add_tmb_bar(
     palette: Mapping[str, str],
     tmb_palette: Optional[Mapping[str, str]],
     options: OncoplotOptions,
+    mutation_legend_visible: bool = True,
 ):
     go, _make_subplots = _require_plotly()
     tmb = prepared.tmb
@@ -272,7 +279,14 @@ def _add_tmb_bar(
     value_col = prepared.tmb_value_col
     type_col = prepared.tmb_type_col
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb
-    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked, palette, tmb_palette)
+    show_tmb_legend = _should_show_tmb_legend(
+        prepared,
+        options,
+        render_stacked,
+        palette,
+        tmb_palette,
+        mutation_legend_visible=mutation_legend_visible,
+    )
     if prepared.tmb_render_stacked and options.log10_transform_tmb:
         warnings.warn(
             "log10_transform_tmb=True disables stacked TMB rendering; totals are rendered instead.",
@@ -501,6 +515,78 @@ def _add_numeric_metadata_colorbars(
         )
 
 
+def _variant_value_hover_text(row: pd.Series, title: str) -> str:
+    return f"{row['Tooltip']}<br><strong>{title}</strong>: {float(row['VariantValue']):g}"
+
+
+def _add_continuous_main_tiles(
+    fig,
+    prepared: PreparedOncoplotData,
+    row: int,
+    col: int,
+    variant_value_palette: object,
+    options: OncoplotOptions,
+    copy_on_click: str,
+) -> None:
+    go, _make_subplots = _require_plotly()
+    sample_index = {sample: index for index, sample in enumerate(prepared.samples)}
+    gene_index = {gene: index for index, gene in enumerate(prepared.genes)}
+    z = np.full((len(prepared.genes), len(prepared.samples)), np.nan)
+    text = [["" for _sample in prepared.samples] for _gene in prepared.genes]
+    customdata = [
+        [_custom_payload(role="main_tile", sample=str(sample), gene=str(gene)) for sample in prepared.samples]
+        for gene in prepared.genes
+    ]
+    title = _legend_title(prepared.variant_value_col, options)
+
+    for _index, row_value in prepared.tiles.iterrows():
+        sample = str(row_value["Sample"])
+        gene = str(row_value["Gene"])
+        if sample not in sample_index or gene not in gene_index:
+            continue
+        y = gene_index[gene]
+        x = sample_index[sample]
+        value = float(row_value["VariantValue"])
+        z[y, x] = value
+        text[y][x] = _variant_value_hover_text(row_value, title)
+        customdata[y][x] = _custom_payload(
+            role="main_tile",
+            sample=sample,
+            gene=gene,
+            mutation_type="" if pd.isna(row_value["MutationType"]) else str(row_value["MutationType"]),
+            variant_value=value,
+            copy_value=_copy_value(row_value, copy_on_click),
+        )
+
+    min_value = prepared.variant_value_min if prepared.variant_value_min is not None else 0.0
+    max_value = prepared.variant_value_max if prepared.variant_value_max is not None else 1.0
+    cmin, cmax, tickvals, ticktext = _numeric_colorbar_bounds(float(min_value), float(max_value))
+    show_colorbar = options.show_legend and options.mutation_legend_position != "none"
+    fig.add_trace(
+        go.Heatmap(
+            x=prepared.samples,
+            y=prepared.genes,
+            z=z,
+            text=text,
+            customdata=customdata,
+            hovertemplate="%{text}<extra></extra>",
+            hoverongaps=False,
+            colorscale=continuous_colorscale(variant_value_palette, prepared.variant_value_col),
+            zmin=cmin,
+            zmax=cmax,
+            showscale=show_colorbar,
+            colorbar=dict(
+                title=dict(text=title),
+                tickvals=tickvals,
+                ticktext=ticktext,
+                tickfont=_font_options(options.font_size_metadata, options),
+            ),
+        ),
+        row=row,
+        col=col,
+    )
+
+
 def _add_metadata_strip(
     fig,
     prepared: PreparedOncoplotData,
@@ -653,6 +739,7 @@ def _add_main_tiles(
     row: int,
     col: int,
     palette: Mapping[str, str],
+    variant_value_palette: object,
     options: OncoplotOptions,
     copy_on_click: str,
 ):
@@ -673,6 +760,66 @@ def _add_main_tiles(
     )
 
     tiles = prepared.tiles
+    if prepared.variant_value_col is not None:
+        if not tiles.empty:
+            _add_continuous_main_tiles(
+                fig,
+                prepared,
+                row,
+                col,
+                variant_value_palette,
+                options,
+                copy_on_click,
+            )
+        fig.update_yaxes(**_gene_axis_options(prepared), row=row, col=col)
+        fig.update_yaxes(tickfont=_font_options(options.font_size_genes, options), row=row, col=col)
+        fig.update_xaxes(
+            **_sample_axis_options(prepared),
+            tickfont=_font_options(options.font_size_samples, options),
+            row=row,
+            col=col,
+        )
+        if not options.show_sample_ids:
+            fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)
+        else:
+            fig.update_xaxes(side=options.sample_id_position, tickangle=options.sample_id_angle, row=row, col=col)
+        if options.show_x_label:
+            fig.update_xaxes(
+                title_text=options.x_label,
+                title_font=_font_options(options.font_size_x_label, options),
+                row=row,
+                col=col,
+            )
+        if options.show_y_label:
+            fig.update_yaxes(
+                title_text=options.y_label,
+                title_font=_font_options(options.font_size_y_label, options),
+                row=row,
+                col=col,
+            )
+        if prepared.pathway_groups:
+            xref = f"x{'' if row == 1 and col == 1 else row}"
+            yref = f"y{'' if row == 1 and col == 1 else row}"
+            for group in prepared.pathway_groups:
+                center_gene = group.genes[len(group.genes) // 2]
+                fig.add_annotation(
+                    xref=xref,
+                    yref=yref,
+                    x=prepared.samples[0] if prepared.samples else 0,
+                    y=center_gene,
+                    text=group.name,
+                    showarrow=False,
+                    xanchor="right",
+                    yanchor="middle",
+                    textangle=options.pathway_text_angle,
+                    xshift=-16,
+                    font=dict(color=options.pathway_text_color, size=10),
+                    bgcolor=options.pathway_background_color,
+                    bordercolor=options.pathway_outline_color,
+                    borderwidth=1,
+                )
+        return
+
     if not tiles.empty:
         mutation_values = _mutation_levels(prepared, palette)
         for mutation_type in mutation_values:
@@ -801,6 +948,7 @@ def _add_gene_bar(
     col: int,
     palette: Mapping[str, str],
     options: OncoplotOptions,
+    show_gene_bar_legend: bool = False,
 ):
     go, _make_subplots = _require_plotly()
     tiles = prepared.tiles
@@ -819,6 +967,10 @@ def _add_gene_bar(
 
     for mutation_type, group in mutation_groups:
         counts = group.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0)
+        if options.gene_bar_mode == "percent":
+            values = (counts / total_counts.replace(0, np.nan) * 100).fillna(0.0)
+        else:
+            values = counts
         mutation_label = _legend_label(mutation_type, options)
         hover = [
             "Total Samples Mutated: "
@@ -831,7 +983,7 @@ def _add_gene_bar(
         color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
         fig.add_trace(
             go.Bar(
-                x=counts.values,
+                x=values.values,
                 y=prepared.genes,
                 orientation="h",
                 width=1,
@@ -847,7 +999,8 @@ def _add_gene_bar(
                     for gene in prepared.genes
                 ],
                 hovertemplate="%{hovertext}<extra></extra>",
-                showlegend=False,
+                showlegend=show_gene_bar_legend,
+                legendgroup=f"gene_bar:{mutation_label}",
                 name=_legend_label(mutation_type, options),
                 selected=dict(marker=dict(opacity=1.0)),
                 unselected=dict(marker=dict(opacity=0.18)),
@@ -857,12 +1010,12 @@ def _add_gene_bar(
         )
     fig.update_layout(barmode="stack")
     if options.show_gene_bar_labels:
-        max_total = max(float(total_counts.max()), 1.0)
-        label_x = (
-            total_counts.astype(float)
-            + max_total * options.gene_bar_label_padding
-            + options.gene_bar_label_nudge
-        )
+        max_total = 100.0 if options.gene_bar_mode == "percent" else max(float(total_counts.max()), 1.0)
+        if options.gene_bar_mode == "percent":
+            label_x = pd.Series(max_total, index=total_counts.index)
+        else:
+            label_x = total_counts.astype(float)
+        label_x = label_x + max_total * options.gene_bar_label_padding + options.gene_bar_label_nudge
         fig.add_trace(
             go.Scatter(
                 x=label_x.values,
@@ -881,6 +1034,8 @@ def _add_gene_bar(
             col=col,
         )
         fig.update_xaxes(range=[0, max(label_x.max(), max_total) * 1.08], row=row, col=col)
+    elif options.gene_bar_mode == "percent":
+        fig.update_xaxes(range=[0, 100], row=row, col=col)
     fig.update_yaxes(
         **_gene_axis_options(prepared),
         showticklabels=False,
@@ -891,7 +1046,7 @@ def _add_gene_bar(
         fig.update_xaxes(showticklabels=False, ticks="", row=row, col=col)
     else:
         fig.update_xaxes(
-            title_text="Samples",
+            title_text="Mutation Type (%)" if options.gene_bar_mode == "percent" else "Samples",
             tickfont=_font_options(options.font_size_gene_bar_axis, options),
             title_font=_font_options(options.font_size_gene_bar_axis, options),
             row=row,
@@ -927,6 +1082,7 @@ def render_plotly_oncoplot(
     palette = merged["palette"]
     tmb_palette = merged["tmb_palette"]
     metadata_palette = merged["metadata_palette"]
+    variant_value_palette = merged["variant_value_palette"]
     options = coerce_options(merged["options"])
     draw_gene_bar = merged["draw_gene_bar"]
     draw_tmb_bar = merged["draw_tmb_bar"]
@@ -959,25 +1115,56 @@ def render_plotly_oncoplot(
         shared_xaxes=False,
     )
 
+    mutation_legend_visible = prepared.variant_value_col is None or has_gene_bar
     if draw_tmb_bar and "tmb" in row_by_name:
-        _add_tmb_bar(figure, prepared, row_by_name["tmb"], 1, palette, tmb_palette, options)
+        _add_tmb_bar(
+            figure,
+            prepared,
+            row_by_name["tmb"],
+            1,
+            palette,
+            tmb_palette,
+            options,
+            mutation_legend_visible=mutation_legend_visible,
+        )
     if draw_metadata and "metadata" in row_by_name:
         _add_metadata_strip(figure, prepared, row_by_name["metadata"], 1, options, metadata_palette=metadata_palette)
 
     main_row = row_by_name["main"]
-    _add_main_tiles(figure, prepared, main_row, 1, palette, options, copy_on_click)
+    _add_main_tiles(figure, prepared, main_row, 1, palette, variant_value_palette, options, copy_on_click)
     if has_gene_bar:
-        _add_gene_bar(figure, prepared, main_row, 2, palette, options)
+        _add_gene_bar(
+            figure,
+            prepared,
+            main_row,
+            2,
+            palette,
+            options,
+            show_gene_bar_legend=prepared.variant_value_col is not None
+            and options.show_legend
+            and options.mutation_legend_position != "none",
+        )
 
     dragmode = {"none": "zoom", "multiple": "lasso", "single": "select"}[options.selection_type]
-    mutation_legend_active = options.show_legend and options.mutation_legend_position != "none"
+    mutation_legend_active = bool(
+        options.show_legend
+        and options.mutation_legend_position != "none"
+        and (prepared.variant_value_col is None or has_gene_bar)
+    )
     tmb_render_stacked = (
         draw_tmb_bar
         and prepared.tmb is not None
         and prepared.tmb_render_stacked
         and not options.log10_transform_tmb
     )
-    tmb_legend_active = _should_show_tmb_legend(prepared, options, tmb_render_stacked, palette, tmb_palette)
+    tmb_legend_active = _should_show_tmb_legend(
+        prepared,
+        options,
+        tmb_render_stacked,
+        palette,
+        tmb_palette,
+        mutation_legend_visible=mutation_legend_visible,
+    )
     metadata_legend_active = options.show_metadata_legends and draw_metadata
     numeric_metadata_legend_active = bool(
         metadata_legend_active
@@ -1021,6 +1208,8 @@ def render_plotly_oncoplot(
         margin["b"] = max(margin["b"], 135)
     elif numeric_metadata_legend_active:
         margin["r"] = max(margin["r"], 220)
+    if prepared.variant_value_col is not None and options.show_legend and options.mutation_legend_position != "none":
+        margin["r"] = max(margin["r"], 130)
     figure.update_layout(
         width=options.width,
         height=options.height,

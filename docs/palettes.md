@@ -128,6 +128,30 @@ Plotly shows continuous colorbars for numeric metadata when
 `options={"metadata_legend_orientation_heatmap": "horizontal"}` to place
 numeric metadata colorbars horizontally.
 
+## Variant Value Palette
+
+Pass `variant_value_col` to color the main oncoplot grid by a numeric
+variant-level value instead of mutation type. `variant_value_palette` accepts
+the same continuous colormap forms as numeric metadata and defaults to
+`"viridis"`:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    variant_value_col="VAF",
+    variant_value_agg="max",
+    variant_value_palette="magma",
+    draw_gene_bar=True,
+)
+```
+
+Mutation palettes still control stacked gene bars when `draw_gene_bar=True`.
+Use `options={"gene_bar_mode": "percent"}` for a normalized mutation-type
+composition bar beside each gene.
+
 PyOncoplot also exports reusable color cycles and ramps from
 `pyoncoplot.palettes`: `tol_colors`, `Iridescent`, `vega_10`,
 `vega_10_scanpy`, `vega_20`, `vega_20_scanpy`, `default_20`, `zeileis_28`,

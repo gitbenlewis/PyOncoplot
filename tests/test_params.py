@@ -21,6 +21,7 @@ def small_df():
             "sample": ["S1", "S2", "S3"],
             "gene": ["TP53", "EGFR", "PTEN"],
             "type": ["Missense_Mutation", "Frame_Shift_Del", "Nonsense_Mutation"],
+            "vaf": [0.25, 0.50, 0.75],
         }
     )
 
@@ -82,6 +83,26 @@ def test_oncoplot_params_options_can_be_overridden_with_params_argument():
 
     assert result.figure.layout.width == 720
     assert result.figure.layout.height == 460
+
+
+def test_oncoplot_params_accept_variant_value_heatmap_arguments():
+    result = oncoplot(
+        params={
+            "data": small_df(),
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "variant_value_col": "vaf",
+            "variant_value_agg": "max",
+            "variant_value_palette": "viridis",
+            "backend": "plotly",
+            "options": {"width": 720, "height": 460},
+        }
+    )
+
+    assert result.prepared_data.variant_value_col == "vaf"
+    assert result.prepared_data.variant_value_agg == "max"
+    assert result.figure.layout.width == 720
 
 
 def test_merge_oncoplot_params_supports_unpacked_kwargs_override():
@@ -210,6 +231,8 @@ datasets:
       gene_col: gene
       sample_col: sample
       mutation_type_col: type
+      variant_value_col: vaf
+      variant_value_agg: max
       backend: plotly
       top_n: 1
 """,
@@ -222,6 +245,7 @@ datasets:
 
     assert len(result.prepared_data.genes) == 2
     assert result.prepared_data.metadata is not None
+    assert result.prepared_data.variant_value_col == "vaf"
 
 
 def test_table_read_spec_passes_read_csv_kwargs(tmp_path):

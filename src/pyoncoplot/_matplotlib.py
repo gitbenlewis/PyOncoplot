@@ -11,6 +11,7 @@ import pandas as pd
 from ._data import PreparedOncoplotData
 from ._metadata_colors import (
     categorical_metadata_palette,
+    coerce_continuous_colormap,
     metadata_palette_spec,
     numeric_metadata_colormap_spec,
     numeric_metadata_endpoint_colors,
@@ -26,6 +27,7 @@ MATPLOTLIB_RENDER_PARAM_KEYS = {
     "palette",
     "tmb_palette",
     "metadata_palette",
+    "variant_value_palette",
     "options",
     "draw_gene_bar",
     "draw_tmb_bar",
@@ -34,6 +36,7 @@ MATPLOTLIB_RENDER_PARAM_KEYS = {
 MATPLOTLIB_RENDER_DEFAULTS: dict[str, Any] = {
     "tmb_palette": None,
     "metadata_palette": None,
+    "variant_value_palette": "viridis",
     "draw_gene_bar": False,
     "draw_tmb_bar": False,
 }
@@ -172,6 +175,7 @@ def _should_show_tmb_legend(
     render_stacked: bool,
     mutation_palette: Optional[Mapping[str, str]] = None,
     tmb_palette: Optional[Mapping[str, str]] = None,
+    mutation_legend_visible: bool = True,
 ) -> bool:
     show = bool(
         prepared.tmb_is_custom
@@ -182,6 +186,8 @@ def _should_show_tmb_legend(
     if not show or mutation_palette is None:
         return show
     if prepared.tmb is None or prepared.tmb_type_col is None or prepared.tiles.empty:
+        return show
+    if not mutation_legend_visible:
         return show
 
     tmb_categories = prepared.tmb_type_levels or [
@@ -210,8 +216,34 @@ def _validate_metadata_levels(prepared: PreparedOncoplotData, options: OncoplotO
             )
 
 
-def _draw_main(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str], options: OncoplotOptions):
+def _draw_main(
+    ax,
+    prepared: PreparedOncoplotData,
+    palette: Mapping[str, str],
+    variant_value_palette: object,
+    options: OncoplotOptions,
+):
     _plt, _ListedColormap, _GridSpec, _Patch, Rectangle = _require_matplotlib()
+    continuous_cmap = None
+    continuous_norm = None
+    if prepared.variant_value_col is not None:
+        from matplotlib.cm import ScalarMappable
+        from matplotlib.colors import Normalize
+
+        min_value = prepared.variant_value_min if prepared.variant_value_min is not None else 0.0
+        max_value = prepared.variant_value_max if prepared.variant_value_max is not None else 1.0
+        if np.isclose(min_value, max_value):
+            padding = max(0.5, abs(float(min_value)) * 0.05)
+            min_value = float(min_value) - padding
+            max_value = float(max_value) + padding
+        continuous_cmap = coerce_continuous_colormap(variant_value_palette, prepared.variant_value_col)
+        continuous_norm = Normalize(vmin=float(min_value), vmax=float(max_value))
+        if options.show_legend and options.mutation_legend_position != "none":
+            mappable = ScalarMappable(norm=continuous_norm, cmap=continuous_cmap)
+            mappable.set_array([])
+            colorbar = ax.figure.colorbar(mappable, ax=ax, fraction=0.025, pad=0.012)
+            colorbar.set_label(_legend_title(prepared.variant_value_col, options), fontsize=options.font_size_metadata)
+            colorbar.ax.tick_params(labelsize=options.font_size_metadata)
     n_genes = len(prepared.genes)
     n_samples = len(prepared.samples)
     pathway_width = 0.95 if prepared.pathway_groups else 0
@@ -240,8 +272,11 @@ def _draw_main(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str], o
         gene = str(row["Gene"])
         if sample not in sample_pos or gene not in gene_pos:
             continue
-        mutation_type = row["MutationType"]
-        color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
+        if continuous_cmap is not None and continuous_norm is not None:
+            color = continuous_cmap(continuous_norm(float(row["VariantValue"])))
+        else:
+            mutation_type = row["MutationType"]
+            color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
         ax.add_patch(
             Rectangle(
                 (sample_pos[sample], gene_pos[gene]),
@@ -327,18 +362,24 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
     unspecified = tiles[tiles["MutationType"].isna()]
     if not unspecified.empty:
         mutation_groups.append((np.nan, unspecified))
+    total_counts = tiles.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0).to_numpy(dtype=float)
     for mutation_type, group in mutation_groups:
-        counts = group.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0).to_numpy()
+        counts = group.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0).to_numpy(dtype=float)
+        if options.gene_bar_mode == "percent":
+            values = np.divide(counts, total_counts, out=np.zeros_like(counts), where=total_counts > 0) * 100
+        else:
+            values = counts
         color = options.unspecified_mutation_color if pd.isna(mutation_type) else palette.get(str(mutation_type), options.unspecified_mutation_color)
-        ax.barh(y_positions, counts, left=left, height=0.85, color=color)
-        left = left + counts
+        ax.barh(y_positions, values, left=left, height=0.85, color=color)
+        left = left + values
     if options.show_gene_bar_labels:
-        totals = tiles.groupby("Gene", observed=False).size().reindex(prepared.genes, fill_value=0).to_numpy()
+        totals = total_counts
         denominator = max(prepared.total_samples, 1)
-        max_total = max(left.max(), 1)
+        max_total = 100 if options.gene_bar_mode == "percent" else max(left.max(), 1)
         for y_position, total in zip(y_positions, totals):
+            label_x = (100 if options.gene_bar_mode == "percent" else total)
             ax.text(
-                total + max_total * options.gene_bar_label_padding + options.gene_bar_label_nudge,
+                label_x + max_total * options.gene_bar_label_padding + options.gene_bar_label_nudge,
                 y_position,
                 f"{round(total / denominator * 100, options.gene_bar_label_round):g}%",
                 va="center",
@@ -346,11 +387,16 @@ def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str
                 fontsize=options.font_size_gene_bar_axis,
             )
         ax.set_xlim(0, max(left.max() * (1 + options.gene_bar_label_padding + 0.08), left.max() + 1))
+    elif options.gene_bar_mode == "percent":
+        ax.set_xlim(0, 100)
     ax.set_ylim(0, len(prepared.genes))
     ax.invert_yaxis()
     ax.set_yticks([])
     if options.show_gene_bar_axis:
-        ax.set_xlabel("Samples", fontsize=options.font_size_gene_bar_axis)
+        ax.set_xlabel(
+            "Mutation Type (%)" if options.gene_bar_mode == "percent" else "Samples",
+            fontsize=options.font_size_gene_bar_axis,
+        )
         if options.gene_bar_scale_breaks is not None:
             ax.set_xticks(list(options.gene_bar_scale_breaks))
         elif options.gene_bar_scale_n_breaks is not None:
@@ -375,6 +421,7 @@ def _draw_tmb(
     mutation_palette: Mapping[str, str],
     tmb_palette: Optional[Mapping[str, str]],
     options: OncoplotOptions,
+    mutation_legend_visible: bool = True,
 ) -> List[object]:
     if prepared.tmb is None or prepared.tmb_sample_col is None or prepared.tmb_value_col is None:
         return []
@@ -382,7 +429,14 @@ def _draw_tmb(
     sample_col = prepared.tmb_sample_col
     x_positions = np.arange(len(prepared.samples)) + 0.5
     render_stacked = prepared.tmb_render_stacked and not options.log10_transform_tmb and prepared.tmb_type_col is not None
-    show_tmb_legend = _should_show_tmb_legend(prepared, options, render_stacked, mutation_palette, tmb_palette)
+    show_tmb_legend = _should_show_tmb_legend(
+        prepared,
+        options,
+        render_stacked,
+        mutation_palette,
+        tmb_palette,
+        mutation_legend_visible=mutation_legend_visible,
+    )
     handles: List[object] = []
     if prepared.tmb_render_stacked and options.log10_transform_tmb:
         warnings.warn(
@@ -753,6 +807,7 @@ def render_matplotlib_oncoplot(
     palette = merged["palette"]
     tmb_palette = merged["tmb_palette"]
     metadata_palette = merged["metadata_palette"]
+    variant_value_palette = merged["variant_value_palette"]
     options = coerce_options(merged["options"])
     draw_gene_bar = merged["draw_gene_bar"]
     draw_tmb_bar = merged["draw_tmb_bar"]
@@ -792,12 +847,20 @@ def render_matplotlib_oncoplot(
             axes["gene_bar"] = figure.add_subplot(grid[row_index, 1])
 
     tmb_handles = []
+    mutation_legend_visible = prepared.variant_value_col is None or draw_gene_bar
     if draw_tmb_bar and "tmb" in axes:
-        tmb_handles = _draw_tmb(axes["tmb"], prepared, palette, tmb_palette, options)
+        tmb_handles = _draw_tmb(
+            axes["tmb"],
+            prepared,
+            palette,
+            tmb_palette,
+            options,
+            mutation_legend_visible=mutation_legend_visible,
+        )
     metadata_legends = []
     if draw_metadata and "metadata" in axes:
         metadata_legends = _draw_metadata(axes["metadata"], prepared, options, metadata_palette=metadata_palette)
-    _draw_main(axes["main"], prepared, palette, options)
+    _draw_main(axes["main"], prepared, palette, variant_value_palette, options)
     if draw_gene_bar and "gene_bar" in axes:
         _draw_gene_bar(axes["gene_bar"], prepared, palette, options)
         if draw_metadata and options.metadata_position == "bottom" and options.show_gene_bar_axis:
@@ -805,7 +868,11 @@ def render_matplotlib_oncoplot(
             axes["gene_bar"].xaxis.set_label_position("top")
 
     mutation_handles = []
-    if options.show_legend and options.mutation_legend_position != "none":
+    if (
+        options.show_legend
+        and options.mutation_legend_position != "none"
+        and (prepared.variant_value_col is None or draw_gene_bar)
+    ):
         mutation_handles = [
             Patch(color=palette.get(name, options.unspecified_mutation_color), label=_legend_label(name, options))
             for name in _mutation_levels(prepared, palette)
@@ -815,10 +882,15 @@ def render_matplotlib_oncoplot(
         ((mutation_handles or tmb_handles) and options.mutation_legend_position == "right")
         or (metadata_legends and options.show_metadata_legends and options.metadata_legend_position == "right")
     )
+    variant_colorbar_active = (
+        prepared.variant_value_col is not None
+        and options.show_legend
+        and options.mutation_legend_position != "none"
+    )
     _add_static_legends(figure, mutation_handles, tmb_handles, metadata_legends, options)
     figure.subplots_adjust(
         left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
-        right=0.70 if has_right_legend else 0.98,
+        right=0.70 if has_right_legend else (0.88 if variant_colorbar_active else 0.98),
         top=0.92,
         bottom=0.18 if has_bottom_legend else 0.08,
         hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),

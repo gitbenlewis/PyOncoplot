@@ -116,17 +116,18 @@ datasets:
 | --- | --- |
 | `data` | mutation-level `pandas.DataFrame` or CSV/TSV path |
 | `gene_col`, `sample_col` | required column names for gene and sample identifiers |
-| `mutation_type_col` | optional mutation category column used for tile colors and legends |
+| `mutation_type_col` | optional mutation category column used for tile colors and legends unless `variant_value_col` colors the main grid |
 | `tooltip_col` | optional tooltip text column; defaults to `sample_col` |
 | `include_genes`, `ignore_genes`, `top_n` | choose the displayed gene panel |
 | `draw_gene_bar`, `draw_tmb_bar` | add recurrence and mutation burden side panels |
-| `palette`, `tmb_palette`, `metadata_palette` | color mappings for mutation tiles, typed TMB bars, categorical metadata, and numeric metadata colormaps |
+| `palette`, `tmb_palette`, `metadata_palette`, `variant_value_palette` | color mappings for mutation tiles, typed TMB bars, metadata, and continuous variant heatmaps |
 | `metadata`, `metadata_cols`, `metadata_sample_col` | clinical annotation input and selected tracks |
 | `metadata_require_mutations`, `show_all_samples` | sample inclusion controls |
 | `pathway`, `pathway_gene_col` | pathway grouping input |
 | `sample_order`, `metadata_sort_cols` | explicit or metadata-driven sample sorting |
 | `mutation_type_order`, `metadata_category_orders`, `tmb_type_order` | categorical level order for colors, stacks, and legends |
 | `tmb_data` | optional 2- or 3-column custom TMB table |
+| `variant_value_col`, `variant_value_agg` | optional numeric variant column for continuous main-grid coloring and the collapse rule for multi-hit tiles |
 | `backend`, `interactive` | choose Plotly or Matplotlib rendering |
 | `copy_on_click` | Plotly clipboard payload behavior |
 | `options` | `OncoplotOptions` instance or mapping for visual controls |
@@ -148,6 +149,27 @@ oncoplot(
     tmb_type_order=["clonal", "subclonal"],
 )
 ```
+
+Continuous variant coloring replaces categorical mutation-type coloring in the
+main grid when `variant_value_col` is supplied. The mutation type column is
+still retained for stacked gene bars and TMB fallbacks:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    variant_value_col="VAF",
+    variant_value_agg="max",
+    variant_value_palette="viridis",
+    draw_gene_bar=True,
+    options={"gene_bar_mode": "percent"},
+)
+```
+
+`variant_value_agg` controls how multiple rows for the same sample/gene tile are
+collapsed and can be `"max"`, `"mean"`, `"median"`, or `"min"`.
 
 ## `merge_oncoplot_params`
 
@@ -218,6 +240,7 @@ print(prepared.tiles.head())
 | `tmb_render_stacked`, `tmb_is_custom` | flags used by renderers to decide stacked TMB behavior |
 | `mutation_counts`, `tmb_totals`, `tmb_type_counts` | summary tables for testing, debugging, and downstream inspection |
 | `mutation_type_levels`, `tmb_type_levels` | resolved categorical order used by renderers |
+| `variant_value_col`, `variant_value_agg`, `variant_value_min`, `variant_value_max` | continuous tile-coloring metadata when `variant_value_col` is supplied |
 
 ## `identify_top_genes`
 

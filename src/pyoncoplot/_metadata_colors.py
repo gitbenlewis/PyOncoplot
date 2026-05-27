@@ -107,7 +107,7 @@ def _coerce_continuous_colormap(spec: Any, column: object):
     try:
         from matplotlib.colors import Colormap, LinearSegmentedColormap
     except ImportError as exc:
-        raise ImportError("Continuous metadata colormaps require the 'matplotlib' package.") from exc
+        raise ImportError("Continuous colormaps require the 'matplotlib' package.") from exc
 
     if isinstance(spec, Colormap):
         return spec
@@ -163,6 +163,14 @@ def numeric_metadata_colorscale(spec: Any, column: object, n: int = 257) -> list
         [index / (n - 1), to_hex(colormap(index / (n - 1)), keep_alpha=False)]
         for index in range(n)
     ]
+
+
+def continuous_colorscale(spec: Any, column: object, n: int = 257) -> list[list[object]]:
+    return numeric_metadata_colorscale(spec, column, n=n)
+
+
+def coerce_continuous_colormap(spec: Any, column: object):
+    return _coerce_continuous_colormap(spec, column)
 
 
 def numeric_metadata_endpoint_colors(spec: Any, column: object) -> tuple[str, str]:

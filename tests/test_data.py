@@ -86,6 +86,78 @@ def test_prepare_oncoplot_data_collapses_multi_hits_and_tooltips():
     assert set(prepared.mutation_counts.columns) == {"Gene", "MutationType", "Count"}
 
 
+def test_prepare_oncoplot_data_aggregates_variant_values_for_collapsed_tiles():
+    df = mutation_df()
+    df["vaf"] = [0.12, 0.42, 0.20, 0.35, 0.51, 0.62, 0.25, 0.15]
+    expected = {
+        "max": 0.42,
+        "mean": 0.27,
+        "median": 0.27,
+        "min": 0.12,
+    }
+
+    for agg, value in expected.items():
+        prepared = prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            tooltip_col="tooltip",
+            include_genes=["TP53", "EGFR"],
+            variant_value_col="vaf",
+            variant_value_agg=agg,
+        )
+        hit = prepared.tiles[
+            (prepared.tiles["Sample"].astype(str) == "S1")
+            & (prepared.tiles["Gene"].astype(str) == "TP53")
+        ].iloc[0]
+
+        assert hit["MutationType"] == "Multi_Hit"
+        assert hit["VariantValue"] == pytest.approx(value)
+        assert prepared.variant_value_col == "vaf"
+        assert prepared.variant_value_agg == agg
+        assert prepared.variant_value_min is not None
+        assert prepared.variant_value_max is not None
+
+
+def test_prepare_oncoplot_data_validates_variant_value_inputs():
+    df = mutation_df()
+    df["vaf"] = [0.12, 0.42, 0.20, 0.35, 0.51, 0.62, 0.25, 0.15]
+
+    with pytest.raises(ValueError, match="variant_value_agg"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            variant_value_col="vaf",
+            variant_value_agg="sum",
+        )
+
+    non_numeric = df.copy()
+    non_numeric["vaf"] = non_numeric["vaf"].astype(str)
+    with pytest.raises(ValueError, match="numeric"):
+        prepare_oncoplot_data(
+            non_numeric,
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            variant_value_col="vaf",
+        )
+
+    missing = df.copy()
+    missing.loc[0, "vaf"] = None
+    with pytest.raises(ValueError, match="missing values"):
+        prepare_oncoplot_data(
+            missing,
+            gene_col="gene",
+            sample_col="sample",
+            mutation_type_col="type",
+            include_genes=["TP53"],
+            variant_value_col="vaf",
+        )
+
+
 def test_prepare_oncoplot_data_validates_empty_ids_and_metadata_duplicates():
     df = mutation_df()
     bad = df.copy()

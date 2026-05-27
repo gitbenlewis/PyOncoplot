@@ -68,6 +68,7 @@ class OncoplotOptions:
     scientific_tmb: bool = False
     show_gene_bar_axis: bool = True
     show_tmb_axis: bool = True
+    gene_bar_mode: Literal["counts", "percent"] = "counts"
     show_gene_bar_labels: bool = False
     gene_bar_label_round: int = 0
     gene_bar_label_padding: float = 0.24
@@ -112,6 +113,8 @@ class OncoplotOptions:
             raise ValueError("sample_id_position must be 'bottom' or 'top'.")
         if self.metadata_numeric_plot_type not in {"bar", "heatmap"}:
             raise ValueError("metadata_numeric_plot_type must be 'bar' or 'heatmap'.")
+        if self.gene_bar_mode not in {"counts", "percent"}:
+            raise ValueError("gene_bar_mode must be 'counts' or 'percent'.")
         if self.mutation_legend_position not in {"bottom", "right", "none"}:
             raise ValueError("mutation_legend_position must be one of: 'bottom', 'right', 'none'.")
         if self.metadata_legend_position not in {"right", "bottom"}:
