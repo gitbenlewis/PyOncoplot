@@ -9,6 +9,7 @@ from ._data import (
     rank_genes_by_pathway,
     score_sample_by_gene_rank,
 )
+from ._io import load_oncoplot_params
 from ._options import OncoplotOptions
 from ._palette import assert_palette_is_sensible, get_sensible_default_palette
 from ._result import OncoplotResult
@@ -49,6 +50,7 @@ __all__ = [
     "godsnot_102",
     "inferno_greyzero",
     "identify_top_genes",
+    "load_oncoplot_params",
     "magma_greyzero",
     "make_greyzero_colormap",
     "oncoplot",

@@ -10,13 +10,15 @@ oncoplot(
     data=None,
     *,
     params=None,
+    params_key=None,
     **kwargs,
 )
 ```
 
 Create an oncoplot from mutation-level data and return an `OncoplotResult`.
 The function accepts normal explicit keyword arguments, a `params` dictionary,
-or both. Explicit keywords override values in `params`.
+the path to a YAML params file, or both. Explicit keywords override values in
+`params`.
 
 Common call:
 
@@ -34,14 +36,17 @@ result = oncoplot(
 )
 ```
 
-Config-driven or reusable calls can pass the same arguments as a dictionary:
+Config-driven or reusable calls can pass the same arguments as a dictionary.
+Table inputs can be DataFrames or paths to CSV/TSV-style files:
 
 ```python
 params = {
-    "data": mutations,
+    "data": "data/mutations.csv",
+    "metadata": "data/metadata.csv",
     "gene_col": "gene",
     "sample_col": "sample",
     "mutation_type_col": "mutation_type",
+    "metadata_cols": ["Subtype"],
     "backend": "matplotlib",
     "options": {"width": 900, "height": 520},
 }
@@ -51,11 +56,43 @@ result = oncoplot(params=params, top_n=20)
 
 Here `top_n=20` overrides any `params["top_n"]` value.
 
+YAML configs can be loaded directly:
+
+```python
+result = oncoplot(params="config.yaml", params_key="datasets.m15.plot1_params")
+```
+
+or read first:
+
+```python
+from pyoncoplot import load_oncoplot_params
+
+params = load_oncoplot_params("config.yaml", key="datasets.m15.plot1_params")
+result = oncoplot(params=params)
+```
+
+Relative table paths inside YAML are resolved relative to the config file. Use
+`params_key`/`key` for dot-separated nested mappings. Table read specs pass
+extra options to `pandas.read_csv`:
+
+```yaml
+datasets:
+  m15:
+    plot1_params:
+      data:
+        path: files/mutations.txt
+        sep: "\t"
+      metadata: files/metadata.csv
+      gene_col: gene
+      sample_col: sample
+      mutation_type_col: mutation_type
+```
+
 ### Core Arguments
 
 | Argument | Purpose |
 | --- | --- |
-| `data` | mutation-level `pandas.DataFrame` |
+| `data` | mutation-level `pandas.DataFrame` or CSV/TSV path |
 | `gene_col`, `sample_col` | required column names for gene and sample identifiers |
 | `mutation_type_col` | optional mutation category column used for tile colors and legends |
 | `tooltip_col` | optional tooltip text column; defaults to `sample_col` |

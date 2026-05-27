@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from pyoncoplot import OncoplotOptions, oncoplot, prepare_oncoplot_data
+from pyoncoplot import OncoplotOptions, load_oncoplot_params, oncoplot, prepare_oncoplot_data
 from pyoncoplot._matplotlib import render_matplotlib_oncoplot
 from pyoncoplot._params import merge_params
 from pyoncoplot._plotly import render_plotly_oncoplot
@@ -15,6 +15,11 @@ def small_df():
             "type": ["Missense_Mutation", "Frame_Shift_Del", "Nonsense_Mutation"],
         }
     )
+
+
+def _write_table(path, frame, **kwargs):
+    frame.to_csv(path, index=False, **kwargs)
+    return path
 
 
 def test_merge_params_accepts_params_and_kwargs_with_kwargs_precedence():
@@ -52,6 +57,140 @@ def test_oncoplot_params_matches_explicit_kwargs_and_allows_override():
     assert from_params.prepared_data.genes == explicit.prepared_data.genes
     assert from_params.prepared_data.samples == explicit.prepared_data.samples
     assert from_params.backend == "matplotlib"
+
+
+def test_oncoplot_params_accept_data_and_metadata_paths(tmp_path):
+    data_path = _write_table(tmp_path / "mutations.csv", small_df())
+    metadata_path = _write_table(
+        tmp_path / "metadata.csv",
+        pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]}),
+    )
+
+    result = oncoplot(
+        params={
+            "data": data_path,
+            "metadata": metadata_path,
+            "metadata_cols": ["group"],
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "backend": "plotly",
+        }
+    )
+
+    assert result.prepared_data.metadata is not None
+    assert result.prepared_data.metadata_cols == ["group"]
+
+
+def test_oncoplot_params_accept_tmb_and_pathway_paths(tmp_path):
+    data_path = _write_table(tmp_path / "mutations.csv", small_df())
+    tmb_path = _write_table(
+        tmp_path / "tmb.csv",
+        pd.DataFrame({"sample": ["S1", "S2", "S3"], "mutations": [4, 5, 6]}),
+    )
+    pathway_path = _write_table(
+        tmp_path / "pathway.csv",
+        pd.DataFrame({"gene": ["TP53", "EGFR", "PTEN"], "pathway": ["Cell cycle", "RTK", "PI3K"]}),
+    )
+
+    result = oncoplot(
+        params={
+            "data": data_path,
+            "tmb_data": tmb_path,
+            "pathway": pathway_path,
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "draw_tmb_bar": True,
+            "include_genes": ["TP53", "EGFR", "PTEN"],
+            "backend": "matplotlib",
+        }
+    )
+
+    assert result.prepared_data.tmb_is_custom is True
+    assert result.prepared_data.pathway_by_gene == {"TP53": "Cell cycle", "EGFR": "RTK", "PTEN": "PI3K"}
+
+
+def test_load_oncoplot_params_extracts_nested_key_and_resolves_paths(tmp_path):
+    data_dir = tmp_path / "files"
+    data_dir.mkdir()
+    _write_table(data_dir / "mutations.csv", small_df())
+    _write_table(
+        data_dir / "metadata.csv",
+        pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]}),
+    )
+    config = tmp_path / "config.yaml"
+    config.write_text(
+        """
+datasets:
+  m15:
+    plot1_params:
+      data: files/mutations.csv
+      metadata: files/metadata.csv
+      metadata_cols: [group]
+      gene_col: gene
+      sample_col: sample
+      mutation_type_col: type
+      backend: plotly
+      top_n: 1
+""",
+        encoding="utf-8",
+    )
+
+    params = load_oncoplot_params(config, key="datasets.m15.plot1_params")
+    assert isinstance(params["data"], pd.DataFrame)
+    result = oncoplot(params=config, params_key="datasets.m15.plot1_params", top_n=2)
+
+    assert len(result.prepared_data.genes) == 2
+    assert result.prepared_data.metadata is not None
+
+
+def test_table_read_spec_passes_read_csv_kwargs(tmp_path):
+    table_path = _write_table(tmp_path / "mutations.txt", small_df(), sep="\t")
+
+    result = oncoplot(
+        params={
+            "data": {"path": table_path, "sep": "\t"},
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "backend": "plotly",
+        }
+    )
+
+    assert set(result.prepared_data.samples) == {"S1", "S2", "S3"}
+
+
+def test_config_loading_errors_are_clear(tmp_path):
+    config = tmp_path / "config.yaml"
+    config.write_text("datasets:\n  m15:\n    plot1_params: 5\n", encoding="utf-8")
+    with pytest.raises(KeyError, match="datasets.m16.plot1_params"):
+        load_oncoplot_params(config, key="datasets.m16.plot1_params")
+    with pytest.raises(TypeError, match="must resolve to a mapping"):
+        load_oncoplot_params(config, key="datasets.m15.plot1_params")
+
+    root = tmp_path / "root.yaml"
+    root.write_text("- not\n- mapping\n", encoding="utf-8")
+    with pytest.raises(TypeError, match="root must be a mapping"):
+        load_oncoplot_params(root)
+
+    with pytest.raises(FileNotFoundError, match="missing.csv"):
+        oncoplot(
+            params={
+                "data": tmp_path / "missing.csv",
+                "gene_col": "gene",
+                "sample_col": "sample",
+            }
+        )
+
+    with pytest.raises(ValueError, match="must include a 'path'"):
+        oncoplot(
+            params={
+                "data": {"sep": "\t"},
+                "gene_col": "gene",
+                "sample_col": "sample",
+            }
+        )
 
 
 def test_renderers_accept_params_dictionaries():

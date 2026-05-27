@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional
+import os
+from pathlib import Path
+from typing import Any, Mapping, Optional, Union
 
 import pandas as pd
 
 from ._data import prepare_oncoplot_data
+from ._io import load_oncoplot_params, materialize_table_params
 from ._matplotlib import render_matplotlib_oncoplot
 from ._options import OncoplotOptions, coerce_options
 from ._palette import assert_palette_is_sensible, get_sensible_default_palette
@@ -120,9 +123,10 @@ def _palette_for_data(
 
 
 def oncoplot(
-    data: Optional[pd.DataFrame] = None,
+    data: Optional[Union[pd.DataFrame, str, os.PathLike]] = None,
     *,
-    params: Optional[Mapping[str, Any]] = None,
+    params: Optional[Union[Mapping[str, Any], str, os.PathLike]] = None,
+    params_key: Optional[str] = None,
     **kwargs: Any,
 ) -> OncoplotResult:
     """Create a Pythonic oncoplot from mutation-level cohort data.
@@ -131,7 +135,21 @@ def oncoplot(
     `gene_col`, `sample_col`, `mutation_type_col`, `top_n`, and friends.
     """
 
-    supplied = merge_params(params, allowed_keys=ONCOPLOT_PARAM_KEYS, context="oncoplot", **kwargs)
+    if params_key is not None and params is None:
+        raise TypeError("params_key can only be used when params is a YAML config path.")
+    if params_key is not None and isinstance(params, Mapping):
+        raise TypeError("params_key can only be used when params is a YAML config path.")
+    if isinstance(params, (str, os.PathLike)):
+        supplied_params = load_oncoplot_params(params, key=params_key)
+    elif params is None:
+        supplied_params = {}
+    elif isinstance(params, Mapping):
+        supplied_params = materialize_table_params(params, base_dir=Path.cwd())
+    else:
+        supplied_params = params
+
+    supplied = merge_params(supplied_params, allowed_keys=ONCOPLOT_PARAM_KEYS, context="oncoplot", **kwargs)
+    supplied = materialize_table_params(supplied, base_dir=Path.cwd())
     merged = {**ONCOPLOT_DEFAULTS, **supplied}
     if data is None:
         data = merged.pop("data", None)
@@ -139,6 +157,7 @@ def oncoplot(
         merged.pop("data", None)
     if data is None:
         raise TypeError("oncoplot requires mutation data as the first argument or params['data'].")
+    data = materialize_table_params({"data": data}, base_dir=Path.cwd())["data"]
     if "gene_col" not in merged or "sample_col" not in merged:
         raise TypeError("oncoplot requires 'gene_col' and 'sample_col'.")
 
