@@ -140,7 +140,7 @@ each gene's stacked bar to 100%.
 | `metadata_na_marker_size` | `7` | visible NA marker text size |
 | `metadata_max_levels` | `40` | maximum categorical levels allowed per metadata track |
 | `metadata_numeric_plot_type` | `"heatmap"` | `"heatmap"` or `"bar"` |
-| `metadata_legend_orientation_heatmap` | `"vertical"` | orientation hint for numeric heatmap legends |
+| `metadata_legend_orientation_heatmap` | `"horizontal"` | orientation hint for numeric heatmap legends |
 | `metadata_default_colors` | color sequence | fallback metadata colors |
 
 Categorical metadata tracks reuse `metadata_default_colors` from the beginning
