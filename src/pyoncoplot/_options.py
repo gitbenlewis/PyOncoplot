@@ -86,7 +86,7 @@ class OncoplotOptions:
 
     metadata_na_marker: str = "!"
     metadata_na_marker_size: float = 7
-    metadata_max_levels: int = 6
+    metadata_max_levels: int = 12
     metadata_numeric_plot_type: Literal["bar", "heatmap"] = "heatmap"
     metadata_legend_orientation_heatmap: Literal["vertical", "horizontal"] = "vertical"
     metadata_default_colors: Sequence[str] = field(
