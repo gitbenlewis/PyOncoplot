@@ -85,6 +85,17 @@ def sample_numeric_metadata_colormap(
     return to_hex(colormap(fraction), keep_alpha=False)
 
 
+def numeric_metadata_colorscale(spec: Any, column: object, n: int = 257) -> list[list[object]]:
+    from matplotlib.colors import to_hex
+
+    colormap = _coerce_continuous_colormap(spec, column)
+    n = max(2, int(n))
+    return [
+        [index / (n - 1), to_hex(colormap(index / (n - 1)), keep_alpha=False)]
+        for index in range(n)
+    ]
+
+
 def numeric_metadata_endpoint_colors(spec: Any, column: object) -> tuple[str, str]:
     return (
         sample_numeric_metadata_colormap(spec, 0.0, 0.0, 1.0, column),

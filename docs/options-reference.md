@@ -53,7 +53,7 @@ result = oncoplot(
 | `show_legend` | `True` | draw mutation legend |
 | `show_legend_titles` | `True` | draw legend titles |
 | `mutation_legend_position` | `"bottom"` | `"bottom"`, `"right"`, or `"none"` |
-| `show_metadata_legends` | `True` | draw metadata legends |
+| `show_metadata_legends` | `True` | draw categorical metadata legends and numeric metadata colorbars |
 | `metadata_legend_position` | `"right"` | `"right"` or `"bottom"` |
 | `legend_key_size` | `1.0` | mutation legend key size multiplier |
 | `metadata_legend_nrow` | `None` | optional metadata legend row limit |

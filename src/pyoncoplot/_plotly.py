@@ -13,6 +13,7 @@ from ._data import PreparedOncoplotData
 from ._metadata_colors import (
     categorical_metadata_palette,
     metadata_palette_spec,
+    numeric_metadata_colorscale,
     numeric_metadata_colormap_spec,
     sample_numeric_metadata_colormap,
 )
@@ -339,6 +340,102 @@ def _metadata_numeric_color(
     return _numeric_metadata_color(value, min_value, max_value, options)
 
 
+def _metadata_colorbar_is_horizontal(options: OncoplotOptions) -> bool:
+    return (
+        options.metadata_legend_position == "bottom"
+        or options.metadata_legend_orientation_heatmap == "horizontal"
+    )
+
+
+def _metadata_colorbar_layout(
+    index: int,
+    total: int,
+    options: OncoplotOptions,
+) -> Dict[str, object]:
+    thickness = max(8, int(options.metadata_legend_key_size * 12))
+    if _metadata_colorbar_is_horizontal(options):
+        slot_width = min(0.92, 0.92 / max(total, 1))
+        return {
+            "orientation": "h",
+            "x": 0.04 + (index + 0.5) * slot_width,
+            "xanchor": "center",
+            "y": -0.32,
+            "yanchor": "top",
+            "len": max(0.12, min(0.28, slot_width * 0.72)),
+            "thickness": thickness,
+            "outlinewidth": 0,
+        }
+
+    slot_height = min(0.22, 0.86 / max(total, 1))
+    return {
+        "x": 1.08,
+        "xanchor": "left",
+        "y": 1.0 - index * slot_height,
+        "yanchor": "top",
+        "len": max(0.10, min(0.20, slot_height * 0.72)),
+        "thickness": thickness,
+        "outlinewidth": 0,
+    }
+
+
+def _numeric_colorbar_bounds(min_value: float, max_value: float) -> tuple[float, float, list[float], list[str]]:
+    if math.isclose(min_value, max_value):
+        padding = max(0.5, abs(min_value) * 0.05)
+        return (
+            min_value - padding,
+            max_value + padding,
+            [min_value],
+            [f"{min_value:g}"],
+        )
+    return min_value, max_value, [min_value, max_value], [f"{min_value:g}", f"{max_value:g}"]
+
+
+def _add_numeric_metadata_colorbars(
+    fig,
+    prepared: PreparedOncoplotData,
+    row: int,
+    col: int,
+    colorbars: Sequence[tuple[str, float, float, list[list[object]]]],
+    options: OncoplotOptions,
+) -> None:
+    if not colorbars:
+        return
+    go, _make_subplots = _require_plotly()
+    x_values = [prepared.samples[0], prepared.samples[-1]] if prepared.samples else [None, None]
+    metadata_labels = [_legend_title(column, options) for column in prepared.metadata_cols or []]
+    y_value = metadata_labels[0] if metadata_labels else None
+
+    for index, (title, min_value, max_value, colorscale) in enumerate(colorbars):
+        cmin, cmax, tickvals, ticktext = _numeric_colorbar_bounds(min_value, max_value)
+        fig.add_trace(
+            go.Scatter(
+                x=x_values,
+                y=[y_value, y_value],
+                mode="markers",
+                marker=dict(
+                    color=[cmin, cmax],
+                    cmin=cmin,
+                    cmax=cmax,
+                    colorscale=colorscale,
+                    showscale=True,
+                    size=0.1,
+                    opacity=0,
+                    colorbar=dict(
+                        title=dict(text=title),
+                        tickvals=tickvals,
+                        ticktext=ticktext,
+                        tickfont=_font_options(options.font_size_metadata, options),
+                        **_metadata_colorbar_layout(index, len(colorbars), options),
+                    ),
+                ),
+                hoverinfo="skip",
+                showlegend=False,
+            ),
+            row=row,
+            col=col,
+        )
+
+
 def _add_metadata_strip(
     fig,
     prepared: PreparedOncoplotData,
@@ -358,6 +455,7 @@ def _add_metadata_strip(
     colorscale = []
     color_index = 0
     color_lookup: Dict[object, int] = {}
+    numeric_colorbars: list[tuple[str, float, float, list[list[object]]]] = []
     metadata_palette = metadata_palette or {}
     metadata_by_sample = metadata.set_index("Sample")
 
@@ -376,6 +474,16 @@ def _add_metadata_strip(
             max_value = 1.0
         palette_spec = metadata_palette_spec(metadata_palette, col_name)
         numeric_colormap = numeric_metadata_colormap_spec(palette_spec) if is_numeric else None
+        if is_numeric and options.show_metadata_legends and values_by_sample.notna().any():
+            colorbar_spec = numeric_colormap if numeric_colormap is not None else options.metadata_default_colors
+            numeric_colorbars.append(
+                (
+                    display_col,
+                    min_value,
+                    max_value,
+                    numeric_metadata_colorscale(colorbar_spec, col_name),
+                )
+            )
         level_map = (
             {}
             if is_numeric
@@ -449,6 +557,14 @@ def _add_metadata_strip(
         ),
         row=row,
         col=col,
+    )
+    _add_numeric_metadata_colorbars(
+        fig,
+        prepared,
+        row,
+        col,
+        numeric_colorbars,
+        options,
     )
     fig.update_xaxes(
         **_sample_axis_options(prepared),
@@ -790,6 +906,15 @@ def render_plotly_oncoplot(
     )
     tmb_legend_active = _should_show_tmb_legend(prepared, options, tmb_render_stacked, palette, tmb_palette)
     metadata_legend_active = options.show_metadata_legends and draw_metadata
+    numeric_metadata_legend_active = bool(
+        metadata_legend_active
+        and prepared.metadata is not None
+        and any(
+            pd.api.types.is_numeric_dtype(prepared.metadata[column])
+            and prepared.metadata[column].notna().any()
+            for column in prepared.metadata_cols or []
+        )
+    )
     legend_active = mutation_legend_active or tmb_legend_active or metadata_legend_active
     bottom_legend = (
         (mutation_legend_active and options.mutation_legend_position == "bottom")
@@ -819,6 +944,10 @@ def render_plotly_oncoplot(
             yanchor="top",
         )
         margin["r"] = 150
+    if numeric_metadata_legend_active and _metadata_colorbar_is_horizontal(options):
+        margin["b"] = max(margin["b"], 135)
+    elif numeric_metadata_legend_active:
+        margin["r"] = max(margin["r"], 220)
     figure.update_layout(
         width=options.width,
         height=options.height,

@@ -98,6 +98,11 @@ Numeric metadata columns must have numeric dtype. Convert strings such as
 metadata["CAF%"] = pd.to_numeric(metadata["CAF%"].astype(str).str.rstrip("%"), errors="coerce")
 ```
 
+Plotly shows continuous colorbars for numeric metadata when
+`options={"show_metadata_legends": True}`. Set
+`options={"metadata_legend_orientation_heatmap": "horizontal"}` to place
+numeric metadata colorbars horizontally.
+
 PyOncoplot also exports reusable color cycles and ramps from
 `pyoncoplot.palettes`: `tol_colors`, `Iridescent`, `vega_10`,
 `vega_10_scanpy`, `vega_20`, `vega_20_scanpy`, `default_20`, `zeileis_28`,

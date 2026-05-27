@@ -1036,6 +1036,18 @@ def test_numeric_metadata_supports_per_column_continuous_colormaps():
     assert expected_score_zero in plotly_colors
     assert expected_score_mid in plotly_colors
     assert expected_purity_mid in plotly_colors
+    colorbar_traces = [
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(getattr(trace, "marker", None), "showscale", False)
+    ]
+    assert [trace.marker.colorbar.title.text for trace in colorbar_traces] == ["Score", "Purity"]
+    score_colorbar = colorbar_traces[0]
+    score_colorbar_colors = {color.lower() for _stop, color in score_colorbar.marker.colorscale}
+    assert expected_score_zero in score_colorbar_colors
+    assert expected_score_mid in score_colorbar_colors
+    assert score_colorbar.marker.cmin == 0.0
+    assert score_colorbar.marker.cmax == 1.0
 
     matplotlib_result = oncoplot(
         small_df(),
@@ -1056,6 +1068,49 @@ def test_numeric_metadata_supports_per_column_continuous_colormaps():
     assert expected_score_zero in patch_colors
     assert expected_score_mid in patch_colors
     assert expected_purity_mid in patch_colors
+
+
+def test_plotly_numeric_metadata_colorbars_follow_metadata_legend_options():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "score": [1.0, 3.0, 5.0],
+        }
+    )
+    hidden_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["score"],
+        metadata_palette={"score": "viridis"},
+        backend="plotly",
+        options=OncoplotOptions(show_metadata_legends=False),
+    )
+    assert not any(
+        getattr(getattr(trace, "marker", None), "showscale", False)
+        for trace in hidden_result.figure.data
+    )
+
+    horizontal_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["score"],
+        metadata_palette={"score": "viridis"},
+        backend="plotly",
+        options=OncoplotOptions(metadata_legend_orientation_heatmap="horizontal"),
+    )
+    colorbar_trace = next(
+        trace
+        for trace in horizontal_result.figure.data
+        if getattr(getattr(trace, "marker", None), "showscale", False)
+    )
+    assert colorbar_trace.marker.colorbar.orientation == "h"
+    assert horizontal_result.figure.layout.margin.b >= 135
 
 
 def test_matplotlib_pathway_strip_and_metadata_na_marker_render():
