@@ -123,7 +123,7 @@ Numeric metadata columns must have numeric dtype. Convert strings such as
 metadata["CAF%"] = pd.to_numeric(metadata["CAF%"].astype(str).str.rstrip("%"), errors="coerce")
 ```
 
-Plotly shows continuous colorbars for numeric metadata when
+Plotly and Matplotlib show continuous colorbars for numeric metadata when
 `options={"show_metadata_legends": True}`. Set
 `options={"metadata_legend_orientation_heatmap": "horizontal"}` to place
 numeric metadata colorbars horizontally.

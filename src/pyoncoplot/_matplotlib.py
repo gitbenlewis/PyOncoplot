@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import warnings
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
@@ -14,7 +15,6 @@ from ._metadata_colors import (
     coerce_continuous_colormap,
     metadata_palette_spec,
     numeric_metadata_colormap_spec,
-    numeric_metadata_endpoint_colors,
     sample_numeric_metadata_colormap,
 )
 from ._options import OncoplotOptions, coerce_options
@@ -40,6 +40,19 @@ MATPLOTLIB_RENDER_DEFAULTS: dict[str, Any] = {
     "draw_gene_bar": False,
     "draw_tmb_bar": False,
 }
+
+
+@dataclass(frozen=True)
+class _MetadataLegendSpec:
+    title: str
+    handles: Optional[List[object]] = None
+    colormap: object = None
+    min_value: float = 0.0
+    max_value: float = 1.0
+
+    @property
+    def is_numeric(self) -> bool:
+        return self.colormap is not None
 
 
 def _require_matplotlib():
@@ -167,6 +180,71 @@ def _legend_stack_step(
     line_count = handle_count + (1 if include_title else 0)
     line_height = fontsize / 72 / max(figure_height, 1) * 1.35
     return min(max_step, 0.025 + line_height * line_count)
+
+
+def _metadata_colorbar_is_horizontal(options: OncoplotOptions) -> bool:
+    return (
+        options.metadata_legend_position == "bottom"
+        or options.metadata_legend_orientation_heatmap == "horizontal"
+    )
+
+
+def _numeric_colorbar_bounds(min_value: float, max_value: float) -> tuple[float, float, list[float], list[str]]:
+    if np.isclose(min_value, max_value):
+        padding = max(0.5, abs(float(min_value)) * 0.05)
+        return (
+            float(min_value) - padding,
+            float(max_value) + padding,
+            [float(min_value)],
+            [f"{min_value:g}"],
+        )
+    return (
+        float(min_value),
+        float(max_value),
+        [float(min_value), float(max_value)],
+        [f"{min_value:g}", f"{max_value:g}"],
+    )
+
+
+def _numeric_metadata_legend_spec(
+    title: str,
+    column: object,
+    colormap_spec: object,
+    min_value: float,
+    max_value: float,
+) -> _MetadataLegendSpec:
+    return _MetadataLegendSpec(
+        title=title,
+        colormap=coerce_continuous_colormap(colormap_spec, column),
+        min_value=min_value,
+        max_value=max_value,
+    )
+
+
+def _metadata_has_numeric_legends(metadata_legends: Sequence[_MetadataLegendSpec]) -> bool:
+    return any(legend.is_numeric for legend in metadata_legends)
+
+
+def _metadata_has_bottom_legends(
+    metadata_legends: Sequence[_MetadataLegendSpec],
+    options: OncoplotOptions,
+) -> bool:
+    if not options.show_metadata_legends or not metadata_legends:
+        return False
+    if options.metadata_legend_position == "bottom":
+        return True
+    return _metadata_has_numeric_legends(metadata_legends) and _metadata_colorbar_is_horizontal(options)
+
+
+def _metadata_has_right_legends(
+    metadata_legends: Sequence[_MetadataLegendSpec],
+    options: OncoplotOptions,
+) -> bool:
+    if not options.show_metadata_legends or not metadata_legends or options.metadata_legend_position != "right":
+        return False
+    if not _metadata_colorbar_is_horizontal(options):
+        return True
+    return any(not legend.is_numeric for legend in metadata_legends)
 
 
 def _should_show_tmb_legend(
@@ -488,12 +566,12 @@ def _draw_metadata(
     prepared: PreparedOncoplotData,
     options: OncoplotOptions,
     metadata_palette: Optional[Mapping[str, Any]] = None,
-) -> List[tuple[str, List[object]]]:
+) -> List[_MetadataLegendSpec]:
     if prepared.metadata is None or not prepared.metadata_cols:
         return []
     _plt, _ListedColormap, _GridSpec, Patch, Rectangle = _require_matplotlib()
     metadata = prepared.metadata.set_index("Sample")
-    legends: List[tuple[str, List[object]]] = []
+    legends: List[_MetadataLegendSpec] = []
     ax.set_xlim(0, len(prepared.samples))
     ax.set_ylim(0, len(prepared.metadata_cols))
     ax.invert_yaxis()
@@ -509,6 +587,7 @@ def _draw_metadata(
         span = max(max_value - min_value, 1e-9)
         palette_spec = metadata_palette_spec(metadata_palette, column)
         numeric_colormap = numeric_metadata_colormap_spec(palette_spec) if is_numeric else None
+        numeric_color_spec = numeric_colormap if numeric_colormap is not None else options.metadata_default_colors
         if is_numeric and options.metadata_numeric_plot_type == "bar":
             ax.add_patch(
                 Rectangle(
@@ -535,11 +614,7 @@ def _draw_metadata(
                     )
                     continue
                 frac = (float(value) - min_value) / span
-                color = (
-                    sample_numeric_metadata_colormap(numeric_colormap, value, min_value, max_value, column)
-                    if numeric_colormap is not None
-                    else "#7F7F7F"
-                )
+                color = sample_numeric_metadata_colormap(numeric_color_spec, value, min_value, max_value, column)
                 ax.add_patch(
                     Rectangle(
                         (col_index, row_index + (1 - frac)),
@@ -568,36 +643,27 @@ def _draw_metadata(
                 fontsize=options.font_size_metadata_bar_numbers,
                 clip_on=False,
             )
-            if numeric_colormap is not None:
-                legend_low, legend_high = numeric_metadata_endpoint_colors(numeric_colormap, column)
-                legends.append(
-                    (
-                        display_column,
-                        [
-                            Patch(color=legend_low, label=f"{min_value:g}"),
-                            Patch(color=legend_high, label=f"{max_value:g}"),
-                        ],
-                    )
+            legends.append(
+                _numeric_metadata_legend_spec(
+                    display_column,
+                    column,
+                    numeric_color_spec,
+                    min_value,
+                    max_value,
                 )
-            else:
-                legends.append((display_column, [Patch(color="#7F7F7F", label=f"{min_value:g}-{max_value:g}")]))
+            )
             continue
 
         if is_numeric:
             numeric_values = values.astype(float)
             min_value = float(numeric_values.min(skipna=True)) if numeric_values.notna().any() else 0.0
             max_value = float(numeric_values.max(skipna=True)) if numeric_values.notna().any() else 1.0
-            span = max(max_value - min_value, 1e-9)
-            colours = options.metadata_default_colors
             for col_index, sample in enumerate(prepared.samples):
                 value = numeric_values.get(sample, np.nan)
                 if pd.isna(value):
                     color = "#D9D9D9"
-                elif numeric_colormap is not None:
-                    color = sample_numeric_metadata_colormap(numeric_colormap, value, min_value, max_value, column)
                 else:
-                    bucket = min(len(colours) - 1, int((float(value) - min_value) / span * len(colours)))
-                    color = colours[bucket]
+                    color = sample_numeric_metadata_colormap(numeric_color_spec, value, min_value, max_value, column)
                 ax.add_patch(Rectangle((col_index, row_index), 1, 1, facecolor=color, edgecolor="white", linewidth=0.1))
                 if pd.isna(value):
                     ax.text(
@@ -609,18 +675,13 @@ def _draw_metadata(
                         fontsize=options.metadata_na_marker_size,
                         color="#333333",
                     )
-            legend_low, legend_high = (
-                numeric_metadata_endpoint_colors(numeric_colormap, column)
-                if numeric_colormap is not None
-                else (options.metadata_default_colors[0], options.metadata_default_colors[-1])
-            )
             legends.append(
-                (
+                _numeric_metadata_legend_spec(
                     display_column,
-                    [
-                        Patch(color=legend_low, label=f"{min_value:g}"),
-                        Patch(color=legend_high, label=f"{max_value:g}"),
-                    ],
+                    column,
+                    numeric_color_spec,
+                    min_value,
+                    max_value,
                 )
             )
             continue
@@ -650,7 +711,7 @@ def _draw_metadata(
         ]
         if values.isna().any():
             handles.append(Patch(color="#D9D9D9", label=options.metadata_na_marker))
-        legends.append((display_column, handles))
+        legends.append(_MetadataLegendSpec(title=display_column, handles=handles))
 
     ax.set_yticks(np.arange(len(prepared.metadata_cols)))
     ax.set_yticklabels(
@@ -661,6 +722,62 @@ def _draw_metadata(
         label.update(_font_kwargs(options.font_style_metadata))
     ax.set_xticks([])
     return legends
+
+
+def _add_numeric_metadata_colorbar(
+    figure,
+    legend: _MetadataLegendSpec,
+    bounds: Sequence[float],
+    orientation: str,
+    options: OncoplotOptions,
+    fontsize: float,
+    title_fontsize: float,
+) -> None:
+    from matplotlib.cm import ScalarMappable
+    from matplotlib.colors import Normalize
+
+    cmin, cmax, tick_values, tick_labels = _numeric_colorbar_bounds(legend.min_value, legend.max_value)
+    cax = figure.add_axes(bounds)
+    mappable = ScalarMappable(norm=Normalize(vmin=cmin, vmax=cmax), cmap=legend.colormap)
+    mappable.set_array([])
+    colorbar = figure.colorbar(mappable, cax=cax, orientation=orientation, ticks=tick_values)
+    if orientation == "horizontal":
+        colorbar.ax.set_xticklabels(tick_labels)
+    else:
+        colorbar.ax.set_yticklabels(tick_labels)
+    colorbar.ax.tick_params(labelsize=fontsize)
+    if options.show_legend_titles:
+        colorbar.set_label(legend.title, fontsize=title_fontsize)
+
+
+def _add_bottom_numeric_metadata_colorbars(
+    figure,
+    numeric_legends: Sequence[_MetadataLegendSpec],
+    options: OncoplotOptions,
+    fontsize: float,
+    title_fontsize: float,
+    *,
+    has_lower_bottom_legend: bool,
+) -> None:
+    if not numeric_legends:
+        return
+    total = len(numeric_legends)
+    slot_width = min(0.28, 0.86 / max(total, 1))
+    colorbar_width = slot_width * 0.68
+    thickness = max(0.012, min(0.035, 0.015 * max(options.metadata_legend_key_size, 0.5)))
+    y = 0.105 if has_lower_bottom_legend else 0.055
+    start_x = 0.08 if total > 1 else 0.36
+    for index, legend in enumerate(numeric_legends):
+        x = start_x + index * slot_width
+        _add_numeric_metadata_colorbar(
+            figure,
+            legend,
+            [x, y, colorbar_width, thickness],
+            "horizontal",
+            options,
+            fontsize,
+            title_fontsize,
+        )
 
 
 def _add_static_legends(
@@ -741,10 +858,33 @@ def _add_static_legends(
     if not options.show_metadata_legends or not metadata_legends:
         return
 
-    if options.metadata_legend_position == "bottom":
+    metadata_legends = list(metadata_legends)
+    categorical_bottom_legends = [
+        legend
+        for legend in metadata_legends
+        if not legend.is_numeric and options.metadata_legend_position == "bottom"
+    ]
+    numeric_bottom_legends = [
+        legend
+        for legend in metadata_legends
+        if legend.is_numeric and _metadata_colorbar_is_horizontal(options)
+    ]
+    right_legends = [
+        legend
+        for legend in metadata_legends
+        if options.metadata_legend_position == "right"
+        and (not legend.is_numeric or not _metadata_colorbar_is_horizontal(options))
+    ]
+    has_bottom_mutation_legend = bool(
+        options.show_legend
+        and (mutation_handles or tmb_handles)
+        and options.mutation_legend_position == "bottom"
+    )
+
+    if categorical_bottom_legends:
         handles = []
-        for title, title_handles in metadata_legends:
-            handles.extend(title_handles[: max(1, min(3, len(title_handles)))])
+        for legend in categorical_bottom_legends:
+            handles.extend((legend.handles or [])[: max(1, min(3, len(legend.handles or [])))])
         if handles:
             ncol = options.metadata_legend_ncol or 3
             figure.legend(
@@ -757,10 +897,37 @@ def _add_static_legends(
                 handlelength=options.metadata_legend_key_size,
                 handleheight=options.metadata_legend_key_size,
             )
+    _add_bottom_numeric_metadata_colorbars(
+        figure,
+        numeric_bottom_legends,
+        options,
+        metadata_fontsize,
+        metadata_title_fontsize,
+        has_lower_bottom_legend=has_bottom_mutation_legend or bool(categorical_bottom_legends),
+    )
+
+    if not right_legends:
         return
 
     y = right_y
-    for title, handles in metadata_legends:
+    for legend in right_legends:
+        if legend.is_numeric:
+            height = max(0.10, min(0.18, 0.13 * max(options.metadata_legend_key_size, 0.5)))
+            width = max(0.012, min(0.035, 0.016 * max(options.metadata_legend_key_size, 0.5)))
+            _add_numeric_metadata_colorbar(
+                figure,
+                legend,
+                [0.74, max(0.05, y - height), width, height],
+                "vertical",
+                options,
+                metadata_fontsize,
+                metadata_title_fontsize,
+            )
+            y -= height + 0.065
+            if y < 0.05:
+                break
+            continue
+        handles = legend.handles or []
         if not handles:
             continue
         ncol = options.metadata_legend_ncol or 1
@@ -773,7 +940,7 @@ def _add_static_legends(
             ncol=ncol,
             frameon=False,
             fontsize=metadata_fontsize,
-            title=title if options.show_legend_titles else None,
+            title=legend.title if options.show_legend_titles else None,
             title_fontsize=metadata_title_fontsize,
             handlelength=options.metadata_legend_key_size,
             handleheight=options.metadata_legend_key_size,
@@ -877,10 +1044,19 @@ def render_matplotlib_oncoplot(
             Patch(color=palette.get(name, options.unspecified_mutation_color), label=_legend_label(name, options))
             for name in _mutation_levels(prepared, palette)
         ]
-    has_bottom_legend = bool((mutation_handles or tmb_handles) and options.mutation_legend_position == "bottom")
+    has_bottom_mutation_legend = bool((mutation_handles or tmb_handles) and options.mutation_legend_position == "bottom")
+    has_bottom_metadata_legend = _metadata_has_bottom_legends(metadata_legends, options)
+    if has_bottom_mutation_legend and has_bottom_metadata_legend:
+        bottom_margin = 0.26
+    elif has_bottom_metadata_legend:
+        bottom_margin = 0.20
+    elif has_bottom_mutation_legend:
+        bottom_margin = 0.18
+    else:
+        bottom_margin = 0.08
     has_right_legend = bool(
         ((mutation_handles or tmb_handles) and options.mutation_legend_position == "right")
-        or (metadata_legends and options.show_metadata_legends and options.metadata_legend_position == "right")
+        or _metadata_has_right_legends(metadata_legends, options)
     )
     variant_colorbar_active = (
         prepared.variant_value_col is not None
@@ -892,7 +1068,7 @@ def render_matplotlib_oncoplot(
         left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
         right=0.70 if has_right_legend else (0.88 if variant_colorbar_active else 0.98),
         top=0.92,
-        bottom=0.18 if has_bottom_legend else 0.08,
+        bottom=bottom_margin,
         hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
         wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
     )

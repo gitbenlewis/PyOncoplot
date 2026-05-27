@@ -19,6 +19,23 @@ def small_df():
     )
 
 
+def matplotlib_colorbar_axes(figure, *labels):
+    label_set = set(labels)
+    return [
+        axis
+        for axis in figure.axes
+        if axis.get_ylabel() in label_set or axis.get_xlabel() in label_set or axis.get_title() in label_set
+    ]
+
+
+def axis_colormap_colors(axis, fraction):
+    return {
+        to_hex(collection.cmap(fraction)).lower()
+        for collection in axis.collections
+        if getattr(collection, "cmap", None) is not None
+    }
+
+
 def test_plotly_render_and_html_clipboard():
     result = oncoplot(
         small_df(),
@@ -1481,6 +1498,89 @@ def test_numeric_metadata_supports_per_column_continuous_colormaps():
     assert expected_score_zero in patch_colors
     assert expected_score_mid in patch_colors
     assert expected_purity_mid in patch_colors
+    matplotlib_colorbars = matplotlib_colorbar_axes(matplotlib_result.figure, "Score", "Purity")
+    assert [axis.get_ylabel() for axis in matplotlib_colorbars] == ["Score", "Purity"]
+    assert [text.get_text() for text in matplotlib_colorbars[0].get_yticklabels() if text.get_text()] == ["0", "1"]
+    assert expected_score_zero in axis_colormap_colors(matplotlib_colorbars[0], 0.0)
+    assert expected_score_mid in axis_colormap_colors(matplotlib_colorbars[0], 0.5)
+    assert expected_purity_mid in axis_colormap_colors(matplotlib_colorbars[1], 0.5)
+
+
+def test_matplotlib_numeric_metadata_colorbars_follow_legend_options():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "score": [1.0, 3.0, 5.0],
+        }
+    )
+    hidden_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["score"],
+        metadata_palette={"score": "viridis"},
+        backend="matplotlib",
+        options=OncoplotOptions(
+            mutation_legend_position="none",
+            show_metadata_legends=False,
+        ),
+    )
+    assert not matplotlib_colorbar_axes(hidden_result.figure, "Score")
+    assert any(axis.patches for axis in hidden_result.figure.axes)
+
+    horizontal_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["score"],
+        metadata_palette={"score": "viridis"},
+        backend="matplotlib",
+        options=OncoplotOptions(
+            mutation_legend_position="none",
+            metadata_legend_orientation_heatmap="horizontal",
+        ),
+    )
+    horizontal_colorbar = matplotlib_colorbar_axes(horizontal_result.figure, "Score")[0]
+    assert horizontal_colorbar.get_xlabel() == "Score"
+    assert horizontal_colorbar.get_position().width > horizontal_colorbar.get_position().height
+    assert horizontal_result.figure.subplotpars.bottom >= 0.20
+
+
+def test_matplotlib_numeric_metadata_bar_tracks_get_continuous_colorbars():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "score": [1.0, 3.0, 5.0],
+        }
+    )
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["score"],
+        metadata_palette={"score": "magma"},
+        backend="matplotlib",
+        options=OncoplotOptions(
+            mutation_legend_position="none",
+            metadata_numeric_plot_type="bar",
+        ),
+    )
+    metadata_axis = next(
+        axis
+        for axis in result.figure.axes
+        if [label.get_text() for label in axis.get_yticklabels()] == ["Score"]
+    )
+    metadata_text = {text.get_text() for text in metadata_axis.texts}
+    assert {"1", "5"}.issubset(metadata_text)
+    colorbar = matplotlib_colorbar_axes(result.figure, "Score")[0]
+    assert colorbar.get_ylabel() == "Score"
+    assert [text.get_text() for text in colorbar.get_yticklabels() if text.get_text()] == ["1", "5"]
 
 
 def test_metadata_palette_unknown_names_raise_clear_errors():

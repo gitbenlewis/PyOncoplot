@@ -144,9 +144,10 @@ each gene's stacked bar to 100%.
 | `metadata_default_colors` | color sequence | fallback metadata colors |
 
 Categorical metadata tracks reuse `metadata_default_colors` from the beginning
-when there are more levels than fallback colors. `metadata_numeric_plot_type="bar"`,
-metadata legend row/column controls, and `metadata_legend_orientation_heatmap`
-are Matplotlib/static metadata controls.
+when there are more levels than fallback colors. `metadata_numeric_plot_type="bar"`
+and metadata legend row/column controls are Matplotlib/static metadata controls.
+`metadata_legend_orientation_heatmap` controls numeric metadata colorbar
+orientation in both backends.
 Plotly renders compact metadata heatmaps and categorical metadata legend entries
 that fit its interactive model.
 
