@@ -61,7 +61,7 @@ Here `top_n=20` overrides any `params["top_n"]` value.
 | `tooltip_col` | optional tooltip text column; defaults to `sample_col` |
 | `include_genes`, `ignore_genes`, `top_n` | choose the displayed gene panel |
 | `draw_gene_bar`, `draw_tmb_bar` | add recurrence and mutation burden side panels |
-| `palette`, `tmb_palette`, `metadata_palette` | color mappings for mutation tiles, typed TMB bars, and metadata tracks |
+| `palette`, `tmb_palette`, `metadata_palette` | color mappings for mutation tiles, typed TMB bars, categorical metadata, and numeric metadata colormaps |
 | `metadata`, `metadata_cols`, `metadata_sample_col` | clinical annotation input and selected tracks |
 | `metadata_require_mutations`, `show_all_samples` | sample inclusion controls |
 | `pathway`, `pathway_gene_col` | pathway grouping input |

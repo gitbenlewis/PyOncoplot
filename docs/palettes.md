@@ -67,6 +67,49 @@ Categorical levels not listed in the metadata palette receive fallback colors.
 When a metadata track has more categories than fallback colors, the fallback
 colors wrap around from the first color again.
 
+For numeric metadata, `metadata_palette` can specify a true continuous colormap
+per column. Use a Matplotlib colormap name such as `"viridis"` or a sequence of
+colors such as `Iridescent`:
+
+```python
+from pyoncoplot import Iridescent
+
+metadata_palette = {
+    "CAF%": "viridis_greyzero",
+    "Mean VAF%": "magma",
+    "Tumor purity": Iridescent,
+}
+
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    metadata_cols=["CAF%", "Mean VAF%", "Tumor purity"],
+    metadata_palette=metadata_palette,
+)
+```
+
+Numeric metadata columns must have numeric dtype. Convert strings such as
+`"42%"` before plotting:
+
+```python
+metadata["CAF%"] = pd.to_numeric(metadata["CAF%"].astype(str).str.rstrip("%"), errors="coerce")
+```
+
+PyOncoplot also exports reusable color cycles and ramps from
+`pyoncoplot.palettes`: `tol_colors`, `Iridescent`, `vega_10`,
+`vega_10_scanpy`, `vega_20`, `vega_20_scanpy`, `default_20`, `zeileis_28`,
+`default_28`, `godsnot_102`, `default_102`, and the gray-zero colormaps
+listed below.
+
+For sparse continuous tracks where exact zero should stand out as gray,
+PyOncoplot registers gray-zero colormaps named `viridis_greyzero`,
+`plasma_greyzero`, `magma_greyzero`, `inferno_greyzero`, `cividis_greyzero`,
+and `turbo_greyzero`. These are built as a gray first color followed by the
+256-color base Matplotlib ramp.
+
 ## TMB Palette
 
 When TMB data includes a mutation type column, pass a matching palette to stack

@@ -1,7 +1,18 @@
 import pandas as pd
 import pytest
+from matplotlib import colormaps
+from matplotlib.colors import to_hex
 
-from pyoncoplot import assert_palette_is_sensible, get_sensible_default_palette
+from pyoncoplot import (
+    Iridescent,
+    default_20,
+    default_28,
+    default_102,
+    viridis_greyzero,
+    assert_palette_is_sensible,
+    get_sensible_default_palette,
+)
+from pyoncoplot import palettes
 
 
 def test_default_palette_detects_maf_and_adds_multi_hit():
@@ -24,3 +35,17 @@ def test_fallback_palette_errors_for_too_many_categories():
 def test_palette_rejects_ampersand_delimited_so_terms():
     with pytest.raises(ValueError, match="ampersand"):
         get_sensible_default_palette(["missense_variant&intron_variant"])
+
+
+def test_public_annotation_palettes_are_exported():
+    assert palettes.Iridescent == Iridescent
+    assert len(default_20) == 20
+    assert len(default_28) == 28
+    assert len(default_102) == 102
+    assert Iridescent[0] == "#FEFBE9"
+
+
+def test_greyzero_colormaps_are_registered_and_exported():
+    assert palettes.viridis_greyzero is viridis_greyzero
+    assert colormaps.get_cmap("viridis_greyzero").name == "viridis_greyzero"
+    assert to_hex(viridis_greyzero(0.0)) == "#808080"

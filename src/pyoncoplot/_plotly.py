@@ -10,6 +10,12 @@ import numpy as np
 import pandas as pd
 
 from ._data import PreparedOncoplotData
+from ._metadata_colors import (
+    categorical_metadata_palette,
+    metadata_palette_spec,
+    numeric_metadata_colormap_spec,
+    sample_numeric_metadata_colormap,
+)
 from ._options import OncoplotOptions, coerce_options
 from ._params import merge_params
 from ._utils import as_percent
@@ -133,6 +139,22 @@ def _gene_axis_options(prepared: PreparedOncoplotData) -> Dict[str, object]:
         "categoryorder": "array",
         "categoryarray": list(reversed(prepared.genes)),
         "range": _category_range(len(prepared.genes)),
+        "tickmode": "array",
+        "tickvals": list(prepared.genes),
+        "ticktext": list(prepared.genes),
+        "automargin": True,
+    }
+
+
+def _metadata_axis_options(prepared: PreparedOncoplotData, options: OncoplotOptions) -> Dict[str, object]:
+    labels = [_legend_title(column, options) for column in prepared.metadata_cols or []]
+    return {
+        "categoryorder": "array",
+        "categoryarray": labels,
+        "tickmode": "array",
+        "tickvals": labels,
+        "ticktext": labels,
+        "automargin": True,
     }
 
 
@@ -302,13 +324,28 @@ def _numeric_metadata_color(value: object, min_value: float, max_value: float, o
     return options.metadata_default_colors[bucket]
 
 
+def _metadata_numeric_color(
+    value: object,
+    min_value: float,
+    max_value: float,
+    column: object,
+    options: OncoplotOptions,
+    colormap_spec: object = None,
+) -> str:
+    if pd.isna(value):
+        return "#D9D9D9"
+    if colormap_spec is not None:
+        return sample_numeric_metadata_colormap(colormap_spec, value, min_value, max_value, column)
+    return _numeric_metadata_color(value, min_value, max_value, options)
+
+
 def _add_metadata_strip(
     fig,
     prepared: PreparedOncoplotData,
     row: int,
     col: int,
     options: OncoplotOptions,
-    metadata_palette: Optional[Mapping[str, Mapping[str, str]]] = None,
+    metadata_palette: Optional[Mapping[str, Any]] = None,
 ):
     go, _make_subplots = _require_plotly()
     metadata = prepared.metadata
@@ -337,13 +374,15 @@ def _add_metadata_strip(
         else:
             min_value = 0.0
             max_value = 1.0
+        palette_spec = metadata_palette_spec(metadata_palette, col_name)
+        numeric_colormap = numeric_metadata_colormap_spec(palette_spec) if is_numeric else None
         level_map = (
             {}
             if is_numeric
             else _metadata_color_map(
                 values_by_sample.astype("object"),
                 options,
-                supplied=metadata_palette.get(str(col_name), {}),
+                supplied=categorical_metadata_palette(palette_spec, col_name),
             )
         )
         for sample in prepared.samples:
@@ -353,7 +392,7 @@ def _add_metadata_strip(
                 key = ("__NA__", col_name)
                 color = "#D9D9D9"
             elif is_numeric:
-                color = _numeric_metadata_color(value, min_value, max_value, options)
+                color = _metadata_numeric_color(value, min_value, max_value, col_name, options, numeric_colormap)
                 key = ("__NUM__", col_name, color)
             else:
                 key = (col_name, str(value))
@@ -419,6 +458,7 @@ def _add_metadata_strip(
         col=col,
     )
     fig.update_yaxes(
+        **_metadata_axis_options(prepared, options),
         autorange="reversed",
         tickfont=_font_options(options.font_size_metadata, options),
         row=row,

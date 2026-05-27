@@ -9,6 +9,13 @@ import numpy as np
 import pandas as pd
 
 from ._data import PreparedOncoplotData
+from ._metadata_colors import (
+    categorical_metadata_palette,
+    metadata_palette_spec,
+    numeric_metadata_colormap_spec,
+    numeric_metadata_endpoint_colors,
+    sample_numeric_metadata_colormap,
+)
 from ._options import OncoplotOptions, coerce_options
 from ._params import merge_params
 
@@ -355,7 +362,7 @@ def _draw_metadata(
     ax,
     prepared: PreparedOncoplotData,
     options: OncoplotOptions,
-    metadata_palette: Optional[Mapping[str, Mapping[str, str]]] = None,
+    metadata_palette: Optional[Mapping[str, Any]] = None,
 ) -> List[tuple[str, List[object]]]:
     if prepared.metadata is None or not prepared.metadata_cols:
         return []
@@ -375,6 +382,8 @@ def _draw_metadata(
         min_value = float(values.min(skipna=True)) if is_numeric and values.notna().any() else 0.0
         max_value = float(values.max(skipna=True)) if is_numeric and values.notna().any() else 1.0
         span = max(max_value - min_value, 1e-9)
+        palette_spec = metadata_palette_spec(metadata_palette, column)
+        numeric_colormap = numeric_metadata_colormap_spec(palette_spec) if is_numeric else None
         if is_numeric and options.metadata_numeric_plot_type == "bar":
             ax.add_patch(
                 Rectangle(
@@ -401,12 +410,17 @@ def _draw_metadata(
                     )
                     continue
                 frac = (float(value) - min_value) / span
+                color = (
+                    sample_numeric_metadata_colormap(numeric_colormap, value, min_value, max_value, column)
+                    if numeric_colormap is not None
+                    else "#7F7F7F"
+                )
                 ax.add_patch(
                     Rectangle(
                         (col_index, row_index + (1 - frac)),
                         1,
                         frac,
-                        facecolor="#7F7F7F",
+                        facecolor=color,
                         edgecolor="white",
                         linewidth=0.1,
                     )
@@ -429,7 +443,19 @@ def _draw_metadata(
                 fontsize=options.font_size_metadata_bar_numbers,
                 clip_on=False,
             )
-            legends.append((display_column, [Patch(color="#7F7F7F", label=f"{min_value:g}-{max_value:g}")]))
+            if numeric_colormap is not None:
+                legend_low, legend_high = numeric_metadata_endpoint_colors(numeric_colormap, column)
+                legends.append(
+                    (
+                        display_column,
+                        [
+                            Patch(color=legend_low, label=f"{min_value:g}"),
+                            Patch(color=legend_high, label=f"{max_value:g}"),
+                        ],
+                    )
+                )
+            else:
+                legends.append((display_column, [Patch(color="#7F7F7F", label=f"{min_value:g}-{max_value:g}")]))
             continue
 
         if is_numeric:
@@ -442,6 +468,8 @@ def _draw_metadata(
                 value = numeric_values.get(sample, np.nan)
                 if pd.isna(value):
                     color = "#D9D9D9"
+                elif numeric_colormap is not None:
+                    color = sample_numeric_metadata_colormap(numeric_colormap, value, min_value, max_value, column)
                 else:
                     bucket = min(len(colours) - 1, int((float(value) - min_value) / span * len(colours)))
                     color = colours[bucket]
@@ -456,19 +484,24 @@ def _draw_metadata(
                         fontsize=options.metadata_na_marker_size,
                         color="#333333",
                     )
+            legend_low, legend_high = (
+                numeric_metadata_endpoint_colors(numeric_colormap, column)
+                if numeric_colormap is not None
+                else (options.metadata_default_colors[0], options.metadata_default_colors[-1])
+            )
             legends.append(
                 (
                     display_column,
                     [
-                        Patch(color=options.metadata_default_colors[0], label=f"{min_value:g}"),
-                        Patch(color=options.metadata_default_colors[-1], label=f"{max_value:g}"),
+                        Patch(color=legend_low, label=f"{min_value:g}"),
+                        Patch(color=legend_high, label=f"{max_value:g}"),
                     ],
                 )
             )
             continue
 
         levels = [str(value) for value in pd.unique(values.dropna())]
-        column_palette = dict(metadata_palette.get(column, {}))
+        column_palette = categorical_metadata_palette(palette_spec, column)
         for level_index, level in enumerate(levels):
             column_palette.setdefault(level, options.metadata_default_colors[level_index % len(options.metadata_default_colors)])
         for col_index, sample in enumerate(prepared.samples):

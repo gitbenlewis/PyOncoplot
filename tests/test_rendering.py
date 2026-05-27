@@ -2,8 +2,10 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from matplotlib import colormaps
+from matplotlib.colors import LinearSegmentedColormap, to_hex
 
-from pyoncoplot import OncoplotOptions, oncoplot
+from pyoncoplot import Iridescent, OncoplotOptions, oncoplot
 
 
 def small_df():
@@ -744,6 +746,55 @@ def test_plotly_bar_axes_share_matrix_category_extents():
     assert all(trace.width == 1 for trace in gene_bars)
 
 
+def test_plotly_forces_all_gene_and_metadata_tick_labels():
+    samples = [f"S{i:02d}" for i in range(1, 11)]
+    genes = [f"GENE{i:02d}" for i in range(1, 26)]
+    metadata_cols = [f"meta_{i}" for i in range(1, 6)]
+    mutations = pd.DataFrame(
+        {
+            "sample": [samples[index % len(samples)] for index in range(len(genes))],
+            "gene": genes,
+            "type": ["Missense_Mutation"] * len(genes),
+        }
+    )
+    metadata = pd.DataFrame(
+        {
+            "sample": samples,
+            **{column: [f"value_{index % 3}" for index in range(len(samples))] for column in metadata_cols},
+        }
+    )
+
+    result = oncoplot(
+        mutations,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=metadata_cols,
+        draw_gene_bar=True,
+        draw_tmb_bar=True,
+        top_n=25,
+        backend="plotly",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+
+    main_gene_axis = result.figure.layout.yaxis2
+    gene_bar_axis = result.figure.layout.yaxis3
+    metadata_axis = result.figure.layout.yaxis4
+    expected_metadata_labels = ["Meta 1", "Meta 2", "Meta 3", "Meta 4", "Meta 5"]
+
+    assert main_gene_axis.tickmode == "array"
+    assert list(main_gene_axis.tickvals) == result.prepared_data.genes
+    assert list(main_gene_axis.ticktext) == result.prepared_data.genes
+    assert main_gene_axis.automargin is True
+    assert gene_bar_axis.showticklabels is False
+    assert list(gene_bar_axis.tickvals) == result.prepared_data.genes
+    assert metadata_axis.tickmode == "array"
+    assert list(metadata_axis.tickvals) == expected_metadata_labels
+    assert list(metadata_axis.ticktext) == expected_metadata_labels
+    assert metadata_axis.automargin is True
+
+
 def test_matplotlib_tmb_axis_uses_matrix_sample_boundaries():
     result = oncoplot(
         small_df(),
@@ -949,6 +1000,62 @@ def test_metadata_fallback_palette_wraps_for_many_categories():
     assert legend_colors["Group: C1"] == "#222222"
     assert legend_colors["Group: C2"] == "#111111"
     assert legend_colors["Group: C3"] == "#222222"
+
+
+def test_numeric_metadata_supports_per_column_continuous_colormaps():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "score": [0.0, 0.5, 1.0],
+            "purity": [0.0, 0.5, 1.0],
+        }
+    )
+    metadata_palette = {"score": "viridis_greyzero", "purity": Iridescent}
+    expected_score_zero = "#808080"
+    expected_score_mid = to_hex(colormaps.get_cmap("viridis_greyzero")(0.5))
+    expected_purity_mid = to_hex(LinearSegmentedColormap.from_list("iridescent_test", Iridescent)(0.5))
+
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["score", "purity"],
+        metadata_palette=metadata_palette,
+        backend="plotly",
+    )
+    metadata_heatmap = next(
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and trace.customdata is not None
+        and trace.customdata[0][0]["role"] == "metadata"
+    )
+    plotly_colors = {color.lower() for _stop, color in metadata_heatmap.colorscale}
+    assert expected_score_zero in plotly_colors
+    assert expected_score_mid in plotly_colors
+    assert expected_purity_mid in plotly_colors
+
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["score", "purity"],
+        metadata_palette=metadata_palette,
+        backend="matplotlib",
+        options=OncoplotOptions(metadata_numeric_plot_type="heatmap"),
+    )
+    patch_colors = {
+        to_hex(patch.get_facecolor()).lower()
+        for axis in matplotlib_result.figure.axes
+        for patch in axis.patches
+    }
+    assert expected_score_zero in patch_colors
+    assert expected_score_mid in patch_colors
+    assert expected_purity_mid in patch_colors
 
 
 def test_matplotlib_pathway_strip_and_metadata_na_marker_render():
