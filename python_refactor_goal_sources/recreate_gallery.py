@@ -470,6 +470,7 @@ def _weighted_row_starts(columns: Sequence[str], weights: Mapping[str, float]) -
     return row_starts, row_heights, y_cursor
 
 
+# Generates gen.goal_plot_18.png from the AML basic oncoplot preset.
 def render_aml_basic(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml_basic gallery", **kwargs)
     oncoplot_params = _load_run_oncoplot_params(run_name)
@@ -477,6 +478,7 @@ def render_aml_basic(output_path: Path, *, params: Optional[Mapping[str, Any]] =
     _save_exact(result, output_path, dpi=_save_dpi(merged, default=120))
 
 
+# Generates gen.goal_plot_19.png, gen.goal_plot_20.png, and gen.goal_plot_22.png.
 def render_aml_metadata(
     output_path: Path,
     sort_metadata: bool = False,
@@ -501,6 +503,7 @@ def render_aml_metadata(
     _save_exact(result, output_path, dpi=_save_dpi(merged, default=120))
 
 
+# Generates gen.goal_plot_1.png from the large BRCA gallery preset.
 def render_brca_large(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     _render_brca_large_static(output_path, params=params, **kwargs)
 
@@ -635,12 +638,14 @@ def _render_brca_large_static(output_path: Path, *, params: Optional[Mapping[str
     plt.close(fig)
 
 
+# Generates gen.goal_plot_15.png from the compact BRCA gallery preset.
 def render_brca_compact_complex(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="brca compact gallery", **kwargs)
     result = oncoplot(params=_load_run_oncoplot_params(run_name))
     _save_exact(result, output_path, dpi=_save_dpi(merged, default=100))
 
 
+# Generates gen.goal_plot_16.png from the compact CSSC gallery preset.
 def render_cssc_compact(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
@@ -721,6 +726,7 @@ def render_cssc_compact(output_path: Path, *, params: Optional[Mapping[str, Any]
     plt.close(fig)
 
 
+# Generates gen.goal_plot_14.png and gen.goal_plot_17.png from GBM presets.
 def render_gbm_clinical_molecular(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
@@ -782,6 +788,7 @@ def render_gbm_clinical_molecular(output_path: Path, *, params: Optional[Mapping
     plt.close(fig)
 
 
+# Generates gen.goal_plot_21.png from the structural variation panel preset.
 def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
@@ -827,6 +834,7 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
     plt.close(fig)
 
 
+# Generates gen.goal_plot_2.png through gen.goal_plot_5.png from README presets.
 def render_readme_oncoplot(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
     merged = merge_params(params, allowed_keys=README_ONCOPLOT_KEYS, context="readme oncoplot gallery", **kwargs)
     oncoplot_params = _load_run_oncoplot_params(run_name)
@@ -844,6 +852,7 @@ def render_readme_oncoplot(output_path: Path, *, params: Optional[Mapping[str, A
     _save_exact(result, output_path, dpi=dpi)
 
 
+# Generates gen.goal_plot_6.png from the package mark preset.
 def render_package_mark(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Circle, Rectangle
@@ -869,6 +878,7 @@ def render_package_mark(output_path: Path, *, params: Optional[Mapping[str, Any]
     plt.close(fig)
 
 
+# Generates gen.goal_plot_7.png from the interactive snapshot preset.
 def render_interactive_snapshot(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import FancyBboxPatch, Rectangle
@@ -923,6 +933,7 @@ def render_interactive_snapshot(output_path: Path, *, params: Optional[Mapping[s
     plt.close(fig)
 
 
+# Generates gen.goal_plot_8.png and gen.goal_plot_9.png from comparison table presets.
 def render_comparison_table(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
@@ -963,6 +974,7 @@ def render_comparison_table(output_path: Path, *, params: Optional[Mapping[str, 
     plt.close(fig)
 
 
+# Generates gen.goal_plot_10.png from the lasso scatter preset.
 def render_lasso_scatter(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Polygon
@@ -1006,6 +1018,7 @@ def _draw_multimodal_oncoplot(ax, events: pd.DataFrame, samples: Sequence[str], 
         spine.set_visible(False)
 
 
+# Generates gen.goal_plot_11.png through gen.goal_plot_13.png from multimodal presets.
 def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Polygon, Rectangle
@@ -1164,6 +1177,7 @@ def _build_gallery_presets() -> Dict[str, GalleryPreset]:
 GALLERY_PRESETS = _build_gallery_presets()
 
 
+# Clean gallery images are dispatched through GALLERY_PRESETS built from config.yaml.
 def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean") -> Path:
     if style == "comparison":
         return render_brca_comparison_sheet(name, out_dir or COMPARISON_OUT)
@@ -1184,6 +1198,7 @@ def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean
     return output_path
 
 
+# Comparison sheets write compare.goal_plot_1.png and compare.goal_plot_15.png.
 def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> Path:
     comparison_config = GALLERY_CONFIG.get("comparison_runs", {})
     base_name = name
