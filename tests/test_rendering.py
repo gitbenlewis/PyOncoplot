@@ -1605,9 +1605,10 @@ def test_numeric_metadata_supports_per_column_continuous_colormaps():
     assert expected_score_mid in patch_colors
     assert expected_purity_mid in patch_colors
     matplotlib_colorbars = matplotlib_colorbar_axes(matplotlib_result.figure, "Score", "Purity")
-    assert [axis.get_xlabel() for axis in matplotlib_colorbars] == ["Score", "Purity"]
-    assert all(axis.get_position().width > axis.get_position().height for axis in matplotlib_colorbars)
-    assert [text.get_text() for text in matplotlib_colorbars[0].get_xticklabels() if text.get_text()] == ["0", "1"]
+    assert [axis.get_title() for axis in matplotlib_colorbars] == ["Score", "Purity"]
+    assert [axis.get_ylabel() for axis in matplotlib_colorbars] == ["", ""]
+    assert all(axis.get_position().height > axis.get_position().width for axis in matplotlib_colorbars)
+    assert [text.get_text() for text in matplotlib_colorbars[0].get_yticklabels() if text.get_text()] == ["0", "1"]
     assert expected_score_zero in axis_colormap_colors(matplotlib_colorbars[0], 0.0)
     assert expected_score_mid in axis_colormap_colors(matplotlib_colorbars[0], 0.5)
     assert expected_purity_mid in axis_colormap_colors(matplotlib_colorbars[1], 0.5)
@@ -1648,6 +1649,7 @@ def test_matplotlib_numeric_metadata_colorbars_follow_legend_options():
         backend="matplotlib",
         options=OncoplotOptions(
             mutation_legend_position="none",
+            metadata_legend_orientation_heatmap="horizontal",
         ),
     )
     horizontal_colorbar = matplotlib_colorbar_axes(horizontal_result.figure, "Score")[0]
@@ -1685,9 +1687,10 @@ def test_matplotlib_numeric_metadata_bar_tracks_get_continuous_colorbars():
     metadata_text = {text.get_text() for text in metadata_axis.texts}
     assert {"1", "5"}.issubset(metadata_text)
     colorbar = matplotlib_colorbar_axes(result.figure, "Score")[0]
-    assert colorbar.get_xlabel() == "Score"
-    assert colorbar.get_position().width > colorbar.get_position().height
-    assert [text.get_text() for text in colorbar.get_xticklabels() if text.get_text()] == ["1", "5"]
+    assert colorbar.get_title() == "Score"
+    assert colorbar.get_ylabel() == ""
+    assert colorbar.get_position().height > colorbar.get_position().width
+    assert [text.get_text() for text in colorbar.get_yticklabels() if text.get_text()] == ["1", "5"]
 
 
 def test_metadata_palette_unknown_names_raise_clear_errors():

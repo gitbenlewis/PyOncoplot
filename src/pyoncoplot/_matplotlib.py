@@ -1031,7 +1031,10 @@ def _add_numeric_metadata_colorbar(
         colorbar.ax.set_yticklabels(tick_labels)
     colorbar.ax.tick_params(labelsize=fontsize)
     if options.show_legend_titles:
-        colorbar.set_label(legend.title, fontsize=title_fontsize)
+        if orientation == "horizontal":
+            colorbar.set_label(legend.title, fontsize=title_fontsize)
+        else:
+            colorbar.ax.set_title(legend.title, fontsize=title_fontsize, pad=max(2, title_fontsize * 0.35))
 
 
 def _add_bottom_numeric_metadata_colorbars(
