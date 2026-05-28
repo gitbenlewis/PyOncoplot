@@ -419,6 +419,237 @@ def test_prepare_oncoplot_data_rejects_conflicting_derived_metadata_values():
         )
 
 
+def test_mutation_filters_are_row_level_and_affect_top_gene_ranking():
+    df = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3", "S4", "S5", "S6"],
+            "gene": ["AAA", "AAA", "AAA", "BBB", "BBB", "CCC"],
+            "type": ["keep", "drop", "drop", "keep", "keep", "keep"],
+            "vaf": [0.90, 0.90, 0.90, 0.70, 0.80, 0.20],
+        }
+    )
+
+    unfiltered = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        top_n=1,
+    )
+    filtered = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        top_n=1,
+        filter_mutations_by_isin_lists={"type": ["keep"]},
+        filter_mutations_by_greater_than={"vaf": 0.50},
+        filter_mutations_by_less_than={"vaf": 0.95},
+    )
+
+    assert unfiltered.genes == ["AAA"]
+    assert filtered.genes == ["BBB"]
+    assert filtered.samples == ["S4", "S5"]
+    assert set(filtered.tiles["Gene"].astype(str)) == {"BBB"}
+
+
+def test_sample_filters_use_metadata_with_and_semantics():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3", "S4", "S5"],
+            "group": ["A", "B", "A", "A", "C"],
+            "age": [45, 60, 61, 72, 55],
+        }
+    )
+
+    prepared = prepare_oncoplot_data(
+        mutation_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group", "age"],
+        top_n=None,
+        filter_samples_by_isin_lists={"group": ["A"]},
+        filter_samples_by_greater_than={"age": 50},
+        filter_samples_by_less_than={"age": 70},
+    )
+
+    assert prepared.samples == ["S3"]
+    assert prepared.genes == ["PTEN"]
+    assert prepared.total_samples == 1
+    assert prepared.metadata["Sample"].astype(str).tolist() == ["S3"]
+
+
+def test_sample_filter_source_resolution_prefers_metadata_over_main_data():
+    df = mutation_df()
+    df["group"] = df["sample"].map(
+        {
+            "S1": "main_drop",
+            "S2": "main_keep",
+            "S3": "main_drop",
+            "S4": "main_drop",
+            "S5": "main_drop",
+        }
+    )
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3", "S4", "S5"],
+            "group": ["meta_keep", "meta_drop", "meta_drop", "meta_drop", "meta_drop"],
+        }
+    )
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        top_n=None,
+        filter_samples_by_isin_lists={"group": ["meta_keep"]},
+    )
+
+    assert prepared.samples == ["S1"]
+    assert set(prepared.tiles["Sample"].astype(str)) == {"S1"}
+
+
+def test_main_data_sample_filters_require_one_row_to_satisfy_all_filters_then_keep_sample_rows():
+    df = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2", "S2", "S3"],
+            "gene": ["TP53", "PTEN", "TP53", "PTEN", "EGFR"],
+            "type": [
+                "Missense_Mutation",
+                "Nonsense_Mutation",
+                "Missense_Mutation",
+                "Nonsense_Mutation",
+                "Missense_Mutation",
+            ],
+            "vaf": [0.20, 0.95, 0.90, 0.10, 0.40],
+        }
+    )
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        top_n=None,
+        filter_samples_by_isin_lists={"type": ["Missense_Mutation"]},
+        filter_samples_by_greater_than={"vaf": 0.80},
+    )
+
+    assert prepared.samples == ["S2"]
+    assert set(prepared.tiles["Sample"].astype(str)) == {"S2"}
+    assert set(prepared.tiles["Gene"].astype(str)) == {"PTEN", "TP53"}
+
+
+def test_mutation_filters_run_before_main_data_sample_filters():
+    df = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2", "S2"],
+            "gene": ["TP53", "EGFR", "TP53", "PTEN"],
+            "status": ["keep", "drop", "keep", "keep"],
+            "cohort": ["other", "target", "target", "other"],
+        }
+    )
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="status",
+        top_n=None,
+        filter_mutations_by_isin_lists={"status": ["keep"]},
+        filter_samples_by_isin_lists={"cohort": ["target"]},
+    )
+
+    assert prepared.samples == ["S2"]
+    assert set(prepared.tiles["Gene"].astype(str)) == {"PTEN", "TP53"}
+    assert "S1" not in set(prepared.tiles["Sample"].astype(str))
+
+
+def test_derived_metadata_omits_filter_only_main_data_columns():
+    df = mutation_df()
+    df["clinical_group"] = df["sample"].map({"S1": "A", "S2": "B", "S3": "A", "S4": "C", "S5": "B"})
+    df["cohort"] = df["sample"].map({"S1": "keep", "S2": "drop", "S3": "keep", "S4": "drop", "S5": "drop"})
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata_cols=["clinical_group"],
+        show_all_samples=True,
+        filter_samples_by_isin_lists={"cohort": ["keep"]},
+    )
+
+    assert set(prepared.samples) == {"S1", "S3"}
+    assert prepared.metadata_cols == ["clinical_group"]
+    assert list(prepared.metadata.columns) == ["Sample", "clinical_group"]
+
+
+def test_filter_validation_errors_are_clear():
+    df = mutation_df()
+
+    with pytest.raises(TypeError, match="mapping"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            filter_mutations_by_isin_lists=["type"],
+        )
+
+    with pytest.raises(TypeError, match="sequence"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            filter_samples_by_isin_lists={"type": "Missense_Mutation"},
+        )
+
+    with pytest.raises(ValueError, match="Could not find column: missing"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            filter_mutations_by_isin_lists={"missing": ["x"]},
+        )
+
+    with pytest.raises(ValueError, match="numeric filters"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            filter_mutations_by_greater_than={"type": 1},
+        )
+
+    with pytest.raises(ValueError, match="not NaN"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            filter_samples_by_less_than={"type": math.nan},
+        )
+
+    with pytest.raises(ValueError, match="zero mutation rows"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            filter_mutations_by_isin_lists={"type": ["absent"]},
+        )
+
+    with pytest.raises(ValueError, match="zero samples"):
+        prepare_oncoplot_data(
+            df,
+            gene_col="gene",
+            sample_col="sample",
+            filter_samples_by_isin_lists={"type": ["absent"]},
+        )
+
+
 def test_ampersand_delimited_so_terms_are_rejected():
     df = pd.DataFrame(
         {

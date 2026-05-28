@@ -153,6 +153,44 @@ oncoplot(
 )
 ```
 
+## Row and Sample Filters
+
+Use mutation filters to remove mutation rows before gene ranking. Use sample
+filters to choose the cohort before ranking, TMB preparation, sample ordering,
+and recurrence denominators.
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    filter_mutations_by_isin_lists={"mutation_type": ["Missense_Mutation"]},
+    filter_mutations_by_greater_than={"VAF": 0.10},
+    filter_mutations_by_less_than={"VAF": 0.80},
+)
+```
+
+Sample filters use the same shapes, but they select samples rather than rows:
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    filter_samples_by_isin_lists={"Subtype": ["Basal"]},
+    filter_samples_by_greater_than={"Age_years": 45},
+)
+```
+
+All filters combine with AND semantics. Sample filters resolve columns from
+metadata first when the column exists there; otherwise they use mutation-table
+columns. When sample filters use mutation-table columns, one retained mutation
+row must satisfy all mutation-table sample filters for that sample, then all
+retained mutation rows for that sample remain available for ranking and display.
+
 ## Validation Rules
 
 The data preparation layer checks:

@@ -256,6 +256,143 @@ def _validate_variant_value_columns(
         raise ValueError(f"{label} must reference numeric columns: {column}")
 
 
+def _coerce_isin_filters(
+    filters: Optional[Mapping[str, Sequence[object]]],
+    label: str,
+) -> dict[str, List[object]]:
+    if filters is None:
+        return {}
+    if not isinstance(filters, Mapping):
+        raise TypeError(f"{label} must be a mapping of column name to allowed values.")
+    out: dict[str, List[object]] = {}
+    for column, values in filters.items():
+        column_name = str(column)
+        if isinstance(values, (str, bytes, bytearray)) or not isinstance(values, Sequence):
+            raise TypeError(f"{label}[{column_name!r}] must be a sequence of allowed values, not a string.")
+        out[column_name] = list(values)
+    return out
+
+
+def _coerce_numeric_filters(
+    filters: Optional[Mapping[str, object]],
+    label: str,
+) -> dict[str, float]:
+    if filters is None:
+        return {}
+    if not isinstance(filters, Mapping):
+        raise TypeError(f"{label} must be a mapping of column name to numeric cutoff.")
+    out: dict[str, float] = {}
+    for column, cutoff in filters.items():
+        column_name = str(column)
+        try:
+            numeric_cutoff = pd.to_numeric(pd.Series([cutoff]), errors="coerce").iloc[0]
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"{label}[{column_name!r}] cutoff must be numeric and not NaN.") from exc
+        if pd.isna(numeric_cutoff):
+            raise ValueError(f"{label}[{column_name!r}] cutoff must be numeric and not NaN.")
+        out[column_name] = float(numeric_cutoff)
+    return out
+
+
+def _filter_mask(
+    data: pd.DataFrame,
+    *,
+    isin_filters: Mapping[str, Sequence[object]],
+    greater_than_filters: Mapping[str, float],
+    less_than_filters: Mapping[str, float],
+    label: str,
+) -> pd.Series:
+    columns = unique_preserve_order(
+        list(isin_filters)
+        + list(greater_than_filters)
+        + list(less_than_filters)
+    )
+    check_valid_dataframe_columns(data, columns)
+    mask = pd.Series(True, index=data.index)
+
+    for column, values in isin_filters.items():
+        mask &= (data[column].notna() & data[column].isin(values)).fillna(False).astype(bool)
+
+    numeric_columns = unique_preserve_order(list(greater_than_filters) + list(less_than_filters))
+    for column in numeric_columns:
+        if not pd.api.types.is_numeric_dtype(data[column]):
+            raise ValueError(f"{label} numeric filters must reference numeric columns: {column}")
+
+    for column, cutoff in greater_than_filters.items():
+        mask &= (data[column] > cutoff).fillna(False).astype(bool)
+    for column, cutoff in less_than_filters.items():
+        mask &= (data[column] < cutoff).fillna(False).astype(bool)
+    return mask
+
+
+def _split_sample_filters(
+    data: pd.DataFrame,
+    metadata: Optional[pd.DataFrame],
+    *,
+    isin_filters: Mapping[str, Sequence[object]],
+    greater_than_filters: Mapping[str, float],
+    less_than_filters: Mapping[str, float],
+) -> tuple[
+    dict[str, List[object]],
+    dict[str, float],
+    dict[str, float],
+    dict[str, List[object]],
+    dict[str, float],
+    dict[str, float],
+]:
+    metadata_isin: dict[str, List[object]] = {}
+    metadata_greater_than: dict[str, float] = {}
+    metadata_less_than: dict[str, float] = {}
+    data_isin: dict[str, List[object]] = {}
+    data_greater_than: dict[str, float] = {}
+    data_less_than: dict[str, float] = {}
+
+    for column, values in isin_filters.items():
+        if metadata is not None and column in metadata.columns:
+            metadata_isin[column] = list(values)
+        elif column in data.columns:
+            data_isin[column] = list(values)
+        else:
+            available = ", ".join(map(str, data.columns))
+            metadata_available = ", ".join(map(str, metadata.columns)) if metadata is not None else "none"
+            raise ValueError(
+                f"Could not find sample filter column: {column}. "
+                f"Available metadata columns: {metadata_available}. Available mutation columns: {available}"
+            )
+    for column, cutoff in greater_than_filters.items():
+        if metadata is not None and column in metadata.columns:
+            metadata_greater_than[column] = cutoff
+        elif column in data.columns:
+            data_greater_than[column] = cutoff
+        else:
+            available = ", ".join(map(str, data.columns))
+            metadata_available = ", ".join(map(str, metadata.columns)) if metadata is not None else "none"
+            raise ValueError(
+                f"Could not find sample filter column: {column}. "
+                f"Available metadata columns: {metadata_available}. Available mutation columns: {available}"
+            )
+    for column, cutoff in less_than_filters.items():
+        if metadata is not None and column in metadata.columns:
+            metadata_less_than[column] = cutoff
+        elif column in data.columns:
+            data_less_than[column] = cutoff
+        else:
+            available = ", ".join(map(str, data.columns))
+            metadata_available = ", ".join(map(str, metadata.columns)) if metadata is not None else "none"
+            raise ValueError(
+                f"Could not find sample filter column: {column}. "
+                f"Available metadata columns: {metadata_available}. Available mutation columns: {available}"
+            )
+    return (
+        metadata_isin,
+        metadata_greater_than,
+        metadata_less_than,
+        data_isin,
+        data_greater_than,
+        data_less_than,
+    )
+
+
 def _default_track_label(column: object) -> str:
     return str(column)
 
@@ -1105,6 +1242,12 @@ def prepare_oncoplot_data(
     metadata_sample_col: Optional[str] = None,
     metadata_cols: Optional[Sequence[str]] = None,
     metadata_require_mutations: bool = True,
+    filter_samples_by_isin_lists: Optional[Mapping[str, Sequence[object]]] = None,
+    filter_samples_by_greater_than: Optional[Mapping[str, object]] = None,
+    filter_samples_by_less_than: Optional[Mapping[str, object]] = None,
+    filter_mutations_by_isin_lists: Optional[Mapping[str, Sequence[object]]] = None,
+    filter_mutations_by_greater_than: Optional[Mapping[str, object]] = None,
+    filter_mutations_by_less_than: Optional[Mapping[str, object]] = None,
     pathway: Optional[pd.DataFrame] = None,
     pathway_gene_col: Optional[str] = None,
     show_all_samples: bool = False,
@@ -1142,6 +1285,26 @@ def prepare_oncoplot_data(
     variant_value_agg = _coerce_variant_value_agg(variant_value_agg)
     variant_value_missing = _coerce_variant_value_missing(variant_value_missing)
     variant_value_scale = _coerce_variant_value_scale(variant_value_scale)
+    sample_isin_filters = _coerce_isin_filters(filter_samples_by_isin_lists, "filter_samples_by_isin_lists")
+    sample_greater_than_filters = _coerce_numeric_filters(
+        filter_samples_by_greater_than,
+        "filter_samples_by_greater_than",
+    )
+    sample_less_than_filters = _coerce_numeric_filters(
+        filter_samples_by_less_than,
+        "filter_samples_by_less_than",
+    )
+    mutation_isin_filters = _coerce_isin_filters(filter_mutations_by_isin_lists, "filter_mutations_by_isin_lists")
+    mutation_greater_than_filters = _coerce_numeric_filters(
+        filter_mutations_by_greater_than,
+        "filter_mutations_by_greater_than",
+    )
+    mutation_less_than_filters = _coerce_numeric_filters(
+        filter_mutations_by_less_than,
+        "filter_mutations_by_less_than",
+    )
+    sample_filters_active = bool(sample_isin_filters or sample_greater_than_filters or sample_less_than_filters)
+    mutation_filters_active = bool(mutation_isin_filters or mutation_greater_than_filters or mutation_less_than_filters)
     variant_value_cols = _coerce_variant_value_cols(variant_value_cols)
     main_grid_tracks, main_grid_mode = _normalise_main_grid_tracks(
         main_grid_rows,
@@ -1174,10 +1337,72 @@ def prepare_oncoplot_data(
 
     data = _validate_mutation_inputs(data, gene_col, sample_col, mutation_type_col, tooltip_col)
     _validate_variant_value_columns(data, variant_value_columns, label="variant value column")
+    if mutation_filters_active:
+        mutation_filter_mask = _filter_mask(
+            data,
+            isin_filters=mutation_isin_filters,
+            greater_than_filters=mutation_greater_than_filters,
+            less_than_filters=mutation_less_than_filters,
+            label="filter_mutations",
+        )
+        if not bool(mutation_filter_mask.any()):
+            raise ValueError("Mutation filters matched zero mutation rows.")
+        data = data[mutation_filter_mask].copy()
     if metadata is None and metadata_cols is not None:
         metadata = _derive_metadata_from_data(data, metadata_sample_col, metadata_cols)
     metadata = _validate_metadata(metadata, metadata_sample_col)
     pathway_df, _pathway_col = _validate_pathway(pathway, pathway_gene_col, gene_col)
+
+    if sample_filters_active:
+        (
+            metadata_isin_filters,
+            metadata_greater_than_filters,
+            metadata_less_than_filters,
+            data_isin_filters,
+            data_greater_than_filters,
+            data_less_than_filters,
+        ) = _split_sample_filters(
+            data,
+            metadata,
+            isin_filters=sample_isin_filters,
+            greater_than_filters=sample_greater_than_filters,
+            less_than_filters=sample_less_than_filters,
+        )
+        passing_sample_ids: Optional[set[str]] = None
+        metadata_filters_active = bool(
+            metadata_isin_filters or metadata_greater_than_filters or metadata_less_than_filters
+        )
+        if metadata_filters_active:
+            if metadata is None:
+                raise ValueError("metadata must be supplied when metadata sample filters are selected.")
+            metadata_filter_mask = _filter_mask(
+                metadata,
+                isin_filters=metadata_isin_filters,
+                greater_than_filters=metadata_greater_than_filters,
+                less_than_filters=metadata_less_than_filters,
+                label="filter_samples",
+            )
+            passing_sample_ids = set(metadata.loc[metadata_filter_mask, metadata_sample_col].astype(str))
+        data_filters_active = bool(data_isin_filters or data_greater_than_filters or data_less_than_filters)
+        if data_filters_active:
+            data_filter_mask = _filter_mask(
+                data,
+                isin_filters=data_isin_filters,
+                greater_than_filters=data_greater_than_filters,
+                less_than_filters=data_less_than_filters,
+                label="filter_samples",
+            )
+            data_sample_ids = set(data.loc[data_filter_mask, sample_col].astype(str))
+            passing_sample_ids = (
+                data_sample_ids
+                if passing_sample_ids is None
+                else passing_sample_ids & data_sample_ids
+            )
+        if not passing_sample_ids:
+            raise ValueError("Sample filters matched zero samples.")
+        data = data[data[sample_col].isin(passing_sample_ids)].copy()
+        if metadata is not None:
+            metadata = metadata[metadata[metadata_sample_col].isin(passing_sample_ids)].copy()
 
     if metadata is not None and metadata_require_mutations:
         metadata = metadata[metadata[metadata_sample_col].isin(pd.unique(data[sample_col]))].copy()
@@ -1232,6 +1457,11 @@ def prepare_oncoplot_data(
     samples_with_custom_tmb = (
         _custom_tmb_sample_ids(tmb_data, sample_col) if prepare_tmb and tmb_data is not None else []
     )
+    if mutation_filters_active or sample_filters_active:
+        eligible_custom_tmb_samples = set(samples_with_any_mutations) | set(samples_with_metadata)
+        samples_with_custom_tmb = [
+            sample for sample in samples_with_custom_tmb if sample in eligible_custom_tmb_samples
+        ]
     all_sample_ids = unique_preserve_order(
         list(samples_with_selected_mutations)
         + list(samples_with_any_mutations)

@@ -123,6 +123,8 @@ datasets:
 | `palette`, `tmb_palette`, `metadata_palette`, `variant_value_palette` | color mappings for mutation tiles, typed TMB bars, metadata, and continuous variant heatmaps |
 | `metadata`, `metadata_cols`, `metadata_sample_col` | clinical annotation input and selected tracks |
 | `metadata_require_mutations`, `show_all_samples` | sample inclusion controls |
+| `filter_samples_by_isin_lists`, `filter_samples_by_greater_than`, `filter_samples_by_less_than` | pre-ranking sample-cohort filters from metadata first, then mutation data |
+| `filter_mutations_by_isin_lists`, `filter_mutations_by_greater_than`, `filter_mutations_by_less_than` | pre-ranking row filters for the mutation table |
 | `pathway`, `pathway_gene_col` | pathway grouping input |
 | `sample_order`, `metadata_sort_cols` | explicit or metadata-driven sample sorting |
 | `mutation_type_order`, `metadata_category_orders`, `tmb_type_order` | categorical level order for colors, stacks, and legends |
@@ -133,6 +135,27 @@ datasets:
 | `backend`, `interactive` | choose Plotly or Matplotlib rendering |
 | `copy_on_click` | Plotly clipboard payload behavior |
 | `options` | `OncoplotOptions` instance or mapping for visual controls |
+
+Filtering runs before gene ranking, TMB preparation, sample ordering, and
+recurrence denominators. Mutation filters are row-wise and operate only on the
+main mutation table. Sample filters choose a cohort; each column is resolved from
+metadata first when available, otherwise from the mutation table. All filters
+combine with AND semantics, and numeric filters use strict `>` and `<`
+comparisons.
+
+```python
+oncoplot(
+    mutations,
+    gene_col="gene",
+    sample_col="sample",
+    mutation_type_col="mutation_type",
+    metadata=metadata,
+    filter_samples_by_isin_lists={"Subtype": ["Basal", "HER2"]},
+    filter_samples_by_greater_than={"Age_years": 45},
+    filter_mutations_by_isin_lists={"mutation_type": ["Missense_Mutation"]},
+    filter_mutations_by_less_than={"VAF": 0.80},
+)
+```
 
 Categorical order controls apply to both Plotly and Matplotlib. If an explicit
 order is not supplied, pandas categorical dtype order is used when present;

@@ -105,6 +105,13 @@ oncoplot(
 )
 ```
 
+`filter_samples_by_isin_lists`, `filter_samples_by_greater_than`, and
+`filter_samples_by_less_than` run before these inclusion controls. They use
+metadata columns first when available, then fall back to mutation-table columns.
+Mutation-table fallback filters identify samples with a matching retained
+mutation row; custom TMB-only samples do not re-enter a filtered cohort unless
+they also exist in the filtered metadata or mutation data.
+
 ## Numeric Metadata
 
 Numeric metadata can be shown as a heatmap or as mini bars.

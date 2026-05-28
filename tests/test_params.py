@@ -140,6 +140,37 @@ def test_oncoplot_params_accept_multi_row_main_grid_arguments():
     assert result.prepared_data.main_grid_tiles["Kind"].tolist()
 
 
+def test_oncoplot_params_accept_sample_and_mutation_filters():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "group": ["A", "B", "A"],
+            "score": [1.0, 1.5, 3.0],
+        }
+    )
+
+    result = oncoplot(
+        params={
+            "data": small_df(),
+            "metadata": metadata,
+            "metadata_cols": ["group", "score"],
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "filter_mutations_by_isin_lists": {"type": ["Missense_Mutation", "Nonsense_Mutation"]},
+            "filter_mutations_by_greater_than": {"vaf": 0.20},
+            "filter_mutations_by_less_than": {"vaf": 0.80},
+            "filter_samples_by_isin_lists": {"group": ["A"]},
+            "filter_samples_by_greater_than": {"score": 0.50},
+            "filter_samples_by_less_than": {"score": 2.00},
+            "backend": "plotly",
+        }
+    )
+
+    assert result.prepared_data.samples == ["S1"]
+    assert result.prepared_data.genes == ["TP53"]
+
+
 def test_merge_oncoplot_params_supports_unpacked_kwargs_override():
     merged = merge_oncoplot_params(
         {
