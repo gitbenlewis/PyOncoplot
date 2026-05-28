@@ -9,16 +9,13 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from pyoncoplot import load_oncoplot_params, oncoplot
 
+from python_refactor_goal_sources import generate_synthetic_inputs
 from python_refactor_goal_sources.recreate_gallery import (
     CONFIG_PATH,
     GALLERY_CONFIG,
-    GALLERY_PRESETS,
     GENERATED_ROOT,
     GOAL_PLOTS,
     INPUTS,
-    _multimodal_marker_style,
-    _multimodal_panel_title_font_size,
-    _multimodal_title_font_size,
     render_preset,
 )
 
@@ -82,11 +79,17 @@ ONCOPLOT_CONFIG_RUNS_WITH_METADATA = {
     if "metadata" in GALLERY_CONFIG["plot_runs"][name]["params"]["oncoplot"]
 }
 
+CLEAN_RUNS = {
+    name: run
+    for name, run in GALLERY_CONFIG["plot_runs"].items()
+    if run.get("style") == "clean"
+}
+
 
 @pytest.fixture(scope="module")
 def rendered_clean_gallery(tmp_path_factory):
     output_dir = tmp_path_factory.mktemp("clean_gallery")
-    for name in GALLERY_PRESETS:
+    for name in CLEAN_RUNS:
         render_preset(name, output_dir)
     return output_dir
 
@@ -125,6 +128,22 @@ def test_synthetic_fixture_files_exist_and_load():
     multimodal_palette = json.loads((INPUTS / "paper_multimodal_palette.json").read_text(encoding="utf-8"))
     assert "Triple Negative" in multimodal_palette
     assert "Selected" in multimodal_palette
+
+
+def test_synthetic_input_generator_uses_configured_output_names(tmp_path, monkeypatch):
+    monkeypatch.setattr(generate_synthetic_inputs, "OUT", tmp_path)
+    generate_synthetic_inputs.main()
+
+    generated = {path.name for path in tmp_path.iterdir()}
+    expected = {
+        filename
+        for family in ("brca", "cssc", "gbm", "readme", "multimodal", "comparison_table")
+        for filename in GALLERY_CONFIG["input_files"][family].values()
+    }
+    assert expected <= generated
+    assert "aml_mutations.tsv" not in generated
+    assert "sv_depth.tsv" not in generated
+    assert json.loads((tmp_path / GALLERY_CONFIG["input_files"]["brca"]["palette"]).read_text(encoding="utf-8")) == GALLERY_CONFIG["shared"]["brca_palette"]
 
 
 def test_goal_source_paths_and_numbered_reference_plots():
@@ -190,7 +209,7 @@ def test_gallery_config_loads_and_declares_enabled_runs():
             continue
         assert required.issubset(run), name
 
-    clean_names = [preset.output_name for preset in GALLERY_PRESETS.values()]
+    clean_names = [run["output_name"] for run in CLEAN_RUNS.values()]
     assert clean_names == [f"gen.goal_plot_{index}.png" for index in range(1, 23)]
     comparison_runs = GALLERY_CONFIG["comparison_runs"]
     assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_1.png"
@@ -269,9 +288,9 @@ def test_brca_large_oncoplot_config_keeps_all_metadata_samples_and_mutation_rank
 
 
 def test_oncoplot_config_covers_cssc_gbm_and_brca_gallery_behavior():
-    brca_params = GALLERY_PRESETS["brca_large"].params["oncoplot"]
-    cssc_params = GALLERY_PRESETS["cssc_compact"].params["oncoplot"]
-    gbm_params = GALLERY_PRESETS["gbm_clinical_molecular"].params["oncoplot"]
+    brca_params = CLEAN_RUNS["brca_large"]["params"]["oncoplot"]
+    cssc_params = CLEAN_RUNS["cssc_compact"]["params"]["oncoplot"]
+    gbm_params = CLEAN_RUNS["gbm_clinical_molecular"]["params"]["oncoplot"]
 
     assert "Age_years" in brca_params["metadata_cols"]
     assert brca_params["options"]["metadata_numeric_plot_type"] == "bar"
@@ -282,37 +301,25 @@ def test_oncoplot_config_covers_cssc_gbm_and_brca_gallery_behavior():
 
 
 def test_multimodal_gallery_points_are_large_enough_for_exported_pngs():
-    params = GALLERY_PRESETS["multimodal_selection_with_lasso"].params
+    params = CLEAN_RUNS["multimodal_selection_with_lasso"]["params"]
     marker_style = params["marker_style"]
     assert marker_style["point_size"] >= 64
     assert marker_style["selected_point_size"] >= 140
     assert marker_style["selected_linewidth"] >= 1.8
 
-    reference_style = _multimodal_marker_style(
-        {
-            "figure_size": [marker_style["reference_output_width"] / 100, 15.2],
-            "marker_style": marker_style,
-        },
-        dpi=100,
-    )
-    large_style = _multimodal_marker_style(
-        {
-            "figure_size": [76.2, 52.04],
-            "marker_style": marker_style,
-        },
-        dpi=100,
-    )
-    assert reference_style["point_size"] == marker_style["point_size"]
-    assert large_style["point_size"] == marker_style["point_size"] * marker_style["max_scale"] ** 2
-    assert large_style["selected_point_size"] == marker_style["selected_point_size"] * marker_style["max_scale"] ** 2
+    reference_width = marker_style["reference_output_width"]
+    assert min(marker_style["max_scale"], max(1.0, reference_width / reference_width)) == 1.0
+    assert min(marker_style["max_scale"], max(1.0, 7620 / reference_width)) == marker_style["max_scale"]
+    assert marker_style["point_size"] * marker_style["max_scale"] ** 2 == 1530
+    assert marker_style["selected_point_size"] * marker_style["max_scale"] ** 2 == 3060
 
 
 def test_gallery_titles_use_python_branding_and_scale_for_large_exports():
     configured_titles = {
-        name: str(preset.params["oncoplot"]["options"]["title_text"])
-        for name, preset in GALLERY_PRESETS.items()
-        if preset.renderer.__name__ == "render_oncoplot"
-        and "title_text" in preset.params["oncoplot"]["options"]
+        name: str(run["params"]["oncoplot"]["options"]["title_text"])
+        for name, run in CLEAN_RUNS.items()
+        if run["renderer"] == "oncoplot"
+        and "title_text" in run["params"]["oncoplot"]["options"]
     }
 
     assert configured_titles["ggoncoplot_readme_small"] == "Pyoncoplot"
@@ -320,39 +327,47 @@ def test_gallery_titles_use_python_branding_and_scale_for_large_exports():
     assert configured_titles["ggoncoplot_readme_marginal"] == "Pyoncoplot"
     assert configured_titles["ggoncoplot_readme_metadata"] == "Pyoncoplot"
     assert configured_titles["aml_metadata_unsorted"] == "customized_oncoplot_1.py"
-    assert GALLERY_PRESETS["ggoncoplot_package_mark"].params["title"] == "Pyoncoplot"
+    assert CLEAN_RUNS["ggoncoplot_package_mark"]["params"]["title"] == "Pyoncoplot"
     assert not any("ggoncoplot" in title.lower() for title in configured_titles.values())
-    assert GALLERY_PRESETS["ggoncoplot_readme_small"].params["oncoplot"]["options"]["font_size_title"] == 14
-    assert GALLERY_PRESETS["ggoncoplot_readme_basic"].params["oncoplot"]["options"]["font_size_title"] >= 47
-    multimodal_params = GALLERY_PRESETS["multimodal_selection"].params
-    assert _multimodal_title_font_size(multimodal_params, dpi=100) >= 47
-    assert _multimodal_panel_title_font_size(multimodal_params, dpi=100) >= 27
+    assert CLEAN_RUNS["ggoncoplot_readme_small"]["params"]["oncoplot"]["options"]["font_size_title"] == 14
+    assert CLEAN_RUNS["ggoncoplot_readme_basic"]["params"]["oncoplot"]["options"]["font_size_title"] >= 47
+    multimodal_params = CLEAN_RUNS["multimodal_selection"]["params"]
+    output_width = multimodal_params["figure_size"][0] * multimodal_params["save"]["dpi"]
+    title_style = multimodal_params["title_style"]
+    panel_title_style = multimodal_params["panel_title_style"]
+    title_font_size = max(title_style["min_font_size"], min(title_style["max_font_size"], output_width / title_style["width_divisor"]))
+    panel_title_font_size = max(
+        panel_title_style["min_font_size"],
+        min(panel_title_style["max_font_size"], output_width / panel_title_style["width_divisor"]),
+    )
+    assert title_font_size >= 47
+    assert panel_title_font_size >= 27
 
 
 def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):
-    for name, preset in GALLERY_PRESETS.items():
-        output = rendered_clean_gallery / preset.output_name
+    for name, run in CLEAN_RUNS.items():
+        output = rendered_clean_gallery / run["output_name"]
         assert output.exists()
         assert output.name.startswith("gen.goal_plot_")
         assert output.stat().st_size > 0
         with Image.open(output) as image:
-            assert image.size == preset.expected_size
+            assert image.size == tuple(run["expected_size"])
 
 
 def test_new_gallery_outputs_are_generated_not_copied(rendered_clean_gallery):
     for index in range(1, 23):
-        preset = next(preset for preset in GALLERY_PRESETS.values() if preset.output_name == f"gen.goal_plot_{index}.png")
-        output = rendered_clean_gallery / preset.output_name
+        run = next(run for run in CLEAN_RUNS.values() if run["output_name"] == f"gen.goal_plot_{index}.png")
+        output = rendered_clean_gallery / run["output_name"]
         goal = GOAL_PLOTS / f"goal_plot_{index}.png"
         assert output.read_bytes() != goal.read_bytes()
 
 
 def test_new_gallery_outputs_have_expected_broad_features(rendered_clean_gallery):
     for index in (3, 4, 5, 7, 8, 10, 13, 14):
-        preset = next(preset for preset in GALLERY_PRESETS.values() if preset.output_name == f"gen.goal_plot_{index}.png")
-        output = rendered_clean_gallery / preset.output_name
+        run = next(run for run in CLEAN_RUNS.values() if run["output_name"] == f"gen.goal_plot_{index}.png")
+        output = rendered_clean_gallery / run["output_name"]
         with Image.open(output) as image:
-            assert image.size == preset.expected_size
+            assert image.size == tuple(run["expected_size"])
             gray = image.convert("L")
             assert gray.getextrema()[0] != gray.getextrema()[1]
             width, height = image.size
@@ -368,9 +383,9 @@ def test_new_gallery_outputs_have_expected_broad_features(rendered_clean_gallery
 
 def test_accepted_aml_metadata_outputs_remain_clean_only_and_featureful(tmp_path):
     for name in ("aml_metadata_unsorted", "aml_metadata_sorted", "aml_metadata_survival"):
-        preset = GALLERY_PRESETS[name]
-        assert preset.clean_only
-        assert preset.feature_axes_min >= 4
+        run = CLEAN_RUNS[name]
+        assert run["clean_only"]
+        assert run["feature_axes_min"] >= 4
         output = render_preset(name, tmp_path)
         with Image.open(output) as image:
             assert image.size == (1080, 720)

@@ -397,6 +397,263 @@ gallery_params:
       max_font_size: 30
       width_divisor: 280
 
+  synthetic_inputs:
+    brca:
+      seed: 202
+      sample_prefix: BRCA
+      sample_count: 420
+      genes:
+        [PIK3CA, TP53, CDH1, GATA3, KMT2C, MAP3K1, SPTA1, ZFHX4, PTEN, ABCA13, BRCA2, FOXA1, AKT1, NF1, NCOR1, MYC, CCND1, ERBB2, EGFR, FGFR1, RB1, BRAF, BRCA1, PIK3R1, FGFR2, MAP2K4]
+      subtype_counts:
+        "HR+/HER2-": 190
+        "HR-/HER2+": 70
+        "HR+/HER2+": 55
+        "HR-/HER2-": 105
+      gene_probabilities:
+        PIK3CA: 0.37
+        TP53: 0.34
+        CDH1: 0.14
+        GATA3: 0.13
+        KMT2C: 0.10
+        MAP3K1: 0.09
+        SPTA1: 0.07
+        ZFHX4: 0.06
+        PTEN: 0.06
+        ABCA13: 0.055
+        BRCA2: 0.045
+        FOXA1: 0.045
+        AKT1: 0.04
+        NF1: 0.04
+        NCOR1: 0.035
+        MYC: 0.032
+        CCND1: 0.03
+        ERBB2: 0.026
+        EGFR: 0.025
+        FGFR1: 0.024
+        RB1: 0.024
+        BRAF: 0.022
+        BRCA1: 0.02
+        PIK3R1: 0.02
+        FGFR2: 0.018
+        MAP2K4: 0.018
+      subtype_gene_multipliers:
+        "HR-/HER2-": {genes: [TP53, BRCA1, RB1], multiplier: 1.9}
+        "HR+/HER2-": {genes: [PIK3CA, GATA3, MAP3K1, CDH1], multiplier: 1.4}
+        "HR-/HER2+": {genes: [ERBB2, MYC, CCND1, EGFR, FGFR1], multiplier: 2.2}
+        "HR+/HER2+": {genes: [ERBB2, MYC, CCND1, EGFR, FGFR1], multiplier: 2.2}
+      mutation_type_weights:
+        Missense_Mutation: 0.58
+        Frame_Shift_Del: 0.07
+        Frame_Shift_Ins: 0.035
+        Nonsense_Mutation: 0.12
+        Splice_Site: 0.08
+        Silent: 0.04
+        "3'UTR": 0.025
+        "5'UTR": 0.015
+        Intron: 0.035
+      max_probability: 0.85
+      multi_hit_probability: 0.05
+      extra_tmb_probability: 0.65
+      extra_tmb_mutations_range: [3, 25]
+      age_values: ["<=50", ">50"]
+      age_weights: [0.38, 0.62]
+      age_year_range: [28, 91]
+      pr_status_weights: {values: [Positive, Negative], weights: [0.72, 0.28]}
+      menopause_weights: {values: [Premenopausal, Postmenopausal], weights: [0.75, 0.25]}
+      ln_stage_weights: {values: [Positive, Negative], weights: [0.42, 0.58]}
+      grade_weights: {values: [I, II, III, Unknown], weights: [0.12, 0.38, 0.42, 0.08]}
+      tnm_stage_weights: {values: [I, II, III, IV], weights: [0.24, 0.46, 0.25, 0.05]}
+      histological_type_weights:
+        values: [Infiltrating Ductal Carcinoma, Infiltrating Lobular Carcinoma, Others]
+        weights: [0.72, 0.16, 0.12]
+
+    cssc:
+      seed: 404
+      target_counts:
+        TP53: 24
+        CDKN2A: 20
+        C9: 13
+        KHDRBS2: 12
+        SLC22A6: 11
+        COLEC12: 11
+        LINGO2: 10
+        CDHR5: 8
+        ZNF442: 8
+        PRLR: 7
+        DHRS4: 5
+      alteration_weights:
+        missense_variant: 0.50
+        synonymous_variant: 0.09
+        stop_gained: 0.18
+        complex_substitution: 0.09
+        splice_site_variant: 0.03
+        frameshift_truncation: 0.08
+        inframe_deletion: 0.03
+      secondary_alterations: [complex_substitution, synonymous_variant, frameshift_truncation, inframe_deletion]
+      secondary_modulo: 8
+      extra_tmb_type_count_range: [1, 4]
+      extra_tmb_mutations_range: [1, 5]
+
+    gbm:
+      seed: 505
+      sample_prefix: G-SAM
+      sample_count: 147
+      subtype_values: [Classical, Mesenchymal, Proneural]
+      subtype_weights: [0.34, 0.36, 0.30]
+      beva_random_probability: 0.18
+      track_weights:
+        Recurrence: {values: ["Yes / stable / resection", "No / wildtype / biopsy"], weights: [0.83, 0.17]}
+        Sex: {values: ["Gained / increased / female", "Lost / decreased / male"], weights: [0.45, 0.55]}
+        "Age above 50": {values: ["Yes / stable / resection", "No / wildtype / biopsy"], weights: [0.62, 0.38]}
+        "KPS 70 or above": {values: ["Yes / stable / resection", "No / wildtype / biopsy"], weights: [0.74, 0.26]}
+        Deceased: {values: ["Yes / stable / resection", "No / wildtype / biopsy"], weights: [0.55, 0.45]}
+        "Treatment: RT": {values: ["Yes / stable / resection", "No / wildtype / biopsy"], weights: [0.86, 0.14]}
+        "Treatment: TMZ": {values: ["Yes / stable / resection", "No / wildtype / biopsy"], weights: [0.78, 0.22]}
+        "Treatment: Beva": {values: ["NA / Beva: random trial", "Yes / stable / resection", "No / wildtype / biopsy"], weights: [0.55, 0.22, 0.23]}
+        "CN status MDM2": {values: ["Gained / increased / female", "No / wildtype / biopsy"], weights: [0.10, 0.90]}
+        "CN status CDK4": {values: ["Gained / increased / female", "No / wildtype / biopsy"], weights: [0.11, 0.89]}
+        "CN status NF1": {values: ["Lost / decreased / male", "No / wildtype / biopsy"], weights: [0.16, 0.84]}
+        "CN status RB1": {values: ["Lost / decreased / male", "No / wildtype / biopsy"], weights: [0.13, 0.87]}
+        "CN status EGFR": {values: ["Gained / increased / female", "No / wildtype / biopsy"], weights: [0.22, 0.78]}
+      gene_probabilities:
+        TERT: 0.52
+        PDGFRA: 0.28
+        TSC2: 0.13
+        PIK3CA: 0.16
+        PIK3R1: 0.19
+        TP53: 0.23
+        TP53BP1: 0.08
+        EGFR: 0.30
+        ERBB3: 0.06
+        NF1: 0.16
+        PTEN: 0.22
+        KMT2C: 0.12
+        MTOR: 0.09
+        ARID2: 0.07
+        SETD2: 0.06
+        ATM: 0.08
+        BRCA2: 0.06
+        BRCA1: 0.05
+        MSH2: 0.06
+        RB1: 0.08
+        JAK2: 0.04
+        APC: 0.05
+        AXIN2: 0.04
+        HM: 0.10
+        "MGMT meth": 0.18
+      subtype_gene_multipliers:
+        Proneural: {genes: [TP53, PIK3CA, PIK3R1], multiplier: 1.45}
+        Classical: {genes: [EGFR, PTEN, PDGFRA], multiplier: 1.45}
+        Mesenchymal: {genes: [NF1, TERT, KMT2C], multiplier: 1.35}
+      event_weights:
+        Mutation: 0.70
+        "Gained / increased / female": 0.16
+        "Lost / decreased / male": 0.14
+      max_probability: 0.82
+      secondary_event_probability: 0.07
+
+    readme:
+      seed: 606
+      sample_prefix: README
+      sample_count: 180
+      subtype_counts: {Luminal: 74, Basal: 50, HER2: 34, Normal-like: 22}
+      gene_probabilities:
+        PIK3CA: 0.42
+        TP53: 0.36
+        CDH1: 0.16
+        GATA3: 0.14
+        MAP3K1: 0.12
+        PTEN: 0.10
+        KMT2C: 0.10
+        NF1: 0.08
+        ERBB2: 0.07
+        BRCA1: 0.06
+        RB1: 0.06
+        EGFR: 0.05
+      subtype_gene_multipliers:
+        Basal: {genes: [TP53, BRCA1, RB1, EGFR], multiplier: 1.75}
+        Luminal: {genes: [PIK3CA, GATA3, MAP3K1, CDH1], multiplier: 1.45}
+        HER2: {genes: [ERBB2, TP53, PIK3CA], multiplier: 1.55}
+      mutation_type_weights:
+        missense: 0.55
+        nonsense: 0.14
+        frameshift: 0.12
+        splice: 0.08
+        inframe: 0.07
+        silent: 0.04
+      max_probability: 0.90
+      multi_hit_probability: 0.06
+      pr_status_weights: {values: [Positive, Negative], weights: [0.78, 0.22]}
+      er_status_weights: {values: [Positive, Negative], weights: [0.76, 0.24]}
+      ambiguous_her2_values: [Positive, Negative]
+      tmb_gamma_shape: 2.2
+      tmb_gamma_scale: 1.5
+      extra_tmb_type_count_range: [1, 3]
+      extra_tmb_mutations_range: [1, 9]
+
+    multimodal:
+      seed: 707
+      sample_prefix: GSM
+      sample_count: 147
+      selected_count: 30
+      classes: [Triple Negative, Not Triple Negative, Ambiguous]
+      class_weights: [0.24, 0.64, 0.12]
+      selected_class: Triple Negative
+      centers:
+        Triple Negative: [-2.2, 1.4]
+        Not Triple Negative: [1.2, -0.8]
+        Ambiguous: [0.0, 1.8]
+      tsne_sd: [0.75, 0.72]
+      umap_center_scale: 0.62
+      umap_sd: [1.1, 1.0]
+      pr_status_weights: {values: [Positive, Negative], weights: [0.70, 0.30]}
+      er_status_weights: {values: [Positive, Negative], weights: [0.76, 0.24]}
+      ambiguous_her2_values: [Positive, Negative]
+      gene_probabilities:
+        PIK3CA: 0.33
+        TP53: 0.31
+        CDH1: 0.12
+        GATA3: 0.11
+        MAP3K1: 0.09
+        PTEN: 0.08
+        NF1: 0.07
+        BRCA1: 0.06
+        RB1: 0.06
+        EGFR: 0.05
+      selected_gene_multiplier: {genes: [TP53, BRCA1, RB1, EGFR], multiplier: 2.0}
+      class_gene_multipliers:
+        Not Triple Negative: {genes: [PIK3CA, GATA3, MAP3K1], multiplier: 1.45}
+      alteration_weights:
+        Mutation: 0.70
+        Amplification: 0.13
+        Deletion: 0.13
+        Fusion: 0.04
+      max_probability: 0.88
+      selection_vertices:
+        - {vertex: 1, x: -3.45, y: 0.45}
+        - {vertex: 2, x: -2.50, y: 2.65}
+        - {vertex: 3, x: -1.15, y: 2.25}
+        - {vertex: 4, x: -0.80, y: 0.95}
+        - {vertex: 5, x: -3.45, y: 0.45}
+      palette:
+        Mutation: "#244A7F"
+        Amplification: "#B74A5A"
+        Deletion: "#5DA8A3"
+        Fusion: "#D1A12B"
+        Triple Negative: "#111111"
+        Not Triple Negative: "#E43D30"
+        Ambiguous: "#BDBDBD"
+        Selected: "#E43D30"
+        Unselected: "#BDBDBD"
+
+    comparison_table:
+      rows:
+        - {package: ggoncoplot, tidy input: "Yes", interactive: "Yes", linked selection: "Yes", metadata: "Yes", auto palette: "Yes", notes: Python target}
+        - {package: ComplexHeatmap, tidy input: "No", interactive: Shiny, linked selection: Limited, metadata: "Yes", auto palette: Manual, notes: Matrix-first}
+        - {package: maftools, tidy input: MAF, interactive: "No", linked selection: "No", metadata: "Yes", auto palette: MAF classes, notes: Cancer-focused}
+        - {package: genVisR, tidy input: Wide, interactive: "No", linked selection: "No", metadata: "Yes", auto palette: Manual, notes: Static}
+        - {package: cBioPortal, tidy input: Portal, interactive: "Yes", linked selection: Partial, metadata: "Yes", auto palette: Preset, notes: Web app}
+
   plot_runs:
     brca_large:
       run: true

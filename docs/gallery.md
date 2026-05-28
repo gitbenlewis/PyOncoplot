@@ -12,7 +12,8 @@ small renderer registry. Oncoplot-style presets use the generic
 `params.oncoplot`, including table sources, titles, subplot labels, legends, and
 layout options. Input filenames are also declared there under
 `gallery_params.input_files`; custom renderers read the TSV/JSON files from
-those configured names.
+those configured names. Deterministic non-fuc input-generation settings live in
+`gallery_params.synthetic_inputs`.
 
 ## Render The Clean Gallery
 

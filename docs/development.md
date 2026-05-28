@@ -38,6 +38,10 @@ This rewrites deterministic non-fuc TSV/JSON files under:
 python_refactor_goal_sources/syntheitic_goal_data/
 ```
 
+The generator reads output filenames and deterministic non-fuc generation
+settings from `gallery_params.input_files` and
+`gallery_params.synthetic_inputs` in `python_refactor_goal_sources/config.yaml`.
+
 The AML and structural-variation fuc fixtures are rebuilt separately after
 downloading the upstream `fuc-data` source files listed in
 `python_refactor_goal_sources/fuc_sources/manifest.json`:
@@ -57,7 +61,7 @@ Generated gallery images are tracked when intentionally updated.
 
 ## Adding A Gallery Preset
 
-1. Add or extend synthetic inputs in `python_refactor_goal_sources/generate_synthetic_inputs.py`, or fuc-derived inputs in `python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py`.
+1. Add or extend synthetic input settings in `python_refactor_goal_sources/config.yaml`, or fuc-derived inputs in `python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py`.
 2. Commit the generated TSV/JSON inputs.
 3. Use `renderer: oncoplot` when public `oncoplot()` params can express the plot.
 4. Add the named run to `python_refactor_goal_sources/config.yaml` under `gallery_params.plot_runs`.

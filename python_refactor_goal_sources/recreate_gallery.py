@@ -9,9 +9,8 @@ from __future__ import annotations
 import argparse
 import json
 import tempfile
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Union
+from typing import Any, Callable, Mapping, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
@@ -55,166 +54,26 @@ OUTPUT_DIRS = GALLERY_CONFIG.get("output_dirs", {})
 GENERATED_ROOT = GOAL_SOURCE_ROOT / "generated_plots"
 CLEAN_OUT = _resolve_repo_path(OUTPUT_DIRS.get("clean", GENERATED_ROOT / "clean"))
 COMPARISON_OUT = _resolve_repo_path(OUTPUT_DIRS.get("comparison", GENERATED_ROOT / "comparison"))
-OUT = CLEAN_OUT
-
-
-@dataclass(frozen=True)
-class GalleryPreset:
-    name: str
-    output_name: str
-    renderer: Callable[..., None]
-    expected_size: tuple[int, int]
-    goal_plot: str
-    params: Mapping[str, Any]
-    run: bool = True
-    clean_only: bool = False
-    feature_axes_min: int = 1
-
-
-def _read_tsv(name: str) -> pd.DataFrame:
-    return pd.read_csv(INPUTS / name, sep="\t")
-
-
-def _read_palette(name: str) -> Dict[str, str]:
-    return json.loads((INPUTS / name).read_text(encoding="utf-8"))
-
-
-def _input_file(family: str, key: str) -> str:
-    return str(GALLERY_CONFIG["input_files"][family][key])
-
-
-def _load_run_oncoplot_params(run_name: Optional[str]) -> dict[str, Any]:
-    if not run_name:
-        raise ValueError("Config-backed gallery oncoplot renderers require a run_name.")
-    return load_oncoplot_params(CONFIG_PATH, key=f"gallery_params.plot_runs.{run_name}.params.oncoplot")
-
-
-def _save_exact(result, output_path: Path, dpi: int = 120) -> None:
-    result.figure.savefig(output_path, dpi=dpi)
-
-
-def _save_dpi(params: Mapping[str, Any], default: int = 120) -> int:
-    save_params = params.get("save", {})
-    if save_params is None:
-        return default
-    if not isinstance(save_params, Mapping):
-        raise TypeError("gallery save params must be a mapping.")
-    return int(save_params.get("dpi", default))
-
-
-def _output_width(params: Mapping[str, Any], dpi: int) -> float:
-    figure_size = params.get("figure_size", [1, 1])
-    return float(figure_size[0]) * dpi
-
-
-def _multimodal_marker_style(params: Mapping[str, Any], dpi: int) -> dict[str, float]:
-    marker_params = params.get("marker_style", {})
-    if not isinstance(marker_params, Mapping):
-        marker_params = {}
-    output_width = _output_width(params, dpi)
-    reference_width = float(marker_params.get("reference_output_width", 2281))
-    max_scale = float(marker_params.get("max_scale", 3.0))
-    scale = min(max_scale, max(1.0, output_width / reference_width))
-    return {
-        "point_size": float(marker_params.get("point_size", 170)) * scale**2,
-        "selected_point_size": float(marker_params.get("selected_point_size", 340)) * scale**2,
-        "edge_linewidth": float(marker_params.get("edge_linewidth", 0.35)) * scale,
-        "selected_linewidth": float(marker_params.get("selected_linewidth", 1.9)) * scale,
-    }
-
-
-def _multimodal_title_font_size(params: Mapping[str, Any], dpi: int) -> float:
-    title_params = params.get("title_style", {})
-    if not isinstance(title_params, Mapping):
-        title_params = {}
-    minimum = float(title_params.get("min_font_size", 14))
-    maximum = float(title_params.get("max_font_size", 52))
-    width_divisor = float(title_params.get("width_divisor", 160))
-    return max(minimum, min(maximum, _output_width(params, dpi) / width_divisor))
-
-
-def _multimodal_panel_title_font_size(params: Mapping[str, Any], dpi: int) -> float:
-    title_params = params.get("panel_title_style", {})
-    if not isinstance(title_params, Mapping):
-        title_params = {}
-    minimum = float(title_params.get("min_font_size", 9))
-    maximum = float(title_params.get("max_font_size", 30))
-    width_divisor = float(title_params.get("width_divisor", 280))
-    return max(minimum, min(maximum, _output_width(params, dpi) / width_divisor))
-
-
-def _axes_from_params(params: Mapping[str, Any], required: Sequence[str]) -> dict[str, Sequence[float]]:
-    axes = params.get("axes", {})
-    if not isinstance(axes, Mapping):
-        raise TypeError("gallery axes params must be a mapping.")
-    missing = [name for name in required if name not in axes]
-    if missing:
-        raise ValueError(f"Missing configured axes: {', '.join(missing)}.")
-    return dict(axes)
-
-
-def _filter_aml_inputs(
-    mutations: pd.DataFrame,
-    metadata: pd.DataFrame,
-    tmb: pd.DataFrame,
-    filter_params: Optional[Mapping[str, Any]],
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    if not filter_params:
-        return mutations, metadata, tmb
-    column = str(filter_params["column"])
-    value = str(filter_params["value"])
-    selected = metadata.loc[metadata[column].astype(str) == value, "sample"].astype(str)
-    selected_samples = set(selected)
-    return (
-        mutations[mutations["sample"].astype(str).isin(selected_samples)].copy(),
-        metadata[metadata["sample"].astype(str).isin(selected_samples)].copy(),
-        tmb[tmb["sample"].astype(str).isin(selected_samples)].copy(),
-    )
-
-
-def _filter_aml_oncoplot_params(
-    oncoplot_params: Mapping[str, Any],
-    filter_params: Optional[Mapping[str, Any]],
-) -> dict[str, Any]:
-    if not filter_params:
-        return dict(oncoplot_params)
-    filtered = dict(oncoplot_params)
-    mutations, metadata, tmb = _filter_aml_inputs(
-        filtered["data"],
-        filtered["metadata"],
-        filtered["tmb_data"],
-        filter_params,
-    )
-    selected_samples = set(metadata["sample"].astype(str))
-    sample_order = filtered.get("sample_order")
-    if sample_order is not None:
-        filtered["sample_order"] = [sample for sample in sample_order if str(sample) in selected_samples]
-    filtered["data"] = mutations
-    filtered["metadata"] = metadata
-    filtered["tmb_data"] = tmb
-    return filtered
 
 
 def _load_readme():
-    mutations = _read_tsv(_input_file("readme", "mutations"))
-    metadata = _read_tsv(_input_file("readme", "metadata"))
-    tmb = _read_tsv(_input_file("readme", "tmb"))
-    palette = _read_palette(_input_file("readme", "palette"))
+    files = GALLERY_CONFIG["input_files"]["readme"]
+    mutations = pd.read_csv(INPUTS / files["mutations"], sep="\t")
+    metadata = pd.read_csv(INPUTS / files["metadata"], sep="\t")
+    tmb = pd.read_csv(INPUTS / files["tmb"], sep="\t")
+    palette = json.loads((INPUTS / files["palette"]).read_text(encoding="utf-8"))
     return mutations, metadata, tmb, palette
 
 
 def _load_multimodal():
-    samples = _read_tsv(_input_file("multimodal", "samples"))
-    points = _read_tsv(_input_file("multimodal", "points"))
-    events = _read_tsv(_input_file("multimodal", "events"))
-    clinical = _read_tsv(_input_file("multimodal", "clinical"))
-    selection = _read_tsv(_input_file("multimodal", "selection"))
-    palette = _read_palette(_input_file("multimodal", "palette"))
+    files = GALLERY_CONFIG["input_files"]["multimodal"]
+    samples = pd.read_csv(INPUTS / files["samples"], sep="\t")
+    points = pd.read_csv(INPUTS / files["points"], sep="\t")
+    events = pd.read_csv(INPUTS / files["events"], sep="\t")
+    clinical = pd.read_csv(INPUTS / files["clinical"], sep="\t")
+    selection = pd.read_csv(INPUTS / files["selection"], sep="\t")
+    palette = json.loads((INPUTS / files["palette"]).read_text(encoding="utf-8"))
     return samples, points, events, clinical, selection, palette
-
-
-def _load_comparison_table():
-    return _read_tsv(_input_file("comparison_table", "table"))
 
 
 def _group_events(events: pd.DataFrame, sample_col: str = "sample", gene_col: str = "gene", type_col: str = "alteration") -> dict[tuple[str, str], list[str]]:
@@ -249,20 +108,30 @@ def _draw_split_tile(ax, x: float, y: float, alterations: Sequence[str], palette
 
 
 # Generates all config-backed oncoplot gallery presets.
-def render_oncoplot(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None) -> None:
+def render_oncoplot(output_path: Path, *, params: Mapping[str, Any], run_name: str) -> None:
     import matplotlib.pyplot as plt
 
-    merged = dict(params or {})
-    oncoplot_params = _filter_aml_oncoplot_params(
-        _load_run_oncoplot_params(run_name),
-        merged.get("metadata_filter"),
-    )
+    merged = dict(params)
+    oncoplot_params = load_oncoplot_params(CONFIG_PATH, key=f"gallery_params.plot_runs.{run_name}.params.oncoplot")
+    if filter_params := merged.get("metadata_filter"):
+        oncoplot_params = dict(oncoplot_params)
+        column = str(filter_params["column"])
+        value = str(filter_params["value"])
+        metadata = oncoplot_params["metadata"]
+        selected_samples = set(metadata.loc[metadata[column].astype(str) == value, "sample"].astype(str))
+        oncoplot_params["data"] = oncoplot_params["data"][oncoplot_params["data"]["sample"].astype(str).isin(selected_samples)].copy()
+        oncoplot_params["metadata"] = metadata[metadata["sample"].astype(str).isin(selected_samples)].copy()
+        oncoplot_params["tmb_data"] = oncoplot_params["tmb_data"][oncoplot_params["tmb_data"]["sample"].astype(str).isin(selected_samples)].copy()
+        sample_order = oncoplot_params.get("sample_order")
+        if sample_order is not None:
+            oncoplot_params["sample_order"] = [sample for sample in sample_order if str(sample) in selected_samples]
+
     result = oncoplot(params=oncoplot_params)
-    dpi = _save_dpi(merged, default=120)
-    options = oncoplot_params.get("options", {})
-    if result.backend == "matplotlib" and isinstance(options, Mapping):
+    dpi = int(merged["save"]["dpi"])
+    options = oncoplot_params["options"]
+    if result.backend == "matplotlib":
         result.figure.set_size_inches(float(options["width"]) / dpi, float(options["height"]) / dpi, forward=True)
-    _save_exact(result, output_path, dpi=dpi)
+    result.figure.savefig(output_path, dpi=dpi)
     if result.backend == "matplotlib":
         plt.close(result.figure)
 
@@ -273,9 +142,10 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
     from matplotlib.patches import Rectangle
 
     merged = {**dict(params or {}), **kwargs}
-    depth = _read_tsv(_input_file("sv", "depth"))
-    allele = _read_tsv(_input_file("sv", "allele_fraction"))
-    gene_models = _read_tsv(_input_file("sv", "gene_models"))
+    files = GALLERY_CONFIG["input_files"]["sv"]
+    depth = pd.read_csv(INPUTS / files["depth"], sep="\t")
+    allele = pd.read_csv(INPUTS / files["allele_fraction"], sep="\t")
+    gene_models = pd.read_csv(INPUTS / files["gene_models"], sep="\t")
     samples = list(merged["samples"])
     fig, axes = plt.subplots(2, len(samples), figsize=tuple(merged["figure_size"]), sharex=True)
     depth_ylim = tuple(merged.get("depth_ylim", [-15, 120]))
@@ -309,7 +179,7 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
         for ax in ax_row:
             ax.set_facecolor("#EAEAF2")
     fig.tight_layout()
-    fig.savefig(output_path, dpi=_save_dpi(merged, default=100))
+    fig.savefig(output_path, dpi=int(merged["save"]["dpi"]))
     plt.close(fig)
 
 
@@ -319,7 +189,7 @@ def render_package_mark(output_path: Path, *, params: Optional[Mapping[str, Any]
     from matplotlib.patches import Circle, Rectangle
 
     merged = {**dict(params or {}), **kwargs}
-    dpi = _save_dpi(merged, default=120)
+    dpi = int(merged["save"]["dpi"])
     fig = plt.figure(figsize=tuple(merged["figure_size"]))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 1)
@@ -345,7 +215,7 @@ def render_interactive_snapshot(output_path: Path, *, params: Optional[Mapping[s
     from matplotlib.patches import FancyBboxPatch, Rectangle
 
     merged = {**dict(params or {}), **kwargs}
-    dpi = _save_dpi(merged, default=100)
+    dpi = int(merged["save"]["dpi"])
     mutations, metadata, _tmb, palette = _load_readme()
     samples = metadata.sort_values(["Subtype", "sample"])["sample"].astype(str).tolist()[:48]
     genes = list(merged["genes"])
@@ -400,8 +270,9 @@ def render_comparison_table(output_path: Path, *, params: Optional[Mapping[str, 
     from matplotlib.patches import Rectangle
 
     merged = {**dict(params or {}), **kwargs}
-    table = _load_comparison_table()
-    dpi = _save_dpi(merged, default=100)
+    files = GALLERY_CONFIG["input_files"]["comparison_table"]
+    table = pd.read_csv(INPUTS / files["table"], sep="\t")
+    dpi = int(merged["save"]["dpi"])
     fig = plt.figure(figsize=tuple(merged["figure_size"]))
     ax = fig.add_axes([0.03, 0.06, 0.94, 0.84])
     ax.axis("off")
@@ -442,7 +313,7 @@ def render_lasso_scatter(output_path: Path, *, params: Optional[Mapping[str, Any
 
     merged = {**dict(params or {}), **kwargs}
     _samples, points, _events, _clinical, selection, palette = _load_multimodal()
-    dpi = _save_dpi(merged, default=100)
+    dpi = int(merged["save"]["dpi"])
     fig = plt.figure(figsize=tuple(merged["figure_size"]))
     ax = fig.add_axes([0.09, 0.11, 0.82, 0.78])
     for classification, group in points.groupby("classification", sort=False):
@@ -486,15 +357,31 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
 
     merged = {**dict(params or {}), **kwargs}
     _samples, points, events, clinical, selection, palette = _load_multimodal()
-    dpi = _save_dpi(merged, default=100)
-    marker_style = _multimodal_marker_style(merged, dpi)
-    title_font_size = _multimodal_title_font_size(merged, dpi)
-    panel_title_font_size = _multimodal_panel_title_font_size(merged, dpi)
+    dpi = int(merged["save"]["dpi"])
+    output_width = float(merged["figure_size"][0]) * dpi
+    marker_params = merged["marker_style"]
+    scale = min(float(marker_params["max_scale"]), max(1.0, output_width / float(marker_params["reference_output_width"])))
+    marker_style = {
+        "point_size": float(marker_params["point_size"]) * scale**2,
+        "selected_point_size": float(marker_params["selected_point_size"]) * scale**2,
+        "edge_linewidth": float(marker_params["edge_linewidth"]) * scale,
+        "selected_linewidth": float(marker_params["selected_linewidth"]) * scale,
+    }
+    title_params = merged["title_style"]
+    title_font_size = max(
+        float(title_params["min_font_size"]),
+        min(float(title_params["max_font_size"]), output_width / float(title_params["width_divisor"])),
+    )
+    panel_title_params = merged["panel_title_style"]
+    panel_title_font_size = max(
+        float(panel_title_params["min_font_size"]),
+        min(float(panel_title_params["max_font_size"]), output_width / float(panel_title_params["width_divisor"])),
+    )
     genes = list(merged["genes"])
     tracks = list(merged.get("tracks", ["PR_status", "ER_status", "HER2_status", "Classification"]))
     selected_samples = set(points.loc[points["selected"], "sample"].astype(str))
     ordered_samples = points.sort_values(["selected", "classification", "sample"], ascending=[False, True, True])["sample"].astype(str).tolist()
-    axes_config = _axes_from_params(merged, ["tsne", "umap", "main", "clinical", "legend"])
+    axes_config = merged["axes"]
     fig = plt.figure(figsize=tuple(merged["figure_size"]))
     ax_tsne = fig.add_axes(axes_config["tsne"])
     ax_umap = fig.add_axes(axes_config["umap"])
@@ -564,7 +451,7 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
     plt.close(fig)
 
 
-RENDERERS: Dict[str, Callable[..., None]] = {
+RENDERERS: dict[str, Callable[..., None]] = {
     "oncoplot": render_oncoplot,
     "sv_panel": render_sv_panel,
     "package_mark": render_package_mark,
@@ -574,74 +461,33 @@ RENDERERS: Dict[str, Callable[..., None]] = {
     "multimodal_panel": render_multimodal_panel,
 }
 
-def _configured_runs() -> dict[str, dict[str, Any]]:
-    defaults = GALLERY_CONFIG.get("default_params", {})
-    runs = GALLERY_CONFIG.get("plot_runs", {})
-    configured: dict[str, dict[str, Any]] = {}
-    for name, run_config in runs.items():
-        merged = _deep_merge(defaults, run_config or {})
-        nested_params = _deep_merge(defaults.get("params", {}), merged.get("params", {}))
-        if "save" in merged:
-            nested_params = _deep_merge({"save": merged["save"]}, nested_params)
-        if "backend" in merged and isinstance(nested_params.get("oncoplot"), Mapping):
-            nested_params["oncoplot"] = _deep_merge({"backend": merged["backend"]}, nested_params["oncoplot"])
-        merged["params"] = nested_params
-        configured[name] = merged
-    return configured
 
-
-CONFIGURED_RUNS = _configured_runs()
-
-
-def _renderer_from_config(run_name: str, run_config: Mapping[str, Any]) -> Callable[..., None]:
-    renderer_name = run_config["renderer"]
-    try:
-        return RENDERERS[renderer_name]
-    except KeyError as exc:
-        available = ", ".join(sorted(RENDERERS))
-        raise ValueError(f"Unknown renderer {renderer_name!r} for {run_name!r}. Available renderers: {available}.") from exc
-
-
-def _build_gallery_presets() -> Dict[str, GalleryPreset]:
-    presets: Dict[str, GalleryPreset] = {}
-    for name, run_config in CONFIGURED_RUNS.items():
-        if run_config.get("style") != "clean":
-            continue
-        presets[name] = GalleryPreset(
-            name=name,
-            output_name=run_config["output_name"],
-            renderer=_renderer_from_config(name, run_config),
-            expected_size=tuple(run_config["expected_size"]),
-            goal_plot=run_config["goal_plot"],
-            params=run_config.get("params", {}),
-            run=bool(run_config.get("run", False)),
-            clean_only=bool(run_config.get("clean_only", False)),
-            feature_axes_min=int(run_config.get("feature_axes_min", 1)),
-        )
-    return presets
-
-
-GALLERY_PRESETS = _build_gallery_presets()
-
-
-# Clean gallery images are dispatched through GALLERY_PRESETS built from config.yaml.
+# Clean gallery images are dispatched directly from config.yaml.
 def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean") -> Path:
     if style == "comparison":
         return render_brca_comparison_sheet(name, out_dir or COMPARISON_OUT)
     if style != "clean":
         raise ValueError("style must be one of: clean, comparison.")
 
-    if name not in GALLERY_PRESETS:
-        available = ", ".join(sorted(GALLERY_PRESETS))
+    runs = GALLERY_CONFIG["plot_runs"]
+    if name not in runs:
+        available = ", ".join(sorted(run_name for run_name, run in runs.items() if run.get("style") == "clean"))
         raise ValueError(f"Unknown gallery preset {name!r}. Available presets: {available}")
+    run_config = _deep_merge(GALLERY_CONFIG.get("default_params", {}), runs[name])
+    params = _deep_merge(GALLERY_CONFIG.get("default_params", {}).get("params", {}), run_config.get("params", {}))
+    if "save" in run_config:
+        params = _deep_merge({"save": run_config["save"]}, params)
+    if "backend" in run_config and isinstance(params.get("oncoplot"), Mapping):
+        params["oncoplot"] = _deep_merge({"backend": run_config["backend"]}, params["oncoplot"])
+
     out_dir = out_dir or CLEAN_OUT
     out_dir.mkdir(parents=True, exist_ok=True)
-    preset = GALLERY_PRESETS[name]
-    output_path = out_dir / preset.output_name
-    if preset.renderer is render_oncoplot:
-        preset.renderer(output_path, params=preset.params, run_name=name)
+    output_path = out_dir / run_config["output_name"]
+    renderer = RENDERERS[run_config["renderer"]]
+    if renderer is render_oncoplot:
+        renderer(output_path, params=params, run_name=name)
     else:
-        preset.renderer(output_path, params=preset.params)
+        renderer(output_path, params=params)
     return output_path
 
 
@@ -656,7 +502,7 @@ def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> P
         raise ValueError("Comparison sheets are only available for configured BRCA gallery presets.")
     run_config = _deep_merge(GALLERY_CONFIG.get("default_params", {}), comparison_config[base_name])
     clean_name = run_config["clean_preset"]
-    clean_preset = GALLERY_PRESETS[clean_name]
+    clean_run = GALLERY_CONFIG["plot_runs"][clean_name]
     out_dir = out_dir or COMPARISON_OUT
     out_dir.mkdir(parents=True, exist_ok=True)
     output_path = out_dir / run_config["output_name"]
@@ -664,7 +510,7 @@ def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> P
     with tempfile.TemporaryDirectory(prefix="pyoncoplot_compare_") as temporary_dir:
         work_dir = Path(temporary_dir)
         clean_path = render_preset(clean_name, work_dir / "clean", style="clean")
-        original_path = GOAL_PLOTS / clean_preset.goal_plot
+        original_path = GOAL_PLOTS / clean_run["goal_plot"]
         labels = ["Original reference", "Clean generated"]
         paths = [original_path, clean_path]
         thumb_width = 620
@@ -686,11 +532,12 @@ def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> P
 
 
 def _selected_clean_presets(names: Optional[Sequence[str]]) -> list[str]:
+    runs = GALLERY_CONFIG["plot_runs"]
     if not names:
-        return [name for name, preset in GALLERY_PRESETS.items() if preset.run]
+        return [name for name, run in runs.items() if run.get("style") == "clean" and run.get("run", True)]
     selected = []
     for name in names:
-        if name in GALLERY_PRESETS:
+        if name in runs and runs[name].get("style") == "clean":
             selected.append(name)
         else:
             raise ValueError(f"Unknown gallery preset {name!r}.")
