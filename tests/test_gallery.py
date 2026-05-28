@@ -9,7 +9,12 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from pyoncoplot import load_oncoplot_params, oncoplot
 
-from python_refactor_goal_sources import generate_synthetic_inputs
+from python_refactor_goal_sources import (
+    generate_synthetic_inputs,
+    make_oncoplots,
+    make_other_gallery_plots,
+    recreate_gallery,
+)
 from python_refactor_goal_sources.recreate_gallery import (
     CONFIG_PATH,
     GALLERY_CONFIG,
@@ -156,8 +161,7 @@ def test_goal_source_paths_and_numbered_reference_plots():
         for path in GOAL_PLOTS.glob("goal_plot_*.png")
         if (match := re.fullmatch(r"goal_plot_(\d+)\.png", path.name))
     )
-    assert goal_plot_numbers == list(range(1, max(goal_plot_numbers) + 1))
-    assert max(goal_plot_numbers) >= 21
+    assert goal_plot_numbers == list(range(1, 22))
     assert not (OLD_GOAL_PLOT_NAMES & {path.name for path in GOAL_PLOTS.iterdir() if path.is_file()})
     assert not any(
         pattern in path.name
@@ -210,11 +214,11 @@ def test_gallery_config_loads_and_declares_enabled_runs():
         assert required.issubset(run), name
 
     clean_names = [run["output_name"] for run in CLEAN_RUNS.values()]
-    assert clean_names == [f"gen.goal_plot_{index}.png" for index in range(1, 23)]
+    assert clean_names == [f"gen.goal_plot_{index:02d}.png" for index in range(1, 22)]
     comparison_runs = GALLERY_CONFIG["comparison_runs"]
-    assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_1.png"
+    assert comparison_runs["brca_large"]["output_name"] == "compare.goal_plot_01.png"
     assert comparison_runs["brca_large"]["expected_size"] == [1240, 398]
-    assert comparison_runs["brca_compact_complex"]["output_name"] == "compare.goal_plot_15.png"
+    assert comparison_runs["brca_compact_complex"]["output_name"] == "compare.goal_plot_14.png"
     assert comparison_runs["brca_compact_complex"]["expected_size"] == [1240, 398]
 
 
@@ -256,6 +260,43 @@ def test_oncoplot_gallery_runs_use_yaml_table_sources():
             assert isinstance(loaded["metadata"], pd.DataFrame), name
 
 
+def test_split_gallery_scripts_cover_renderer_config():
+    oncoplot_names = make_oncoplots.clean_run_names(renderer="oncoplot")
+    custom_names = [
+        name
+        for name in make_oncoplots.clean_run_names()
+        if GALLERY_CONFIG["plot_runs"][name]["renderer"] in make_other_gallery_plots.RENDERERS
+    ]
+
+    assert "brca_large" in oncoplot_names
+    assert "ggoncoplot_package_mark" in custom_names
+    assert "ggoncoplot_comparison_table" not in GALLERY_CONFIG["plot_runs"]
+    assert set(oncoplot_names).isdisjoint(custom_names)
+
+
+def test_recreate_gallery_dispatches_to_split_renderers_in_config_order(tmp_path, monkeypatch):
+    calls = []
+
+    def fake_oncoplot(name, out_dir):
+        calls.append(("oncoplot", name))
+        return out_dir / GALLERY_CONFIG["plot_runs"][name]["output_name"]
+
+    def fake_other(name, out_dir, style="clean"):
+        calls.append(("comparison" if style == "comparison" else "other", name))
+        return out_dir / GALLERY_CONFIG["plot_runs"].get(name, {"output_name": "comparison.png"})["output_name"]
+
+    monkeypatch.setattr(recreate_gallery, "render_oncoplot_preset", fake_oncoplot)
+    monkeypatch.setattr(recreate_gallery, "render_other_preset", fake_other)
+
+    recreate_gallery.main(["--style", "clean", "--out-dir", str(tmp_path)])
+
+    assert calls == [
+        ("oncoplot" if run["renderer"] == "oncoplot" else "other", name)
+        for name, run in GALLERY_CONFIG["plot_runs"].items()
+        if run.get("style") == "clean" and run.get("run", True)
+    ]
+
+
 def test_brca_large_oncoplot_config_keeps_all_metadata_samples_and_mutation_rank_order():
     params = load_oncoplot_params(CONFIG_PATH, key="gallery_params.plot_runs.brca_large.params.oncoplot")
     result = oncoplot(params=params)
@@ -293,6 +334,7 @@ def test_oncoplot_config_covers_cssc_gbm_and_brca_gallery_behavior():
     gbm_params = CLEAN_RUNS["gbm_clinical_molecular"]["params"]["oncoplot"]
 
     assert "Age_years" in brca_params["metadata_cols"]
+    assert brca_params["metadata_palette"]["Age_years"] == "viridis"
     assert brca_params["options"]["metadata_numeric_plot_type"] == "bar"
     assert "Multi_Hit" in cssc_params["palette"]
     assert "Multi_Hit" in gbm_params["palette"]
@@ -355,16 +397,16 @@ def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):
 
 
 def test_new_gallery_outputs_are_generated_not_copied(rendered_clean_gallery):
-    for index in range(1, 23):
-        run = next(run for run in CLEAN_RUNS.values() if run["output_name"] == f"gen.goal_plot_{index}.png")
+    for index in range(1, 22):
+        run = next(run for run in CLEAN_RUNS.values() if run["output_name"] == f"gen.goal_plot_{index:02d}.png")
         output = rendered_clean_gallery / run["output_name"]
-        goal = GOAL_PLOTS / f"goal_plot_{index}.png"
+        goal = GOAL_PLOTS / f"goal_plot_{index:02d}.png"
         assert output.read_bytes() != goal.read_bytes()
 
 
 def test_new_gallery_outputs_have_expected_broad_features(rendered_clean_gallery):
-    for index in (3, 4, 5, 7, 8, 10, 13, 14):
-        run = next(run for run in CLEAN_RUNS.values() if run["output_name"] == f"gen.goal_plot_{index}.png")
+    for index in (3, 4, 5, 7, 8, 9, 12, 13):
+        run = next(run for run in CLEAN_RUNS.values() if run["output_name"] == f"gen.goal_plot_{index:02d}.png")
         output = rendered_clean_gallery / run["output_name"]
         with Image.open(output) as image:
             assert image.size == tuple(run["expected_size"])
@@ -404,8 +446,8 @@ def test_accepted_aml_metadata_outputs_remain_clean_only_and_featureful(tmp_path
 
 def test_brca_comparison_sheet_smoke(tmp_path):
     for name, output_name in {
-        "brca_large": "compare.goal_plot_1.png",
-        "brca_compact_complex": "compare.goal_plot_15.png",
+        "brca_large": "compare.goal_plot_01.png",
+        "brca_compact_complex": "compare.goal_plot_14.png",
     }.items():
         output = render_preset(name, tmp_path, style="comparison")
         assert output.exists()

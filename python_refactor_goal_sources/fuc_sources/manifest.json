@@ -10,13 +10,13 @@
     "getrm-cyp2d6-vdr.vcf": "58963f31be951330b51a3dffdd808eb0f1855756f2c65d7dc347510b73296923"
   },
   "source_scripts": {
-    "goal_plot_18.png": "oncoplot.py",
-    "goal_plot_19.png": "customized_oncoplot_1.py",
-    "goal_plot_20.png": "customized_oncoplot_2.py",
-    "goal_plot_21.png": "vcf_sv.py",
-    "goal_plot_22.png": "customized_oncoplot_3.py"
+    "goal_plot_17.png": "oncoplot.py",
+    "goal_plot_18.png": "customized_oncoplot_1.py",
+    "goal_plot_19.png": "customized_oncoplot_2.py",
+    "goal_plot_20.png": "vcf_sv.py",
+    "goal_plot_21.png": "customized_oncoplot_3.py"
   },
-  "goal_plot_22_sha256": "6e6f19675709e97c08f5c9e1326f96046775f73ab9b170c5dee7f5d2a9d97f85",
+  "goal_plot_21_sha256": "6e6f19675709e97c08f5c9e1326f96046775f73ab9b170c5dee7f5d2a9d97f85",
   "derived_fixture_checksums": {
     "aml_mutations.tsv": "eda552368068a0c0aa4bfbaf5931cecb9334521b213b0c375accb26fceea0361",
     "aml_metadata.tsv": "31068677bcd5f6dd50ef5371444aca2e3eb79bd3b0394cdb93d3ff7edf2b9efe",

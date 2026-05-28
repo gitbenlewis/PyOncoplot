@@ -1,6 +1,6 @@
 # Structural Variation Panel
 
-The structural-variation panel recreates `gen.goal_plot_21.png` from compact
+The structural-variation panel recreates `gen.goal_plot_20.png` from compact
 depth, allele-fraction, and exon-model inputs derived from the fuc
 `pyvcf/getrm-cyp2d6-vdr.vcf` example.
 
@@ -16,7 +16,7 @@ python3 python_refactor_goal_sources/recreate_gallery.py --preset sv_panel
 Output:
 
 ```text
-python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_21.png
+python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_20.png
 ```
 
 ## Inputs

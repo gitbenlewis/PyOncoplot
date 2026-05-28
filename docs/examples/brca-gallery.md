@@ -14,8 +14,8 @@ python3 python_refactor_goal_sources/recreate_gallery.py --preset brca_compact_c
 Outputs:
 
 ```text
-python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_1.png
-python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_15.png
+python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_01.png
+python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_14.png
 ```
 
 ## Render Comparison Sheets
@@ -38,11 +38,11 @@ python_refactor_goal_sources/syntheitic_goal_data/brca_palette.json
 
 ## Inspect The Preset Code
 
-The gallery renderer lives in:
+Direct oncoplot gallery rendering lives in:
 
 ```text
-python_refactor_goal_sources/recreate_gallery.py
+python_refactor_goal_sources/make_oncoplots.py
 ```
 
-Use this file as a recipe for larger Matplotlib layouts that are too bespoke for
-the core `oncoplot()` API.
+Use `renderer: oncoplot` presets when the public API can express the plot. Add a
+custom renderer only when the plot is too bespoke for `oncoplot()`.

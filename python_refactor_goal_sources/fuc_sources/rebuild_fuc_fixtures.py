@@ -347,13 +347,13 @@ def main() -> None:
             for name in ["tcga_laml.maf.gz", "tcga_laml_annot.tsv", "getrm-cyp2d6-vdr.vcf"]
         },
         "source_scripts": {
-            "goal_plot_18.png": "oncoplot.py",
-            "goal_plot_19.png": "customized_oncoplot_1.py",
-            "goal_plot_20.png": "customized_oncoplot_2.py",
-            "goal_plot_21.png": "vcf_sv.py",
-            "goal_plot_22.png": "customized_oncoplot_3.py",
+            "goal_plot_17.png": "oncoplot.py",
+            "goal_plot_18.png": "customized_oncoplot_1.py",
+            "goal_plot_19.png": "customized_oncoplot_2.py",
+            "goal_plot_20.png": "vcf_sv.py",
+            "goal_plot_21.png": "customized_oncoplot_3.py",
         },
-        "goal_plot_22_sha256": sha256(GOAL_PLOTS / "goal_plot_22.png") if (GOAL_PLOTS / "goal_plot_22.png").exists() else None,
+        "goal_plot_21_sha256": sha256(GOAL_PLOTS / "goal_plot_21.png") if (GOAL_PLOTS / "goal_plot_21.png").exists() else None,
         "derived_fixture_checksums": fixture_checksums(),
         "summary": {"aml": aml, "sv": sv},
     }

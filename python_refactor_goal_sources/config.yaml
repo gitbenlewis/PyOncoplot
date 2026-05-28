@@ -266,7 +266,9 @@ gallery_params:
       tmb_data: *brca_tmb_source
       tmb_palette: *brca_palette
       metadata: *brca_metadata_source
-      metadata_palette: *brca_metadata_palette
+      metadata_palette:
+        <<: *brca_metadata_palette
+        Age_years: viridis
     brca_large_options: &brca_large_options
       width: 3600
       height: 1800
@@ -659,8 +661,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_1.png
-      goal_plot: goal_plot_1.png
+      output_name: gen.goal_plot_01.png
+      goal_plot: goal_plot_01.png
       expected_size: [3600, 1800]
       feature_axes_min: 5
       params: &brca_large_params
@@ -675,8 +677,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_2.png
-      goal_plot: goal_plot_2.png
+      output_name: gen.goal_plot_02.png
+      goal_plot: goal_plot_02.png
       expected_size: [672, 480]
       feature_axes_min: 1
       params:
@@ -700,8 +702,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_3.png
-      goal_plot: goal_plot_3.png
+      output_name: gen.goal_plot_03.png
+      goal_plot: goal_plot_03.png
       expected_size: [7200, 3000]
       feature_axes_min: 1
       params:
@@ -725,8 +727,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_4.png
-      goal_plot: goal_plot_4.png
+      output_name: gen.goal_plot_04.png
+      goal_plot: goal_plot_04.png
       expected_size: [7200, 3600]
       feature_axes_min: 3
       params:
@@ -757,8 +759,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_5.png
-      goal_plot: goal_plot_5.png
+      output_name: gen.goal_plot_05.png
+      goal_plot: goal_plot_05.png
       expected_size: [7200, 3600]
       feature_axes_min: 4
       params:
@@ -797,8 +799,8 @@ gallery_params:
       run: true
       renderer: package_mark
       style: clean
-      output_name: gen.goal_plot_6.png
-      goal_plot: goal_plot_6.png
+      output_name: gen.goal_plot_06.png
+      goal_plot: goal_plot_06.png
       expected_size: [125, 144]
       feature_axes_min: 1
       params:
@@ -810,8 +812,8 @@ gallery_params:
       run: true
       renderer: interactive_snapshot
       style: clean
-      output_name: gen.goal_plot_7.png
-      goal_plot: goal_plot_7.png
+      output_name: gen.goal_plot_07.png
+      goal_plot: goal_plot_07.png
       expected_size: [1566, 1036]
       feature_axes_min: 3
       params:
@@ -820,27 +822,12 @@ gallery_params:
         title: "Interactive oncoplot snapshot"
         save: {dpi: 100}
 
-    ggoncoplot_comparison_table:
-      run: true
-      renderer: comparison_table
-      style: clean
-      output_name: gen.goal_plot_8.png
-      goal_plot: goal_plot_8.png
-      expected_size: [800, 533]
-      feature_axes_min: 1
-      params:
-        figure_size: [8.0, 5.33]
-        title: "Comparison of R packages for creating oncoplots"
-        subtitle: "Feature support across common oncoplot tools"
-        compact: false
-        save: {dpi: 100}
-
     ggoncoplot_comparison_table_jats:
       run: true
       renderer: comparison_table
       style: clean
-      output_name: gen.goal_plot_9.png
-      goal_plot: goal_plot_9.png
+      output_name: gen.goal_plot_08.png
+      goal_plot: goal_plot_08.png
       expected_size: [800, 513]
       feature_axes_min: 1
       params:
@@ -854,8 +841,8 @@ gallery_params:
       run: true
       renderer: lasso_scatter
       style: clean
-      output_name: gen.goal_plot_10.png
-      goal_plot: goal_plot_10.png
+      output_name: gen.goal_plot_09.png
+      goal_plot: goal_plot_09.png
       expected_size: [1408, 922]
       feature_axes_min: 1
       params:
@@ -867,8 +854,8 @@ gallery_params:
       run: true
       renderer: multimodal_panel
       style: clean
-      output_name: gen.goal_plot_11.png
-      goal_plot: goal_plot_11.png
+      output_name: gen.goal_plot_10.png
+      goal_plot: goal_plot_10.png
       expected_size: [7620, 5204]
       feature_axes_min: 4
       params:
@@ -888,8 +875,8 @@ gallery_params:
       run: true
       renderer: multimodal_panel
       style: clean
-      output_name: gen.goal_plot_12.png
-      goal_plot: goal_plot_12.png
+      output_name: gen.goal_plot_11.png
+      goal_plot: goal_plot_11.png
       expected_size: [7620, 5204]
       feature_axes_min: 4
       params:
@@ -909,8 +896,8 @@ gallery_params:
       run: true
       renderer: multimodal_panel
       style: clean
-      output_name: gen.goal_plot_13.png
-      goal_plot: goal_plot_13.png
+      output_name: gen.goal_plot_12.png
+      goal_plot: goal_plot_12.png
       expected_size: [2281, 1520]
       feature_axes_min: 4
       params:
@@ -930,8 +917,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_14.png
-      goal_plot: goal_plot_14.png
+      output_name: gen.goal_plot_13.png
+      goal_plot: goal_plot_13.png
       expected_size: [864, 432]
       feature_axes_min: 3
       params:
@@ -949,8 +936,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_15.png
-      goal_plot: goal_plot_15.png
+      output_name: gen.goal_plot_14.png
+      goal_plot: goal_plot_14.png
       expected_size: [850, 683]
       feature_axes_min: 4
       params: &brca_compact_params
@@ -968,8 +955,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_16.png
-      goal_plot: goal_plot_16.png
+      output_name: gen.goal_plot_15.png
+      goal_plot: goal_plot_15.png
       expected_size: [1400, 700]
       feature_axes_min: 4
       params:
@@ -984,8 +971,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_17.png
-      goal_plot: goal_plot_17.png
+      output_name: gen.goal_plot_16.png
+      goal_plot: goal_plot_16.png
       expected_size: [1080, 436]
       feature_axes_min: 3
       params:
@@ -1003,8 +990,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_18.png
-      goal_plot: goal_plot_18.png
+      output_name: gen.goal_plot_17.png
+      goal_plot: goal_plot_17.png
       expected_size: [1080, 720]
       feature_axes_min: 3
       params:
@@ -1019,8 +1006,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_19.png
-      goal_plot: goal_plot_19.png
+      output_name: gen.goal_plot_18.png
+      goal_plot: goal_plot_18.png
       expected_size: [1080, 720]
       clean_only: true
       feature_axes_min: 4
@@ -1045,8 +1032,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_20.png
-      goal_plot: goal_plot_20.png
+      output_name: gen.goal_plot_19.png
+      goal_plot: goal_plot_19.png
       expected_size: [1080, 720]
       clean_only: true
       feature_axes_min: 4
@@ -1071,8 +1058,8 @@ gallery_params:
       run: true
       renderer: sv_panel
       style: clean
-      output_name: gen.goal_plot_21.png
-      goal_plot: goal_plot_21.png
+      output_name: gen.goal_plot_20.png
+      goal_plot: goal_plot_20.png
       expected_size: [1296, 864]
       feature_axes_min: 6
       params:
@@ -1086,8 +1073,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_22.png
-      goal_plot: goal_plot_22.png
+      output_name: gen.goal_plot_21.png
+      goal_plot: goal_plot_21.png
       expected_size: [1080, 720]
       clean_only: true
       feature_axes_min: 4
@@ -1115,10 +1102,10 @@ gallery_params:
     brca_large:
       run: true
       clean_preset: brca_large
-      output_name: compare.goal_plot_1.png
+      output_name: compare.goal_plot_01.png
       expected_size: [1240, 398]
     brca_compact_complex:
       run: true
       clean_preset: brca_compact_complex
-      output_name: compare.goal_plot_15.png
+      output_name: compare.goal_plot_14.png
       expected_size: [1240, 398]

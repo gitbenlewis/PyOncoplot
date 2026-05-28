@@ -5,14 +5,14 @@ Generated images are written outside the reference image paths so originals stay
 untouched.
 
 Runtime choices live in `python_refactor_goal_sources/config.yaml` under the
-`gallery_params` block. The script loads that YAML once, merges `default_params`
-into named `plot_runs`, skips runs with `run: false`, and dispatches through a
-small renderer registry. Oncoplot-style presets use the generic
-`renderer: oncoplot` path and keep public `oncoplot()` params under
-`params.oncoplot`, including table sources, titles, subplot labels, legends, and
-layout options. Input filenames are also declared there under
-`gallery_params.input_files`; custom renderers read the TSV/JSON files from
-those configured names. Deterministic non-fuc input-generation settings live in
+`gallery_params` block. `recreate_gallery.py` loads that YAML once and dispatches
+clean runs to `make_oncoplots.py` for direct public `oncoplot()` presets or to
+`make_other_gallery_plots.py` for custom plots. Oncoplot-style presets use
+`renderer: oncoplot` and keep public `oncoplot()` params under `params.oncoplot`,
+including table sources, titles, subplot labels, legends, and layout options.
+Input filenames are also declared there under `gallery_params.input_files`;
+custom renderers read the TSV/JSON files from those configured names.
+Deterministic non-fuc input-generation settings live in
 `gallery_params.synthetic_inputs`.
 
 ## Render The Clean Gallery
@@ -65,9 +65,9 @@ python_refactor_goal_sources/generated_plots/comparison/
 
 The generated AML metadata plots are treated as approved clean baselines:
 
+- `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_18.png`
 - `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_19.png`
-- `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_20.png`
-- `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_22.png`
+- `python_refactor_goal_sources/generated_plots/clean/gen.goal_plot_21.png`
 
 Do not tune these toward the originals if it makes the generated versions worse.
 
@@ -78,28 +78,27 @@ R-based paper examples next, and Python/fuc examples last.
 
 | Preset | Output | Size | Notes |
 | --- | --- | --- | --- |
-| `brca_large` | `gen.goal_plot_1.png` | `3600 x 1800` | ggoncoplot/R large BRCA plot |
-| `ggoncoplot_readme_small` | `gen.goal_plot_2.png` | `672 x 480` | ggoncoplot/R small README oncoplot |
-| `ggoncoplot_readme_basic` | `gen.goal_plot_3.png` | `7200 x 3000` | ggoncoplot/R README basic oncoplot |
-| `ggoncoplot_readme_marginal` | `gen.goal_plot_4.png` | `7200 x 3600` | ggoncoplot/R README oncoplot with marginal bars |
-| `ggoncoplot_readme_metadata` | `gen.goal_plot_5.png` | `7200 x 3600` | ggoncoplot/R README oncoplot with clinical metadata |
-| `ggoncoplot_package_mark` | `gen.goal_plot_6.png` | `125 x 144` | ggoncoplot/R package mark recreation |
-| `ggoncoplot_interactive_snapshot` | `gen.goal_plot_7.png` | `1566 x 1036` | ggoncoplot/R static interactive snapshot |
-| `ggoncoplot_comparison_table` | `gen.goal_plot_8.png` | `800 x 533` | ggoncoplot/R package comparison table |
-| `ggoncoplot_comparison_table_jats` | `gen.goal_plot_9.png` | `800 x 513` | ggoncoplot/R compact comparison table |
-| `lasso_select` | `gen.goal_plot_10.png` | `1408 x 922` | ggoncoplot/R lasso-selection scatterplot |
-| `multimodal_selection_old` | `gen.goal_plot_11.png` | `7620 x 5204` | ggoncoplot/R multimodal linked panel |
-| `multimodal_selection` | `gen.goal_plot_12.png` | `7620 x 5204` | ggoncoplot/R multimodal linked panel |
-| `multimodal_selection_with_lasso` | `gen.goal_plot_13.png` | `2281 x 1520` | ggoncoplot/R multimodal panel with lasso |
-| `paper_gbm_oncoplot` | `gen.goal_plot_14.png` | `864 x 432` | ggoncoplot/R compact paper-style GBM oncoplot |
-| `brca_compact_complex` | `gen.goal_plot_15.png` | `850 x 683` | other R-based paper compact BRCA plot |
-| `cssc_compact` | `gen.goal_plot_16.png` | `1400 x 700` | other R-based paper alteration matrix |
-| `gbm_clinical_molecular` | `gen.goal_plot_17.png` | `1080 x 436` | other R-based paper GBM clinical/molecular heatmap |
-| `aml_basic` | `gen.goal_plot_18.png` | `1080 x 720` | Python/fuc basic AML oncoplot |
-| `aml_metadata_unsorted` | `gen.goal_plot_19.png` | `1080 x 720` | Python/fuc accepted clean baseline |
-| `aml_metadata_sorted` | `gen.goal_plot_20.png` | `1080 x 720` | Python/fuc accepted clean baseline |
-| `sv_panel` | `gen.goal_plot_21.png` | `1296 x 864` | Python/fuc structural-variation panel |
-| `aml_metadata_survival` | `gen.goal_plot_22.png` | `1080 x 720` | Python/fuc survival-filtered AML baseline |
+| `brca_large` | `gen.goal_plot_01.png` | `3600 x 1800` | ggoncoplot/R large BRCA plot |
+| `ggoncoplot_readme_small` | `gen.goal_plot_02.png` | `672 x 480` | ggoncoplot/R small README oncoplot |
+| `ggoncoplot_readme_basic` | `gen.goal_plot_03.png` | `7200 x 3000` | ggoncoplot/R README basic oncoplot |
+| `ggoncoplot_readme_marginal` | `gen.goal_plot_04.png` | `7200 x 3600` | ggoncoplot/R README oncoplot with marginal bars |
+| `ggoncoplot_readme_metadata` | `gen.goal_plot_05.png` | `7200 x 3600` | ggoncoplot/R README oncoplot with clinical metadata |
+| `ggoncoplot_package_mark` | `gen.goal_plot_06.png` | `125 x 144` | ggoncoplot/R package mark recreation |
+| `ggoncoplot_interactive_snapshot` | `gen.goal_plot_07.png` | `1566 x 1036` | ggoncoplot/R static interactive snapshot |
+| `ggoncoplot_comparison_table_jats` | `gen.goal_plot_08.png` | `800 x 513` | ggoncoplot/R compact comparison table |
+| `lasso_select` | `gen.goal_plot_09.png` | `1408 x 922` | ggoncoplot/R lasso-selection scatterplot |
+| `multimodal_selection_old` | `gen.goal_plot_10.png` | `7620 x 5204` | ggoncoplot/R multimodal linked panel |
+| `multimodal_selection` | `gen.goal_plot_11.png` | `7620 x 5204` | ggoncoplot/R multimodal linked panel |
+| `multimodal_selection_with_lasso` | `gen.goal_plot_12.png` | `2281 x 1520` | ggoncoplot/R multimodal panel with lasso |
+| `paper_gbm_oncoplot` | `gen.goal_plot_13.png` | `864 x 432` | ggoncoplot/R compact paper-style GBM oncoplot |
+| `brca_compact_complex` | `gen.goal_plot_14.png` | `850 x 683` | other R-based paper compact BRCA plot |
+| `cssc_compact` | `gen.goal_plot_15.png` | `1400 x 700` | other R-based paper alteration matrix |
+| `gbm_clinical_molecular` | `gen.goal_plot_16.png` | `1080 x 436` | other R-based paper GBM clinical/molecular heatmap |
+| `aml_basic` | `gen.goal_plot_17.png` | `1080 x 720` | Python/fuc basic AML oncoplot |
+| `aml_metadata_unsorted` | `gen.goal_plot_18.png` | `1080 x 720` | Python/fuc accepted clean baseline |
+| `aml_metadata_sorted` | `gen.goal_plot_19.png` | `1080 x 720` | Python/fuc accepted clean baseline |
+| `sv_panel` | `gen.goal_plot_20.png` | `1296 x 864` | Python/fuc structural-variation panel |
+| `aml_metadata_survival` | `gen.goal_plot_21.png` | `1080 x 720` | Python/fuc survival-filtered AML baseline |
 
 ## Config-Driven Runs
 
@@ -113,8 +112,8 @@ gallery_params:
       run: true
       renderer: oncoplot
       style: clean
-      output_name: gen.goal_plot_1.png
-      goal_plot: goal_plot_1.png
+      output_name: gen.goal_plot_01.png
+      goal_plot: goal_plot_01.png
       expected_size: [3600, 1800]
       params:
         oncoplot:
@@ -128,8 +127,8 @@ gallery_params:
             height: 1800
 ```
 
-Generated outputs keep the numbered naming convention:
-`gen.goal_plot_N.png` for generated plots and `compare.goal_plot_N.png` for
+Generated outputs keep the zero-padded numbered naming convention:
+`gen.goal_plot_NN.png` for generated plots and `compare.goal_plot_NN.png` for
 comparison sheets.
 
 ## Input Families
