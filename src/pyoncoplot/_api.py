@@ -67,6 +67,7 @@ ONCOPLOT_PARAM_KEYS = {
     "backend",
     "interactive",
     "options",
+    "save",
     "verbose",
 }
 
@@ -116,6 +117,7 @@ ONCOPLOT_DEFAULTS: dict[str, Any] = {
     "backend": "plotly",
     "interactive": None,
     "options": None,
+    "save": None,
     "verbose": False,
 }
 
@@ -315,9 +317,28 @@ def oncoplot(
             draw_tmb_bar=merged["draw_tmb_bar"],
         )
 
-    return OncoplotResult(
+    result = OncoplotResult(
         figure=figure,
         backend=backend,
         prepared_data=prepared,
         copy_on_click=copy_on_click,
     )
+    save = merged["save"]
+    if save is not None:
+        if not isinstance(save, Mapping):
+            raise TypeError("save must be a mapping with a 'path' entry.")
+        save_kwargs = dict(save)
+        path = save_kwargs.pop("path", None)
+        if path is None:
+            raise ValueError("save must include a 'path' entry.")
+        if backend == "matplotlib" and "dpi" in save_kwargs:
+            try:
+                dpi = float(save_kwargs["dpi"])
+            except (TypeError, ValueError) as exc:
+                raise ValueError("save dpi must be numeric when supplied.") from exc
+            if dpi <= 0:
+                raise ValueError("save dpi must be > 0.")
+            figure.set_size_inches(float(options.width) / dpi, float(options.height) / dpi, forward=True)
+            save_kwargs.setdefault("bbox_inches", None)
+        result.save(path, **save_kwargs)
+    return result

@@ -6,6 +6,8 @@ import argparse
 from pathlib import Path
 from typing import Optional, Sequence
 
+from pyoncoplot import oncoplot
+
 try:
     from python_refactor_goal_sources.make_oncoplots import (
         CLEAN_OUT,
@@ -15,9 +17,6 @@ try:
         GENERATED_ROOT,
         GOAL_PLOTS,
         INPUTS,
-        clean_run_names,
-        merged_run_config,
-        render_preset as render_oncoplot_preset,
     )
     from python_refactor_goal_sources.make_other_gallery_plots import render_preset as render_other_preset
 except ModuleNotFoundError:  # pragma: no cover - supports ``python path/to/script.py``.
@@ -29,9 +28,6 @@ except ModuleNotFoundError:  # pragma: no cover - supports ``python path/to/scri
         GENERATED_ROOT,
         GOAL_PLOTS,
         INPUTS,
-        clean_run_names,
-        merged_run_config,
-        render_preset as render_oncoplot_preset,
     )
     from make_other_gallery_plots import render_preset as render_other_preset  # type: ignore
 
@@ -42,10 +38,25 @@ def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean
     if style != "clean":
         raise ValueError("style must be one of: clean, comparison.")
 
-    run_config = merged_run_config(name)
+    run_config = GALLERY_CONFIG["plot_runs"].get(name)
+    if run_config is None:
+        raise ValueError(f"Unknown gallery preset {name!r}.")
     out_dir = out_dir or CLEAN_OUT
     if run_config["renderer"] == "oncoplot":
-        return render_oncoplot_preset(name, out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        output_path = out_dir / run_config["output_name"]
+        save = dict(run_config["params"]["save"])
+        save["path"] = output_path
+        result = oncoplot(
+            params=CONFIG_PATH,
+            params_key=f"gallery_params.plot_runs.{name}.params.oncoplot",
+            save=save,
+        )
+        if result.backend == "matplotlib":
+            import matplotlib.pyplot as plt
+
+            plt.close(result.figure)
+        return output_path
     return render_other_preset(name, out_dir, style="clean")
 
 
@@ -58,7 +69,11 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
 
     if args.style in {"clean", "both"}:
         clean_out = args.out_dir if args.style == "clean" and args.out_dir else CLEAN_OUT
-        for name in clean_run_names(args.preset):
+        runs = GALLERY_CONFIG["plot_runs"]
+        selected_names = args.preset or [
+            name for name, run in runs.items() if run.get("style") == "clean" and run.get("run", True)
+        ]
+        for name in selected_names:
             render_preset(name, clean_out, style="clean")
         print(f"Wrote clean gallery images to {clean_out}")
 

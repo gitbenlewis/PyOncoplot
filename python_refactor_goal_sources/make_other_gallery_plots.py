@@ -11,30 +11,25 @@ from typing import Any, Callable, Mapping, Optional, Sequence
 import numpy as np
 import pandas as pd
 from PIL import Image, ImageDraw
+from pyoncoplot import oncoplot
 
 try:
     from python_refactor_goal_sources.make_oncoplots import (
         CLEAN_OUT,
         COMPARISON_OUT,
+        CONFIG_PATH,
         GALLERY_CONFIG,
         GOAL_PLOTS,
         INPUTS,
-        _deep_merge,
-        clean_run_names,
-        merged_run_config,
-        render_preset as render_oncoplot_preset,
     )
 except ModuleNotFoundError:  # pragma: no cover - supports ``python path/to/script.py``.
     from make_oncoplots import (  # type: ignore
         CLEAN_OUT,
         COMPARISON_OUT,
+        CONFIG_PATH,
         GALLERY_CONFIG,
         GOAL_PLOTS,
         INPUTS,
-        _deep_merge,
-        clean_run_names,
-        merged_run_config,
-        render_preset as render_oncoplot_preset,
     )
 
 
@@ -420,7 +415,9 @@ def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean
     if style != "clean":
         raise ValueError("style must be one of: clean, comparison.")
 
-    run_config = merged_run_config(name)
+    run_config = GALLERY_CONFIG["plot_runs"].get(name)
+    if run_config is None:
+        raise ValueError(f"Unknown gallery preset {name!r}.")
     if run_config.get("style") != "clean" or run_config["renderer"] not in RENDERERS:
         raise ValueError(f"Preset {name!r} is not a custom gallery preset.")
 
@@ -440,7 +437,7 @@ def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> P
             base_name = "brca_compact_complex"
     if base_name not in comparison_config:
         raise ValueError("Comparison sheets are only available for configured BRCA gallery presets.")
-    run_config = _deep_merge(GALLERY_CONFIG.get("default_params", {}), comparison_config[base_name])
+    run_config = comparison_config[base_name]
     clean_name = run_config["clean_preset"]
     clean_run = GALLERY_CONFIG["plot_runs"][clean_name]
     out_dir = out_dir or COMPARISON_OUT
@@ -449,7 +446,20 @@ def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> P
 
     with tempfile.TemporaryDirectory(prefix="pyoncoplot_compare_") as temporary_dir:
         work_dir = Path(temporary_dir)
-        clean_path = render_oncoplot_preset(clean_name, work_dir / "clean")
+        clean_dir = work_dir / "clean"
+        clean_dir.mkdir(parents=True, exist_ok=True)
+        clean_path = clean_dir / clean_run["output_name"]
+        save = dict(clean_run["params"]["save"])
+        save["path"] = clean_path
+        result = oncoplot(
+            params=CONFIG_PATH,
+            params_key=f"gallery_params.plot_runs.{clean_name}.params.oncoplot",
+            save=save,
+        )
+        if result.backend == "matplotlib":
+            import matplotlib.pyplot as plt
+
+            plt.close(result.figure)
         original_path = GOAL_PLOTS / clean_run["goal_plot"]
         labels = ["Original reference", "Clean generated"]
         paths = [original_path, clean_path]
@@ -472,11 +482,20 @@ def render_brca_comparison_sheet(name: str, out_dir: Optional[Path] = None) -> P
 
 
 def _selected_custom_presets(names: Optional[Sequence[str]]) -> list[str]:
-    selected = clean_run_names(names)
-    custom = [name for name in selected if GALLERY_CONFIG["plot_runs"][name]["renderer"] in RENDERERS]
-    if names and len(custom) != len(selected):
-        invalid = sorted(set(selected) - set(custom))
-        raise ValueError(f"Preset {invalid[0]!r} is not a custom gallery preset.")
+    runs = GALLERY_CONFIG["plot_runs"]
+    selected = names or [
+        name
+        for name, run in runs.items()
+        if run.get("style") == "clean" and run.get("run", True) and run["renderer"] in RENDERERS
+    ]
+    custom = []
+    for name in selected:
+        run = runs.get(name)
+        if run is None or run.get("style") != "clean":
+            raise ValueError(f"Unknown gallery preset {name!r}.")
+        if run["renderer"] not in RENDERERS:
+            raise ValueError(f"Preset {name!r} is not a custom gallery preset.")
+        custom.append(name)
     return custom
 
 

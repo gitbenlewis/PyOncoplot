@@ -2,6 +2,7 @@ from collections import ChainMap
 
 import pandas as pd
 import pytest
+from PIL import Image
 
 from pyoncoplot import (
     OncoplotOptions,
@@ -84,6 +85,31 @@ def test_oncoplot_params_options_can_be_overridden_with_params_argument():
 
     assert result.figure.layout.width == 720
     assert result.figure.layout.height == 460
+
+
+def test_oncoplot_save_mapping_writes_matplotlib_output(tmp_path):
+    output = tmp_path / "saved-oncoplot.png"
+    result = oncoplot(
+        params={
+            "data": small_df(),
+            "gene_col": "gene",
+            "sample_col": "sample",
+            "mutation_type_col": "type",
+            "backend": "matplotlib",
+            "options": {"width": 480, "height": 360},
+            "save": {"path": output, "dpi": 120},
+        }
+    )
+
+    try:
+        assert output.exists()
+        with Image.open(output) as image:
+            assert image.size == (480, 360)
+        assert result.backend == "matplotlib"
+    finally:
+        import matplotlib.pyplot as plt
+
+        plt.close(result.figure)
 
 
 def test_oncoplot_params_accept_variant_value_heatmap_arguments():

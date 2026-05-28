@@ -42,12 +42,6 @@ gallery_params:
     comparison_table:
       table: ggoncoplot_comparison_table.tsv
 
-  default_params:
-    run: true
-    backend: matplotlib
-    save:
-      dpi: 120
-
   shared:
     aml_mutations_source: &aml_mutations_source {path: syntheitic_goal_data/aml_mutations.tsv, sep: "\t"}
     aml_metadata_source: &aml_metadata_source

@@ -18,7 +18,8 @@ oncoplot(
 Create an oncoplot from mutation-level data and return an `OncoplotResult`.
 The function accepts normal explicit keyword arguments, a `params` dictionary,
 the path to a YAML params file, or both. Explicit keywords override values in
-`params`.
+`params`. Pass `save={"path": ..., ...}` to save the returned result during the
+same call; keys other than `path` are forwarded to `OncoplotResult.save()`.
 
 Common call:
 
@@ -135,6 +136,7 @@ datasets:
 | `backend`, `interactive` | choose Plotly or Matplotlib rendering |
 | `copy_on_click` | Plotly clipboard payload behavior |
 | `options` | `OncoplotOptions` instance or mapping for visual controls |
+| `save` | optional mapping with `path` plus save keyword arguments |
 
 Filtering runs before gene ranking, TMB preparation, sample ordering, and
 recurrence denominators. Mutation filters are row-wise and operate only on the

@@ -1,6 +1,7 @@
 import json
 import re
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
@@ -265,31 +266,41 @@ def test_oncoplot_gallery_runs_use_yaml_table_sources():
 
 
 def test_split_gallery_scripts_cover_renderer_config():
-    oncoplot_names = make_oncoplots.clean_run_names(renderer="oncoplot")
+    clean_runs = {
+        name: run
+        for name, run in GALLERY_CONFIG["plot_runs"].items()
+        if run.get("style") == "clean" and run.get("run", True)
+    }
+    oncoplot_names = [name for name, run in clean_runs.items() if run["renderer"] == "oncoplot"]
     custom_names = [
         name
-        for name in make_oncoplots.clean_run_names()
-        if GALLERY_CONFIG["plot_runs"][name]["renderer"] in make_other_gallery_plots.RENDERERS
+        for name, run in clean_runs.items()
+        if run["renderer"] in make_other_gallery_plots.RENDERERS
     ]
 
     assert "brca_large" in oncoplot_names
     assert "ggoncoplot_package_mark" in custom_names
     assert "ggoncoplot_comparison_table" not in GALLERY_CONFIG["plot_runs"]
     assert set(oncoplot_names).isdisjoint(custom_names)
+    assert not hasattr(make_oncoplots, "render_preset")
+    assert not hasattr(make_oncoplots, "clean_run_names")
+    assert not hasattr(make_oncoplots, "merged_run_config")
 
 
 def test_recreate_gallery_dispatches_to_split_renderers_in_config_order(tmp_path, monkeypatch):
     calls = []
 
-    def fake_oncoplot(name, out_dir):
+    def fake_oncoplot(*, params, params_key, save):
+        del params, save
+        name = params_key.split(".")[2]
         calls.append(("oncoplot", name))
-        return out_dir / GALLERY_CONFIG["plot_runs"][name]["output_name"]
+        return SimpleNamespace(backend="plotly")
 
     def fake_other(name, out_dir, style="clean"):
         calls.append(("comparison" if style == "comparison" else "other", name))
         return out_dir / GALLERY_CONFIG["plot_runs"].get(name, {"output_name": "comparison.png"})["output_name"]
 
-    monkeypatch.setattr(recreate_gallery, "render_oncoplot_preset", fake_oncoplot)
+    monkeypatch.setattr(recreate_gallery, "oncoplot", fake_oncoplot)
     monkeypatch.setattr(recreate_gallery, "render_other_preset", fake_other)
 
     recreate_gallery.main(["--style", "clean", "--out-dir", str(tmp_path)])
