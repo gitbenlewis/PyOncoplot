@@ -148,6 +148,7 @@ def test_oncoplot_params_accept_multi_row_main_grid_arguments():
             ],
             "variant_value_scale": "per_column",
             "gene_name_x_offset": 6,
+            "main_grid_rows_label_x_offset": 12,
             "backend": "plotly",
         }
     )
@@ -163,6 +164,7 @@ def test_oncoplot_params_accept_multi_row_main_grid_arguments():
         "zero",
     ]
     assert next(annotation for annotation in result.figure.layout.annotations if annotation.text == "TP53").xshift == -60
+    assert next(annotation for annotation in result.figure.layout.annotations if annotation.text == "VAF").xshift == -20
     assert result.prepared_data.main_grid_tiles["Kind"].tolist()
 
 

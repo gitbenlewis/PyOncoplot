@@ -824,7 +824,7 @@ def _collapse_mutations(
                 mutation_type = "Multi_Hit"
         tooltip = "<br>".join(tooltip_values)
         if tooltip_col != sample_col:
-            tooltip = f"<strong>{sample}</strong><br>{tooltip}"
+            tooltip = f"Sample: {sample}<br>{tooltip}"
         aggregated_values = {
             str(spec["key"]): _aggregate_variant_value(
                 group[str(spec["column"])],
@@ -984,6 +984,7 @@ def _build_main_grid_tiles(
     tiles: pd.DataFrame,
     tracks: Sequence[Mapping[str, object]],
     main_grid_rows: pd.DataFrame,
+    include_variant_summaries: bool = False,
 ) -> pd.DataFrame:
     if tiles.empty or main_grid_rows.empty or not tracks:
         return _empty_main_grid_tiles()
@@ -994,19 +995,40 @@ def _build_main_grid_tiles(
     rows = []
     for _tile_index, tile in tiles.iterrows():
         gene = str(tile["Gene"])
-        for _row_index, row_spec in rows_by_gene.get(gene, pd.DataFrame()).iterrows():
+        gene_rows = rows_by_gene.get(gene, pd.DataFrame())
+        variant_summaries: dict[str, str] = {}
+        if include_variant_summaries:
+            for _variant_index, variant_spec in gene_rows.iterrows():
+                if variant_spec["Kind"] != "variant_value":
+                    continue
+                key = variant_spec["VariantValueKey"]
+                value = tile[str(key)]
+                if pd.isna(value):
+                    continue
+                variant_summaries[str(variant_spec["TrackId"])] = (
+                    f"{variant_spec['Label']}: {float(value):g}"
+                )
+        for _row_index, row_spec in gene_rows.iterrows():
             variant_value = np.nan
             if row_spec["Kind"] == "variant_value":
                 key = row_spec["VariantValueKey"]
                 value = tile[str(key)]
                 variant_value = np.nan if pd.isna(value) else float(value)
+            tooltip = str(tile["Tooltip"])
+            if include_variant_summaries:
+                if row_spec["Kind"] == "variant_value":
+                    summaries = [variant_summaries[str(row_spec["TrackId"])]] if str(row_spec["TrackId"]) in variant_summaries else []
+                else:
+                    summaries = list(variant_summaries.values())
+                if summaries:
+                    tooltip = f"{tooltip}<br>{'<br>'.join(summaries)}"
             rows.append(
                 {
                     "Sample": str(tile["Sample"]),
                     "Gene": gene,
                     "MutationType": tile["MutationType"],
                     "MutationCount": int(tile["MutationCount"]),
-                    "Tooltip": str(tile["Tooltip"]),
+                    "Tooltip": tooltip,
                     "RowId": str(row_spec["RowId"]),
                     "RowIndex": int(row_spec["RowIndex"]),
                     "GeneIndex": int(row_spec["GeneIndex"]),
@@ -1592,7 +1614,12 @@ def prepare_oncoplot_data(
         tiles,
         variant_value_scale,
     )
-    main_grid_tiles_out = _build_main_grid_tiles(tiles, main_grid_tracks, main_grid_rows_out)
+    main_grid_tiles_out = _build_main_grid_tiles(
+        tiles,
+        main_grid_tracks,
+        main_grid_rows_out,
+        include_variant_summaries=tooltip_was_generated,
+    )
 
     return PreparedOncoplotData(
         tiles=tiles.reset_index(drop=True),

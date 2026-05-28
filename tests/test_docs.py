@@ -98,6 +98,7 @@ def test_options_reference_mentions_parity_options():
         "font_size_subplot_title",
         "font_size_pathway",
         "gene_name_x_offset",
+        "main_grid_rows_label_x_offset",
         "title_text",
         "main_subplot_title",
         "tmb_subplot_title",
@@ -176,6 +177,7 @@ def test_docs_cover_remaining_parity_corrections():
     assert "variant_value_cols" in api_reference
     assert "variant_value_missing" in api_reference
     assert "gene_name_x_offset" in api_reference
+    assert "main_grid_rows_label_x_offset" in api_reference
     assert "Save Behavior" in api_reference
 
     rendering_backends = (DOCS / "rendering-backends.md").read_text(encoding="utf-8")

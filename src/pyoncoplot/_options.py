@@ -68,6 +68,7 @@ class OncoplotOptions:
     font_size_subplot_title: float = 12
     font_size_pathway: Optional[float] = None
     gene_name_x_offset: float = 0.0
+    main_grid_rows_label_x_offset: float = 10.0
     font_family: str = "Arial"
     gene_font_style: Literal["normal", "italic", "bold", "bold_italic"] = "normal"
     sample_font_style: Literal["normal", "italic", "bold", "bold_italic"] = "normal"
@@ -154,6 +155,7 @@ class OncoplotOptions:
             "font_size_metadata_bar_numbers",
             "gene_bar_label_padding",
             "gene_name_x_offset",
+            "main_grid_rows_label_x_offset",
         ):
             value = getattr(self, name)
             if value < 0:

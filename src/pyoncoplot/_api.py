@@ -64,6 +64,7 @@ ONCOPLOT_PARAM_KEYS = {
     "variant_value_scale",
     "main_grid_rows",
     "gene_name_x_offset",
+    "main_grid_rows_label_x_offset",
     "backend",
     "interactive",
     "options",
@@ -114,6 +115,7 @@ ONCOPLOT_DEFAULTS: dict[str, Any] = {
     "variant_value_scale": "per_column",
     "main_grid_rows": None,
     "gene_name_x_offset": None,
+    "main_grid_rows_label_x_offset": None,
     "backend": "plotly",
     "interactive": None,
     "options": None,
@@ -234,14 +236,15 @@ def oncoplot(
     if backend not in {"plotly", "matplotlib"}:
         raise ValueError("backend must be either 'plotly' or 'matplotlib'.")
     options = coerce_options(merged["options"])
-    if merged["gene_name_x_offset"] is not None:
-        try:
-            gene_name_x_offset = float(merged["gene_name_x_offset"])
-        except (TypeError, ValueError) as exc:
-            raise ValueError("gene_name_x_offset must be numeric when supplied.") from exc
-        if gene_name_x_offset < 0:
-            raise ValueError("gene_name_x_offset must be >= 0.")
-        options.gene_name_x_offset = gene_name_x_offset
+    for offset_name in ("gene_name_x_offset", "main_grid_rows_label_x_offset"):
+        if merged[offset_name] is not None:
+            try:
+                offset_value = float(merged[offset_name])
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"{offset_name} must be numeric when supplied.") from exc
+            if offset_value < 0:
+                raise ValueError(f"{offset_name} must be >= 0.")
+            setattr(options, offset_name, offset_value)
 
     prepared = prepare_oncoplot_data(
         data,

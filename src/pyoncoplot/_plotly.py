@@ -675,7 +675,15 @@ def _add_numeric_metadata_colorbars(
 
 
 def _variant_value_hover_text(row: pd.Series, title: str) -> str:
-    return f"{row['Tooltip']}<br><strong>{title}</strong>: {float(row['VariantValue']):g}"
+    value = f"{float(row['VariantValue']):g}"
+    tooltip = str(row["Tooltip"])
+    lines = set(tooltip.split("<br>"))
+    title_line = f"{title}: {value}"
+    raw_label = row.get("Label", title)
+    raw_line = "" if pd.isna(raw_label) else f"{raw_label}: {value}"
+    if title_line in lines or raw_line in lines:
+        return tooltip
+    return f"{tooltip}<br>{title_line}"
 
 
 def _variant_colorbar_layout(index: int, total: int, key: str, options: OncoplotOptions) -> Dict[str, object]:
@@ -799,7 +807,7 @@ def _add_expanded_row_labels(
             showarrow=False,
             xanchor="right",
             yanchor="middle",
-            xshift=-8,
+            xshift=-(8 + options.main_grid_rows_label_x_offset),
             font=dict(size=max(7, options.font_size_genes * 0.72), color="#555555"),
         )
 

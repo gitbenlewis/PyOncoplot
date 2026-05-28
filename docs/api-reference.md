@@ -118,7 +118,7 @@ datasets:
 | `data` | mutation-level `pandas.DataFrame` or CSV/TSV path |
 | `gene_col`, `sample_col` | required column names for gene and sample identifiers |
 | `mutation_type_col` | optional mutation category column used for tile colors and legends unless a continuous-only main grid is requested |
-| `tooltip_col` | optional tooltip text column; generated from sample, gene, and mutation type when omitted |
+| `tooltip_col` | optional tooltip text column; generated from sample, gene, mutation type, and expanded-grid variant summaries when omitted |
 | `include_genes`, `ignore_genes`, `top_n` | choose the displayed gene panel |
 | `draw_gene_bar`, `draw_tmb_bar` | add recurrence and mutation burden side panels |
 | `palette`, `tmb_palette`, `metadata_palette`, `variant_value_palette` | color mappings for mutation tiles, typed TMB bars, metadata, and continuous variant heatmaps |
@@ -133,6 +133,7 @@ datasets:
 | `variant_value_col`, `variant_value_cols`, `variant_value_agg`, `variant_value_missing` | optional numeric variant column or columns, collapse rule, and missing-value policy for continuous main-grid coloring |
 | `main_grid_rows`, `variant_value_scale` | expanded main-grid row specifications and per-column/shared continuous color scaling |
 | `gene_name_x_offset` | extra leftward padding for expanded-grid gene labels |
+| `main_grid_rows_label_x_offset` | extra leftward padding for expanded-grid row labels |
 | `backend`, `interactive` | choose Plotly or Matplotlib rendering |
 | `copy_on_click` | Plotly clipboard payload behavior |
 | `options` | `OncoplotOptions` instance or mapping for visual controls |
@@ -227,8 +228,8 @@ mutation-type row followed by one row per numeric value column. Set
 continuous rows; the default `"per_column"` gives each continuous row its own
 range and colorbar. A `main_grid_rows` variant-value row can set
 `missing="blank"` or `missing="zero"` to override `variant_value_missing` for
-that row. `gene_name_x_offset` is also available in `OncoplotOptions`; the
-top-level argument wins when supplied.
+that row. `gene_name_x_offset` and `main_grid_rows_label_x_offset` are also
+available in `OncoplotOptions`; top-level arguments win when supplied.
 
 ## `merge_oncoplot_params`
 

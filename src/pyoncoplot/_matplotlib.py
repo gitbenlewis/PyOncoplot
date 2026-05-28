@@ -551,12 +551,13 @@ def _draw_expanded_main(
         )
 
     if track_count > 1:
-        label_x = -0.08
+        row_label_shift = -(8 + options.main_grid_rows_label_x_offset)
         for _index, row_spec in rows.sort_values("RowIndex", kind="mergesort").iterrows():
-            ax.text(
-                label_x,
-                float(row_spec["RowIndex"]) + 0.5,
+            ax.annotate(
                 _legend_title(row_spec["Label"], options),
+                xy=(0, float(row_spec["RowIndex"]) + 0.5),
+                xytext=(row_label_shift, 0),
+                textcoords="offset points",
                 ha="right",
                 va="center",
                 fontsize=max(7, options.font_size_genes * 0.72),

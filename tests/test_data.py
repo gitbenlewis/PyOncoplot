@@ -80,7 +80,7 @@ def test_prepare_oncoplot_data_collapses_multi_hits_and_tooltips():
     hit = prepared.tiles[(prepared.tiles["Sample"].astype(str) == "S1") & (prepared.tiles["Gene"].astype(str) == "TP53")].iloc[0]
     assert hit["MutationType"] == "Multi_Hit"
     assert hit["MutationCount"] == 2
-    assert hit["Tooltip"] == "<strong>S1</strong><br>a<br>b"
+    assert hit["Tooltip"] == "Sample: S1<br>a<br>b"
     assert prepared.genes == ["EGFR", "PTEN", "TP53"]
     assert prepared.samples[0] == "S1"
     assert set(prepared.mutation_counts.columns) == {"Gene", "MutationType", "Count"}
@@ -105,9 +105,37 @@ def test_prepare_oncoplot_data_generates_default_mutation_tooltips():
     ].iloc[0]
 
     assert multi_hit["Tooltip"] == (
-        "<strong>S1</strong><br>TP53: Missense_Mutation<br>TP53: Nonsense_Mutation"
+        "Sample: S1<br>TP53: Missense_Mutation<br>TP53: Nonsense_Mutation"
     )
-    assert single_hit["Tooltip"] == "<strong>S1</strong><br>EGFR: Missense_Mutation"
+    assert single_hit["Tooltip"] == "Sample: S1<br>EGFR: Missense_Mutation"
+
+
+def test_prepare_oncoplot_data_default_expanded_tooltips_include_variant_values():
+    df = mutation_df()
+    df["vaf_pct"] = [12, 42, 20, 35, 51, 62, 25, 15]
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        include_genes=["TP53", "EGFR"],
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf_pct", "label": "VAF %"},
+        ],
+    )
+    tp53_s1 = prepared.main_grid_tiles[
+        (prepared.main_grid_tiles["Sample"] == "S1")
+        & (prepared.main_grid_tiles["Gene"] == "TP53")
+    ].sort_values("TrackIndex")
+
+    assert tp53_s1.iloc[0]["Tooltip"] == (
+        "Sample: S1<br>TP53: Missense_Mutation<br>TP53: Nonsense_Mutation<br>VAF %: 42"
+    )
+    assert tp53_s1.iloc[1]["Tooltip"] == (
+        "Sample: S1<br>TP53: Missense_Mutation<br>TP53: Nonsense_Mutation<br>VAF %: 42"
+    )
 
 
 def test_prepare_oncoplot_data_aggregates_variant_values_for_collapsed_tiles():

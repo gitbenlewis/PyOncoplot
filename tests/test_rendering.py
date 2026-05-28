@@ -212,9 +212,12 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
         if payload.get("sample") == "S1" and payload.get("gene") == "TP53"
     )
     assert tp53_s1_payload["variant_value"] == pytest.approx(0.34)
-    assert tp53_s1_mutation_hover == "<strong>S1</strong><br>TP53: Missense_Mutation"
-    assert "<strong>S1</strong><br>TP53: Missense_Mutation" in tp53_s1_variant_hover
-    assert "<strong>VAF %</strong>: 0.34" in tp53_s1_variant_hover
+    assert tp53_s1_mutation_hover == (
+        "Sample: S1<br>TP53: Missense_Mutation<br>VAF %: 0.34<br>VAF abs: 0.034"
+    )
+    assert tp53_s1_variant_hover == "Sample: S1<br>TP53: Missense_Mutation<br>VAF %: 0.34"
+    assert "<strong>" not in tp53_s1_mutation_hover
+    assert "<strong>" not in tp53_s1_variant_hover
     assert mutation_traces
     assert any(trace.showlegend is True for trace in mutation_traces)
     assert gene_bar_traces
@@ -235,6 +238,7 @@ def test_plotly_multi_row_main_grid_leaves_missing_values_blank_and_offsets_gene
         ],
         backend="plotly",
         gene_name_x_offset=18,
+        main_grid_rows_label_x_offset=12,
         options=OncoplotOptions(width=760, height=500, prettify_legend_titles=False),
     )
 
@@ -256,7 +260,7 @@ def test_plotly_multi_row_main_grid_leaves_missing_values_blank_and_offsets_gene
 
     assert pd.isna(main_heatmap.z[int(tp53_vaf_row["RowIndex"])][s1_index])
     assert gene_label.xshift == pytest.approx(-72)
-    assert row_label.xshift == pytest.approx(-8)
+    assert row_label.xshift == pytest.approx(-20)
 
 
 def test_plotly_variant_value_cols_shared_scale_uses_one_colorbar():
@@ -333,6 +337,7 @@ def test_matplotlib_multi_row_main_grid_offsets_gene_labels_from_row_labels():
         ],
         backend="matplotlib",
         gene_name_x_offset=18,
+        main_grid_rows_label_x_offset=12,
         options=OncoplotOptions(width=700, height=450, prettify_legend_titles=False),
     )
 
@@ -341,7 +346,7 @@ def test_matplotlib_multi_row_main_grid_offsets_gene_labels_from_row_labels():
     row_label = next(text for text in main_axis.texts if text.get_text() == "VAF %")
 
     assert gene_label.xyann[0] == pytest.approx(-72)
-    assert row_label.get_position()[0] == pytest.approx(-0.08)
+    assert row_label.xyann[0] == pytest.approx(-20)
 
 
 def test_plotly_gene_bar_percent_mode_normalizes_each_gene():
@@ -2220,3 +2225,5 @@ def test_new_options_validate_boundaries():
         OncoplotOptions(legend_offsets={"metadata:group": {"z": 1}})
     with pytest.raises(ValueError, match="gene_name_x_offset"):
         OncoplotOptions(gene_name_x_offset=-1)
+    with pytest.raises(ValueError, match="main_grid_rows_label_x_offset"):
+        OncoplotOptions(main_grid_rows_label_x_offset=-1)

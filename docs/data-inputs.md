@@ -48,7 +48,8 @@ cell, even if the repeated rows have the same mutation type.
 The tooltip content is aggregated so the original mutation-level evidence is not
 lost in interactive output. When `tooltip_col` is omitted, hover text is
 generated from the sample, gene, and mutation type; continuous variant rows also
-append the hovered variant value.
+append the hovered variant value. Expanded main grids also include configured
+variant-value summaries in default mutation-row hovers.
 
 When `variant_value_col` is supplied, collapsed sample/gene tiles also aggregate
 that numeric column. Use `variant_value_agg` to choose `"max"` (default),
@@ -88,6 +89,7 @@ oncoplot(
         {"kind": "variant_value", "column": "deltaVAF_pct", "label": "delta VAF %", "agg": "mean", "missing": "zero"},
     ],
     gene_name_x_offset=12,
+    main_grid_rows_label_x_offset=14,
 )
 ```
 
