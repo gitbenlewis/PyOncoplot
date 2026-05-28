@@ -196,7 +196,25 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
         and payload.get("gene") == "TP53"
         and payload.get("variant_value_column") == "vaf"
     )
+    tp53_s1_variant_hover = next(
+        trace.text[row_index][sample_index]
+        for trace in main_heatmaps
+        for row_index, row in enumerate(trace.customdata)
+        for sample_index, payload in enumerate(row)
+        if payload.get("sample") == "S1"
+        and payload.get("gene") == "TP53"
+        and payload.get("variant_value_column") == "vaf"
+    )
+    tp53_s1_mutation_hover = next(
+        text
+        for trace in mutation_traces
+        for text, payload in zip(trace.text, trace.customdata)
+        if payload.get("sample") == "S1" and payload.get("gene") == "TP53"
+    )
     assert tp53_s1_payload["variant_value"] == pytest.approx(0.34)
+    assert tp53_s1_mutation_hover == "<strong>S1</strong><br>TP53: Missense_Mutation"
+    assert "<strong>S1</strong><br>TP53: Missense_Mutation" in tp53_s1_variant_hover
+    assert "<strong>VAF %</strong>: 0.34" in tp53_s1_variant_hover
     assert mutation_traces
     assert any(trace.showlegend is True for trace in mutation_traces)
     assert gene_bar_traces
@@ -453,10 +471,14 @@ def test_matplotlib_multi_row_main_grid_and_colorbars(tmp_path):
     assert output.stat().st_size > 0
     assert result.prepared_data.main_grid_mode == "expanded"
     assert len(result.prepared_data.main_grid_rows) == len(result.prepared_data.genes) * 3
+    main_position = result.figure.axes[0].get_position()
+    gene_bar_position = result.figure.axes[1].get_position()
     colorbar_axes = matplotlib_colorbar_axes(result.figure, "Vaf", "Vaf Abs")
     assert [axis.get_title() for axis in colorbar_axes] == ["Vaf", "Vaf Abs"]
     assert all(axis.get_ylabel() == "" for axis in colorbar_axes)
     assert all(axis.get_position().width > axis.get_position().height for axis in colorbar_axes)
+    assert gene_bar_position.y0 == pytest.approx(main_position.y0)
+    assert gene_bar_position.height == pytest.approx(main_position.height)
 
 
 def test_matplotlib_gene_bar_percent_mode_normalizes_each_gene():

@@ -1271,7 +1271,8 @@ def prepare_oncoplot_data(
 ) -> PreparedOncoplotData:
     """Validate and transform mutation-level data into oncoplot-ready tables."""
 
-    tooltip_col = tooltip_col or sample_col
+    tooltip_was_generated = tooltip_col is None
+    validation_tooltip_col = sample_col if tooltip_was_generated else tooltip_col
     metadata_sample_col = metadata_sample_col or sample_col
     total_samples_options = {"any_mutations", "all", "oncoplot"}
     if total_samples not in total_samples_options:
@@ -1335,7 +1336,16 @@ def prepare_oncoplot_data(
         else None
     )
 
-    data = _validate_mutation_inputs(data, gene_col, sample_col, mutation_type_col, tooltip_col)
+    data = _validate_mutation_inputs(data, gene_col, sample_col, mutation_type_col, validation_tooltip_col)
+    if tooltip_was_generated:
+        tooltip_col = "__pyoncoplot_default_tooltip__"
+        while tooltip_col in data.columns:
+            tooltip_col = f"_{tooltip_col}"
+        data[tooltip_col] = data[gene_col].astype(str)
+        if mutation_type_col is not None:
+            data[tooltip_col] = data[tooltip_col] + ": " + data[mutation_type_col].astype(str)
+    else:
+        tooltip_col = str(tooltip_col)
     _validate_variant_value_columns(data, variant_value_columns, label="variant value column")
     if mutation_filters_active:
         mutation_filter_mask = _filter_mask(

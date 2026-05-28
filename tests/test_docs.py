@@ -121,7 +121,7 @@ def test_options_reference_mentions_parity_options():
 
 def test_docs_describe_tooltip_default_and_precise_parity_status():
     data_inputs = (DOCS / "data-inputs.md").read_text(encoding="utf-8")
-    assert "defaults to `sample_col`" in data_inputs
+    assert "generated from the sample, gene, and mutation type" in data_inputs
     assert "defaults to the mutation type column" not in data_inputs
     assert "custom TMB input" in data_inputs
 

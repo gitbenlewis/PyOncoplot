@@ -86,6 +86,30 @@ def test_prepare_oncoplot_data_collapses_multi_hits_and_tooltips():
     assert set(prepared.mutation_counts.columns) == {"Gene", "MutationType", "Count"}
 
 
+def test_prepare_oncoplot_data_generates_default_mutation_tooltips():
+    prepared = prepare_oncoplot_data(
+        mutation_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        include_genes=["TP53", "EGFR"],
+    )
+
+    multi_hit = prepared.tiles[
+        (prepared.tiles["Sample"].astype(str) == "S1")
+        & (prepared.tiles["Gene"].astype(str) == "TP53")
+    ].iloc[0]
+    single_hit = prepared.tiles[
+        (prepared.tiles["Sample"].astype(str) == "S1")
+        & (prepared.tiles["Gene"].astype(str) == "EGFR")
+    ].iloc[0]
+
+    assert multi_hit["Tooltip"] == (
+        "<strong>S1</strong><br>TP53: Missense_Mutation<br>TP53: Nonsense_Mutation"
+    )
+    assert single_hit["Tooltip"] == "<strong>S1</strong><br>EGFR: Missense_Mutation"
+
+
 def test_prepare_oncoplot_data_aggregates_variant_values_for_collapsed_tiles():
     df = mutation_df()
     df["vaf"] = [0.12, 0.42, 0.20, 0.35, 0.51, 0.62, 0.25, 0.15]

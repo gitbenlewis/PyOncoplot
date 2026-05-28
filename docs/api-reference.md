@@ -117,7 +117,7 @@ datasets:
 | `data` | mutation-level `pandas.DataFrame` or CSV/TSV path |
 | `gene_col`, `sample_col` | required column names for gene and sample identifiers |
 | `mutation_type_col` | optional mutation category column used for tile colors and legends unless a continuous-only main grid is requested |
-| `tooltip_col` | optional tooltip text column; defaults to `sample_col` |
+| `tooltip_col` | optional tooltip text column; generated from sample, gene, and mutation type when omitted |
 | `include_genes`, `ignore_genes`, `top_n` | choose the displayed gene panel |
 | `draw_gene_bar`, `draw_tmb_bar` | add recurrence and mutation burden side panels |
 | `palette`, `tmb_palette`, `metadata_palette`, `variant_value_palette` | color mappings for mutation tiles, typed TMB bars, metadata, and continuous variant heatmaps |

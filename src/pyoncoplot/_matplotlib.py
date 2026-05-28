@@ -1538,4 +1538,10 @@ def render_matplotlib_oncoplot(
         hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
         wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
     )
+    if draw_gene_bar and "gene_bar" in axes:
+        main_position = axes["main"].get_position()
+        gene_bar_position = axes["gene_bar"].get_position()
+        axes["gene_bar"].set_position(
+            [gene_bar_position.x0, main_position.y0, gene_bar_position.width, main_position.height]
+        )
     return figure

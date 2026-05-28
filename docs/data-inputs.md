@@ -23,7 +23,7 @@ Required mutation table fields:
 | gene identifier | `gene_col` | yes | cannot be missing or empty |
 | mutation type | `mutation_type_col` | no | required for mutation-specific colors |
 | variant value | `variant_value_col`, `variant_value_cols`, `main_grid_rows` | no | numeric values used for continuous main-grid coloring |
-| tooltip text | `tooltip_col` | no | defaults to `sample_col` when omitted |
+| tooltip text | `tooltip_col` | no | generated from sample, gene, and mutation type when omitted |
 
 ## Example Mutation Table
 
@@ -46,7 +46,9 @@ into a single tile. With a mutation type column, multi-hit cells are marked as
 cell, even if the repeated rows have the same mutation type.
 
 The tooltip content is aggregated so the original mutation-level evidence is not
-lost in interactive output.
+lost in interactive output. When `tooltip_col` is omitted, hover text is
+generated from the sample, gene, and mutation type; continuous variant rows also
+append the hovered variant value.
 
 When `variant_value_col` is supplied, collapsed sample/gene tiles also aggregate
 that numeric column. Use `variant_value_agg` to choose `"max"` (default),
