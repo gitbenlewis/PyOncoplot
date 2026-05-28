@@ -1198,6 +1198,222 @@ def test_matplotlib_large_figure_legend_text_matches_export_scale():
     assert {"Clinical Group", "Er Status", "Pr Status", "Her2 Status"}.issubset(legend_by_title)
 
 
+def test_matplotlib_legend_offsets_move_only_targeted_legend():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    base = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="matplotlib",
+        options=OncoplotOptions(
+            mutation_legend_position="right",
+            metadata_legend_position="right",
+        ),
+    )
+    shifted = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="matplotlib",
+        options=OncoplotOptions(
+            mutation_legend_position="right",
+            metadata_legend_position="right",
+            legend_offsets={"metadata:group": {"x": 0.08}},
+        ),
+    )
+    base.figure.canvas.draw()
+    shifted.figure.canvas.draw()
+
+    base_legends = {legend.get_title().get_text(): legend for legend in base.figure.legends}
+    shifted_legends = {legend.get_title().get_text(): legend for legend in shifted.figure.legends}
+    assert shifted_legends["Group"].get_window_extent().x0 > base_legends["Group"].get_window_extent().x0
+    assert shifted_legends["Mutation Type"].get_window_extent().x0 == pytest.approx(
+        base_legends["Mutation Type"].get_window_extent().x0,
+        abs=1,
+    )
+
+
+def test_plotly_legend_offsets_split_only_targeted_legend_group():
+    metadata = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "group": ["A", "B", "A"],
+            "status": ["High", "Low", "High"],
+        }
+    )
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group", "status"],
+        backend="plotly",
+        options=OncoplotOptions(
+            mutation_legend_position="right",
+            metadata_legend_position="right",
+            legend_offsets={"metadata:group": {"x": 0.05, "y": -0.02}},
+        ),
+    )
+    group_traces = [
+        trace for trace in result.figure.data if getattr(trace, "legendgroup", "") == "metadata:group"
+    ]
+    status_traces = [
+        trace for trace in result.figure.data if getattr(trace, "legendgroup", "") == "metadata:status"
+    ]
+    mutation_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "showlegend", None) is True
+        and getattr(trace, "legendgroup", "") not in {"metadata:group", "metadata:status"}
+    ]
+
+    assert group_traces and all(trace.legend == "legend2" for trace in group_traces)
+    assert status_traces and all(getattr(trace, "legend", None) is None for trace in status_traces)
+    assert mutation_traces and all(getattr(trace, "legend", None) is None for trace in mutation_traces)
+    assert result.figure.layout.legend2.x == pytest.approx(result.figure.layout.legend.x + 0.05)
+    assert result.figure.layout.legend2.y == pytest.approx(result.figure.layout.legend.y - 0.02)
+
+
+def test_legend_offsets_apply_to_variant_and_metadata_colorbars():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "score": [1.0, 3.0, 5.0]})
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_col="vaf",
+        metadata=metadata,
+        metadata_cols=["score"],
+        backend="plotly",
+        options=OncoplotOptions(
+            metadata_legend_orientation_heatmap="horizontal",
+            legend_offsets={
+                "variant:vaf": {"x": 0.04, "y": 0.08},
+                "metadata:score": {"x": -0.03, "y": 0.02},
+            },
+        ),
+    )
+    variant_heatmap = next(
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+    )
+    metadata_colorbar = next(
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(getattr(trace, "marker", None), "showscale", False)
+    )
+
+    assert variant_heatmap.colorbar.x == pytest.approx(1.06)
+    assert variant_heatmap.colorbar.y == pytest.approx(0.58)
+    assert metadata_colorbar.marker.colorbar.x < 0.5
+    assert metadata_colorbar.marker.colorbar.y == pytest.approx(-0.30)
+
+
+def test_explicit_legend_font_sizes_and_character_limits_are_applied():
+    data = pd.DataFrame(
+        {
+            "sample": ["S1", "S2", "S3"],
+            "gene": ["TP53", "TP53", "TP53"],
+            "type": ["very_long_mutation_label", "another_long_mutation_label", "short"],
+        }
+    )
+    matplotlib_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="matplotlib",
+        options=OncoplotOptions(
+            mutation_legend_position="right",
+            font_size_legend_text=11,
+            font_size_legend_title=13,
+            legend_label_max_chars=10,
+            legend_title_max_chars=8,
+        ),
+    )
+    legend = matplotlib_result.figure.legends[0]
+    assert legend.get_texts()[0].get_fontsize() == 11
+    assert legend.get_title().get_fontsize() == 13
+    assert legend.get_title().get_text() == "Mutat..."
+    assert all(len(text.get_text()) <= 10 for text in legend.get_texts())
+
+    plotly_result = oncoplot(
+        data,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="plotly",
+        options=OncoplotOptions(
+            font_size_legend_text=15,
+            legend_label_max_chars=9,
+        ),
+    )
+    mutation_traces = [
+        trace
+        for trace in plotly_result.figure.data
+        if getattr(trace, "showlegend", None) is True
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0]["role"] == "main_tile"
+    ]
+    assert plotly_result.figure.layout.legend.font.size == 15
+    assert all(len(trace.name) <= 9 for trace in mutation_traces)
+
+
+def test_title_and_subplot_title_options_apply_to_both_backends():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    options = OncoplotOptions(
+        title_text="Cohort overview",
+        main_subplot_title="Mutations",
+        tmb_subplot_title="Burden",
+        gene_bar_subplot_title="Counts",
+        metadata_subplot_title="Clinical",
+        font_size_title=18,
+        font_size_subplot_title=11,
+    )
+    matplotlib_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        draw_gene_bar=True,
+        draw_tmb_bar=True,
+        backend="matplotlib",
+        options=options,
+    )
+    assert matplotlib_result.figure._suptitle.get_text() == "Cohort overview"
+    assert {axis.get_title() for axis in matplotlib_result.figure.axes}.issuperset(
+        {"Mutations", "Burden", "Counts", "Clinical"}
+    )
+
+    plotly_result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        draw_gene_bar=True,
+        draw_tmb_bar=True,
+        backend="plotly",
+        options=options,
+    )
+    annotation_text = {annotation.text for annotation in plotly_result.figure.layout.annotations}
+    assert plotly_result.figure.layout.title.text == "Cohort overview"
+    assert {"Mutations", "Burden", "Counts", "Clinical"}.issubset(annotation_text)
+
+
 def test_metadata_max_levels_validation_applies_to_renderers():
     metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "C"]})
     with pytest.raises(ValueError, match="metadata_max_levels"):
@@ -1797,3 +2013,9 @@ def test_new_options_validate_boundaries():
         OncoplotOptions(metadata_max_levels=0)
     with pytest.raises(ValueError, match="gene_bar_scale_n_breaks"):
         OncoplotOptions(gene_bar_scale_n_breaks=0)
+    with pytest.raises(ValueError, match="font_size_legend_text"):
+        OncoplotOptions(font_size_legend_text=0)
+    with pytest.raises(ValueError, match="legend_label_max_chars"):
+        OncoplotOptions(legend_label_max_chars=0)
+    with pytest.raises(ValueError, match="legend_offsets"):
+        OncoplotOptions(legend_offsets={"metadata:group": {"z": 1}})

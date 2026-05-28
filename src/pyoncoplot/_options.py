@@ -39,6 +39,7 @@ class OncoplotOptions:
     show_metadata_legends: bool = True
     metadata_legend_position: Literal["right", "bottom"] = "right"
     legend_key_size: float = 1.0
+    legend_offsets: Mapping[str, Mapping[str, float]] = field(default_factory=dict)
     metadata_legend_nrow: Optional[int] = None
     metadata_legend_ncol: Optional[int] = None
     metadata_legend_key_size: float = 1.0
@@ -59,6 +60,13 @@ class OncoplotOptions:
     font_size_tmb_axis: float = 10
     font_size_metadata: float = 10
     font_size_metadata_bar_numbers: float = 8
+    font_size_legend_text: Optional[float] = None
+    font_size_legend_title: Optional[float] = None
+    font_size_metadata_legend_text: Optional[float] = None
+    font_size_metadata_legend_title: Optional[float] = None
+    font_size_title: float = 14
+    font_size_subplot_title: float = 12
+    font_size_pathway: Optional[float] = None
     font_family: str = "Arial"
     gene_font_style: Literal["normal", "italic", "bold", "bold_italic"] = "normal"
     sample_font_style: Literal["normal", "italic", "bold", "bold_italic"] = "normal"
@@ -84,6 +92,13 @@ class OncoplotOptions:
     prettify_legend_titles: bool = True
     prettify_legend_values: bool = True
     prettify_function: Callable[[str], str] = prettify
+    legend_label_max_chars: Optional[int] = None
+    legend_title_max_chars: Optional[int] = None
+    title_text: Optional[str] = None
+    main_subplot_title: Optional[str] = None
+    tmb_subplot_title: Optional[str] = None
+    gene_bar_subplot_title: Optional[str] = None
+    metadata_subplot_title: Optional[str] = None
 
     metadata_na_marker: str = "!"
     metadata_na_marker_size: float = 7
@@ -141,6 +156,41 @@ class OncoplotOptions:
             value = getattr(self, name)
             if value < 0:
                 raise ValueError(f"{name} must be >= 0.")
+        for name in ("font_size_title", "font_size_subplot_title"):
+            value = getattr(self, name)
+            if value <= 0:
+                raise ValueError(f"{name} must be > 0.")
+        for name in (
+            "font_size_legend_text",
+            "font_size_legend_title",
+            "font_size_metadata_legend_text",
+            "font_size_metadata_legend_title",
+            "font_size_pathway",
+        ):
+            value = getattr(self, name)
+            if value is not None and value <= 0:
+                raise ValueError(f"{name} must be > 0 when supplied.")
+        for name in ("legend_label_max_chars", "legend_title_max_chars"):
+            value = getattr(self, name)
+            if value is not None and value < 1:
+                raise ValueError(f"{name} must be >= 1 when supplied.")
+        if not isinstance(self.legend_offsets, Mapping):
+            raise ValueError("legend_offsets must be a mapping of legend keys to x/y offsets.")
+        normalized_offsets: dict[str, dict[str, float]] = {}
+        for key, offsets in self.legend_offsets.items():
+            if not isinstance(offsets, Mapping):
+                raise ValueError("legend_offsets values must be mappings with optional 'x' and 'y' entries.")
+            unknown = set(offsets) - {"x", "y"}
+            if unknown:
+                raise ValueError("legend_offsets entries may only contain 'x' and 'y'.")
+            try:
+                normalized_offsets[str(key)] = {
+                    "x": float(offsets.get("x", 0.0)),
+                    "y": float(offsets.get("y", 0.0)),
+                }
+            except (TypeError, ValueError) as exc:
+                raise ValueError("legend_offsets x/y values must be numeric.") from exc
+        self.legend_offsets = normalized_offsets
         if self.gene_bar_width_ratio >= 0.95:
             raise ValueError("gene_bar_width_ratio must be less than 0.95.")
         if self.tmb_height_ratio + self.metadata_height_ratio >= 0.95:

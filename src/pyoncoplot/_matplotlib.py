@@ -48,6 +48,7 @@ RIGHT_LEGEND_RIGHT = 0.98
 @dataclass(frozen=True)
 class _MetadataLegendSpec:
     title: str
+    key: str
     handles: Optional[List[object]] = None
     colormap: object = None
     min_value: float = 0.0
@@ -83,6 +84,14 @@ def _legend_font_size(base: float, reference: float, scale: float = 0.75) -> flo
     return max(base, reference * scale)
 
 
+def _truncate_text(text: str, max_chars: Optional[int]) -> str:
+    if max_chars is None or len(text) <= max_chars:
+        return text
+    if max_chars <= 3:
+        return text[:max_chars]
+    return f"{text[: max_chars - 3]}..."
+
+
 def _legend_label(value: object, options: OncoplotOptions) -> str:
     text = "Unspecified" if pd.isna(value) else str(value)
     return options.prettify_function(text) if options.prettify_legend_values else text
@@ -91,6 +100,44 @@ def _legend_label(value: object, options: OncoplotOptions) -> str:
 def _legend_title(value: object, options: OncoplotOptions) -> str:
     text = "" if value is None else str(value)
     return options.prettify_function(text) if options.prettify_legend_titles else text
+
+
+def _legend_entry_label(value: object, options: OncoplotOptions) -> str:
+    return _truncate_text(_legend_label(value, options), options.legend_label_max_chars)
+
+
+def _legend_entry_title(value: object, options: OncoplotOptions) -> str:
+    return _truncate_text(_legend_title(value, options), options.legend_title_max_chars)
+
+
+def _legend_offset(options: OncoplotOptions, key: str, fallback_key: Optional[str] = None) -> tuple[float, float]:
+    offsets = options.legend_offsets
+    offset = offsets.get(key)
+    if offset is None and fallback_key is not None:
+        offset = offsets.get(fallback_key)
+    if offset is None:
+        return 0.0, 0.0
+    return float(offset.get("x", 0.0)), float(offset.get("y", 0.0))
+
+
+def _offset_anchor(
+    anchor: tuple[float, float],
+    options: OncoplotOptions,
+    key: str,
+    fallback_key: Optional[str] = None,
+) -> tuple[float, float]:
+    x_offset, y_offset = _legend_offset(options, key, fallback_key)
+    return anchor[0] + x_offset, anchor[1] + y_offset
+
+
+def _offset_bounds(
+    bounds: Sequence[float],
+    options: OncoplotOptions,
+    key: str,
+    fallback_key: Optional[str] = None,
+) -> list[float]:
+    x_offset, y_offset = _legend_offset(options, key, fallback_key)
+    return [bounds[0] + x_offset, bounds[1] + y_offset, bounds[2], bounds[3]]
 
 
 def _ordered_levels(
@@ -218,6 +265,7 @@ def _numeric_metadata_legend_spec(
 ) -> _MetadataLegendSpec:
     return _MetadataLegendSpec(
         title=title,
+        key=f"metadata:{column}",
         colormap=coerce_continuous_colormap(colormap_spec, column),
         min_value=min_value,
         max_value=max_value,
@@ -351,6 +399,7 @@ def _add_variant_value_colorbar(
     min_value: float,
     max_value: float,
     title: str,
+    legend_key: str,
     options: OncoplotOptions,
 ) -> None:
     from matplotlib.cm import ScalarMappable
@@ -368,9 +417,17 @@ def _add_variant_value_colorbar(
         aspect=30,
         ticks=tick_values,
     )
+    if legend_key in options.legend_offsets or "variant" in options.legend_offsets:
+        colorbar.ax.set_position(_offset_bounds(colorbar.ax.get_position().bounds, options, legend_key, "variant"))
     colorbar.ax.set_xticklabels(tick_labels)
-    colorbar.ax.set_title(title, fontsize=options.font_size_metadata, pad=max(2, options.font_size_metadata * 0.35))
-    colorbar.ax.tick_params(labelsize=options.font_size_metadata)
+    fontsize = options.font_size_legend_text or options.font_size_metadata
+    title_fontsize = options.font_size_legend_title or fontsize
+    colorbar.ax.set_title(
+        _truncate_text(title, options.legend_title_max_chars),
+        fontsize=title_fontsize,
+        pad=max(2, title_fontsize * 0.35),
+    )
+    colorbar.ax.tick_params(labelsize=fontsize)
 
 
 def _is_missing_palette_spec(value: object) -> bool:
@@ -434,17 +491,23 @@ def _draw_expanded_main(
                     if track_rows["TrackId"].nunique() > 1
                     else _legend_title(first_track["Label"], options)
                 )
+                legend_key = (
+                    "variant:shared"
+                    if track_rows["TrackId"].nunique() > 1
+                    else f"variant:{first_track['VariantValueColumn']}"
+                )
             else:
                 palette_spec = first_track["VariantValuePalette"]
                 if _is_missing_palette_spec(palette_spec):
                     palette_spec = variant_value_palette
                 title = _legend_title(first_track["Label"], options)
+                legend_key = f"variant:{first_track['VariantValueColumn']}"
             cmap = coerce_continuous_colormap(palette_spec, first_track["VariantValueColumn"])
             norm = Normalize(vmin=cmin, vmax=cmax)
             for track_id in track_ids:
                 continuous_maps[track_id] = (cmap, norm)
             if options.show_legend and options.mutation_legend_position != "none":
-                _add_variant_value_colorbar(ax, cmap, min_value, max_value, title, options)
+                _add_variant_value_colorbar(ax, cmap, min_value, max_value, title, legend_key, options)
 
     sample_pos = {sample: index for index, sample in enumerate(prepared.samples)}
     if tiles is not None and not tiles.empty:
@@ -524,7 +587,7 @@ def _draw_expanded_main(
                 va="center",
                 rotation=options.pathway_text_angle,
                 color=options.pathway_text_color,
-                fontsize=max(7, options.font_size_genes * 0.75),
+                fontsize=options.font_size_pathway or max(7, options.font_size_genes * 0.75),
                 clip_on=False,
             )
             ax.hlines(
@@ -590,6 +653,7 @@ def _draw_main(
                 float(min_value),
                 float(max_value),
                 _legend_title(prepared.variant_value_col, options),
+                f"variant:{prepared.variant_value_col}",
                 options,
             )
     n_genes = len(prepared.genes)
@@ -665,7 +729,7 @@ def _draw_main(
                 va="center",
                 rotation=options.pathway_text_angle,
                 color=options.pathway_text_color,
-                fontsize=max(7, options.font_size_genes * 0.75),
+                fontsize=options.font_size_pathway or max(7, options.font_size_genes * 0.75),
                 clip_on=False,
             )
             ax.hlines(
@@ -827,7 +891,7 @@ def _draw_tmb(
             color = "#4D4D4D" if pd.isna(mutation_type) else palette.get(str(mutation_type), "#4D4D4D")
             ax.bar(x_positions, values, bottom=bottoms, color=color, width=1.0, linewidth=0)
             if show_tmb_legend:
-                handles.append(Patch(color=color, label=_legend_label(mutation_type, options)))
+                handles.append(Patch(color=color, label=_legend_entry_label(mutation_type, options)))
             bottoms = bottoms + values
     else:
         totals = prepared.tmb.groupby(sample_col, observed=False)[prepared.tmb_value_col].sum().reindex(prepared.samples, fill_value=0)
@@ -997,12 +1061,12 @@ def _draw_metadata(
                     color="#333333",
                 )
         handles = [
-            Patch(color=color, label=_legend_label(level, options))
+            Patch(color=color, label=_legend_entry_label(level, options))
             for level, color in column_palette.items()
         ]
         if values.isna().any():
-            handles.append(Patch(color="#D9D9D9", label=options.metadata_na_marker))
-        legends.append(_MetadataLegendSpec(title=display_column, handles=handles))
+            handles.append(Patch(color="#D9D9D9", label=_truncate_text(options.metadata_na_marker, options.legend_label_max_chars)))
+        legends.append(_MetadataLegendSpec(title=display_column, key=f"metadata:{column}", handles=handles))
 
     ax.set_yticks(np.arange(len(prepared.metadata_cols)))
     ax.set_yticklabels(
@@ -1028,7 +1092,7 @@ def _add_numeric_metadata_colorbar(
     from matplotlib.colors import Normalize
 
     cmin, cmax, tick_values, tick_labels = _numeric_colorbar_bounds(legend.min_value, legend.max_value)
-    cax = figure.add_axes(bounds)
+    cax = figure.add_axes(_offset_bounds(bounds, options, legend.key))
     mappable = ScalarMappable(norm=Normalize(vmin=cmin, vmax=cmax), cmap=legend.colormap)
     mappable.set_array([])
     colorbar = figure.colorbar(mappable, cax=cax, orientation=orientation, ticks=tick_values)
@@ -1039,9 +1103,13 @@ def _add_numeric_metadata_colorbar(
     colorbar.ax.tick_params(labelsize=fontsize)
     if options.show_legend_titles:
         if orientation == "horizontal":
-            colorbar.set_label(legend.title, fontsize=title_fontsize)
+            colorbar.set_label(_truncate_text(legend.title, options.legend_title_max_chars), fontsize=title_fontsize)
         else:
-            colorbar.ax.set_title(legend.title, fontsize=title_fontsize, pad=max(2, title_fontsize * 0.35))
+            colorbar.ax.set_title(
+                _truncate_text(legend.title, options.legend_title_max_chars),
+                fontsize=title_fontsize,
+                pad=max(2, title_fontsize * 0.35),
+            )
 
 
 def _add_bottom_numeric_metadata_colorbars(
@@ -1080,6 +1148,9 @@ def _add_static_legends(
     tmb_handles,
     metadata_legends,
     options: OncoplotOptions,
+    *,
+    mutation_legend_key: str,
+    tmb_legend_key: str,
 ) -> None:
     large_figure = options.width >= 1600 or options.height >= 1200
     mutation_base = 10 if large_figure else 8
@@ -1088,19 +1159,31 @@ def _add_static_legends(
     metadata_scale = 1.2 if large_figure else 0.85
     title_padding = 4 if large_figure else 1
     figure_height = figure.get_figheight()
-    mutation_fontsize = _legend_font_size(mutation_base, options.font_size_genes, scale=mutation_scale)
-    mutation_title_fontsize = mutation_fontsize + title_padding
-    metadata_fontsize = _legend_font_size(metadata_base, options.font_size_metadata, scale=metadata_scale)
-    metadata_title_fontsize = metadata_fontsize + title_padding
+    mutation_fontsize = options.font_size_legend_text or _legend_font_size(
+        mutation_base,
+        options.font_size_genes,
+        scale=mutation_scale,
+    )
+    mutation_title_fontsize = options.font_size_legend_title or mutation_fontsize + title_padding
+    metadata_fontsize = options.font_size_metadata_legend_text or options.font_size_legend_text or _legend_font_size(
+        metadata_base,
+        options.font_size_metadata,
+        scale=metadata_scale,
+    )
+    metadata_title_fontsize = (
+        options.font_size_metadata_legend_title
+        or options.font_size_legend_title
+        or metadata_fontsize + title_padding
+    )
     if options.show_legend and mutation_handles and options.mutation_legend_position == "bottom":
         figure.legend(
             handles=mutation_handles,
             loc="lower center",
-            bbox_to_anchor=(0.42, 0.01),
+            bbox_to_anchor=_offset_anchor((0.42, 0.01), options, mutation_legend_key, "mutation"),
             ncol=min(5, len(mutation_handles)),
             frameon=True,
             fontsize=mutation_fontsize,
-            title="Mutation Type" if options.show_legend_titles else None,
+            title=_legend_entry_title("Mutation Type", options) if options.show_legend_titles else None,
             title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
@@ -1109,11 +1192,11 @@ def _add_static_legends(
         figure.legend(
             handles=tmb_handles,
             loc="lower right",
-            bbox_to_anchor=(0.99, 0.01),
+            bbox_to_anchor=_offset_anchor((0.99, 0.01), options, tmb_legend_key, "tmb"),
             ncol=min(4, len(tmb_handles)),
             frameon=True,
             fontsize=mutation_fontsize,
-            title="TMB Type" if options.show_legend_titles else None,
+            title=_legend_entry_title("TMB Type", options) if options.show_legend_titles else None,
             title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
@@ -1124,11 +1207,11 @@ def _add_static_legends(
         figure.legend(
             handles=mutation_handles,
             loc="upper left",
-            bbox_to_anchor=(0.74, right_y),
+            bbox_to_anchor=_offset_anchor((0.74, right_y), options, mutation_legend_key, "mutation"),
             ncol=1,
             frameon=False,
             fontsize=mutation_fontsize,
-            title="Mutation Type" if options.show_legend_titles else None,
+            title=_legend_entry_title("Mutation Type", options) if options.show_legend_titles else None,
             title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
@@ -1138,11 +1221,11 @@ def _add_static_legends(
         figure.legend(
             handles=tmb_handles,
             loc="upper left",
-            bbox_to_anchor=(0.74, right_y),
+            bbox_to_anchor=_offset_anchor((0.74, right_y), options, tmb_legend_key, "tmb"),
             ncol=1,
             frameon=False,
             fontsize=mutation_fontsize,
-            title="TMB Type" if options.show_legend_titles else None,
+            title=_legend_entry_title("TMB Type", options) if options.show_legend_titles else None,
             title_fontsize=mutation_title_fontsize,
             handlelength=options.legend_key_size,
             handleheight=options.legend_key_size,
@@ -1176,21 +1259,58 @@ def _add_static_legends(
     )
 
     if categorical_bottom_legends:
-        handles = []
-        for legend in categorical_bottom_legends:
-            handles.extend((legend.handles or [])[: max(1, min(3, len(legend.handles or [])))])
-        if handles:
-            ncol = options.metadata_legend_ncol or 3
-            figure.legend(
-                handles=handles,
-                loc="lower right",
-                bbox_to_anchor=(0.99, 0.01),
-                ncol=ncol,
-                frameon=True,
-                fontsize=metadata_fontsize,
-                handlelength=options.metadata_legend_key_size,
-                handleheight=options.metadata_legend_key_size,
-            )
+        offset_legends = [legend for legend in categorical_bottom_legends if legend.key in options.legend_offsets]
+        default_legends = [legend for legend in categorical_bottom_legends if legend.key not in options.legend_offsets]
+        if offset_legends:
+            handles = []
+            for legend in default_legends:
+                handles.extend((legend.handles or [])[: max(1, min(3, len(legend.handles or [])))])
+            if handles:
+                ncol = options.metadata_legend_ncol or 3
+                figure.legend(
+                    handles=handles,
+                    loc="lower right",
+                    bbox_to_anchor=(0.99, 0.01),
+                    ncol=ncol,
+                    frameon=True,
+                    fontsize=metadata_fontsize,
+                    handlelength=options.metadata_legend_key_size,
+                    handleheight=options.metadata_legend_key_size,
+                )
+            for index, legend in enumerate(offset_legends):
+                handles = legend.handles or []
+                if not handles:
+                    continue
+                ncol = options.metadata_legend_ncol or 3
+                anchor = _offset_anchor((0.99, 0.01 + index * 0.055), options, legend.key)
+                figure.legend(
+                    handles=handles,
+                    loc="lower right",
+                    bbox_to_anchor=anchor,
+                    ncol=ncol,
+                    frameon=True,
+                    fontsize=metadata_fontsize,
+                    title=_truncate_text(legend.title, options.legend_title_max_chars) if options.show_legend_titles else None,
+                    title_fontsize=metadata_title_fontsize,
+                    handlelength=options.metadata_legend_key_size,
+                    handleheight=options.metadata_legend_key_size,
+                )
+        else:
+            handles = []
+            for legend in categorical_bottom_legends:
+                handles.extend((legend.handles or [])[: max(1, min(3, len(legend.handles or [])))])
+            if handles:
+                ncol = options.metadata_legend_ncol or 3
+                figure.legend(
+                    handles=handles,
+                    loc="lower right",
+                    bbox_to_anchor=(0.99, 0.01),
+                    ncol=ncol,
+                    frameon=True,
+                    fontsize=metadata_fontsize,
+                    handlelength=options.metadata_legend_key_size,
+                    handleheight=options.metadata_legend_key_size,
+                )
     _add_bottom_numeric_metadata_colorbars(
         figure,
         numeric_bottom_legends,
@@ -1230,11 +1350,11 @@ def _add_static_legends(
         figure.legend(
             handles=handles,
             loc="upper left",
-            bbox_to_anchor=(0.74, y),
+            bbox_to_anchor=_offset_anchor((0.74, y), options, legend.key),
             ncol=ncol,
             frameon=False,
             fontsize=metadata_fontsize,
-            title=legend.title if options.show_legend_titles else None,
+            title=_truncate_text(legend.title, options.legend_title_max_chars) if options.show_legend_titles else None,
             title_fontsize=metadata_title_fontsize,
             handlelength=options.metadata_legend_key_size,
             handleheight=options.metadata_legend_key_size,
@@ -1332,6 +1452,16 @@ def render_matplotlib_oncoplot(
         if draw_metadata and options.metadata_position == "bottom" and options.show_gene_bar_axis:
             axes["gene_bar"].xaxis.tick_top()
             axes["gene_bar"].xaxis.set_label_position("top")
+    if options.main_subplot_title is not None:
+        axes["main"].set_title(options.main_subplot_title, fontsize=options.font_size_subplot_title)
+    if options.tmb_subplot_title is not None and "tmb" in axes:
+        axes["tmb"].set_title(options.tmb_subplot_title, fontsize=options.font_size_subplot_title)
+    if options.metadata_subplot_title is not None and "metadata" in axes:
+        axes["metadata"].set_title(options.metadata_subplot_title, fontsize=options.font_size_subplot_title)
+    if options.gene_bar_subplot_title is not None and "gene_bar" in axes:
+        axes["gene_bar"].set_title(options.gene_bar_subplot_title, fontsize=options.font_size_subplot_title)
+    if options.title_text is not None:
+        figure.suptitle(options.title_text, fontsize=options.font_size_title)
 
     mutation_handles = []
     if (
@@ -1340,7 +1470,7 @@ def render_matplotlib_oncoplot(
         and (_main_grid_has_mutation_rows(prepared) or draw_gene_bar)
     ):
         mutation_handles = [
-            Patch(color=palette.get(name, options.unspecified_mutation_color), label=_legend_label(name, options))
+            Patch(color=palette.get(name, options.unspecified_mutation_color), label=_legend_entry_label(name, options))
             for name in _mutation_levels(prepared, palette)
         ]
     has_bottom_mutation_legend = bool((mutation_handles or tmb_handles) and options.mutation_legend_position == "bottom")
@@ -1364,11 +1494,29 @@ def render_matplotlib_oncoplot(
     )
     if variant_colorbar_active:
         bottom_margin = max(bottom_margin, 0.14)
-    _add_static_legends(figure, mutation_handles, tmb_handles, metadata_legends, options)
+    mutation_legend_key = f"mutation:{prepared.mutation_type_col}" if prepared.mutation_type_col is not None else "mutation"
+    tmb_legend_key = f"tmb:{prepared.tmb_type_col}" if prepared.tmb_type_col is not None else "tmb"
+    _add_static_legends(
+        figure,
+        mutation_handles,
+        tmb_handles,
+        metadata_legends,
+        options,
+        mutation_legend_key=mutation_legend_key,
+        tmb_legend_key=tmb_legend_key,
+    )
     figure.subplots_adjust(
         left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
         right=0.70 if has_right_legend else 0.98,
-        top=0.92,
+        top=0.86 if options.title_text is not None else 0.90 if any(
+            title is not None
+            for title in (
+                options.main_subplot_title,
+                options.tmb_subplot_title,
+                options.gene_bar_subplot_title,
+                options.metadata_subplot_title,
+            )
+        ) else 0.92,
         bottom=bottom_margin,
         hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
         wspace=max(0.01, min(0.4, options.buffer_gene_bar)),

@@ -191,6 +191,49 @@ def _font_options(size: float, options: OncoplotOptions) -> Dict[str, object]:
     return {"size": size, "family": options.font_family}
 
 
+def _truncate_text(text: str, max_chars: Optional[int]) -> str:
+    if max_chars is None or len(text) <= max_chars:
+        return text
+    if max_chars <= 3:
+        return text[:max_chars]
+    return f"{text[: max_chars - 3]}..."
+
+
+def _legend_entry_label(value: object, options: OncoplotOptions) -> str:
+    return _truncate_text(_legend_label(value, options), options.legend_label_max_chars)
+
+
+def _legend_entry_title(value: object, options: OncoplotOptions) -> str:
+    return _truncate_text(_legend_title(value, options), options.legend_title_max_chars)
+
+
+def _legend_offset_key(options: OncoplotOptions, key: str, fallback_key: Optional[str] = None) -> Optional[str]:
+    if key in options.legend_offsets:
+        return key
+    if fallback_key is not None and fallback_key in options.legend_offsets:
+        return fallback_key
+    return None
+
+
+def _legend_offset(options: OncoplotOptions, key: str, fallback_key: Optional[str] = None) -> tuple[float, float]:
+    offset_key = _legend_offset_key(options, key, fallback_key)
+    if offset_key is None:
+        return 0.0, 0.0
+    offset = options.legend_offsets[offset_key]
+    return float(offset.get("x", 0.0)), float(offset.get("y", 0.0))
+
+
+def _offset_layout_value(
+    value: float,
+    options: OncoplotOptions,
+    key: str,
+    axis: str,
+    fallback_key: Optional[str] = None,
+) -> float:
+    x_offset, y_offset = _legend_offset(options, key, fallback_key)
+    return value + (x_offset if axis == "x" else y_offset)
+
+
 def _category_range(length: int) -> list[float]:
     return [-0.5, max(length - 0.5, 0.5)]
 
@@ -296,6 +339,77 @@ def _grid_positions(prepared: PreparedOncoplotData, draw_tmb_bar: bool, draw_met
     return rows, row_heights, row_by_name
 
 
+def _trace_customdata_role(trace) -> Optional[str]:
+    customdata = getattr(trace, "customdata", None)
+    if customdata is None or len(customdata) == 0:
+        return None
+    first = customdata[0]
+    if isinstance(first, dict):
+        return first.get("role")
+    if isinstance(first, (list, tuple)) and len(first) > 0 and isinstance(first[0], dict):
+        return first[0].get("role")
+    return None
+
+
+def _plotly_legend_trace_key(trace, mutation_key: str, tmb_key: str) -> tuple[Optional[str], Optional[str]]:
+    if getattr(trace, "showlegend", None) is not True:
+        return None, None
+    legendgroup = str(getattr(trace, "legendgroup", "") or "")
+    if legendgroup == "tmb":
+        return tmb_key, "tmb"
+    if legendgroup.startswith("gene_bar:"):
+        return "gene_bar", None
+    if legendgroup.startswith("metadata:"):
+        return legendgroup, None
+    if _trace_customdata_role(trace) == "main_tile":
+        return mutation_key, "mutation"
+    return None, None
+
+
+def _plotly_offset_legend_layout(
+    base_legend: Mapping[str, object],
+    options: OncoplotOptions,
+    key: str,
+    fallback_key: Optional[str],
+) -> dict[str, object]:
+    layout = dict(base_legend)
+    x_offset, y_offset = _legend_offset(options, key, fallback_key)
+    layout["x"] = float(layout.get("x", 1.02)) + x_offset
+    layout["y"] = float(layout.get("y", 1.0)) + y_offset
+    return layout
+
+
+def _assign_plotly_offset_legends(
+    figure,
+    options: OncoplotOptions,
+    base_legend: Mapping[str, object],
+    *,
+    mutation_key: str,
+    tmb_key: str,
+) -> dict[str, object]:
+    offset_layouts: dict[str, object] = {}
+    offset_key_to_legend_name: dict[str, str] = {}
+    for trace in figure.data:
+        key, fallback_key = _plotly_legend_trace_key(trace, mutation_key, tmb_key)
+        if key is None:
+            continue
+        offset_key = _legend_offset_key(options, key, fallback_key)
+        if offset_key is None:
+            continue
+        legend_name = offset_key_to_legend_name.get(offset_key)
+        if legend_name is None:
+            legend_name = f"legend{len(offset_key_to_legend_name) + 2}"
+            offset_key_to_legend_name[offset_key] = legend_name
+            offset_layouts[legend_name] = _plotly_offset_legend_layout(
+                base_legend,
+                options,
+                key,
+                fallback_key,
+            )
+        trace.legend = legend_name
+    return offset_layouts
+
+
 def _add_tmb_bar(
     fig,
     prepared: PreparedOncoplotData,
@@ -347,12 +461,13 @@ def _add_tmb_bar(
             )
             values = values_by_sample.astype(float).tolist()
             tmb_label = _legend_label(tmb_type, options)
+            tmb_legend_label = _legend_entry_label(tmb_type, options)
             fig.add_trace(
                 go.Bar(
                     x=sample_values,
                     y=values,
                     width=1,
-                    name=f"TMB: {tmb_label}",
+                    name=f"TMB: {tmb_legend_label}",
                     legendgroup="tmb",
                     marker_color=color,
                     customdata=[
@@ -470,6 +585,7 @@ def _metadata_colorbar_is_horizontal(options: OncoplotOptions) -> bool:
 def _metadata_colorbar_layout(
     index: int,
     total: int,
+    key: str,
     options: OncoplotOptions,
 ) -> Dict[str, object]:
     thickness = max(8, int(options.metadata_legend_key_size * 12))
@@ -477,9 +593,9 @@ def _metadata_colorbar_layout(
         slot_width = min(0.92, 0.92 / max(total, 1))
         return {
             "orientation": "h",
-            "x": 0.04 + (index + 0.5) * slot_width,
+            "x": _offset_layout_value(0.04 + (index + 0.5) * slot_width, options, key, "x"),
             "xanchor": "center",
-            "y": -0.32,
+            "y": _offset_layout_value(-0.32, options, key, "y"),
             "yanchor": "top",
             "len": max(0.12, min(0.28, slot_width * 0.72)),
             "thickness": thickness,
@@ -488,9 +604,9 @@ def _metadata_colorbar_layout(
 
     slot_height = min(0.22, 0.86 / max(total, 1))
     return {
-        "x": 1.08,
+        "x": _offset_layout_value(1.08, options, key, "x"),
         "xanchor": "left",
-        "y": 1.0 - index * slot_height,
+        "y": _offset_layout_value(1.0 - index * slot_height, options, key, "y"),
         "yanchor": "top",
         "len": max(0.10, min(0.20, slot_height * 0.72)),
         "thickness": thickness,
@@ -515,7 +631,7 @@ def _add_numeric_metadata_colorbars(
     prepared: PreparedOncoplotData,
     row: int,
     col: int,
-    colorbars: Sequence[tuple[str, float, float, list[list[object]]]],
+    colorbars: Sequence[tuple[str, str, float, float, list[list[object]]]],
     options: OncoplotOptions,
 ) -> None:
     if not colorbars:
@@ -525,7 +641,9 @@ def _add_numeric_metadata_colorbars(
     metadata_labels = [_legend_title(column, options) for column in prepared.metadata_cols or []]
     y_value = metadata_labels[0] if metadata_labels else None
 
-    for index, (title, min_value, max_value, colorscale) in enumerate(colorbars):
+    fontsize = options.font_size_metadata_legend_text or options.font_size_legend_text or options.font_size_metadata
+    title_fontsize = options.font_size_metadata_legend_title or options.font_size_legend_title or fontsize
+    for index, (key, title, min_value, max_value, colorscale) in enumerate(colorbars):
         cmin, cmax, tickvals, ticktext = _numeric_colorbar_bounds(min_value, max_value)
         fig.add_trace(
             go.Scatter(
@@ -541,11 +659,11 @@ def _add_numeric_metadata_colorbars(
                     size=0.1,
                     opacity=0,
                     colorbar=dict(
-                        title=dict(text=title),
+                        title=dict(text=_truncate_text(title, options.legend_title_max_chars), font=_font_options(title_fontsize, options)),
                         tickvals=tickvals,
                         ticktext=ticktext,
-                        tickfont=_font_options(options.font_size_metadata, options),
-                        **_metadata_colorbar_layout(index, len(colorbars), options),
+                        tickfont=_font_options(fontsize, options),
+                        **_metadata_colorbar_layout(index, len(colorbars), key, options),
                     ),
                 ),
                 hoverinfo="skip",
@@ -560,14 +678,17 @@ def _variant_value_hover_text(row: pd.Series, title: str) -> str:
     return f"{row['Tooltip']}<br><strong>{title}</strong>: {float(row['VariantValue']):g}"
 
 
-def _variant_colorbar_layout(index: int, total: int) -> Dict[str, object]:
+def _variant_colorbar_layout(index: int, total: int, key: str, options: OncoplotOptions) -> Dict[str, object]:
     if total <= 1:
-        return {}
+        x_offset, y_offset = _legend_offset(options, key, "variant")
+        if not x_offset and not y_offset:
+            return {}
+        return {"x": 1.02 + x_offset, "xanchor": "left", "y": 0.5 + y_offset}
     slot_height = min(0.24, 0.86 / max(total, 1))
     return {
-        "x": 1.02 + min(index, 2) * 0.07,
+        "x": _offset_layout_value(1.02 + min(index, 2) * 0.07, options, key, "x", "variant"),
         "xanchor": "left",
-        "y": 1.0 - index * slot_height,
+        "y": _offset_layout_value(1.0 - index * slot_height, options, key, "y", "variant"),
         "yanchor": "top",
         "len": max(0.14, min(0.24, slot_height * 0.72)),
         "thickness": 12,
@@ -622,6 +743,9 @@ def _add_continuous_main_tiles(
     max_value = prepared.variant_value_max if prepared.variant_value_max is not None else 1.0
     cmin, cmax, tickvals, ticktext = _numeric_colorbar_bounds(float(min_value), float(max_value))
     show_colorbar = options.show_legend and options.mutation_legend_position != "none"
+    legend_key = f"variant:{prepared.variant_value_col}"
+    legend_fontsize = options.font_size_legend_text or options.font_size_metadata
+    legend_title_fontsize = options.font_size_legend_title or legend_fontsize
     fig.add_trace(
         go.Heatmap(
             x=prepared.samples,
@@ -636,10 +760,11 @@ def _add_continuous_main_tiles(
             zmax=cmax,
             showscale=show_colorbar,
             colorbar=dict(
-                title=dict(text=title),
+                title=dict(text=_truncate_text(title, options.legend_title_max_chars), font=_font_options(legend_title_fontsize, options)),
                 tickvals=tickvals,
                 ticktext=ticktext,
-                tickfont=_font_options(options.font_size_metadata, options),
+                tickfont=_font_options(legend_fontsize, options),
+                **_variant_colorbar_layout(0, 1, legend_key, options),
             ),
         ),
         row=row,
@@ -767,11 +892,17 @@ def _add_expanded_continuous_tiles(
                 if track_rows["TrackId"].nunique() > 1
                 else _legend_title(first_track["Label"], options)
             )
+            legend_key = (
+                "variant:shared"
+                if track_rows["TrackId"].nunique() > 1
+                else f"variant:{first_track['VariantValueColumn']}"
+            )
         else:
             palette_spec = first_track["VariantValuePalette"]
             if _is_missing_palette_spec(palette_spec):
                 palette_spec = variant_value_palette
             title = _legend_title(first_track["Label"], options)
+            legend_key = f"variant:{first_track['VariantValueColumn']}"
 
         for _index, row_value in group_tiles.iterrows():
             sample = str(row_value["Sample"])
@@ -795,6 +926,8 @@ def _add_expanded_continuous_tiles(
                 copy_value=_copy_value(row_value, copy_on_click),
             )
 
+        legend_fontsize = options.font_size_legend_text or options.font_size_metadata
+        legend_title_fontsize = options.font_size_legend_title or legend_fontsize
         fig.add_trace(
             go.Heatmap(
                 x=prepared.samples,
@@ -809,11 +942,11 @@ def _add_expanded_continuous_tiles(
                 zmax=cmax,
                 showscale=show_colorbar,
                 colorbar=dict(
-                    title=dict(text=title),
+                    title=dict(text=_truncate_text(title, options.legend_title_max_chars), font=_font_options(legend_title_fontsize, options)),
                     tickvals=tickvals,
                     ticktext=ticktext,
-                    tickfont=_font_options(options.font_size_metadata, options),
-                    **_variant_colorbar_layout(colorbar_index, len(continuous_groups)),
+                    tickfont=_font_options(legend_fontsize, options),
+                    **_variant_colorbar_layout(colorbar_index, len(continuous_groups), legend_key, options),
                 ),
             ),
             row=row,
@@ -894,7 +1027,7 @@ def _add_expanded_main_tiles(
                         color=color,
                         line=dict(color="white", width=options.tile_linewidth),
                     ),
-                    name=_legend_label(mutation_type, options),
+                    name=_legend_entry_label(mutation_type, options),
                     text=group["Tooltip"].astype(str),
                     customdata=customdata,
                     hovertemplate="%{text}<extra></extra>",
@@ -918,7 +1051,7 @@ def _add_expanded_main_tiles(
                         color=options.unspecified_mutation_color,
                         line=dict(color="white", width=options.tile_linewidth),
                     ),
-                    name="Mutation",
+                    name=_truncate_text("Mutation", options.legend_label_max_chars),
                     text=unspecified["Tooltip"].astype(str),
                     customdata=[
                         _custom_payload(
@@ -989,7 +1122,7 @@ def _add_expanded_main_tiles(
                 yanchor="middle",
                 textangle=options.pathway_text_angle,
                 xshift=-86 if rows["TrackId"].nunique() > 1 else -16,
-                font=dict(color=options.pathway_text_color, size=10),
+                font=dict(color=options.pathway_text_color, size=options.font_size_pathway or 10),
                 bgcolor=options.pathway_background_color,
                 bordercolor=options.pathway_outline_color,
                 borderwidth=1,
@@ -1015,7 +1148,7 @@ def _add_metadata_strip(
     colorscale = []
     color_index = 0
     color_lookup: Dict[object, int] = {}
-    numeric_colorbars: list[tuple[str, float, float, list[list[object]]]] = []
+    numeric_colorbars: list[tuple[str, str, float, float, list[list[object]]]] = []
     metadata_palette = metadata_palette or {}
     metadata_by_sample = metadata.set_index("Sample")
 
@@ -1038,6 +1171,7 @@ def _add_metadata_strip(
             colorbar_spec = numeric_colormap if numeric_colormap is not None else options.metadata_default_colors
             numeric_colorbars.append(
                 (
+                    f"metadata:{col_name}",
                     display_col,
                     min_value,
                     max_value,
@@ -1084,14 +1218,14 @@ def _add_metadata_strip(
 
         if not is_numeric and options.show_metadata_legends:
             for level, color in level_map.items():
-                display_level = _metadata_value_label(level, options)
+                display_level = _legend_entry_label(level, options)
                 fig.add_trace(
                     go.Scatter(
                         x=[None],
                         y=[None],
                         mode="markers",
                         marker=dict(symbol="square", size=max(8, options.metadata_legend_key_size * 9), color=color),
-                        name=f"{display_col}: {display_level}",
+                        name=f"{_truncate_text(display_col, options.legend_title_max_chars)}: {display_level}",
                         legendgroup=f"metadata:{col_name}",
                         showlegend=True,
                         hoverinfo="skip",
@@ -1235,7 +1369,7 @@ def _add_main_tiles(
                     yanchor="middle",
                     textangle=options.pathway_text_angle,
                     xshift=-16,
-                    font=dict(color=options.pathway_text_color, size=10),
+                    font=dict(color=options.pathway_text_color, size=options.font_size_pathway or 10),
                     bgcolor=options.pathway_background_color,
                     bordercolor=options.pathway_outline_color,
                     borderwidth=1,
@@ -1268,7 +1402,7 @@ def _add_main_tiles(
                         color=color,
                         line=dict(color="white", width=options.tile_linewidth),
                     ),
-                    name=_legend_label(mutation_type, options),
+                    name=_legend_entry_label(mutation_type, options),
                     text=group["Tooltip"].astype(str),
                     customdata=customdata,
                     hovertemplate="%{text}<extra></extra>",
@@ -1292,7 +1426,7 @@ def _add_main_tiles(
                         color=options.unspecified_mutation_color,
                         line=dict(color="white", width=options.tile_linewidth),
                     ),
-                    name="Mutation",
+                    name=_truncate_text("Mutation", options.legend_label_max_chars),
                     text=unspecified["Tooltip"].astype(str),
                     customdata=[
                         _custom_payload(
@@ -1356,7 +1490,7 @@ def _add_main_tiles(
                 yanchor="middle",
                 textangle=options.pathway_text_angle,
                 xshift=-16,
-                font=dict(color=options.pathway_text_color, size=10),
+                font=dict(color=options.pathway_text_color, size=options.font_size_pathway or 10),
                 bgcolor=options.pathway_background_color,
                 bordercolor=options.pathway_outline_color,
                 borderwidth=1,
@@ -1408,6 +1542,7 @@ def _add_gene_bar(
         else:
             values = counts
         mutation_label = _legend_label(mutation_type, options)
+        mutation_legend_label = _legend_entry_label(mutation_type, options)
         hover = [
             "Total Samples Mutated: "
             f"{int(total_counts[gene])} ({as_percent(total_counts[gene] / max(prepared.total_samples, 1), options.gene_bar_label_round)} of all samples)"
@@ -1437,7 +1572,7 @@ def _add_gene_bar(
                 hovertemplate="%{hovertext}<extra></extra>",
                 showlegend=show_gene_bar_legend,
                 legendgroup=f"gene_bar:{mutation_label}",
-                name=_legend_label(mutation_type, options),
+                name=mutation_legend_label,
                 selected=dict(marker=dict(opacity=1.0)),
                 unselected=dict(marker=dict(opacity=0.18)),
             ),
@@ -1535,13 +1670,28 @@ def render_plotly_oncoplot(
     has_gene_bar = draw_gene_bar
 
     specs = []
+    subplot_titles = []
     for name, _weight in rows:
         if not has_gene_bar:
             specs.append([{}])
+            subplot_titles.append(
+                options.metadata_subplot_title
+                if name == "metadata"
+                else options.tmb_subplot_title
+                if name == "tmb"
+                else options.main_subplot_title
+                if name == "main"
+                else None
+            )
         elif name == "main":
             specs.append([{}, {} if has_gene_bar else None])
+            subplot_titles.append(options.main_subplot_title)
+            subplot_titles.append(options.gene_bar_subplot_title)
         else:
             specs.append([{}, None])
+            subplot_titles.append(options.metadata_subplot_title if name == "metadata" else options.tmb_subplot_title)
+    subplot_titles = [title or "" for title in subplot_titles]
+    has_subplot_titles = any(subplot_titles)
 
     figure = make_subplots(
         rows=len(rows),
@@ -1552,7 +1702,11 @@ def render_plotly_oncoplot(
         vertical_spacing=max(0.0, min(0.25, max(options.buffer_tmb, options.buffer_metadata))),
         specs=specs,
         shared_xaxes=False,
+        subplot_titles=subplot_titles if has_subplot_titles else None,
     )
+    if has_subplot_titles:
+        for annotation in figure.layout.annotations:
+            annotation.font = _font_options(options.font_size_subplot_title, options)
 
     mutation_legend_visible = _main_grid_has_mutation_rows(prepared) or has_gene_bar
     if draw_tmb_bar and "tmb" in row_by_name:
@@ -1626,6 +1780,8 @@ def render_plotly_oncoplot(
         "itemsizing": "constant",
         "itemwidth": max(30, int(options.legend_key_size * 30)),
     }
+    if options.font_size_legend_text is not None:
+        legend["font"] = _font_options(options.font_size_legend_text, options)
     if legend_active and bottom_legend:
         legend.update(
             orientation="h",
@@ -1650,7 +1806,20 @@ def render_plotly_oncoplot(
         margin["r"] = max(margin["r"], 220)
     if _main_grid_has_continuous_rows(prepared) and options.show_legend and options.mutation_legend_position != "none":
         margin["r"] = max(margin["r"], 130)
-    figure.update_layout(
+    if options.title_text is not None:
+        margin["t"] = max(margin["t"], 70)
+    elif has_subplot_titles:
+        margin["t"] = max(margin["t"], 50)
+    mutation_key = f"mutation:{prepared.mutation_type_col}" if prepared.mutation_type_col is not None else "mutation"
+    tmb_key = f"tmb:{prepared.tmb_type_col}" if prepared.tmb_type_col is not None else "tmb"
+    extra_legends = _assign_plotly_offset_legends(
+        figure,
+        options,
+        legend,
+        mutation_key=mutation_key,
+        tmb_key=tmb_key,
+    )
+    layout: Dict[str, object] = dict(
         width=options.width,
         height=options.height,
         template="plotly_white",
@@ -1662,4 +1831,13 @@ def render_plotly_oncoplot(
         margin=margin,
         legend=legend,
     )
+    if options.title_text is not None:
+        layout["title"] = dict(
+            text=options.title_text,
+            font=_font_options(options.font_size_title, options),
+            x=0.5,
+            xanchor="center",
+        )
+    layout.update(extra_legends)
+    figure.update_layout(**layout)
     return figure
