@@ -451,7 +451,9 @@ def _draw_expanded_main(
     track_count = int(rows["TrackId"].nunique()) if not rows.empty else 1
     pathway_width = 0.95 if prepared.pathway_groups else 0
     subrow_label_width = 0.95 if track_count > 1 else 0
-    ax.set_xlim(-(pathway_width + subrow_label_width), n_samples)
+    # Keep sample cells on the same x-scale as TMB/metadata axes; row/pathway
+    # labels are drawn outside the axes with clip_on=False.
+    ax.set_xlim(0, n_samples)
     ax.set_ylim(0, n_rows)
     ax.invert_yaxis()
     ax.set_facecolor(options.background_color)

@@ -171,11 +171,15 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
         if getattr(trace, "type", "") == "heatmap"
         and getattr(trace, "customdata", None)
         and trace.customdata[0][0]["role"] == "main_tile"
+        and getattr(trace, "showscale", None) is True
     ]
-    mutation_traces = [
+    mutation_heatmaps = [
         trace
         for trace in result.figure.data
-        if getattr(trace, "type", "") == "scatter" and getattr(trace, "mode", "") == "markers"
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+        and getattr(trace, "showlegend", None) is True
     ]
     gene_bar_traces = [
         trace
@@ -206,9 +210,10 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
         and payload.get("variant_value_column") == "vaf"
     )
     tp53_s1_mutation_hover = next(
-        text
-        for trace in mutation_traces
-        for text, payload in zip(trace.text, trace.customdata)
+        trace.text[row_index][sample_index]
+        for trace in mutation_heatmaps
+        for row_index, row in enumerate(trace.customdata)
+        for sample_index, payload in enumerate(row)
         if payload.get("sample") == "S1" and payload.get("gene") == "TP53"
     )
     assert tp53_s1_payload["variant_value"] == pytest.approx(0.34)
@@ -218,9 +223,74 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
     assert tp53_s1_variant_hover == "Sample: S1<br>TP53: Missense_Mutation<br>VAF %: 0.34"
     assert "<strong>" not in tp53_s1_mutation_hover
     assert "<strong>" not in tp53_s1_variant_hover
-    assert mutation_traces
-    assert any(trace.showlegend is True for trace in mutation_traces)
+    assert mutation_heatmaps
+    assert any(trace.showlegend is True for trace in mutation_heatmaps)
     assert gene_bar_traces
+
+
+def test_plotly_expanded_categorical_multi_hit_tiles_fill_cells():
+    df = pd.DataFrame(
+        {
+            "sample": ["S1", "S1", "S2"],
+            "gene": ["TP53", "TP53", "TP53"],
+            "type": ["Missense_Mutation", "Nonsense_Mutation", "Missense_Mutation"],
+            "vaf": [0.2, 0.6, 0.4],
+        }
+    )
+    result = oncoplot(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf", "label": "VAF %"},
+        ],
+        palette={
+            "Missense_Mutation": "#00AA00",
+            "Nonsense_Mutation": "#CC0000",
+            "Multi_Hit": "#000000",
+        },
+        backend="plotly",
+        options=OncoplotOptions(width=500, height=350),
+    )
+
+    expanded_marker_traces = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "scatter"
+        and getattr(trace, "mode", "") == "markers"
+        and getattr(trace, "customdata", None)
+    ]
+    mutation_heatmap = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "name", "") == "Multi Hit"
+        and getattr(trace, "showlegend", None) is True
+    )
+    vaf_heatmap = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "showscale", None) is True
+        and trace.colorbar.title.text == "VAF %"
+    )
+    mutation_row = result.prepared_data.main_grid_rows[
+        (result.prepared_data.main_grid_rows["Gene"] == "TP53")
+        & (result.prepared_data.main_grid_rows["Kind"] == "mutation_type")
+    ].iloc[0]
+    vaf_row = result.prepared_data.main_grid_rows[
+        (result.prepared_data.main_grid_rows["Gene"] == "TP53")
+        & (result.prepared_data.main_grid_rows["Label"] == "VAF %")
+    ].iloc[0]
+    s1_index = result.prepared_data.samples.index("S1")
+
+    assert expanded_marker_traces == []
+    assert mutation_heatmap.showscale is False
+    assert mutation_heatmap.z[int(mutation_row["RowIndex"])][s1_index] == pytest.approx(1.0)
+    assert mutation_heatmap.customdata[int(mutation_row["RowIndex"])][s1_index]["mutation_type"] == "Multi_Hit"
+    assert vaf_heatmap.z[int(vaf_row["RowIndex"])][s1_index] == pytest.approx(0.6)
 
 
 def test_plotly_multi_row_main_grid_leaves_missing_values_blank_and_offsets_gene_labels():
@@ -281,6 +351,7 @@ def test_plotly_variant_value_cols_shared_scale_uses_one_colorbar():
         if getattr(trace, "type", "") == "heatmap"
         and getattr(trace, "customdata", None)
         and trace.customdata[0][0]["role"] == "main_tile"
+        and getattr(trace, "showscale", None) is True
     ]
     assert len(main_heatmaps) == 1
     assert main_heatmaps[0].showscale is True
@@ -868,7 +939,7 @@ def test_metadata_prettification_applies_to_both_backends_without_mutating_custo
         and trace.customdata[0][0]["role"] == "metadata"
     )
     assert list(metadata_heatmap.y) == ["Clinical Group"]
-    assert metadata_heatmap.text[0][0] == "Clinical Group: High Risk"
+    assert metadata_heatmap.text[0][0] == "Sample: S1<br>Clinical Group: High Risk"
     assert metadata_heatmap.customdata[0][0]["column"] == "clinical_group"
     assert metadata_heatmap.customdata[0][0]["value"] == "high_risk"
     assert any(getattr(trace, "name", "") == "Clinical Group: High Risk" for trace in plotly_result.figure.data)
@@ -909,6 +980,31 @@ def test_metadata_prettification_applies_to_both_backends_without_mutating_custo
         ),
     )
     assert all(legend.get_title().get_text() == "" for legend in hidden_title_result.figure.legends)
+
+
+def test_plotly_bottom_metadata_hover_includes_sample_id():
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "group": ["A", "B", "A"]})
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        metadata=metadata,
+        metadata_cols=["group"],
+        backend="plotly",
+        options=OncoplotOptions(metadata_position="bottom", mutation_legend_position="none"),
+    )
+
+    metadata_heatmap = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "metadata"
+    )
+
+    assert metadata_heatmap.text[0][0] == "Sample: S1<br>Group: A"
+    assert metadata_heatmap.customdata[0][0]["sample"] == "S1"
 
 
 def test_matplotlib_metadata_margin_expands_for_long_row_labels():
@@ -1267,6 +1363,28 @@ def test_matplotlib_tmb_axis_uses_matrix_sample_boundaries():
     assert {round(patch.get_width(), 6) for patch in tmb_axis.patches} == {1.0}
     assert min(round(patch.get_x(), 6) for patch in tmb_axis.patches) == 0.0
     assert max(round(patch.get_x() + patch.get_width(), 6) for patch in tmb_axis.patches) == float(n_samples)
+
+
+def test_matplotlib_expanded_main_grid_aligns_with_tmb_axis():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf", "label": "VAF"},
+        ],
+        draw_tmb_bar=True,
+        backend="matplotlib",
+        options=OncoplotOptions(log10_transform_tmb=False),
+    )
+    tmb_axis = result.figure.axes[0]
+    main_axis = result.figure.axes[1]
+    n_samples = len(result.prepared_data.samples)
+
+    assert result.prepared_data.main_grid_mode == "expanded"
+    assert tmb_axis.get_xlim() == main_axis.get_xlim() == (0.0, float(n_samples))
 
 
 def test_multi_hit_color_applies_to_defaults_and_explicit_palette_wins():

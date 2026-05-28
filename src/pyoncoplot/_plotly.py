@@ -1045,75 +1045,66 @@ def _add_expanded_main_tiles(
         else pd.DataFrame()
     )
     if not mutation_tiles.empty:
-        mutation_values = _mutation_levels(prepared, palette)
-        for mutation_type in mutation_values:
+        sample_index = {sample: index for index, sample in enumerate(prepared.samples)}
+        mutation_groups = []
+        for mutation_type in _mutation_levels(prepared, palette):
             group = mutation_tiles[mutation_tiles["MutationType"].astype(str) == mutation_type]
             color = palette.get(str(mutation_type), options.unspecified_mutation_color)
-            customdata = [
-                _custom_payload(
-                    role="main_tile",
-                    sample=str(row_value["Sample"]),
-                    gene=str(row_value["Gene"]),
-                    row_id=str(row_value["RowId"]),
-                    row_label=str(row_value["Label"]),
-                    mutation_type=str(row_value["MutationType"]),
-                    copy_value=_copy_value(row_value, copy_on_click),
-                )
-                for _index, row_value in group.iterrows()
-            ]
-            fig.add_trace(
-                go.Scatter(
-                    x=group["Sample"].astype(str),
-                    y=group["RowIndex"].astype(float),
-                    mode="markers",
-                    marker=dict(
-                        symbol="square",
-                        size=13,
-                        color=color,
-                        line=dict(color="white", width=options.tile_linewidth),
-                    ),
-                    name=_legend_entry_label(mutation_type, options),
-                    text=group["Tooltip"].astype(str),
-                    customdata=customdata,
-                    hovertemplate="%{text}<extra></extra>",
-                    showlegend=show_mutation_legend,
-                    selected=dict(marker=dict(opacity=1.0)),
-                    unselected=dict(marker=dict(opacity=0.18)),
-                ),
-                row=row,
-                col=col,
+            mutation_groups.append(
+                (group, color, _legend_entry_label(mutation_type, options), show_mutation_legend)
             )
         unspecified = mutation_tiles[mutation_tiles["MutationType"].isna()]
         if not unspecified.empty:
+            mutation_groups.append(
+                (
+                    unspecified,
+                    options.unspecified_mutation_color,
+                    _truncate_text("Mutation", options.legend_label_max_chars),
+                    show_mutation_legend and prepared.mutation_type_col is None,
+                )
+            )
+        for group, color, legend_name, legend_visible in mutation_groups:
+            z = np.full((n_rows, len(prepared.samples)), np.nan)
+            text = [["" for _sample in prepared.samples] for _row in range(n_rows)]
+            customdata = [
+                [
+                    _custom_payload(role="main_tile", sample=str(sample), row_index=row_index)
+                    for sample in prepared.samples
+                ]
+                for row_index in range(n_rows)
+            ]
+            for _index, row_value in group.iterrows():
+                sample = str(row_value["Sample"])
+                if sample not in sample_index:
+                    continue
+                y = int(row_value["RowIndex"])
+                x = sample_index[sample]
+                z[y, x] = 1.0
+                text[y][x] = str(row_value["Tooltip"])
+                customdata[y][x] = _custom_payload(
+                    role="main_tile",
+                    sample=sample,
+                    gene=str(row_value["Gene"]),
+                    row_id=str(row_value["RowId"]),
+                    row_label=str(row_value["Label"]),
+                    mutation_type="" if pd.isna(row_value["MutationType"]) else str(row_value["MutationType"]),
+                    copy_value=_copy_value(row_value, copy_on_click),
+                )
             fig.add_trace(
-                go.Scatter(
-                    x=unspecified["Sample"].astype(str),
-                    y=unspecified["RowIndex"].astype(float),
-                    mode="markers",
-                    marker=dict(
-                        symbol="square",
-                        size=13,
-                        color=options.unspecified_mutation_color,
-                        line=dict(color="white", width=options.tile_linewidth),
-                    ),
-                    name=_truncate_text("Mutation", options.legend_label_max_chars),
-                    text=unspecified["Tooltip"].astype(str),
-                    customdata=[
-                        _custom_payload(
-                            role="main_tile",
-                            sample=str(row_value["Sample"]),
-                            gene=str(row_value["Gene"]),
-                            row_id=str(row_value["RowId"]),
-                            row_label=str(row_value["Label"]),
-                            mutation_type="",
-                            copy_value=_copy_value(row_value, copy_on_click),
-                        )
-                        for _index, row_value in unspecified.iterrows()
-                    ],
+                go.Heatmap(
+                    x=prepared.samples,
+                    y=list(range(n_rows)),
+                    z=z,
+                    text=text,
+                    customdata=customdata,
                     hovertemplate="%{text}<extra></extra>",
-                    showlegend=show_mutation_legend and prepared.mutation_type_col is None,
-                    selected=dict(marker=dict(opacity=1.0)),
-                    unselected=dict(marker=dict(opacity=0.18)),
+                    hoverongaps=False,
+                    colorscale=[[0, color], [1, color]],
+                    zmin=0,
+                    zmax=1,
+                    showscale=False,
+                    showlegend=legend_visible,
+                    name=legend_name,
                 ),
                 row=row,
                 col=col,
@@ -1235,7 +1226,7 @@ def _add_metadata_strip(
             )
         for sample in prepared.samples:
             value = values_by_sample.get(sample, np.nan)
-            row_text.append(f"{display_col}: {_metadata_value_label(value, options)}")
+            row_text.append(f"Sample: {sample}<br>{display_col}: {_metadata_value_label(value, options)}")
             if pd.isna(value):
                 key = ("__NA__", col_name)
                 color = "#D9D9D9"
