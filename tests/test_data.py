@@ -120,6 +120,67 @@ def test_prepare_oncoplot_data_aggregates_variant_values_for_collapsed_tiles():
         assert prepared.variant_value_max is not None
 
 
+def test_prepare_oncoplot_data_blanks_missing_variant_values_by_default():
+    df = mutation_df()
+    df["vaf"] = [pd.NA, 0.42, 0.20, 0.35, 0.51, 0.62, pd.NA, 0.15]
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        tooltip_col="tooltip",
+        include_genes=["TP53", "EGFR"],
+        variant_value_col="vaf",
+        variant_value_agg="mean",
+    )
+
+    tp53_s1 = prepared.tiles[
+        (prepared.tiles["Sample"].astype(str) == "S1")
+        & (prepared.tiles["Gene"].astype(str) == "TP53")
+    ].iloc[0]
+    egfr_s4 = prepared.tiles[
+        (prepared.tiles["Sample"].astype(str) == "S4")
+        & (prepared.tiles["Gene"].astype(str) == "EGFR")
+    ].iloc[0]
+
+    assert tp53_s1["VariantValue"] == pytest.approx(0.42)
+    assert math.isnan(float(egfr_s4["VariantValue"]))
+    assert prepared.variant_value_missing == "blank"
+    assert prepared.variant_value_min == pytest.approx(0.20)
+    assert prepared.variant_value_max == pytest.approx(0.42)
+
+
+def test_prepare_oncoplot_data_can_fill_missing_variant_values_with_zero():
+    df = mutation_df()
+    df["vaf"] = [None, 0.42, 0.20, 0.35, 0.51, 0.62, None, 0.15]
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        tooltip_col="tooltip",
+        include_genes=["TP53", "EGFR"],
+        variant_value_col="vaf",
+        variant_value_agg="mean",
+        variant_value_missing="zero",
+    )
+
+    tp53_s1 = prepared.tiles[
+        (prepared.tiles["Sample"].astype(str) == "S1")
+        & (prepared.tiles["Gene"].astype(str) == "TP53")
+    ].iloc[0]
+    egfr_s4 = prepared.tiles[
+        (prepared.tiles["Sample"].astype(str) == "S4")
+        & (prepared.tiles["Gene"].astype(str) == "EGFR")
+    ].iloc[0]
+
+    assert tp53_s1["VariantValue"] == pytest.approx(0.21)
+    assert egfr_s4["VariantValue"] == pytest.approx(0.0)
+    assert prepared.variant_value_missing == "zero"
+
+
 def test_prepare_oncoplot_data_builds_multi_row_main_grid_tracks():
     df = mutation_df()
     df["vaf_pct"] = [12, 42, 20, 35, 51, 62, 25, 15]
@@ -151,6 +212,66 @@ def test_prepare_oncoplot_data_builds_multi_row_main_grid_tracks():
     assert tp53_s1.iloc[0]["MutationType"] == "Multi_Hit"
     assert tp53_s1.iloc[1]["VariantValue"] == pytest.approx(27.0)
     assert tp53_s1.iloc[2]["VariantValue"] == pytest.approx(0.42)
+
+
+def test_prepare_oncoplot_data_variant_value_cols_use_global_missing_policy():
+    df = mutation_df()
+    df["vaf_pct"] = [None, 42, 20, 35, 51, 62, None, 15]
+    df["delta_vaf_pct"] = [None, 8, 2, 1, -3, 4, None, 9]
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        include_genes=["TP53", "EGFR"],
+        variant_value_cols=["vaf_pct", "delta_vaf_pct"],
+        variant_value_agg="mean",
+        variant_value_missing="zero",
+    )
+
+    tp53_s1 = prepared.main_grid_tiles[
+        (prepared.main_grid_tiles["Sample"] == "S1") & (prepared.main_grid_tiles["Gene"] == "TP53")
+    ].sort_values("TrackIndex")
+    egfr_s4 = prepared.main_grid_tiles[
+        (prepared.main_grid_tiles["Sample"] == "S4") & (prepared.main_grid_tiles["Gene"] == "EGFR")
+    ].sort_values("TrackIndex")
+
+    assert tp53_s1["VariantValue"].tolist()[1:] == pytest.approx([21.0, 4.0])
+    assert egfr_s4["VariantValue"].tolist()[1:] == pytest.approx([0.0, 0.0])
+    assert set(prepared.main_grid_rows["VariantValueMissing"].dropna()) == {"zero"}
+
+
+def test_prepare_oncoplot_data_main_grid_rows_override_missing_policy():
+    df = mutation_df()
+    df["vaf_pct"] = [None, 42, 20, 35, 51, 62, None, 15]
+    df["vaf_abs"] = [None, 0.42, 0.20, 0.35, 0.51, 0.62, None, 0.15]
+
+    prepared = prepare_oncoplot_data(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        include_genes=["TP53", "EGFR"],
+        variant_value_agg="mean",
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf_pct", "label": "VAF %", "missing": "zero"},
+            {"kind": "variant_value", "column": "vaf_abs", "label": "VAF abs"},
+        ],
+    )
+
+    tp53_s1 = prepared.main_grid_tiles[
+        (prepared.main_grid_tiles["Sample"] == "S1") & (prepared.main_grid_tiles["Gene"] == "TP53")
+    ].sort_values("TrackIndex")
+    egfr_s4 = prepared.main_grid_tiles[
+        (prepared.main_grid_tiles["Sample"] == "S4") & (prepared.main_grid_tiles["Gene"] == "EGFR")
+    ].sort_values("TrackIndex")
+
+    assert tp53_s1["VariantValue"].tolist()[1:] == pytest.approx([21.0, 0.42])
+    assert egfr_s4.iloc[1]["VariantValue"] == pytest.approx(0.0)
+    assert math.isnan(float(egfr_s4.iloc[2]["VariantValue"]))
+    assert prepared.main_grid_rows["VariantValueMissing"].dropna().drop_duplicates().tolist() == ["zero", "blank"]
 
 
 def test_prepare_oncoplot_data_variant_value_cols_convenience_and_shared_scale():
@@ -205,16 +326,14 @@ def test_prepare_oncoplot_data_validates_variant_value_inputs():
             variant_value_col="vaf",
         )
 
-    missing = df.copy()
-    missing.loc[0, "vaf"] = None
-    with pytest.raises(ValueError, match="missing values"):
+    with pytest.raises(ValueError, match="variant_value_missing"):
         prepare_oncoplot_data(
-            missing,
+            df,
             gene_col="gene",
             sample_col="sample",
             mutation_type_col="type",
-            include_genes=["TP53"],
             variant_value_col="vaf",
+            variant_value_missing="drop",
         )
 
     with pytest.raises(ValueError, match="variant_value_scale"):

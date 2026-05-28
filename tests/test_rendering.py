@@ -93,6 +93,61 @@ def test_plotly_continuous_variant_heatmap_and_gene_bar_legend():
     assert any(trace.showlegend is True for trace in gene_bar_traces)
 
 
+def test_plotly_continuous_variant_heatmap_leaves_missing_values_blank():
+    df = small_df()
+    df.loc[0, "vaf"] = None
+    result = oncoplot(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_col="vaf",
+        backend="plotly",
+        options=OncoplotOptions(width=700, height=450),
+    )
+
+    main_heatmap = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+    )
+    tp53_index = result.prepared_data.genes.index("TP53")
+    s1_index = result.prepared_data.samples.index("S1")
+
+    assert pd.isna(main_heatmap.z[tp53_index][s1_index])
+    assert "variant_value" not in main_heatmap.customdata[tp53_index][s1_index]
+    assert result.prepared_data.variant_value_min == pytest.approx(0.21)
+    assert result.prepared_data.variant_value_max == pytest.approx(0.67)
+
+
+def test_plotly_continuous_variant_heatmap_skips_colorbar_when_all_values_are_missing():
+    df = small_df()
+    df["vaf"] = pd.NA
+    result = oncoplot(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_col="vaf",
+        backend="plotly",
+        options=OncoplotOptions(width=700, height=450),
+    )
+
+    main_heatmap = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+    )
+
+    assert main_heatmap.showscale is False
+    assert result.prepared_data.variant_value_min is None
+    assert result.prepared_data.variant_value_max is None
+
+
 def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
     result = oncoplot(
         small_df(),
@@ -146,6 +201,45 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
     assert gene_bar_traces
 
 
+def test_plotly_multi_row_main_grid_leaves_missing_values_blank_and_offsets_gene_labels():
+    df = small_df()
+    df.loc[0, "vaf"] = None
+    result = oncoplot(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf", "label": "VAF %"},
+            {"kind": "variant_value", "column": "vaf_abs", "label": "VAF abs"},
+        ],
+        backend="plotly",
+        gene_name_x_offset=18,
+        options=OncoplotOptions(width=760, height=500, prettify_legend_titles=False),
+    )
+
+    main_heatmap = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "heatmap"
+        and getattr(trace, "customdata", None)
+        and trace.customdata[0][0]["role"] == "main_tile"
+        and trace.colorbar.title.text == "VAF %"
+    )
+    tp53_vaf_row = result.prepared_data.main_grid_rows[
+        (result.prepared_data.main_grid_rows["Gene"] == "TP53")
+        & (result.prepared_data.main_grid_rows["Label"] == "VAF %")
+    ].iloc[0]
+    s1_index = result.prepared_data.samples.index("S1")
+    gene_label = next(annotation for annotation in result.figure.layout.annotations if annotation.text == "TP53")
+    row_label = next(annotation for annotation in result.figure.layout.annotations if annotation.text == "VAF %")
+
+    assert pd.isna(main_heatmap.z[int(tp53_vaf_row["RowIndex"])][s1_index])
+    assert gene_label.xshift == pytest.approx(-72)
+    assert row_label.xshift == pytest.approx(-8)
+
+
 def test_plotly_variant_value_cols_shared_scale_uses_one_colorbar():
     result = oncoplot(
         small_df(),
@@ -169,6 +263,66 @@ def test_plotly_variant_value_cols_shared_scale_uses_one_colorbar():
     assert main_heatmaps[0].showscale is True
     assert main_heatmaps[0].zmin == pytest.approx(0.021)
     assert main_heatmaps[0].zmax == pytest.approx(0.67)
+
+
+def test_matplotlib_continuous_variant_heatmap_leaves_missing_values_blank():
+    df = small_df()
+    df.loc[0, "vaf"] = None
+    result = oncoplot(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_col="vaf",
+        backend="matplotlib",
+        options=OncoplotOptions(width=700, height=450),
+    )
+
+    main_axis = result.figure.axes[0]
+    assert result.backend == "matplotlib"
+    assert result.prepared_data.tiles["VariantValue"].isna().any()
+    assert main_axis.patches
+
+
+def test_matplotlib_continuous_variant_heatmap_skips_colorbar_when_all_values_are_missing():
+    df = small_df()
+    df["vaf"] = pd.NA
+    result = oncoplot(
+        df,
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        variant_value_col="vaf",
+        backend="matplotlib",
+        options=OncoplotOptions(width=700, height=450),
+    )
+
+    assert result.prepared_data.variant_value_min is None
+    assert result.prepared_data.variant_value_max is None
+    assert matplotlib_colorbar_axes(result.figure, "Vaf") == []
+
+
+def test_matplotlib_multi_row_main_grid_offsets_gene_labels_from_row_labels():
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        main_grid_rows=[
+            {"kind": "mutation_type", "label": "Variant type"},
+            {"kind": "variant_value", "column": "vaf", "label": "VAF %"},
+        ],
+        backend="matplotlib",
+        gene_name_x_offset=18,
+        options=OncoplotOptions(width=700, height=450, prettify_legend_titles=False),
+    )
+
+    main_axis = result.figure.axes[0]
+    gene_label = next(text for text in main_axis.texts if text.get_text() == "TP53")
+    row_label = next(text for text in main_axis.texts if text.get_text() == "VAF %")
+
+    assert gene_label.xyann[0] == pytest.approx(-72)
+    assert row_label.get_position()[0] == pytest.approx(-0.08)
 
 
 def test_plotly_gene_bar_percent_mode_normalizes_each_gene():
@@ -2019,3 +2173,5 @@ def test_new_options_validate_boundaries():
         OncoplotOptions(legend_label_max_chars=0)
     with pytest.raises(ValueError, match="legend_offsets"):
         OncoplotOptions(legend_offsets={"metadata:group": {"z": 1}})
+    with pytest.raises(ValueError, match="gene_name_x_offset"):
+        OncoplotOptions(gene_name_x_offset=-1)

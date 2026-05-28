@@ -127,8 +127,9 @@ datasets:
 | `sample_order`, `metadata_sort_cols` | explicit or metadata-driven sample sorting |
 | `mutation_type_order`, `metadata_category_orders`, `tmb_type_order` | categorical level order for colors, stacks, and legends |
 | `tmb_data` | optional 2- or 3-column custom TMB table |
-| `variant_value_col`, `variant_value_cols`, `variant_value_agg` | optional numeric variant column or columns for continuous main-grid coloring and the collapse rule for multi-hit tiles |
+| `variant_value_col`, `variant_value_cols`, `variant_value_agg`, `variant_value_missing` | optional numeric variant column or columns, collapse rule, and missing-value policy for continuous main-grid coloring |
 | `main_grid_rows`, `variant_value_scale` | expanded main-grid row specifications and per-column/shared continuous color scaling |
+| `gene_name_x_offset` | extra leftward padding for expanded-grid gene labels |
 | `backend`, `interactive` | choose Plotly or Matplotlib rendering |
 | `copy_on_click` | Plotly clipboard payload behavior |
 | `options` | `OncoplotOptions` instance or mapping for visual controls |
@@ -171,6 +172,10 @@ oncoplot(
 
 `variant_value_agg` controls how multiple rows for the same sample/gene tile are
 collapsed and can be `"max"`, `"mean"`, `"median"`, or `"min"`.
+`variant_value_missing="blank"` is the default: missing values are ignored for
+aggregation, and an all-missing tile is left blank. Use
+`variant_value_missing="zero"` to fill missing values with zero before
+aggregation.
 
 Use `main_grid_rows` when the main heatmap should show mutation type and one or
 more continuous variant tracks as separate subrows for each gene:
@@ -184,8 +189,9 @@ oncoplot(
     main_grid_rows=[
         {"kind": "mutation_type", "label": "Variant type"},
         {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %", "agg": "max"},
-        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma"},
+        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma", "missing": "zero"},
     ],
+    gene_name_x_offset=12,
     draw_gene_bar=True,
 )
 ```
@@ -194,7 +200,10 @@ For the common case, `variant_value_cols=["VAF_pct", "VAF_abs"]` expands to a
 mutation-type row followed by one row per numeric value column. Set
 `variant_value_scale="shared"` to use one shared min/max and colorbar across all
 continuous rows; the default `"per_column"` gives each continuous row its own
-range and colorbar.
+range and colorbar. A `main_grid_rows` variant-value row can set
+`missing="blank"` or `missing="zero"` to override `variant_value_missing` for
+that row. `gene_name_x_offset` is also available in `OncoplotOptions`; the
+top-level argument wins when supplied.
 
 ## `merge_oncoplot_params`
 
@@ -265,7 +274,7 @@ print(prepared.tiles.head())
 | `tmb_render_stacked`, `tmb_is_custom` | flags used by renderers to decide stacked TMB behavior |
 | `mutation_counts`, `tmb_totals`, `tmb_type_counts` | summary tables for testing, debugging, and downstream inspection |
 | `mutation_type_levels`, `tmb_type_levels` | resolved categorical order used by renderers |
-| `variant_value_col`, `variant_value_agg`, `variant_value_min`, `variant_value_max` | continuous tile-coloring metadata when `variant_value_col` is supplied |
+| `variant_value_col`, `variant_value_agg`, `variant_value_missing`, `variant_value_min`, `variant_value_max` | continuous tile-coloring metadata when `variant_value_col` is supplied |
 | `variant_value_cols`, `variant_value_scale` | multi-row continuous variant track inputs and scale mode |
 | `main_grid_rows`, `main_grid_tiles`, `main_grid_mode` | renderer-neutral expanded main-grid row and tile tables |
 

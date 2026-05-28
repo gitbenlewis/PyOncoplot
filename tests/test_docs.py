@@ -97,6 +97,7 @@ def test_options_reference_mentions_parity_options():
         "font_size_title",
         "font_size_subplot_title",
         "font_size_pathway",
+        "gene_name_x_offset",
         "title_text",
         "main_subplot_title",
         "tmb_subplot_title",
@@ -153,6 +154,8 @@ def test_docs_cover_remaining_parity_corrections():
     data_inputs = (DOCS / "data-inputs.md").read_text(encoding="utf-8")
     assert "more than one mutation row" in data_inputs
     assert "`metadata_require_mutations=False` is also set" in data_inputs
+    assert "variant_value_missing=\"zero\"" in data_inputs
+    assert "tile with only missing source values is" in data_inputs
 
     metadata_tmb = (DOCS / "metadata-and-tmb.md").read_text(encoding="utf-8")
     assert "metadata_require_mutations=True" in metadata_tmb
@@ -171,6 +174,8 @@ def test_docs_cover_remaining_parity_corrections():
     assert "`tmb_sample_col`, `tmb_value_col`, `tmb_type_col`" in api_reference
     assert "main_grid_rows" in api_reference
     assert "variant_value_cols" in api_reference
+    assert "variant_value_missing" in api_reference
+    assert "gene_name_x_offset" in api_reference
     assert "Save Behavior" in api_reference
 
     rendering_backends = (DOCS / "rendering-backends.md").read_text(encoding="utf-8")

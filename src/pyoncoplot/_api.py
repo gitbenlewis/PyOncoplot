@@ -53,9 +53,11 @@ ONCOPLOT_PARAM_KEYS = {
     "variant_value_col",
     "variant_value_cols",
     "variant_value_agg",
+    "variant_value_missing",
     "variant_value_palette",
     "variant_value_scale",
     "main_grid_rows",
+    "gene_name_x_offset",
     "backend",
     "interactive",
     "options",
@@ -94,9 +96,11 @@ ONCOPLOT_DEFAULTS: dict[str, Any] = {
     "variant_value_col": None,
     "variant_value_cols": None,
     "variant_value_agg": "max",
+    "variant_value_missing": "blank",
     "variant_value_palette": "viridis",
     "variant_value_scale": "per_column",
     "main_grid_rows": None,
+    "gene_name_x_offset": None,
     "backend": "plotly",
     "interactive": None,
     "options": None,
@@ -216,6 +220,14 @@ def oncoplot(
     if backend not in {"plotly", "matplotlib"}:
         raise ValueError("backend must be either 'plotly' or 'matplotlib'.")
     options = coerce_options(merged["options"])
+    if merged["gene_name_x_offset"] is not None:
+        try:
+            gene_name_x_offset = float(merged["gene_name_x_offset"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError("gene_name_x_offset must be numeric when supplied.") from exc
+        if gene_name_x_offset < 0:
+            raise ValueError("gene_name_x_offset must be >= 0.")
+        options.gene_name_x_offset = gene_name_x_offset
 
     prepared = prepare_oncoplot_data(
         data,
@@ -247,6 +259,7 @@ def oncoplot(
         variant_value_col=merged["variant_value_col"],
         variant_value_cols=merged["variant_value_cols"],
         variant_value_agg=merged["variant_value_agg"],
+        variant_value_missing=merged["variant_value_missing"],
         variant_value_scale=merged["variant_value_scale"],
         main_grid_rows=merged["main_grid_rows"],
         verbose=merged["verbose"],

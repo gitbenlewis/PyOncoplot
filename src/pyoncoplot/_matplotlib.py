@@ -478,10 +478,11 @@ def _draw_expanded_main(
         for _group_id, track_rows in continuous_groups:
             track_ids = set(track_rows["TrackId"].astype(str))
             group_tiles = continuous_tiles[continuous_tiles["TrackId"].astype(str).isin(track_ids)]
-            if group_tiles.empty:
+            non_missing_tiles = group_tiles[group_tiles["VariantValue"].notna()]
+            if non_missing_tiles.empty:
                 continue
-            min_value = float(group_tiles["VariantValueMin"].dropna().iloc[0])
-            max_value = float(group_tiles["VariantValueMax"].dropna().iloc[0])
+            min_value = float(non_missing_tiles["VariantValueMin"].dropna().iloc[0])
+            max_value = float(non_missing_tiles["VariantValueMax"].dropna().iloc[0])
             cmin, cmax, _tick_values, _tick_labels = _numeric_colorbar_bounds(min_value, max_value)
             first_track = track_rows.iloc[0]
             if prepared.variant_value_scale == "shared":
@@ -517,6 +518,8 @@ def _draw_expanded_main(
                 continue
             row_index = int(tile["RowIndex"])
             if tile["Kind"] == "variant_value":
+                if pd.isna(tile["VariantValue"]) or str(tile["TrackId"]) not in continuous_maps:
+                    continue
                 cmap, norm = continuous_maps[str(tile["TrackId"])]
                 color = cmap(norm(float(tile["VariantValue"])))
             else:
@@ -600,10 +603,22 @@ def _draw_expanded_main(
             )
 
     gene_centers = _main_grid_gene_centers(prepared)
-    ax.set_yticks([gene_centers[gene] for gene in prepared.genes if gene in gene_centers])
-    ax.set_yticklabels([gene for gene in prepared.genes if gene in gene_centers], fontsize=options.font_size_genes)
-    for label in ax.get_yticklabels():
-        label.update(_font_kwargs(options.gene_font_style))
+    ax.set_yticks([])
+    gene_label_shift = -(54 + options.gene_name_x_offset)
+    for gene in prepared.genes:
+        if gene not in gene_centers:
+            continue
+        ax.annotate(
+            gene,
+            xy=(0, gene_centers[gene]),
+            xytext=(gene_label_shift, 0),
+            textcoords="offset points",
+            ha="right",
+            va="center",
+            fontsize=options.font_size_genes,
+            clip_on=False,
+            **_font_kwargs(options.gene_font_style),
+        )
     if options.show_sample_ids:
         ax.set_xticks(np.arange(n_samples) + 0.5)
         ax.set_xticklabels(prepared.samples, rotation=options.sample_id_angle, fontsize=options.font_size_samples)
@@ -635,7 +650,7 @@ def _draw_main(
 
     continuous_cmap = None
     continuous_norm = None
-    if prepared.variant_value_col is not None:
+    if prepared.variant_value_col is not None and prepared.variant_value_min is not None and prepared.variant_value_max is not None:
         from matplotlib.colors import Normalize
 
         min_value = prepared.variant_value_min if prepared.variant_value_min is not None else 0.0
@@ -684,7 +699,9 @@ def _draw_main(
         gene = str(row["Gene"])
         if sample not in sample_pos or gene not in gene_pos:
             continue
-        if continuous_cmap is not None and continuous_norm is not None:
+        if prepared.variant_value_col is not None:
+            if continuous_cmap is None or continuous_norm is None or pd.isna(row["VariantValue"]):
+                continue
             color = continuous_cmap(continuous_norm(float(row["VariantValue"])))
         else:
             mutation_type = row["MutationType"]

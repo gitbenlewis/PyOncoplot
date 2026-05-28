@@ -93,6 +93,7 @@ result = oncoplot(
     mutation_type_col="mutation_type",
     variant_value_col="vaf",
     variant_value_agg="max",
+    variant_value_missing="blank",
     variant_value_palette="viridis",
     draw_gene_bar=True,
     backend="plotly",
@@ -111,8 +112,9 @@ result = oncoplot(
     main_grid_rows=[
         {"kind": "mutation_type", "label": "Variant type"},
         {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %"},
-        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma"},
+        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma", "missing": "zero"},
     ],
+    gene_name_x_offset=12,
     draw_gene_bar=True,
     backend="plotly",
 )

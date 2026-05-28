@@ -69,6 +69,7 @@ class PreparedOncoplotData:
     variant_value_min: Optional[float] = None
     variant_value_max: Optional[float] = None
     variant_value_cols: Optional[List[str]] = None
+    variant_value_missing: str = "blank"
     variant_value_scale: str = "per_column"
     main_grid_rows: Optional[pd.DataFrame] = None
     main_grid_tiles: Optional[pd.DataFrame] = None
@@ -214,6 +215,13 @@ def _coerce_variant_value_scale(variant_value_scale: str) -> str:
     return scale
 
 
+def _coerce_variant_value_missing(variant_value_missing: object) -> str:
+    missing = str(variant_value_missing).lower()
+    if missing not in {"blank", "zero"}:
+        raise ValueError("variant_value_missing must be either 'blank' or 'zero'.")
+    return missing
+
+
 def _coerce_variant_value_cols(variant_value_cols: Optional[Sequence[str]]) -> Optional[List[str]]:
     if variant_value_cols is None:
         return None
@@ -238,8 +246,14 @@ def _validate_variant_value_columns(
         return
     check_valid_dataframe_columns(data, list(variant_value_cols))
     for column in variant_value_cols:
-        if not pd.api.types.is_numeric_dtype(data[column]):
-            raise ValueError(f"{label} must reference numeric columns: {column}")
+        values = data[column]
+        if pd.api.types.is_numeric_dtype(values):
+            continue
+        non_missing = values.dropna()
+        inferred = pd.api.types.infer_dtype(non_missing, skipna=True)
+        if non_missing.empty or inferred in {"integer", "floating", "mixed-integer-float"}:
+            continue
+        raise ValueError(f"{label} must reference numeric columns: {column}")
 
 
 def _default_track_label(column: object) -> str:
@@ -253,6 +267,7 @@ def _normalise_main_grid_tracks(
     mutation_type_col: Optional[str],
     variant_value_col: Optional[str],
     variant_value_agg: str,
+    variant_value_missing: str,
     variant_value_scale: str,
 ) -> tuple[List[dict[str, object]], str]:
     if main_grid_rows is not None and variant_value_cols is not None:
@@ -266,7 +281,7 @@ def _normalise_main_grid_tracks(
     if main_grid_rows is not None:
         if isinstance(main_grid_rows, Mapping) or isinstance(main_grid_rows, (str, bytes, bytearray)):
             raise TypeError("main_grid_rows must be a sequence of row-spec mappings.")
-        allowed_keys = {"kind", "label", "column", "agg", "palette"}
+        allowed_keys = {"kind", "label", "column", "agg", "palette", "missing"}
         for index, raw_spec in enumerate(main_grid_rows):
             if not isinstance(raw_spec, Mapping):
                 raise TypeError("Each main_grid_rows entry must be a mapping.")
@@ -290,6 +305,7 @@ def _normalise_main_grid_tracks(
                         "VariantValueAgg": None,
                         "VariantValuePalette": None,
                         "VariantValueKey": None,
+                        "VariantValueMissing": None,
                     }
                 )
                 continue
@@ -300,6 +316,7 @@ def _normalise_main_grid_tracks(
             if variant_value_scale == "shared" and palette is not None:
                 raise ValueError("Row-level palettes are not supported when variant_value_scale='shared'.")
             column = str(raw_spec["column"])
+            missing = _coerce_variant_value_missing(raw_spec.get("missing", variant_value_missing))
             tracks.append(
                 {
                     "TrackId": f"row{index}",
@@ -310,6 +327,7 @@ def _normalise_main_grid_tracks(
                     "VariantValueAgg": agg,
                     "VariantValuePalette": palette,
                     "VariantValueKey": None,
+                    "VariantValueMissing": missing,
                 }
             )
         if not tracks:
@@ -330,6 +348,7 @@ def _normalise_main_grid_tracks(
                     "VariantValueAgg": None,
                     "VariantValuePalette": None,
                     "VariantValueKey": None,
+                    "VariantValueMissing": None,
                 }
             )
             track_index += 1
@@ -344,6 +363,7 @@ def _normalise_main_grid_tracks(
                     "VariantValueAgg": variant_value_agg,
                     "VariantValuePalette": None,
                     "VariantValueKey": None,
+                    "VariantValueMissing": variant_value_missing,
                 }
             )
             track_index += 1
@@ -360,6 +380,7 @@ def _normalise_main_grid_tracks(
                 "VariantValueAgg": variant_value_agg,
                 "VariantValuePalette": None,
                 "VariantValueKey": None,
+                "VariantValueMissing": variant_value_missing,
             }
         ], "legacy"
 
@@ -373,6 +394,7 @@ def _normalise_main_grid_tracks(
             "VariantValueAgg": None,
             "VariantValuePalette": None,
             "VariantValueKey": None,
+            "VariantValueMissing": None,
         }
     ], "legacy"
 
@@ -382,17 +404,18 @@ def _assign_variant_value_keys(
 ) -> tuple[List[dict[str, object]], List[dict[str, object]]]:
     keyed_tracks = [dict(track) for track in tracks]
     value_specs: List[dict[str, object]] = []
-    key_by_column_agg: dict[tuple[str, str], str] = {}
+    key_by_column_agg: dict[tuple[str, str, str], str] = {}
     for track in keyed_tracks:
         if track["Kind"] != "variant_value":
             continue
         column = str(track["VariantValueColumn"])
         agg = str(track["VariantValueAgg"])
-        key = key_by_column_agg.get((column, agg))
+        missing = str(track["VariantValueMissing"])
+        key = key_by_column_agg.get((column, agg, missing))
         if key is None:
             key = f"VariantValue__{len(value_specs)}"
-            key_by_column_agg[(column, agg)] = key
-            value_specs.append({"column": column, "agg": agg, "key": key})
+            key_by_column_agg[(column, agg, missing)] = key
+            value_specs.append({"column": column, "agg": agg, "missing": missing, "key": key})
         track["VariantValueKey"] = key
     return keyed_tracks, value_specs
 
@@ -629,6 +652,17 @@ def _pathway_summary(
     return pathway_by_gene, groups
 
 
+def _aggregate_variant_value(series: pd.Series, agg: str, missing: str) -> float:
+    values = pd.to_numeric(series, errors="coerce")
+    if missing == "zero":
+        values = values.fillna(0)
+    else:
+        values = values.dropna()
+    if values.empty:
+        return np.nan
+    return float(getattr(values, agg)())
+
+
 def _collapse_mutations(
     data: pd.DataFrame,
     gene_col: str,
@@ -655,7 +689,11 @@ def _collapse_mutations(
         if tooltip_col != sample_col:
             tooltip = f"<strong>{sample}</strong><br>{tooltip}"
         aggregated_values = {
-            str(spec["key"]): float(getattr(group[str(spec["column"])], str(spec["agg"]))())
+            str(spec["key"]): _aggregate_variant_value(
+                group[str(spec["column"])],
+                str(spec["agg"]),
+                str(spec["missing"]),
+            )
             for spec in variant_value_specs
         }
         variant_value = (
@@ -695,6 +733,7 @@ def _empty_main_grid_rows() -> pd.DataFrame:
             "VariantValueAgg",
             "VariantValuePalette",
             "VariantValueKey",
+            "VariantValueMissing",
             "VariantValueMin",
             "VariantValueMax",
             "ScaleGroup",
@@ -720,6 +759,7 @@ def _empty_main_grid_tiles() -> pd.DataFrame:
             "VariantValueColumn",
             "VariantValueAgg",
             "VariantValuePalette",
+            "VariantValueMissing",
             "VariantValue",
             "VariantValueMin",
             "VariantValueMax",
@@ -743,7 +783,7 @@ def _variant_track_ranges(
         for track in variant_tracks:
             key = str(track["VariantValueKey"])
             if key in tiles:
-                shared_values.extend(tiles[key].astype(float).tolist())
+                shared_values.extend(tiles[key].astype(float).dropna().tolist())
     shared_min = float(np.min(shared_values)) if shared_values else None
     shared_max = float(np.max(shared_values)) if shared_values else None
 
@@ -756,7 +796,10 @@ def _variant_track_ranges(
         if tiles.empty or key not in tiles:
             ranges[track_id] = (None, None, track_id)
             continue
-        values = tiles[key].astype(float)
+        values = tiles[key].astype(float).dropna()
+        if values.empty:
+            ranges[track_id] = (None, None, track_id)
+            continue
         ranges[track_id] = (float(values.min()), float(values.max()), track_id)
     return ranges
 
@@ -790,6 +833,7 @@ def _build_main_grid_rows(
                     "VariantValueAgg": track["VariantValueAgg"],
                     "VariantValuePalette": track["VariantValuePalette"],
                     "VariantValueKey": track["VariantValueKey"],
+                    "VariantValueMissing": track["VariantValueMissing"],
                     "VariantValueMin": value_min,
                     "VariantValueMax": value_max,
                     "ScaleGroup": scale_group,
@@ -817,7 +861,8 @@ def _build_main_grid_tiles(
             variant_value = np.nan
             if row_spec["Kind"] == "variant_value":
                 key = row_spec["VariantValueKey"]
-                variant_value = float(tile[str(key)])
+                value = tile[str(key)]
+                variant_value = np.nan if pd.isna(value) else float(value)
             rows.append(
                 {
                     "Sample": str(tile["Sample"]),
@@ -835,6 +880,7 @@ def _build_main_grid_tiles(
                     "VariantValueColumn": row_spec["VariantValueColumn"],
                     "VariantValueAgg": row_spec["VariantValueAgg"],
                     "VariantValuePalette": row_spec["VariantValuePalette"],
+                    "VariantValueMissing": row_spec["VariantValueMissing"],
                     "VariantValue": variant_value,
                     "VariantValueMin": row_spec["VariantValueMin"],
                     "VariantValueMax": row_spec["VariantValueMax"],
@@ -1075,6 +1121,7 @@ def prepare_oncoplot_data(
     variant_value_col: Optional[str] = None,
     variant_value_cols: Optional[Sequence[str]] = None,
     variant_value_agg: str = "max",
+    variant_value_missing: str = "blank",
     variant_value_scale: str = "per_column",
     main_grid_rows: Optional[Sequence[Mapping[str, object]]] = None,
     verbose: bool = False,
@@ -1093,6 +1140,7 @@ def prepare_oncoplot_data(
     metadata_category_orders = _coerce_metadata_category_orders(metadata_category_orders)
     tmb_type_explicit_order = _coerce_category_order(tmb_type_order, "tmb_type_order")
     variant_value_agg = _coerce_variant_value_agg(variant_value_agg)
+    variant_value_missing = _coerce_variant_value_missing(variant_value_missing)
     variant_value_scale = _coerce_variant_value_scale(variant_value_scale)
     variant_value_cols = _coerce_variant_value_cols(variant_value_cols)
     main_grid_tracks, main_grid_mode = _normalise_main_grid_tracks(
@@ -1101,6 +1149,7 @@ def prepare_oncoplot_data(
         mutation_type_col=mutation_type_col,
         variant_value_col=variant_value_col,
         variant_value_agg=variant_value_agg,
+        variant_value_missing=variant_value_missing,
         variant_value_scale=variant_value_scale,
     )
     main_grid_tracks, variant_value_specs = _assign_variant_value_keys(main_grid_tracks)
@@ -1151,18 +1200,6 @@ def prepare_oncoplot_data(
         )
 
     selected_rows = data[data[gene_col].isin(genes)].copy()
-    missing_variant_value_cols = [
-        column for column in variant_value_columns if selected_rows[column].isna().any()
-    ]
-    if missing_variant_value_cols:
-        if variant_value_col is not None and missing_variant_value_cols == [str(variant_value_col)]:
-            raise ValueError(
-                f"variant_value_col cannot contain missing values in displayed variants: {variant_value_col}"
-            )
-        raise ValueError(
-            "variant value columns cannot contain missing values in displayed variants: "
-            + ", ".join(missing_variant_value_cols)
-        )
     rank_values = list(range(len(genes), 0, -1))
     if selected_rows.empty:
         sample_scores = pd.Series(dtype="int64")
@@ -1305,9 +1342,10 @@ def prepare_oncoplot_data(
     variant_value_min = None
     variant_value_max = None
     if variant_value_col is not None and not tiles.empty:
-        variant_values = tiles["VariantValue"].astype(float)
-        variant_value_min = float(variant_values.min())
-        variant_value_max = float(variant_values.max())
+        variant_values = tiles["VariantValue"].astype(float).dropna()
+        if not variant_values.empty:
+            variant_value_min = float(variant_values.min())
+            variant_value_max = float(variant_values.max())
     main_grid_rows_out = _build_main_grid_rows(
         genes,
         main_grid_tracks,
@@ -1351,6 +1389,7 @@ def prepare_oncoplot_data(
         variant_value_min=variant_value_min,
         variant_value_max=variant_value_max,
         variant_value_cols=variant_value_cols,
+        variant_value_missing=variant_value_missing,
         variant_value_scale=variant_value_scale,
         main_grid_rows=main_grid_rows_out,
         main_grid_tiles=main_grid_tiles_out,

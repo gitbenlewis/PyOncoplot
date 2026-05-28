@@ -111,6 +111,7 @@ outlines in both renderers.
 | `font_size_title` | `14` | top-level figure title size |
 | `font_size_subplot_title` | `12` | named subplot title size |
 | `font_size_pathway` | `None` | explicit pathway strip label size |
+| `gene_name_x_offset` | `0.0` | extra leftward padding for expanded-grid gene labels |
 | `font_family` | `"Arial"` | renderer font family |
 | `gene_font_style` | `"normal"` | gene label style |
 | `sample_font_style` | `"normal"` | sample label style |

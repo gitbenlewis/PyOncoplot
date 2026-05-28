@@ -50,8 +50,10 @@ lost in interactive output.
 
 When `variant_value_col` is supplied, collapsed sample/gene tiles also aggregate
 that numeric column. Use `variant_value_agg` to choose `"max"` (default),
-`"mean"`, `"median"`, or `"min"`. Missing values in displayed variants are
-rejected so heatmap colors are deterministic.
+`"mean"`, `"median"`, or `"min"`. Missing values are blank by default:
+non-missing values are aggregated, and a tile with only missing source values is
+left uncolored. Set `variant_value_missing="zero"` to fill missing values with
+zero before aggregation.
 
 Multiple numeric variant values can be plotted as separate subrows under each
 gene. The concise form keeps mutation type visible first and then adds one row
@@ -64,11 +66,13 @@ oncoplot(
     sample_col="sample",
     mutation_type_col="mutation_type",
     variant_value_cols=["VAF_pct", "VAF_abs"],
+    variant_value_missing="blank",
 )
 ```
 
 Use `main_grid_rows` for custom labels, per-row aggregation, or per-row
-palettes:
+palettes. A `variant_value` row can set `missing` to override the top-level
+`variant_value_missing` policy:
 
 ```python
 oncoplot(
@@ -79,8 +83,9 @@ oncoplot(
     main_grid_rows=[
         {"kind": "mutation_type", "label": "Variant type"},
         {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %"},
-        {"kind": "variant_value", "column": "deltaVAF_pct", "label": "delta VAF %", "agg": "mean"},
+        {"kind": "variant_value", "column": "deltaVAF_pct", "label": "delta VAF %", "agg": "mean", "missing": "zero"},
     ],
+    gene_name_x_offset=12,
 )
 ```
 

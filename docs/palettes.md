@@ -155,6 +155,9 @@ Use `options={"gene_bar_mode": "percent"}` for a normalized mutation-type
 composition bar beside each gene.
 Matplotlib renders continuous variant-value colorbars horizontally by default
 to keep their labels readable in static figures.
+Missing variant values render as blank tiles by default. Set
+`variant_value_missing="zero"` when missing values should be filled with zero
+before sample/gene aggregation.
 
 For multi-row main grids, each `variant_value` row can define its own continuous
 palette:
@@ -168,7 +171,7 @@ oncoplot(
     main_grid_rows=[
         {"kind": "mutation_type", "label": "Variant type"},
         {"kind": "variant_value", "column": "VAF_pct", "label": "VAF %", "palette": "viridis"},
-        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma"},
+        {"kind": "variant_value", "column": "VAF_abs", "label": "VAF abs", "palette": "magma", "missing": "zero"},
     ],
 )
 ```

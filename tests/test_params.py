@@ -95,6 +95,7 @@ def test_oncoplot_params_accept_variant_value_heatmap_arguments():
             "mutation_type_col": "type",
             "variant_value_col": "vaf",
             "variant_value_agg": "max",
+            "variant_value_missing": "blank",
             "variant_value_palette": "viridis",
             "backend": "plotly",
             "options": {"width": 720, "height": 460},
@@ -103,6 +104,7 @@ def test_oncoplot_params_accept_variant_value_heatmap_arguments():
 
     assert result.prepared_data.variant_value_col == "vaf"
     assert result.prepared_data.variant_value_agg == "max"
+    assert result.prepared_data.variant_value_missing == "blank"
     assert result.figure.layout.width == 720
 
 
@@ -116,9 +118,10 @@ def test_oncoplot_params_accept_multi_row_main_grid_arguments():
             "main_grid_rows": [
                 {"kind": "mutation_type", "label": "Variant type"},
                 {"kind": "variant_value", "column": "vaf", "label": "VAF"},
-                {"kind": "variant_value", "column": "vaf_abs", "label": "VAF abs", "palette": "magma"},
+                {"kind": "variant_value", "column": "vaf_abs", "label": "VAF abs", "palette": "magma", "missing": "zero"},
             ],
             "variant_value_scale": "per_column",
+            "gene_name_x_offset": 6,
             "backend": "plotly",
         }
     )
@@ -129,6 +132,11 @@ def test_oncoplot_params_accept_multi_row_main_grid_arguments():
         "VAF",
         "VAF abs",
     ]
+    assert result.prepared_data.main_grid_rows["VariantValueMissing"].dropna().drop_duplicates().tolist() == [
+        "blank",
+        "zero",
+    ]
+    assert next(annotation for annotation in result.figure.layout.annotations if annotation.text == "TP53").xshift == -60
     assert result.prepared_data.main_grid_tiles["Kind"].tolist()
 
 

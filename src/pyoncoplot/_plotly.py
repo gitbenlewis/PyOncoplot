@@ -294,7 +294,7 @@ def _expanded_main_axis_options(prepared: PreparedOncoplotData) -> Dict[str, obj
         "range": [max(n_rows - 0.5, 0.5), -0.5],
         "tickmode": "array",
         "tickvals": [centers[gene] for gene in prepared.genes if gene in centers],
-        "ticktext": [gene for gene in prepared.genes if gene in centers],
+        "ticktext": ["" for gene in prepared.genes if gene in centers],
         "automargin": True,
     }
 
@@ -725,6 +725,8 @@ def _add_continuous_main_tiles(
         gene = str(row_value["Gene"])
         if sample not in sample_index or gene not in gene_index:
             continue
+        if pd.isna(row_value["VariantValue"]):
+            continue
         y = gene_index[gene]
         x = sample_index[sample]
         value = float(row_value["VariantValue"])
@@ -739,10 +741,11 @@ def _add_continuous_main_tiles(
             copy_value=_copy_value(row_value, copy_on_click),
         )
 
-    min_value = prepared.variant_value_min if prepared.variant_value_min is not None else 0.0
-    max_value = prepared.variant_value_max if prepared.variant_value_max is not None else 1.0
+    has_values = prepared.variant_value_min is not None and prepared.variant_value_max is not None
+    min_value = prepared.variant_value_min if has_values else 0.0
+    max_value = prepared.variant_value_max if has_values else 1.0
     cmin, cmax, tickvals, ticktext = _numeric_colorbar_bounds(float(min_value), float(max_value))
-    show_colorbar = options.show_legend and options.mutation_legend_position != "none"
+    show_colorbar = has_values and options.show_legend and options.mutation_legend_position != "none"
     legend_key = f"variant:{prepared.variant_value_col}"
     legend_fontsize = options.font_size_legend_text or options.font_size_metadata
     legend_title_fontsize = options.font_size_legend_title or legend_fontsize
@@ -798,6 +801,37 @@ def _add_expanded_row_labels(
             yanchor="middle",
             xshift=-8,
             font=dict(size=max(7, options.font_size_genes * 0.72), color="#555555"),
+        )
+
+
+def _add_expanded_gene_labels(
+    fig,
+    prepared: PreparedOncoplotData,
+    row: int,
+    col: int,
+    options: OncoplotOptions,
+) -> None:
+    rows = prepared.main_grid_rows
+    if rows is None or rows.empty:
+        return
+    xref = f"x{'' if row == 1 and col == 1 else row}"
+    yref = f"y{'' if row == 1 and col == 1 else row}"
+    first_sample = prepared.samples[0] if prepared.samples else 0
+    centers = _main_grid_gene_centers(prepared)
+    for gene in prepared.genes:
+        if gene not in centers:
+            continue
+        fig.add_annotation(
+            xref=xref,
+            yref=yref,
+            x=first_sample,
+            y=centers[gene],
+            text=gene,
+            showarrow=False,
+            xanchor="right",
+            yanchor="middle",
+            xshift=-(54 + options.gene_name_x_offset),
+            font=_font_options(options.font_size_genes, options),
         )
 
 
@@ -870,7 +904,8 @@ def _add_expanded_continuous_tiles(
     for colorbar_index, (_group_id, track_rows) in enumerate(continuous_groups):
         track_ids = set(track_rows["TrackId"].astype(str))
         group_tiles = continuous_tiles[continuous_tiles["TrackId"].astype(str).isin(track_ids)]
-        if group_tiles.empty:
+        non_missing_tiles = group_tiles[group_tiles["VariantValue"].notna()]
+        if non_missing_tiles.empty:
             continue
         z = np.full((n_rows, len(prepared.samples)), np.nan)
         text = [["" for _sample in prepared.samples] for _row in range(n_rows)]
@@ -881,8 +916,8 @@ def _add_expanded_continuous_tiles(
             ]
             for row_index in range(n_rows)
         ]
-        min_value = float(group_tiles["VariantValueMin"].dropna().iloc[0])
-        max_value = float(group_tiles["VariantValueMax"].dropna().iloc[0])
+        min_value = float(non_missing_tiles["VariantValueMin"].dropna().iloc[0])
+        max_value = float(non_missing_tiles["VariantValueMax"].dropna().iloc[0])
         cmin, cmax, tickvals, ticktext = _numeric_colorbar_bounds(min_value, max_value)
         first_track = track_rows.iloc[0]
         if prepared.variant_value_scale == "shared":
@@ -907,6 +942,8 @@ def _add_expanded_continuous_tiles(
         for _index, row_value in group_tiles.iterrows():
             sample = str(row_value["Sample"])
             if sample not in sample_index:
+                continue
+            if pd.isna(row_value["VariantValue"]):
                 continue
             y = int(row_value["RowIndex"])
             x = sample_index[sample]
@@ -1101,6 +1138,7 @@ def _add_expanded_main_tiles(
             col=col,
         )
 
+    _add_expanded_gene_labels(fig, prepared, row, col, options)
     _add_expanded_row_labels(fig, prepared, row, col, options)
     _add_expanded_gene_separators(fig, prepared, row, col, options)
     if prepared.pathway_groups:
