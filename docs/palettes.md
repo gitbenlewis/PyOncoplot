@@ -153,8 +153,10 @@ oncoplot(
 Mutation palettes still control stacked gene bars when `draw_gene_bar=True`.
 Use `options={"gene_bar_mode": "percent"}` for a normalized mutation-type
 composition bar beside each gene.
-Matplotlib renders continuous variant-value colorbars horizontally by default
-to keep their labels readable in static figures.
+Continuous variant-value colorbars render horizontally by default to keep their
+labels readable. In expanded main grids, Plotly and Matplotlib place those
+colorbars below the metadata/sample grid rather than on the right side or
+between the metadata and mutation grids.
 Missing variant values render as blank tiles by default. Set
 `variant_value_missing="zero"` when missing values should be filled with zero
 before sample/gene aggregation.

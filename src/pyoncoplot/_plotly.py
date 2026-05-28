@@ -357,6 +357,8 @@ def _plotly_legend_trace_key(trace, mutation_key: str, tmb_key: str) -> tuple[Op
     legendgroup = str(getattr(trace, "legendgroup", "") or "")
     if legendgroup == "tmb":
         return tmb_key, "tmb"
+    if legendgroup == "mutation":
+        return mutation_key, "mutation"
     if legendgroup.startswith("gene_bar:"):
         return "gene_bar", None
     if legendgroup.startswith("metadata:"):
@@ -686,7 +688,26 @@ def _variant_value_hover_text(row: pd.Series, title: str) -> str:
     return f"{tooltip}<br>{title_line}"
 
 
-def _variant_colorbar_layout(index: int, total: int, key: str, options: OncoplotOptions) -> Dict[str, object]:
+def _variant_colorbar_layout(
+    index: int,
+    total: int,
+    key: str,
+    options: OncoplotOptions,
+    *,
+    bottom: bool = False,
+) -> Dict[str, object]:
+    if bottom:
+        slot_width = min(0.92, 0.92 / max(total, 1))
+        return {
+            "orientation": "h",
+            "x": _offset_layout_value(0.04 + (index + 0.5) * slot_width, options, key, "x", "variant"),
+            "xanchor": "center",
+            "y": _offset_layout_value(-0.30, options, key, "y", "variant"),
+            "yanchor": "top",
+            "len": max(0.16, min(0.30, slot_width * 0.72)),
+            "thickness": 12,
+            "outlinewidth": 0,
+        }
     if total <= 1:
         x_offset, y_offset = _legend_offset(options, key, "variant")
         if not x_offset and not y_offset:
@@ -991,7 +1012,13 @@ def _add_expanded_continuous_tiles(
                     tickvals=tickvals,
                     ticktext=ticktext,
                     tickfont=_font_options(legend_fontsize, options),
-                    **_variant_colorbar_layout(colorbar_index, len(continuous_groups), legend_key, options),
+                    **_variant_colorbar_layout(
+                        colorbar_index,
+                        len(continuous_groups),
+                        legend_key,
+                        options,
+                        bottom=True,
+                    ),
                 ),
             ),
             row=row,
@@ -1063,6 +1090,7 @@ def _add_expanded_main_tiles(
                     show_mutation_legend and prepared.mutation_type_col is None,
                 )
             )
+        legend_proxies = []
         for group, color, legend_name, legend_visible in mutation_groups:
             z = np.full((n_rows, len(prepared.samples)), np.nan)
             text = [["" for _sample in prepared.samples] for _row in range(n_rows)]
@@ -1103,8 +1131,32 @@ def _add_expanded_main_tiles(
                     zmin=0,
                     zmax=1,
                     showscale=False,
-                    showlegend=legend_visible,
+                    showlegend=False,
                     name=legend_name,
+                ),
+                row=row,
+                col=col,
+            )
+            if legend_visible:
+                legend_proxies.append((legend_name, color))
+        for proxy_index, (legend_name, color) in enumerate(legend_proxies):
+            fig.add_trace(
+                go.Scatter(
+                    x=[None],
+                    y=[None],
+                    mode="markers",
+                    marker=dict(
+                        symbol="square",
+                        size=max(8, options.legend_key_size * 10),
+                        color=color,
+                    ),
+                    name=legend_name,
+                    legendgroup="mutation",
+                    legendgrouptitle=dict(text=_legend_entry_title("Mutation Type", options))
+                    if proxy_index == 0 and options.show_legend_titles
+                    else None,
+                    hoverinfo="skip",
+                    showlegend=True,
                 ),
                 row=row,
                 col=col,
@@ -1841,7 +1893,14 @@ def render_plotly_oncoplot(
         margin["b"] = max(margin["b"], 135)
     elif numeric_metadata_legend_active:
         margin["r"] = max(margin["r"], 220)
-    if _main_grid_has_continuous_rows(prepared) and options.show_legend and options.mutation_legend_position != "none":
+    variant_colorbar_active = (
+        _main_grid_has_continuous_rows(prepared)
+        and options.show_legend
+        and options.mutation_legend_position != "none"
+    )
+    if variant_colorbar_active and _has_expanded_main_grid(prepared):
+        margin["b"] = max(margin["b"], 150 if bottom_legend else 115)
+    elif variant_colorbar_active:
         margin["r"] = max(margin["r"], 130)
     if options.title_text is not None:
         margin["t"] = max(margin["t"], 70)

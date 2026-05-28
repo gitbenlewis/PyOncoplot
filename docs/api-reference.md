@@ -226,7 +226,7 @@ For the common case, `variant_value_cols=["VAF_pct", "VAF_abs"]` expands to a
 mutation-type row followed by one row per numeric value column. Set
 `variant_value_scale="shared"` to use one shared min/max and colorbar across all
 continuous rows; the default `"per_column"` gives each continuous row its own
-range and colorbar. A `main_grid_rows` variant-value row can set
+range and bottom horizontal colorbar. A `main_grid_rows` variant-value row can set
 `missing="blank"` or `missing="zero"` to override `variant_value_missing` for
 that row. `gene_name_x_offset` and `main_grid_rows_label_x_offset` are also
 available in `OncoplotOptions`; top-level arguments win when supplied.

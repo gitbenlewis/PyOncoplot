@@ -179,7 +179,15 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
         if getattr(trace, "type", "") == "heatmap"
         and getattr(trace, "customdata", None)
         and trace.customdata[0][0]["role"] == "main_tile"
+        and getattr(trace, "showscale", None) is not True
+        and getattr(trace, "name", None)
+    ]
+    mutation_legend_proxies = [
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "scatter"
         and getattr(trace, "showlegend", None) is True
+        and getattr(trace, "legendgroup", "") == "mutation"
     ]
     gene_bar_traces = [
         trace
@@ -191,6 +199,10 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
     assert len(result.prepared_data.main_grid_rows) == len(result.prepared_data.genes) * 3
     assert len(main_heatmaps) == 2
     assert {trace.colorbar.title.text for trace in main_heatmaps} == {"VAF %", "VAF Abs"}
+    assert all(trace.colorbar.orientation == "h" for trace in main_heatmaps)
+    assert all(trace.colorbar.y < 0 for trace in main_heatmaps)
+    assert result.figure.layout.margin.b >= 150
+    assert result.figure.layout.margin.r == 30
     tp53_s1_payload = next(
         payload
         for trace in main_heatmaps
@@ -224,7 +236,15 @@ def test_plotly_multi_row_main_grid_renders_categorical_and_continuous_tracks():
     assert "<strong>" not in tp53_s1_mutation_hover
     assert "<strong>" not in tp53_s1_variant_hover
     assert mutation_heatmaps
-    assert any(trace.showlegend is True for trace in mutation_heatmaps)
+    assert all(trace.showlegend is False for trace in mutation_heatmaps)
+    assert [trace.name for trace in mutation_legend_proxies] == [
+        "Missense Mutation",
+        "Nonsense Mutation",
+        "Frame Shift Del",
+        "Splice Site",
+    ]
+    assert all(trace.marker.symbol == "square" for trace in mutation_legend_proxies)
+    assert mutation_legend_proxies[0].legendgrouptitle.text == "Mutation Type"
     assert gene_bar_traces
 
 
@@ -267,6 +287,12 @@ def test_plotly_expanded_categorical_multi_hit_tiles_fill_cells():
         for trace in result.figure.data
         if getattr(trace, "type", "") == "heatmap"
         and getattr(trace, "name", "") == "Multi Hit"
+    )
+    multi_hit_proxy = next(
+        trace
+        for trace in result.figure.data
+        if getattr(trace, "type", "") == "scatter"
+        and getattr(trace, "name", "") == "Multi Hit"
         and getattr(trace, "showlegend", None) is True
     )
     vaf_heatmap = next(
@@ -288,6 +314,8 @@ def test_plotly_expanded_categorical_multi_hit_tiles_fill_cells():
 
     assert expanded_marker_traces == []
     assert mutation_heatmap.showscale is False
+    assert mutation_heatmap.showlegend is False
+    assert multi_hit_proxy.marker.symbol == "square"
     assert mutation_heatmap.z[int(mutation_row["RowIndex"])][s1_index] == pytest.approx(1.0)
     assert mutation_heatmap.customdata[int(mutation_row["RowIndex"])][s1_index]["mutation_type"] == "Multi_Hit"
     assert vaf_heatmap.z[int(vaf_row["RowIndex"])][s1_index] == pytest.approx(0.6)
@@ -530,6 +558,7 @@ def test_matplotlib_continuous_variant_heatmap_and_save(tmp_path):
 
 
 def test_matplotlib_multi_row_main_grid_and_colorbars(tmp_path):
+    metadata = pd.DataFrame({"sample": ["S1", "S2", "S3"], "score": [1.0, 3.0, 5.0]})
     result = oncoplot(
         small_df(),
         gene_col="gene",
@@ -537,6 +566,8 @@ def test_matplotlib_multi_row_main_grid_and_colorbars(tmp_path):
         mutation_type_col="type",
         variant_value_cols=["vaf", "vaf_abs"],
         draw_gene_bar=True,
+        metadata=metadata,
+        metadata_cols=["score"],
         backend="matplotlib",
         options=OncoplotOptions(width=760, height=500),
     )
@@ -549,10 +580,16 @@ def test_matplotlib_multi_row_main_grid_and_colorbars(tmp_path):
     assert len(result.prepared_data.main_grid_rows) == len(result.prepared_data.genes) * 3
     main_position = result.figure.axes[0].get_position()
     gene_bar_position = result.figure.axes[1].get_position()
+    metadata_axis = next(
+        axis
+        for axis in result.figure.axes
+        if [label.get_text() for label in axis.get_yticklabels()] == ["Score"]
+    )
     colorbar_axes = matplotlib_colorbar_axes(result.figure, "Vaf", "Vaf Abs")
     assert [axis.get_title() for axis in colorbar_axes] == ["Vaf", "Vaf Abs"]
     assert all(axis.get_ylabel() == "" for axis in colorbar_axes)
     assert all(axis.get_position().width > axis.get_position().height for axis in colorbar_axes)
+    assert all(axis.get_position().y1 < metadata_axis.get_position().y0 for axis in colorbar_axes)
     assert gene_bar_position.y0 == pytest.approx(main_position.y0)
     assert gene_bar_position.height == pytest.approx(main_position.height)
 

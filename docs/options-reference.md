@@ -66,8 +66,11 @@ result = oncoplot(
 Plotly uses one shared interactive legend. `mutation_legend_position="none"`
 hides mutation traces while categorical metadata legends can remain visible. A
 bottom request creates a horizontal Plotly legend; otherwise visible legends are
-placed vertically on the right. Matplotlib keeps separate static legend layout
-controls, including `metadata_legend_nrow` and `metadata_legend_ncol`.
+placed vertically on the right. Expanded main-grid variant-value colorbars are
+an exception: Plotly and Matplotlib place them horizontally below the plot area so
+they do not compete with right-side metadata legends. Matplotlib keeps separate
+static legend layout controls, including `metadata_legend_nrow` and
+`metadata_legend_ncol`.
 
 `legend_offsets` targets individual legends by stable keys. Use source columns
 where available, such as `mutation:type`, `tmb:tmb_type`, `metadata:clinical_group`,

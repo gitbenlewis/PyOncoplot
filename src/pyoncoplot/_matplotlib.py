@@ -59,6 +59,15 @@ class _MetadataLegendSpec:
         return self.colormap is not None
 
 
+@dataclass(frozen=True)
+class _VariantValueLegendSpec:
+    title: str
+    key: str
+    colormap: object
+    min_value: float
+    max_value: float
+
+
 def _require_matplotlib():
     try:
         import matplotlib.pyplot as plt
@@ -394,40 +403,61 @@ def _continuous_track_groups(prepared: PreparedOncoplotData) -> list[tuple[str, 
 
 
 def _add_variant_value_colorbar(
-    ax,
-    colormap,
-    min_value: float,
-    max_value: float,
-    title: str,
-    legend_key: str,
+    figure,
+    legend: _VariantValueLegendSpec,
+    bounds: Sequence[float],
     options: OncoplotOptions,
+    fontsize: float,
+    title_fontsize: float,
 ) -> None:
     from matplotlib.cm import ScalarMappable
     from matplotlib.colors import Normalize
 
-    cmin, cmax, tick_values, tick_labels = _numeric_colorbar_bounds(min_value, max_value)
-    mappable = ScalarMappable(norm=Normalize(vmin=cmin, vmax=cmax), cmap=colormap)
+    cmin, cmax, tick_values, tick_labels = _numeric_colorbar_bounds(legend.min_value, legend.max_value)
+    cax = figure.add_axes(_offset_bounds(bounds, options, legend.key, "variant"))
+    mappable = ScalarMappable(norm=Normalize(vmin=cmin, vmax=cmax), cmap=legend.colormap)
     mappable.set_array([])
-    colorbar = ax.figure.colorbar(
-        mappable,
-        ax=ax,
-        orientation="horizontal",
-        fraction=0.06,
-        pad=0.08,
-        aspect=30,
-        ticks=tick_values,
-    )
-    if legend_key in options.legend_offsets or "variant" in options.legend_offsets:
-        colorbar.ax.set_position(_offset_bounds(colorbar.ax.get_position().bounds, options, legend_key, "variant"))
+    colorbar = figure.colorbar(mappable, cax=cax, orientation="horizontal", ticks=tick_values)
     colorbar.ax.set_xticklabels(tick_labels)
-    fontsize = options.font_size_legend_text or options.font_size_metadata
-    title_fontsize = options.font_size_legend_title or fontsize
     colorbar.ax.set_title(
-        _truncate_text(title, options.legend_title_max_chars),
+        _truncate_text(legend.title, options.legend_title_max_chars),
         fontsize=title_fontsize,
         pad=max(2, title_fontsize * 0.35),
     )
     colorbar.ax.tick_params(labelsize=fontsize)
+
+
+def _add_bottom_variant_value_colorbars(
+    figure,
+    variant_legends: Sequence[_VariantValueLegendSpec],
+    options: OncoplotOptions,
+    fontsize: float,
+    title_fontsize: float,
+    *,
+    has_bottom_legend: bool,
+    has_bottom_metadata_legend: bool,
+) -> None:
+    if not variant_legends:
+        return
+    total = len(variant_legends)
+    slot_width = min(0.30, 0.86 / max(total, 1))
+    colorbar_width = slot_width * 0.70
+    thickness = max(0.012, min(0.035, 0.015 * max(options.legend_key_size, 0.5)))
+    y = 0.055
+    if has_bottom_legend and has_bottom_metadata_legend:
+        y = 0.15
+    elif has_bottom_legend or has_bottom_metadata_legend:
+        y = 0.105
+    start_x = 0.08 if total > 1 else 0.36
+    for index, legend in enumerate(variant_legends):
+        _add_variant_value_colorbar(
+            figure,
+            legend,
+            [start_x + index * slot_width, y, colorbar_width, thickness],
+            options,
+            fontsize,
+            title_fontsize,
+        )
 
 
 def _is_missing_palette_spec(value: object) -> bool:
@@ -440,12 +470,12 @@ def _draw_expanded_main(
     palette: Mapping[str, str],
     variant_value_palette: object,
     options: OncoplotOptions,
-) -> None:
+) -> List[_VariantValueLegendSpec]:
     _plt, _ListedColormap, _GridSpec, _Patch, Rectangle = _require_matplotlib()
     rows = prepared.main_grid_rows
     tiles = prepared.main_grid_tiles
     if rows is None:
-        return
+        return []
     n_rows = len(rows)
     n_samples = len(prepared.samples)
     track_count = int(rows["TrackId"].nunique()) if not rows.empty else 1
@@ -473,6 +503,7 @@ def _draw_expanded_main(
 
     continuous_groups = _continuous_track_groups(prepared)
     continuous_maps: dict[str, tuple[object, object]] = {}
+    variant_legends: List[_VariantValueLegendSpec] = []
     if continuous_groups and tiles is not None and not tiles.empty:
         from matplotlib.colors import Normalize
 
@@ -510,7 +541,15 @@ def _draw_expanded_main(
             for track_id in track_ids:
                 continuous_maps[track_id] = (cmap, norm)
             if options.show_legend and options.mutation_legend_position != "none":
-                _add_variant_value_colorbar(ax, cmap, min_value, max_value, title, legend_key, options)
+                variant_legends.append(
+                    _VariantValueLegendSpec(
+                        title=title,
+                        key=legend_key,
+                        colormap=cmap,
+                        min_value=min_value,
+                        max_value=max_value,
+                    )
+                )
 
     sample_pos = {sample: index for index, sample in enumerate(prepared.samples)}
     if tiles is not None and not tiles.empty:
@@ -637,6 +676,7 @@ def _draw_expanded_main(
         ax.set_xticks([])
     ax.set_xlabel(options.x_label if options.show_x_label else "", fontsize=options.font_size_x_label)
     ax.set_ylabel(options.y_label if options.show_y_label else "", fontsize=options.font_size_y_label)
+    return variant_legends
 
 
 def _draw_main(
@@ -645,14 +685,14 @@ def _draw_main(
     palette: Mapping[str, str],
     variant_value_palette: object,
     options: OncoplotOptions,
-):
+) -> List[_VariantValueLegendSpec]:
     _plt, _ListedColormap, _GridSpec, _Patch, Rectangle = _require_matplotlib()
     if _has_expanded_main_grid(prepared):
-        _draw_expanded_main(ax, prepared, palette, variant_value_palette, options)
-        return
+        return _draw_expanded_main(ax, prepared, palette, variant_value_palette, options)
 
     continuous_cmap = None
     continuous_norm = None
+    variant_legends: List[_VariantValueLegendSpec] = []
     if prepared.variant_value_col is not None and prepared.variant_value_min is not None and prepared.variant_value_max is not None:
         from matplotlib.colors import Normalize
 
@@ -665,14 +705,14 @@ def _draw_main(
         continuous_cmap = coerce_continuous_colormap(variant_value_palette, prepared.variant_value_col)
         continuous_norm = Normalize(vmin=float(min_value), vmax=float(max_value))
         if options.show_legend and options.mutation_legend_position != "none":
-            _add_variant_value_colorbar(
-                ax,
-                continuous_cmap,
-                float(min_value),
-                float(max_value),
-                _legend_title(prepared.variant_value_col, options),
-                f"variant:{prepared.variant_value_col}",
-                options,
+            variant_legends.append(
+                _VariantValueLegendSpec(
+                    title=_legend_title(prepared.variant_value_col, options),
+                    key=f"variant:{prepared.variant_value_col}",
+                    colormap=continuous_cmap,
+                    min_value=float(min_value),
+                    max_value=float(max_value),
+                )
             )
     n_genes = len(prepared.genes)
     n_samples = len(prepared.samples)
@@ -779,6 +819,7 @@ def _draw_main(
         ax.set_xticks([])
     ax.set_xlabel(options.x_label if options.show_x_label else "", fontsize=options.font_size_x_label)
     ax.set_ylabel(options.y_label if options.show_y_label else "", fontsize=options.font_size_y_label)
+    return variant_legends
 
 
 def _draw_gene_bar(ax, prepared: PreparedOncoplotData, palette: Mapping[str, str], options: OncoplotOptions):
@@ -1466,7 +1507,7 @@ def render_matplotlib_oncoplot(
     metadata_legends = []
     if draw_metadata and "metadata" in axes:
         metadata_legends = _draw_metadata(axes["metadata"], prepared, options, metadata_palette=metadata_palette)
-    _draw_main(axes["main"], prepared, palette, variant_value_palette, options)
+    variant_value_legends = _draw_main(axes["main"], prepared, palette, variant_value_palette, options)
     if draw_gene_bar and "gene_bar" in axes:
         _draw_gene_bar(axes["gene_bar"], prepared, palette, options)
         if draw_metadata and options.metadata_position == "bottom" and options.show_gene_bar_axis:
@@ -1507,13 +1548,14 @@ def render_matplotlib_oncoplot(
         ((mutation_handles or tmb_handles) and options.mutation_legend_position == "right")
         or _metadata_has_right_legends(metadata_legends, options)
     )
-    variant_colorbar_active = (
-        _main_grid_has_continuous_rows(prepared)
-        and options.show_legend
-        and options.mutation_legend_position != "none"
-    )
+    variant_colorbar_active = bool(variant_value_legends)
     if variant_colorbar_active:
-        bottom_margin = max(bottom_margin, 0.14)
+        if has_bottom_mutation_legend and has_bottom_metadata_legend:
+            bottom_margin = max(bottom_margin, 0.34)
+        elif has_bottom_mutation_legend or has_bottom_metadata_legend:
+            bottom_margin = max(bottom_margin, 0.26)
+        else:
+            bottom_margin = max(bottom_margin, 0.16)
     mutation_legend_key = f"mutation:{prepared.mutation_type_col}" if prepared.mutation_type_col is not None else "mutation"
     tmb_legend_key = f"tmb:{prepared.tmb_type_col}" if prepared.tmb_type_col is not None else "tmb"
     _add_static_legends(
@@ -1546,5 +1588,22 @@ def render_matplotlib_oncoplot(
         gene_bar_position = axes["gene_bar"].get_position()
         axes["gene_bar"].set_position(
             [gene_bar_position.x0, main_position.y0, gene_bar_position.width, main_position.height]
+        )
+    if variant_value_legends:
+        large_figure = options.width >= 1600 or options.height >= 1200
+        variant_fontsize = options.font_size_legend_text or _legend_font_size(
+            10 if large_figure else 8,
+            options.font_size_genes,
+            scale=1.2 if large_figure else 0.75,
+        )
+        variant_title_fontsize = options.font_size_legend_title or variant_fontsize + (4 if large_figure else 1)
+        _add_bottom_variant_value_colorbars(
+            figure,
+            variant_value_legends,
+            options,
+            variant_fontsize,
+            variant_title_fontsize,
+            has_bottom_legend=has_bottom_mutation_legend,
+            has_bottom_metadata_legend=has_bottom_metadata_legend,
         )
     return figure
