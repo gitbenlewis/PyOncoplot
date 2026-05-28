@@ -257,7 +257,9 @@ Returned by `oncoplot()`.
 save `.html` directly, while Plotly image suffixes such as `.png`, `.svg`, and
 `.pdf` require the export extra. Matplotlib results save through
 `figure.savefig()` and support the image/vector formats available in the local
-Matplotlib installation.
+Matplotlib installation. Matplotlib saves default to `bbox_inches="tight"`;
+pass `bbox_inches=None` when exact configured figure dimensions should be
+preserved.
 
 ## `prepare_oncoplot_data`
 

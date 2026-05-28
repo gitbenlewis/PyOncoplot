@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 from matplotlib import colormaps
 from matplotlib.colors import LinearSegmentedColormap, to_hex
+from PIL import Image
 
 from pyoncoplot import Iridescent, OncoplotOptions, oncoplot, tol_colors
 
@@ -388,6 +389,28 @@ def test_matplotlib_render_and_save(tmp_path):
     result.save(str(output), dpi=90)
     assert output.exists()
     assert output.stat().st_size > 0
+
+
+def test_matplotlib_save_can_preserve_exact_figure_extent(tmp_path):
+    result = oncoplot(
+        small_df(),
+        gene_col="gene",
+        sample_col="sample",
+        mutation_type_col="type",
+        backend="matplotlib",
+        options=OncoplotOptions(width=700, height=450),
+    )
+    output = tmp_path / "exact-oncoplot.png"
+    result.figure.set_size_inches(4, 3, forward=True)
+    result.save(str(output), dpi=120, bbox_inches=None)
+
+    try:
+        with Image.open(output) as image:
+            assert image.size == (480, 360)
+    finally:
+        import matplotlib.pyplot as plt
+
+        plt.close(result.figure)
 
 
 def test_matplotlib_continuous_variant_heatmap_and_save(tmp_path):

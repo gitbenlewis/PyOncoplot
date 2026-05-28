@@ -8,7 +8,7 @@ from typing import Any, Mapping, Optional, Sequence, Union
 
 import yaml
 
-from pyoncoplot import load_oncoplot_params, oncoplot
+from pyoncoplot import oncoplot
 
 
 GOAL_SOURCE_ROOT = Path(__file__).resolve().parent
@@ -84,34 +84,6 @@ def clean_run_names(names: Optional[Sequence[str]] = None, *, renderer: Optional
     ]
 
 
-def render_oncoplot(output_path: Path, *, params: Mapping[str, Any], run_name: str) -> None:
-    import matplotlib.pyplot as plt
-
-    merged = dict(params)
-    oncoplot_params = load_oncoplot_params(CONFIG_PATH, key=f"gallery_params.plot_runs.{run_name}.params.oncoplot")
-    if filter_params := merged.get("metadata_filter"):
-        oncoplot_params = dict(oncoplot_params)
-        column = str(filter_params["column"])
-        value = str(filter_params["value"])
-        metadata = oncoplot_params["metadata"]
-        selected_samples = set(metadata.loc[metadata[column].astype(str) == value, "sample"].astype(str))
-        oncoplot_params["data"] = oncoplot_params["data"][oncoplot_params["data"]["sample"].astype(str).isin(selected_samples)].copy()
-        oncoplot_params["metadata"] = metadata[metadata["sample"].astype(str).isin(selected_samples)].copy()
-        oncoplot_params["tmb_data"] = oncoplot_params["tmb_data"][oncoplot_params["tmb_data"]["sample"].astype(str).isin(selected_samples)].copy()
-        sample_order = oncoplot_params.get("sample_order")
-        if sample_order is not None:
-            oncoplot_params["sample_order"] = [sample for sample in sample_order if str(sample) in selected_samples]
-
-    result = oncoplot(params=oncoplot_params)
-    dpi = int(merged["save"]["dpi"])
-    options = oncoplot_params["options"]
-    if result.backend == "matplotlib":
-        result.figure.set_size_inches(float(options["width"]) / dpi, float(options["height"]) / dpi, forward=True)
-    result.figure.savefig(output_path, dpi=dpi)
-    if result.backend == "matplotlib":
-        plt.close(result.figure)
-
-
 def render_preset(name: str, out_dir: Optional[Path] = None) -> Path:
     run_config = merged_run_config(name)
     if run_config.get("style") != "clean" or run_config["renderer"] != "oncoplot":
@@ -120,7 +92,17 @@ def render_preset(name: str, out_dir: Optional[Path] = None) -> Path:
     out_dir = out_dir or CLEAN_OUT
     out_dir.mkdir(parents=True, exist_ok=True)
     output_path = out_dir / run_config["output_name"]
-    render_oncoplot(output_path, params=run_config["params"], run_name=name)
+    result = oncoplot(params=CONFIG_PATH, params_key=f"gallery_params.plot_runs.{name}.params.oncoplot")
+    dpi = int(run_config["params"]["save"]["dpi"])
+    if result.backend == "matplotlib":
+        import matplotlib.pyplot as plt
+
+        options = run_config["params"]["oncoplot"]["options"]
+        result.figure.set_size_inches(float(options["width"]) / dpi, float(options["height"]) / dpi, forward=True)
+        result.save(output_path, dpi=dpi, bbox_inches=None)
+        plt.close(result.figure)
+    else:
+        result.save(output_path, dpi=dpi)
     return output_path
 
 

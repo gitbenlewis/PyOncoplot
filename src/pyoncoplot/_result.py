@@ -116,7 +116,8 @@ class OncoplotResult:
             return
 
         if hasattr(self.figure, "savefig"):
-            self.figure.savefig(str(target), bbox_inches="tight", **kwargs)
+            kwargs.setdefault("bbox_inches", "tight")
+            self.figure.savefig(str(target), **kwargs)
             return
 
         raise TypeError("The current figure object cannot be saved by pyoncoplot.")

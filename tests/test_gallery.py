@@ -232,6 +232,7 @@ def test_oncoplot_gallery_runs_use_yaml_table_sources():
         "metadata_sort_cols",
         "metadata_sort_by",
         "metadata_sort_desc",
+        "metadata_filter",
         "options",
         "sample_order_key",
     }
@@ -258,6 +259,9 @@ def test_oncoplot_gallery_runs_use_yaml_table_sources():
             assert isinstance(loaded["tmb_data"], pd.DataFrame), name
         if name in ONCOPLOT_CONFIG_RUNS_WITH_METADATA:
             assert isinstance(loaded["metadata"], pd.DataFrame), name
+
+    survival_params = runs["aml_metadata_survival"]["params"]["oncoplot"]
+    assert survival_params["filter_samples_by_isin_lists"] == {"Overall_Survival_Status": ["1"]}
 
 
 def test_split_gallery_scripts_cover_renderer_config():

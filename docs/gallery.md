@@ -9,7 +9,8 @@ Runtime choices live in `python_refactor_goal_sources/config.yaml` under the
 clean runs to `make_oncoplots.py` for direct public `oncoplot()` presets or to
 `make_other_gallery_plots.py` for custom plots. Oncoplot-style presets use
 `renderer: oncoplot` and keep public `oncoplot()` params under `params.oncoplot`,
-including table sources, titles, subplot labels, legends, and layout options.
+including table sources, sample or mutation filters, titles, subplot labels,
+legends, and layout options.
 Input filenames are also declared there under `gallery_params.input_files`;
 custom renderers read the TSV/JSON files from those configured names.
 Deterministic non-fuc input-generation settings live in

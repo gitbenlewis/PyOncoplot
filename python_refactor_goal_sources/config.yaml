@@ -1079,15 +1079,14 @@ gallery_params:
       clean_only: true
       feature_axes_min: 4
       params:
-        metadata_filter:
-          column: Overall_Survival_Status
-          value: "1"
         oncoplot:
           <<: *aml_oncoplot
           include_genes: *aml_survival_genes
           sample_order: *aml_survival_sample_order
           metadata: *aml_metadata_source
           metadata_cols: [FAB_classification, days_to_last_followup, Overall_Survival_Status]
+          filter_samples_by_isin_lists:
+            Overall_Survival_Status: ["1"]
           metadata_palette: *aml_metadata_palette
           metadata_sort_cols:
           metadata_sort_by: alphabetical
