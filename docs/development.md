@@ -59,14 +59,15 @@ Generated gallery images are tracked when intentionally updated.
 
 1. Add or extend synthetic inputs in `python_refactor_goal_sources/generate_synthetic_inputs.py`, or fuc-derived inputs in `python_refactor_goal_sources/fuc_sources/rebuild_fuc_fixtures.py`.
 2. Commit the generated TSV/JSON inputs.
-3. Add a renderer function in `python_refactor_goal_sources/recreate_gallery.py` only when an existing renderer cannot express the plot.
+3. Use `renderer: oncoplot` when public `oncoplot()` params can express the plot.
 4. Add the named run to `python_refactor_goal_sources/config.yaml` under `gallery_params.plot_runs`.
-5. Add or update tests in `tests/test_gallery.py`.
-6. Document the preset in [Gallery](gallery.md).
+5. Add a renderer function in `python_refactor_goal_sources/recreate_gallery.py` only when `oncoplot()` and the existing custom renderers cannot express the plot.
+6. Add or update tests in `tests/test_gallery.py`.
+7. Document the preset in [Gallery](gallery.md).
 
-Renderer functions accept `params={...}` plus explicit overrides. Keep data
-loading in named loader functions and put runtime choices such as genes,
-metadata tracks, expected dimensions, output names, and save DPI in YAML.
+The generic oncoplot renderer reads `params.oncoplot` from config and passes it
+to the public API. Keep runtime choices such as genes, metadata tracks, legend
+controls, expected dimensions, output names, and save DPI in YAML.
 
 ## Documentation Changes
 

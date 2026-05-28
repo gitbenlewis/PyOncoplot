@@ -5,8 +5,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 import yaml
+import matplotlib.pyplot as plt
 from PIL import Image
-from pyoncoplot import load_oncoplot_params
+from pyoncoplot import load_oncoplot_params, oncoplot
 
 from python_refactor_goal_sources.recreate_gallery import (
     CONFIG_PATH,
@@ -15,19 +16,9 @@ from python_refactor_goal_sources.recreate_gallery import (
     GENERATED_ROOT,
     GOAL_PLOTS,
     INPUTS,
-    MULTIMODAL_MAX_MARKER_SCALE,
-    MULTIMODAL_POINT_SIZE,
-    MULTIMODAL_REFERENCE_OUTPUT_WIDTH,
-    MULTIMODAL_SELECTED_LINEWIDTH,
-    MULTIMODAL_SELECTED_POINT_SIZE,
-    _load_brca,
     _multimodal_marker_style,
     _multimodal_panel_title_font_size,
     _multimodal_title_font_size,
-    _options_from_params,
-    _readme_title_font_size,
-    _sample_order_by_mutation_rank,
-    _weighted_row_starts,
     render_preset,
 )
 
@@ -80,23 +71,15 @@ REQUIRED_FIXTURES = {
 }
 
 ONCOPLOT_CONFIG_RUNS = {
-    "ggoncoplot_readme_small",
-    "ggoncoplot_readme_basic",
-    "ggoncoplot_readme_marginal",
-    "ggoncoplot_readme_metadata",
-    "brca_compact_complex",
-    "aml_basic",
-    "aml_metadata_unsorted",
-    "aml_metadata_sorted",
-    "aml_metadata_survival",
+    name
+    for name, run in GALLERY_CONFIG["plot_runs"].items()
+    if run.get("renderer") == "oncoplot"
 }
 
 ONCOPLOT_CONFIG_RUNS_WITH_METADATA = {
-    "ggoncoplot_readme_metadata",
-    "brca_compact_complex",
-    "aml_metadata_unsorted",
-    "aml_metadata_sorted",
-    "aml_metadata_survival",
+    name
+    for name in ONCOPLOT_CONFIG_RUNS
+    if "metadata" in GALLERY_CONFIG["plot_runs"][name]["params"]["oncoplot"]
 }
 
 
@@ -237,7 +220,8 @@ def test_oncoplot_gallery_runs_use_yaml_table_sources():
         assert isinstance(oncoplot_params["data"], dict), name
         assert oncoplot_params["data"]["path"].startswith("syntheitic_goal_data/"), name
         assert oncoplot_params["data"]["sep"] == "\t", name
-        assert isinstance(oncoplot_params["tmb_data"], dict), name
+        if "tmb_data" in oncoplot_params:
+            assert isinstance(oncoplot_params["tmb_data"], dict), name
         assert "palette" in oncoplot_params, name
         assert "options" in oncoplot_params, name
         if name in ONCOPLOT_CONFIG_RUNS_WITH_METADATA:
@@ -247,82 +231,102 @@ def test_oncoplot_gallery_runs_use_yaml_table_sources():
 
         loaded = load_oncoplot_params(CONFIG_PATH, key=f"gallery_params.plot_runs.{name}.params.oncoplot")
         assert isinstance(loaded["data"], pd.DataFrame), name
-        assert isinstance(loaded["tmb_data"], pd.DataFrame), name
+        if "tmb_data" in loaded:
+            assert isinstance(loaded["tmb_data"], pd.DataFrame), name
         if name in ONCOPLOT_CONFIG_RUNS_WITH_METADATA:
             assert isinstance(loaded["metadata"], pd.DataFrame), name
 
 
-def test_brca_large_gallery_sample_order_uses_mutation_rank():
-    genes = list(GALLERY_PRESETS["brca_large"].params["genes"])
-    mutations, metadata, _, _ = _load_brca()
-    order = _sample_order_by_mutation_rank(
-        mutations,
-        metadata,
-        sample_col="sample",
-        gene_col="gene",
-        genes=genes,
-    )
-    metadata_order = metadata.sort_values(["Subtype", "Classification", "ER_status", "sample"], kind="stable")[
-        "sample"
-    ].astype(str).tolist()
-    assert order != metadata_order
+def test_brca_large_oncoplot_config_keeps_all_metadata_samples_and_mutation_rank_order():
+    params = load_oncoplot_params(CONFIG_PATH, key="gallery_params.plot_runs.brca_large.params.oncoplot")
+    result = oncoplot(params=params)
+    try:
+        genes = list(params["include_genes"])
+        order = list(result.prepared_data.samples)
+        metadata_samples = params["metadata"]["sample"].astype(str).tolist()
+        metadata_order = params["metadata"].sort_values(["Subtype", "Classification", "ER_status", "sample"], kind="stable")[
+            "sample"
+        ].astype(str).tolist()
 
-    weights = {gene: 2 ** (len(genes) - index - 1) for index, gene in enumerate(genes)}
-    hits = (
-        mutations[mutations["gene"].isin(genes)]
-        .drop_duplicates(["sample", "gene"])
-        .groupby("sample")["gene"]
-        .apply(lambda values: sum(weights[gene] for gene in values.astype(str)))
-    )
-    scores = [int(hits.get(sample, 0)) for sample in order]
-    assert scores == sorted(scores, reverse=True)
-    assert scores[0] > scores[-1]
+        assert params["metadata_require_mutations"] is False
+        assert params["show_all_samples"] is True
+        assert len(order) == len(metadata_samples)
+        assert set(order) == set(metadata_samples)
+        assert order != metadata_order
+
+        weights = {gene: 2 ** (len(genes) - index - 1) for index, gene in enumerate(genes)}
+        hits = (
+            params["data"][params["data"]["gene"].isin(genes)]
+            .drop_duplicates(["sample", "gene"])
+            .groupby("sample")["gene"]
+            .apply(lambda values: sum(weights[gene] for gene in values.astype(str)))
+        )
+        scores = [int(hits.get(sample, 0)) for sample in order]
+        assert scores == sorted(scores, reverse=True)
+        assert scores[0] > scores[-1]
+    finally:
+        plt.close(result.figure)
 
 
-def test_brca_large_age_years_metadata_row_is_double_height():
-    columns = list(GALLERY_PRESETS["brca_large"].params["metadata_cols"])
-    row_starts, row_heights, total_height = _weighted_row_starts(columns, {"Age_years": 2.0})
+def test_oncoplot_config_covers_cssc_gbm_and_brca_gallery_behavior():
+    brca_params = GALLERY_PRESETS["brca_large"].params["oncoplot"]
+    cssc_params = GALLERY_PRESETS["cssc_compact"].params["oncoplot"]
+    gbm_params = GALLERY_PRESETS["gbm_clinical_molecular"].params["oncoplot"]
 
-    assert row_heights["Age_years"] == 2.0
-    assert all(row_heights[column] == 1.0 for column in columns if column != "Age_years")
-    assert total_height == len(columns) + 1
-    assert row_starts["Age_years"] == len(columns) - 1
+    assert "Age_years" in brca_params["metadata_cols"]
+    assert brca_params["options"]["metadata_numeric_plot_type"] == "bar"
+    assert "Multi_Hit" in cssc_params["palette"]
+    assert "Multi_Hit" in gbm_params["palette"]
+    assert gbm_params["metadata_cols"] == GALLERY_CONFIG["shared"]["gbm_tracks"]
+    assert gbm_params["options"]["metadata_position"] == "top"
 
 
 def test_multimodal_gallery_points_are_large_enough_for_exported_pngs():
-    assert MULTIMODAL_POINT_SIZE >= 64
-    assert MULTIMODAL_SELECTED_POINT_SIZE >= 140
-    assert MULTIMODAL_SELECTED_LINEWIDTH >= 1.8
+    params = GALLERY_PRESETS["multimodal_selection_with_lasso"].params
+    marker_style = params["marker_style"]
+    assert marker_style["point_size"] >= 64
+    assert marker_style["selected_point_size"] >= 140
+    assert marker_style["selected_linewidth"] >= 1.8
 
     reference_style = _multimodal_marker_style(
-        {"figure_size": [MULTIMODAL_REFERENCE_OUTPUT_WIDTH / 100, 15.2]},
+        {
+            "figure_size": [marker_style["reference_output_width"] / 100, 15.2],
+            "marker_style": marker_style,
+        },
         dpi=100,
     )
-    large_style = _multimodal_marker_style({"figure_size": [76.2, 52.04]}, dpi=100)
-    assert reference_style["point_size"] == MULTIMODAL_POINT_SIZE
-    assert large_style["point_size"] == MULTIMODAL_POINT_SIZE * MULTIMODAL_MAX_MARKER_SCALE**2
-    assert large_style["selected_point_size"] == MULTIMODAL_SELECTED_POINT_SIZE * MULTIMODAL_MAX_MARKER_SCALE**2
+    large_style = _multimodal_marker_style(
+        {
+            "figure_size": [76.2, 52.04],
+            "marker_style": marker_style,
+        },
+        dpi=100,
+    )
+    assert reference_style["point_size"] == marker_style["point_size"]
+    assert large_style["point_size"] == marker_style["point_size"] * marker_style["max_scale"] ** 2
+    assert large_style["selected_point_size"] == marker_style["selected_point_size"] * marker_style["max_scale"] ** 2
 
 
 def test_gallery_titles_use_python_branding_and_scale_for_large_exports():
-    small_options = _options_from_params(GALLERY_PRESETS["ggoncoplot_readme_small"].params)
-    large_options = _options_from_params(GALLERY_PRESETS["ggoncoplot_readme_basic"].params)
     configured_titles = {
-        name: str(preset.params["title"])
+        name: str(preset.params["oncoplot"]["options"]["title_text"])
         for name, preset in GALLERY_PRESETS.items()
-        if "title" in preset.params
+        if preset.renderer.__name__ == "render_oncoplot"
+        and "title_text" in preset.params["oncoplot"]["options"]
     }
 
     assert configured_titles["ggoncoplot_readme_small"] == "Pyoncoplot"
     assert configured_titles["ggoncoplot_readme_basic"] == "Pyoncoplot"
     assert configured_titles["ggoncoplot_readme_marginal"] == "Pyoncoplot"
     assert configured_titles["ggoncoplot_readme_metadata"] == "Pyoncoplot"
-    assert configured_titles["ggoncoplot_package_mark"] == "Pyoncoplot"
+    assert configured_titles["aml_metadata_unsorted"] == "customized_oncoplot_1.py"
+    assert GALLERY_PRESETS["ggoncoplot_package_mark"].params["title"] == "Pyoncoplot"
     assert not any("ggoncoplot" in title.lower() for title in configured_titles.values())
-    assert _readme_title_font_size(small_options) == 14
-    assert _readme_title_font_size(large_options) >= 47
-    assert _multimodal_title_font_size({"figure_size": [76.2, 52.04]}, dpi=100) >= 47
-    assert _multimodal_panel_title_font_size({"figure_size": [76.2, 52.04]}, dpi=100) >= 27
+    assert GALLERY_PRESETS["ggoncoplot_readme_small"].params["oncoplot"]["options"]["font_size_title"] == 14
+    assert GALLERY_PRESETS["ggoncoplot_readme_basic"].params["oncoplot"]["options"]["font_size_title"] >= 47
+    multimodal_params = GALLERY_PRESETS["multimodal_selection"].params
+    assert _multimodal_title_font_size(multimodal_params, dpi=100) >= 47
+    assert _multimodal_panel_title_font_size(multimodal_params, dpi=100) >= 27
 
 
 def test_gallery_presets_write_expected_png_dimensions(rendered_clean_gallery):

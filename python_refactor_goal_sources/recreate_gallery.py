@@ -18,9 +18,7 @@ import pandas as pd
 from PIL import Image, ImageDraw
 import yaml
 
-from pyoncoplot import OncoplotOptions, load_oncoplot_params, oncoplot
-from pyoncoplot._data import score_sample_by_gene_rank
-from pyoncoplot._params import merge_params
+from pyoncoplot import load_oncoplot_params, oncoplot
 
 
 GOAL_SOURCE_ROOT = Path(__file__).resolve().parent
@@ -28,13 +26,6 @@ REPO_ROOT = GOAL_SOURCE_ROOT.parent
 CONFIG_PATH = GOAL_SOURCE_ROOT / "config.yaml"
 GOAL_PLOTS = GOAL_SOURCE_ROOT / "goal_plots"
 INPUTS = GOAL_SOURCE_ROOT / "syntheitic_goal_data"
-
-MULTIMODAL_REFERENCE_OUTPUT_WIDTH = 2281
-MULTIMODAL_POINT_SIZE = 170
-MULTIMODAL_SELECTED_POINT_SIZE = 340
-MULTIMODAL_SELECTED_LINEWIDTH = 1.9
-MULTIMODAL_MAX_MARKER_SCALE = 3.0
-
 
 def _deep_merge(base: Mapping[str, Any], override: Mapping[str, Any]) -> dict[str, Any]:
     merged = dict(base)
@@ -65,91 +56,6 @@ GENERATED_ROOT = GOAL_SOURCE_ROOT / "generated_plots"
 CLEAN_OUT = _resolve_repo_path(OUTPUT_DIRS.get("clean", GENERATED_ROOT / "clean"))
 COMPARISON_OUT = _resolve_repo_path(OUTPUT_DIRS.get("comparison", GENERATED_ROOT / "comparison"))
 OUT = CLEAN_OUT
-
-ONCOPLOT_GALLERY_KEYS = {
-    "include_genes",
-    "include_genes_key",
-    "metadata_cols",
-    "metadata_sort_cols",
-    "metadata_sort_by",
-    "metadata_sort_desc",
-    "metadata_filter",
-    "oncoplot",
-    "options",
-    "save",
-    "sample_order_key",
-    "title",
-}
-
-BRCA_LARGE_KEYS = {
-    "genes",
-    "metadata_cols",
-    "metadata_legend_cols",
-    "sort_columns",
-    "figure_size",
-    "axes",
-    "save",
-    "tmb_scale",
-    "tmb_ymax_min",
-    "mutation_legend_limit",
-}
-
-CSSC_KEYS = {
-    "samples",
-    "genes",
-    "figure_size",
-    "axes",
-    "save",
-    "tmb_ymax_min",
-    "bar_xlim",
-    "bar_xticks",
-}
-
-GBM_KEYS = {
-    "tracks",
-    "genes",
-    "figure_size",
-    "axes",
-    "save",
-    "footer_text",
-    "legend_entries",
-}
-
-SV_KEYS = {
-    "samples",
-    "figure_size",
-    "save",
-    "depth_ylim",
-    "allele_ylim",
-}
-
-README_ONCOPLOT_KEYS = {
-    "include_genes",
-    "metadata_cols",
-    "metadata_sort_cols",
-    "metadata_sort_by",
-    "metadata_sort_desc",
-    "oncoplot",
-    "options",
-    "save",
-    "title",
-}
-
-PACKAGE_MARK_KEYS = {"figure_size", "save", "title"}
-
-COMPARISON_TABLE_KEYS = {"figure_size", "save", "title", "subtitle", "compact"}
-
-MULTIMODAL_KEYS = {
-    "figure_size",
-    "save",
-    "variant",
-    "genes",
-    "tracks",
-    "axes",
-    "title",
-    "show_lasso",
-    "selected_only_label",
-}
 
 
 @dataclass(frozen=True)
@@ -202,39 +108,39 @@ def _output_width(params: Mapping[str, Any], dpi: int) -> float:
 
 
 def _multimodal_marker_style(params: Mapping[str, Any], dpi: int) -> dict[str, float]:
+    marker_params = params.get("marker_style", {})
+    if not isinstance(marker_params, Mapping):
+        marker_params = {}
     output_width = _output_width(params, dpi)
-    scale = min(MULTIMODAL_MAX_MARKER_SCALE, max(1.0, output_width / MULTIMODAL_REFERENCE_OUTPUT_WIDTH))
+    reference_width = float(marker_params.get("reference_output_width", 2281))
+    max_scale = float(marker_params.get("max_scale", 3.0))
+    scale = min(max_scale, max(1.0, output_width / reference_width))
     return {
-        "point_size": MULTIMODAL_POINT_SIZE * scale**2,
-        "selected_point_size": MULTIMODAL_SELECTED_POINT_SIZE * scale**2,
-        "edge_linewidth": 0.35 * scale,
-        "selected_linewidth": MULTIMODAL_SELECTED_LINEWIDTH * scale,
+        "point_size": float(marker_params.get("point_size", 170)) * scale**2,
+        "selected_point_size": float(marker_params.get("selected_point_size", 340)) * scale**2,
+        "edge_linewidth": float(marker_params.get("edge_linewidth", 0.35)) * scale,
+        "selected_linewidth": float(marker_params.get("selected_linewidth", 1.9)) * scale,
     }
 
 
 def _multimodal_title_font_size(params: Mapping[str, Any], dpi: int) -> float:
-    return max(14, min(52, _output_width(params, dpi) / 160))
+    title_params = params.get("title_style", {})
+    if not isinstance(title_params, Mapping):
+        title_params = {}
+    minimum = float(title_params.get("min_font_size", 14))
+    maximum = float(title_params.get("max_font_size", 52))
+    width_divisor = float(title_params.get("width_divisor", 160))
+    return max(minimum, min(maximum, _output_width(params, dpi) / width_divisor))
 
 
 def _multimodal_panel_title_font_size(params: Mapping[str, Any], dpi: int) -> float:
-    return max(9, min(30, _output_width(params, dpi) / 280))
-
-
-def _options_from_params(params: Mapping[str, Any]) -> OncoplotOptions:
-    options = params.get("options")
-    if options is None and isinstance(params.get("oncoplot"), Mapping):
-        options = params["oncoplot"].get("options")
-    if options is None:
-        options = {}
-    if isinstance(options, OncoplotOptions):
-        return options
-    if not isinstance(options, Mapping):
-        raise TypeError("gallery options must be a mapping or OncoplotOptions instance.")
-    return OncoplotOptions(**dict(options))
-
-
-def _readme_title_font_size(options: OncoplotOptions) -> float:
-    return max(14, options.font_size_genes * 1.25)
+    title_params = params.get("panel_title_style", {})
+    if not isinstance(title_params, Mapping):
+        title_params = {}
+    minimum = float(title_params.get("min_font_size", 9))
+    maximum = float(title_params.get("max_font_size", 30))
+    width_divisor = float(title_params.get("width_divisor", 280))
+    return max(minimum, min(maximum, _output_width(params, dpi) / width_divisor))
 
 
 def _axes_from_params(params: Mapping[str, Any], required: Sequence[str]) -> dict[str, Sequence[float]]:
@@ -245,35 +151,6 @@ def _axes_from_params(params: Mapping[str, Any], required: Sequence[str]) -> dic
     if missing:
         raise ValueError(f"Missing configured axes: {', '.join(missing)}.")
     return dict(axes)
-
-
-def _brca_metadata_palette() -> Mapping[str, Mapping[str, str]]:
-    return {
-        "Subtype": {
-            "HR+/HER2-": "#E41A1C",
-            "HR-/HER2+": "#377EB8",
-            "HR+/HER2+": "#F781BF",
-            "HR-/HER2-": "#A65628",
-        },
-        "ER_status": {"Positive": "#4DAF4A", "Negative": "#FFFFFF"},
-        "PR_status": {"Positive": "#4DAF4A", "Negative": "#FFFFFF"},
-        "HER2_status": {"Positive": "#377EB8", "Negative": "#FFFFFF"},
-        "Age": {"<=50": "#3366CC", ">50": "#99CCFF"},
-        "Menopause": {"Premenopausal": "#D95F02", "Postmenopausal": "#F2C16B"},
-        "LN_stage": {"Positive": "#6A00D4", "Negative": "#FFFFFF"},
-        "Grade": {"I": "#B7F7C0", "II": "#66C2A5", "III": "#4D8F77", "Unknown": "#CFCFCF"},
-        "TNM_stage": {"I": "#B7F7C0", "II": "#7DDB82", "III": "#4DAF4A", "IV": "#1B7837"},
-        "Histological_type": {
-            "Infiltrating Ductal Carcinoma": "#7B61B4",
-            "Infiltrating Lobular Carcinoma": "#D6B3E6",
-            "Others": "#B8DE6F",
-        },
-        "Classification": {
-            "Ambiguous": "#D9D9D9",
-            "Not Triple Negative": "#FF1A1A",
-            "Triple Negative": "#000000",
-        },
-    }
 
 
 def _filter_aml_inputs(
@@ -318,61 +195,6 @@ def _filter_aml_oncoplot_params(
     return filtered
 
 
-def _load_brca():
-    mutations = _read_tsv(_input_file("brca", "mutations"))
-    metadata = _read_tsv(_input_file("brca", "metadata"))
-    for column in metadata.columns:
-        if column not in {"sample", "Age_years"}:
-            metadata[column] = metadata[column].astype(str)
-    tmb = _read_tsv(_input_file("brca", "tmb"))
-    palette = _read_palette(_input_file("brca", "palette"))
-    return mutations, metadata, tmb, palette
-
-
-def _sample_order_by_mutation_rank(
-    mutations: pd.DataFrame,
-    metadata: pd.DataFrame,
-    *,
-    sample_col: str,
-    gene_col: str,
-    genes: Sequence[str],
-) -> list[str]:
-    selected = mutations[mutations[gene_col].astype(str).isin([str(gene) for gene in genes])].copy()
-    if selected.empty:
-        ranked_samples: list[str] = []
-    else:
-        rank_values = list(range(len(genes), 0, -1))
-        scores = selected.groupby(sample_col, sort=False)[gene_col].apply(
-            lambda values: score_sample_by_gene_rank(values.astype(str), list(genes), rank_values)
-        )
-        ranked_samples = scores.sort_values(ascending=False, kind="mergesort").index.astype(str).tolist()
-
-    ordered: list[str] = []
-    seen: set[str] = set()
-    for sample in (
-        ranked_samples
-        + mutations[sample_col].astype(str).drop_duplicates().tolist()
-        + metadata[sample_col].astype(str).drop_duplicates().tolist()
-    ):
-        if sample not in seen:
-            seen.add(sample)
-            ordered.append(sample)
-    return ordered
-
-
-def _load_cssc():
-    return (
-        _read_tsv(_input_file("cssc", "mutations")),
-        _read_tsv(_input_file("cssc", "tmb")),
-        _read_palette(_input_file("cssc", "palette")),
-    )
-
-
-def _load_gbm():
-    palette = _read_palette(_input_file("gbm", "palette"))
-    return _read_tsv(_input_file("gbm", "tracks")), _read_tsv(_input_file("gbm", "events")), palette
-
-
 def _load_readme():
     mutations = _read_tsv(_input_file("readme", "mutations"))
     metadata = _read_tsv(_input_file("readme", "metadata"))
@@ -407,28 +229,6 @@ def _group_events(events: pd.DataFrame, sample_col: str = "sample", gene_col: st
     return grouped
 
 
-def _draw_alteration_glyph(ax, x: float, y: float, alteration: str, palette: Mapping[str, str], linewidth: float = 1.8) -> None:
-    from matplotlib.patches import Rectangle
-
-    color = palette.get(alteration, "#111111")
-    if alteration == "missense_variant":
-        ax.add_patch(Rectangle((x + 0.32, y + 0.08), 0.32, 0.84, facecolor=color, edgecolor="none"))
-    elif alteration == "synonymous_variant":
-        ax.add_patch(Rectangle((x + 0.08, y + 0.47), 0.84, 0.11, facecolor=color, edgecolor="none"))
-    elif alteration == "stop_gained":
-        ax.add_patch(Rectangle((x + 0.12, y + 0.22), 0.76, 0.22, facecolor=color, edgecolor="none"))
-    elif alteration == "complex_substitution":
-        ax.plot([x + 0.08, x + 0.92], [y + 0.86, y + 0.08], color=color, linewidth=linewidth, solid_capstyle="butt")
-    elif alteration == "splice_site_variant":
-        ax.add_patch(Rectangle((x + 0.36, y + 0.12), 0.28, 0.28, facecolor=color, edgecolor="none"))
-    elif alteration == "frameshift_truncation":
-        ax.add_patch(Rectangle((x + 0.22, y + 0.18), 0.56, 0.60, facecolor=color, edgecolor="none"))
-    elif alteration == "inframe_deletion":
-        ax.plot([x + 0.08, x + 0.88], [y + 0.88, y + 0.12], color=color, linewidth=linewidth, solid_capstyle="butt")
-    else:
-        ax.add_patch(Rectangle((x + 0.18, y + 0.18), 0.64, 0.64, facecolor=color, edgecolor="none"))
-
-
 def _draw_split_tile(ax, x: float, y: float, alterations: Sequence[str], palette: Mapping[str, str], default_color: str = "#1A1A1A") -> None:
     from matplotlib.patches import Rectangle
 
@@ -448,344 +248,23 @@ def _draw_split_tile(ax, x: float, y: float, alterations: Sequence[str], palette
         )
 
 
-def _manual_legend(ax, title: str, entries: Sequence[tuple[str, str]], x: float, y: float, step: float = 0.04, fontsize: float = 8) -> float:
-    from matplotlib.patches import Rectangle
+# Generates all config-backed oncoplot gallery presets.
+def render_oncoplot(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None) -> None:
+    import matplotlib.pyplot as plt
 
-    ax.text(x, y, title, fontsize=fontsize + 1, weight="bold", ha="left", va="top")
-    y -= step * 0.9
-    for label, color in entries:
-        ax.add_patch(Rectangle((x, y - step * 0.42), 0.035, step * 0.6, facecolor=color, edgecolor="#333333", linewidth=0.4))
-        ax.text(x + 0.045, y - step * 0.1, label, fontsize=fontsize, ha="left", va="center")
-        y -= step
-    return y - step * 0.45
-
-
-def _weighted_row_starts(columns: Sequence[str], weights: Mapping[str, float]) -> tuple[dict[str, float], dict[str, float], float]:
-    row_heights = {column: float(weights.get(column, 1.0)) for column in columns}
-    row_starts: dict[str, float] = {}
-    y_cursor = 0.0
-    for column in columns:
-        row_starts[column] = y_cursor
-        y_cursor += row_heights[column]
-    return row_starts, row_heights, y_cursor
-
-
-# Generates gen.goal_plot_18.png from the AML basic oncoplot preset.
-def render_aml_basic(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
-    merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml_basic gallery", **kwargs)
-    oncoplot_params = _load_run_oncoplot_params(run_name)
-    result = oncoplot(params=oncoplot_params)
-    _save_exact(result, output_path, dpi=_save_dpi(merged, default=120))
-
-
-# Generates gen.goal_plot_19.png, gen.goal_plot_20.png, and gen.goal_plot_22.png.
-def render_aml_metadata(
-    output_path: Path,
-    sort_metadata: bool = False,
-    *,
-    params: Optional[Mapping[str, Any]] = None,
-    run_name: Optional[str] = None,
-    **kwargs: Any,
-) -> None:
-    extra_kwargs = dict(kwargs)
-    if sort_metadata:
-        extra_kwargs.setdefault("metadata_sort_cols", ["FAB_classification"])
-    merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="aml metadata gallery", **extra_kwargs)
+    merged = dict(params or {})
     oncoplot_params = _filter_aml_oncoplot_params(
         _load_run_oncoplot_params(run_name),
         merged.get("metadata_filter"),
     )
-    if sort_metadata:
-        oncoplot_params["metadata_sort_cols"] = extra_kwargs["metadata_sort_cols"]
-        oncoplot_params.pop("sample_order", None)
     result = oncoplot(params=oncoplot_params)
-    result.figure.suptitle(str(merged.get("title", output_path.stem + ".py")), fontweight="bold", y=0.98)
-    _save_exact(result, output_path, dpi=_save_dpi(merged, default=120))
-
-
-# Generates gen.goal_plot_1.png from the large BRCA gallery preset.
-def render_brca_large(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
-    _render_brca_large_static(output_path, params=params, **kwargs)
-
-
-def _render_brca_large_static(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
-
-    merged = merge_params(params, allowed_keys=BRCA_LARGE_KEYS, context="brca_large gallery", **kwargs)
-    mutations, metadata, tmb, palette = _load_brca()
-    metadata_palette = _brca_metadata_palette()
-    genes = list(merged["genes"])
-    samples = _sample_order_by_mutation_rank(
-        mutations,
-        metadata,
-        sample_col="sample",
-        gene_col="gene",
-        genes=genes,
-    )
-    grouped = _group_events(
-        mutations[mutations["gene"].isin(genes)].rename(columns={"mutation_type": "alteration"}),
-        type_col="alteration",
-    )
-    axes_config = _axes_from_params(merged, ["tmb", "main", "gene", "metadata", "legend"])
-    fig = plt.figure(figsize=tuple(merged["figure_size"]))
-    ax_tmb = fig.add_axes(axes_config["tmb"])
-    ax_main = fig.add_axes(axes_config["main"])
-    ax_gene = fig.add_axes(axes_config["gene"])
-    ax_meta = fig.add_axes(axes_config["metadata"])
-    ax_legend = fig.add_axes(axes_config["legend"])
-    ax_legend.axis("off")
-
-    x_positions = np.arange(len(samples))
-    bottoms = np.zeros(len(samples))
-    type_col = "mutation_type"
-    tmb_scale = float(merged.get("tmb_scale", 1.0))
-    for mutation_type, group in tmb.groupby(type_col, dropna=False, sort=False):
-        values = (
-            group.groupby("sample", observed=False)["mutations"]
-            .sum()
-            .reindex(samples, fill_value=0)
-            .to_numpy(dtype=float)
-            * tmb_scale
-        )
-        color = "#4D4D4D" if pd.isna(mutation_type) else palette.get(str(mutation_type), "#4D4D4D")
-        ax_tmb.bar(x_positions, values, bottom=bottoms, width=1.0, color=color, linewidth=0)
-        bottoms += values
-    ymax = max(float(bottoms.max()) * 1.05, float(merged.get("tmb_ymax_min", 100)))
-    ax_tmb.set_xlim(-0.5, len(samples) - 0.5)
-    ax_tmb.set_ylim(0, ymax)
-    ax_tmb.set_ylabel("No. of\nMutations", fontsize=24)
-    ax_tmb.set_xticks([])
-    ax_tmb.tick_params(axis="y", labelsize=16)
-    ax_tmb.spines[["top", "right"]].set_visible(False)
-
-    for y, gene in enumerate(genes):
-        for x, sample in enumerate(samples):
-            ax_main.add_patch(Rectangle((x, y), 1, 1, facecolor="#D7D7D7", edgecolor="white", linewidth=0.10))
-            _draw_split_tile(ax_main, x, y, grouped.get((sample, gene), []), palette)
-    ax_main.set_xlim(0, len(samples))
-    ax_main.set_ylim(0, len(genes))
-    ax_main.invert_yaxis()
-    ax_main.set_xticks([])
-    ax_main.set_yticks(np.arange(len(genes)) + 0.5)
-    ax_main.set_yticklabels(genes, fontsize=30, fontstyle="italic")
-    ax_main.tick_params(axis="y", length=0)
-    for spine in ax_main.spines.values():
-        spine.set_visible(False)
-
-    count_by_gene_type = (
-        mutations[mutations["gene"].isin(genes)]
-        .drop_duplicates(["sample", "gene", "mutation_type"])
-        .groupby(["gene", "mutation_type"], observed=False)
-        .size()
-        .rename("count")
-        .reset_index()
-    )
-    left = np.zeros(len(genes))
-    max_total = 1
-    for mutation_type, group in count_by_gene_type.groupby("mutation_type", sort=False):
-        counts = group.set_index("gene")["count"].reindex(genes, fill_value=0).to_numpy(dtype=float)
-        ax_gene.barh(np.arange(len(genes)) + 0.5, counts, left=left, height=0.70, color=palette.get(str(mutation_type), "#1A1A1A"))
-        left += counts
-        max_total = max(max_total, int(left.max()))
-    for y, total in enumerate(left):
-        ax_gene.text(total + max_total * 0.04, y + 0.5, f"{total / max(len(samples), 1) * 100:.0f}%", va="center", fontsize=19)
-    ax_gene.set_xlim(0, max_total * 1.35)
-    ax_gene.set_ylim(0, len(genes))
-    ax_gene.invert_yaxis()
-    ax_gene.set_yticks([])
-    ax_gene.xaxis.set_ticks_position("top")
-    ax_gene.tick_params(axis="x", labelsize=14)
-    ax_gene.spines[["left", "right", "bottom"]].set_visible(False)
-
-    meta_cols = list(merged["metadata_cols"])
-    metadata_indexed = metadata.set_index("sample")
-    row_starts, row_heights, total_metadata_height = _weighted_row_starts(meta_cols, {"Age_years": 2.0})
-    ax_meta.set_xlim(0, len(samples))
-    ax_meta.set_ylim(0, total_metadata_height)
-    ax_meta.invert_yaxis()
-    for column in meta_cols:
-        y = row_starts[column]
-        row_height = row_heights[column]
-        values = metadata_indexed[column].reindex(samples)
-        if pd.api.types.is_numeric_dtype(values):
-            min_value = float(values.min())
-            max_value = float(values.max())
-            span = max(max_value - min_value, 1e-9)
-            ax_meta.add_patch(Rectangle((0, y), len(samples), row_height, facecolor="#F4F4F4", edgecolor="white", linewidth=0))
-            for x, value in enumerate(values):
-                frac = (float(value) - min_value) / span
-                ax_meta.add_patch(Rectangle((x, y + row_height * (1 - frac)), 1, row_height * frac, facecolor="#7F7F7F", edgecolor="white", linewidth=0.04))
-            continue
-        column_palette = metadata_palette.get(column, {})
-        for x, value in enumerate(values.astype(str)):
-            ax_meta.add_patch(Rectangle((x, y), 1, row_height, facecolor=column_palette.get(value, "#D9D9D9"), edgecolor="white", linewidth=0.04))
-    ax_meta.set_yticks([row_starts[column] + row_heights[column] / 2 for column in meta_cols])
-    ax_meta.set_yticklabels(meta_cols, fontsize=20)
-    ax_meta.set_xticks([])
-    ax_meta.tick_params(axis="y", length=0)
-    for spine in ax_meta.spines.values():
-        spine.set_visible(False)
-
-    used_mutation_types = [name for name in palette if name in set(mutations["mutation_type"].astype(str))]
-    mutation_limit = int(merged.get("mutation_legend_limit", 9))
-    y_cursor = _manual_legend(ax_legend, "Mutation", [(name, palette[name]) for name in used_mutation_types[:mutation_limit]], 0.0, 0.98, step=0.032, fontsize=13)
-    for column in merged["metadata_legend_cols"]:
-        entries = list(metadata_palette[column].items())
-        y_cursor = _manual_legend(ax_legend, column, entries, 0.0, y_cursor, step=0.033, fontsize=12)
-    _manual_legend(ax_legend, "Age_years", [("28-90", "#7F7F7F")], 0.0, y_cursor, step=0.033, fontsize=12)
-    fig.savefig(output_path, dpi=_save_dpi(merged, default=120))
-    plt.close(fig)
-
-
-# Generates gen.goal_plot_15.png from the compact BRCA gallery preset.
-def render_brca_compact_complex(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
-    merged = merge_params(params, allowed_keys=ONCOPLOT_GALLERY_KEYS, context="brca compact gallery", **kwargs)
-    result = oncoplot(params=_load_run_oncoplot_params(run_name))
-    _save_exact(result, output_path, dpi=_save_dpi(merged, default=100))
-
-
-# Generates gen.goal_plot_16.png from the compact CSSC gallery preset.
-def render_cssc_compact(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
-
-    merged = merge_params(params, allowed_keys=CSSC_KEYS, context="cssc gallery", **kwargs)
-    mutations, tmb, palette = _load_cssc()
-    samples = list(merged["samples"])
-    genes = list(merged["genes"])
-    grouped = _group_events(mutations)
-    axes_config = _axes_from_params(merged, ["tmb", "main", "bar", "legend"])
-    fig = plt.figure(figsize=tuple(merged["figure_size"]))
-    ax_tmb = fig.add_axes(axes_config["tmb"])
-    ax_main = fig.add_axes(axes_config["main"])
-    ax_bar = fig.add_axes(axes_config["bar"])
-    ax_legend = fig.add_axes(axes_config["legend"])
-    ax_legend.axis("off")
-
-    bottoms = np.zeros(len(samples))
-    for alteration, group in tmb.groupby("alteration", sort=False):
-        values = (
-            group.groupby("sample", observed=False)["mutations"]
-            .sum()
-            .reindex(samples, fill_value=0)
-            .to_numpy(dtype=float)
-        )
-        ax_tmb.bar(np.arange(len(samples)), values, bottom=bottoms, color=palette.get(str(alteration), "#111111"), width=0.62, linewidth=0)
-        bottoms += values
-    ax_tmb.set_xlim(-0.5, len(samples) - 0.5)
-    ax_tmb.set_ylim(0, max(float(merged.get("tmb_ymax_min", 15)), float(bottoms.max()) * 1.15))
-    ax_tmb.set_xticks([])
-    ax_tmb.tick_params(axis="y", labelsize=8)
-    ax_tmb.spines[["top", "right"]].set_visible(False)
-
-    for y, gene in enumerate(genes):
-        gene_samples = mutations.loc[mutations["gene"] == gene, "sample"].nunique()
-        ax_main.text(-0.14, y + 0.5, f"{gene_samples / len(samples) * 100:.0f}%", ha="right", va="center", fontsize=22)
-        for x, sample in enumerate(samples):
-            ax_main.add_patch(Rectangle((x, y), 1, 1, facecolor="#C9C9C9", edgecolor="white", linewidth=0.55))
-            for alteration in grouped.get((sample, gene), []):
-                _draw_alteration_glyph(ax_main, x, y, alteration, palette, linewidth=1.6)
-    ax_main.set_xlim(0, len(samples))
-    ax_main.set_ylim(0, len(genes))
-    ax_main.invert_yaxis()
-    ax_main.set_xticks(np.arange(len(samples)) + 0.5)
-    ax_main.set_xticklabels(samples, rotation=90, fontsize=20, ha="right", va="center", rotation_mode="anchor")
-    ax_main.set_yticks(np.arange(len(genes)) + 0.5)
-    ax_main.set_yticklabels(genes, fontsize=22, fontstyle="italic")
-    ax_main.yaxis.tick_right()
-    ax_main.tick_params(axis="x", length=0)
-    ax_main.tick_params(axis="y", length=0, pad=8)
-    for spine in ax_main.spines.values():
-        spine.set_visible(False)
-
-    y_positions = np.arange(len(genes)) + 0.5
-    left = np.zeros(len(genes))
-    for alteration, group in mutations.drop_duplicates(["sample", "gene", "alteration"]).groupby("alteration", sort=False):
-        counts = group.groupby("gene", observed=False).size().reindex(genes, fill_value=0).to_numpy(dtype=float)
-        ax_bar.barh(y_positions, counts, left=left, color=palette.get(str(alteration), "#111111"), height=0.65)
-        left += counts
-    ax_bar.set_xlim(*merged.get("bar_xlim", [0, 30]))
-    ax_bar.set_ylim(0, len(genes))
-    ax_bar.invert_yaxis()
-    ax_bar.xaxis.set_ticks_position("top")
-    ax_bar.set_xticks(list(merged.get("bar_xticks", [0, 10, 20, 30])))
-    ax_bar.tick_params(axis="x", labelsize=8)
-    ax_bar.set_yticks([])
-    ax_bar.spines[["left", "right", "bottom"]].set_visible(False)
-
-    ax_legend.text(0.0, 0.98, "Alterations", fontsize=15, weight="bold", va="top")
-    y_cursor = 0.84
-    for label, color in palette.items():
-        ax_legend.add_patch(Rectangle((0.0, y_cursor - 0.027), 0.055, 0.054, facecolor=color, edgecolor="#333333", linewidth=0.4))
-        ax_legend.text(0.075, y_cursor, label, fontsize=12, va="center")
-        y_cursor -= 0.095
-    ax_legend.set_xlim(0, 1)
-    ax_legend.set_ylim(0, 1)
-    fig.savefig(output_path, dpi=_save_dpi(merged, default=100))
-    plt.close(fig)
-
-
-# Generates gen.goal_plot_14.png and gen.goal_plot_17.png from GBM presets.
-def render_gbm_clinical_molecular(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
-
-    merged = merge_params(params, allowed_keys=GBM_KEYS, context="gbm gallery", **kwargs)
-    tracks, events, palette = _load_gbm()
-    track_palette = palette["tracks"]
-    alteration_palette = palette["alterations"]
-    samples = tracks["sample"].astype(str).tolist()
-    grouped = _group_events(events)
-    tracks_indexed = tracks.set_index("sample")
-    track_rows = list(merged["tracks"])
-    genes = list(merged["genes"])
-    axes_config = _axes_from_params(merged, ["tracks", "main", "legend"])
-
-    fig = plt.figure(figsize=tuple(merged["figure_size"]))
-    ax_tracks = fig.add_axes(axes_config["tracks"])
-    ax_main = fig.add_axes(axes_config["main"])
-    ax_legend = fig.add_axes(axes_config["legend"])
-    ax_legend.axis("off")
-
-    for y, track in enumerate(track_rows):
-        for x, sample in enumerate(samples):
-            value = str(tracks_indexed.loc[sample, track])
-            ax_tracks.add_patch(Rectangle((x, y), 1, 1, facecolor=track_palette.get(value, "#FFFFFF"), edgecolor="#111111", linewidth=0.18))
-    ax_tracks.set_xlim(0, len(samples))
-    ax_tracks.set_ylim(0, len(track_rows))
-    ax_tracks.invert_yaxis()
-    ax_tracks.set_xticks([])
-    ax_tracks.set_yticks(np.arange(len(track_rows)) + 0.5)
-    ax_tracks.set_yticklabels(track_rows, fontsize=7)
-    ax_tracks.tick_params(axis="y", length=0)
-
-    for y, gene in enumerate(genes):
-        for x, sample in enumerate(samples):
-            ax_main.add_patch(Rectangle((x, y), 1, 1, facecolor="#FFFFFF", edgecolor="#1A1A1A", linewidth=0.18))
-            _draw_split_tile(ax_main, x, y, grouped.get((sample, gene), []), alteration_palette, default_color="#1E355C")
-    ax_main.set_xlim(0, len(samples))
-    ax_main.set_ylim(0, len(genes))
-    ax_main.invert_yaxis()
-    ax_main.set_xticks([])
-    ax_main.set_yticks(np.arange(len(genes)) + 0.5)
-    ax_main.set_yticklabels(genes, fontsize=7)
-    ax_main.tick_params(axis="y", length=0)
-    ax_main.text(len(samples) - 1, len(genes) + 1.0, str(merged["footer_text"]), fontsize=7, ha="right")
-
-    legend_entries = [(label, track_palette[label]) for label in merged["legend_entries"]]
-    x_cursor = 0.00
-    y_rows = [0.68, 0.20]
-    for index, (label, color) in enumerate(legend_entries):
-        row = 0 if index < 4 else 1
-        col_index = index if index < 4 else index - 4
-        x_cursor = 0.01 + col_index * 0.24
-        ax_legend.add_patch(Rectangle((x_cursor, y_rows[row] - 0.12), 0.018, 0.22, facecolor=color, edgecolor="#333333", linewidth=0.35))
-        ax_legend.text(x_cursor + 0.024, y_rows[row], label, fontsize=8.5, va="center")
-    ax_legend.set_xlim(0, 1)
-    ax_legend.set_ylim(0, 1)
-    fig.savefig(output_path, dpi=_save_dpi(merged, default=100))
-    plt.close(fig)
+    dpi = _save_dpi(merged, default=120)
+    options = oncoplot_params.get("options", {})
+    if result.backend == "matplotlib" and isinstance(options, Mapping):
+        result.figure.set_size_inches(float(options["width"]) / dpi, float(options["height"]) / dpi, forward=True)
+    _save_exact(result, output_path, dpi=dpi)
+    if result.backend == "matplotlib":
+        plt.close(result.figure)
 
 
 # Generates gen.goal_plot_21.png from the structural variation panel preset.
@@ -793,7 +272,7 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
 
-    merged = merge_params(params, allowed_keys=SV_KEYS, context="sv gallery", **kwargs)
+    merged = {**dict(params or {}), **kwargs}
     depth = _read_tsv(_input_file("sv", "depth"))
     allele = _read_tsv(_input_file("sv", "allele_fraction"))
     gene_models = _read_tsv(_input_file("sv", "gene_models"))
@@ -834,30 +313,12 @@ def render_sv_panel(output_path: Path, *, params: Optional[Mapping[str, Any]] = 
     plt.close(fig)
 
 
-# Generates gen.goal_plot_2.png through gen.goal_plot_5.png from README presets.
-def render_readme_oncoplot(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, run_name: Optional[str] = None, **kwargs: Any) -> None:
-    merged = merge_params(params, allowed_keys=README_ONCOPLOT_KEYS, context="readme oncoplot gallery", **kwargs)
-    oncoplot_params = _load_run_oncoplot_params(run_name)
-    render_options = _options_from_params(oncoplot_params)
-    result = oncoplot(params=oncoplot_params)
-    if merged.get("title"):
-        result.figure.suptitle(
-            str(merged["title"]),
-            y=0.985,
-            fontsize=_readme_title_font_size(render_options),
-            fontweight="bold",
-        )
-    dpi = _save_dpi(merged, default=120)
-    result.figure.set_size_inches(render_options.width / dpi, render_options.height / dpi, forward=True)
-    _save_exact(result, output_path, dpi=dpi)
-
-
 # Generates gen.goal_plot_6.png from the package mark preset.
 def render_package_mark(output_path: Path, *, params: Optional[Mapping[str, Any]] = None, **kwargs: Any) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Circle, Rectangle
 
-    merged = merge_params(params, allowed_keys=PACKAGE_MARK_KEYS, context="package mark gallery", **kwargs)
+    merged = {**dict(params or {}), **kwargs}
     dpi = _save_dpi(merged, default=120)
     fig = plt.figure(figsize=tuple(merged["figure_size"]))
     ax = fig.add_axes([0, 0, 1, 1])
@@ -883,7 +344,7 @@ def render_interactive_snapshot(output_path: Path, *, params: Optional[Mapping[s
     import matplotlib.pyplot as plt
     from matplotlib.patches import FancyBboxPatch, Rectangle
 
-    merged = merge_params(params, allowed_keys=MULTIMODAL_KEYS, context="interactive snapshot gallery", **kwargs)
+    merged = {**dict(params or {}), **kwargs}
     dpi = _save_dpi(merged, default=100)
     mutations, metadata, _tmb, palette = _load_readme()
     samples = metadata.sort_values(["Subtype", "sample"])["sample"].astype(str).tolist()[:48]
@@ -938,7 +399,7 @@ def render_comparison_table(output_path: Path, *, params: Optional[Mapping[str, 
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
 
-    merged = merge_params(params, allowed_keys=COMPARISON_TABLE_KEYS, context="comparison table gallery", **kwargs)
+    merged = {**dict(params or {}), **kwargs}
     table = _load_comparison_table()
     dpi = _save_dpi(merged, default=100)
     fig = plt.figure(figsize=tuple(merged["figure_size"]))
@@ -979,7 +440,7 @@ def render_lasso_scatter(output_path: Path, *, params: Optional[Mapping[str, Any
     import matplotlib.pyplot as plt
     from matplotlib.patches import Polygon
 
-    merged = merge_params(params, allowed_keys=MULTIMODAL_KEYS, context="lasso scatter gallery", **kwargs)
+    merged = {**dict(params or {}), **kwargs}
     _samples, points, _events, _clinical, selection, palette = _load_multimodal()
     dpi = _save_dpi(merged, default=100)
     fig = plt.figure(figsize=tuple(merged["figure_size"]))
@@ -1023,7 +484,7 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
     import matplotlib.pyplot as plt
     from matplotlib.patches import Polygon, Rectangle
 
-    merged = merge_params(params, allowed_keys=MULTIMODAL_KEYS, context="multimodal panel gallery", **kwargs)
+    merged = {**dict(params or {}), **kwargs}
     _samples, points, events, clinical, selection, palette = _load_multimodal()
     dpi = _save_dpi(merged, default=100)
     marker_style = _multimodal_marker_style(merged, dpi)
@@ -1104,28 +565,14 @@ def render_multimodal_panel(output_path: Path, *, params: Optional[Mapping[str, 
 
 
 RENDERERS: Dict[str, Callable[..., None]] = {
-    "aml_basic": render_aml_basic,
-    "aml_metadata": render_aml_metadata,
-    "brca_large": render_brca_large,
-    "brca_compact_complex": render_brca_compact_complex,
-    "cssc_compact": render_cssc_compact,
-    "gbm_clinical_molecular": render_gbm_clinical_molecular,
+    "oncoplot": render_oncoplot,
     "sv_panel": render_sv_panel,
-    "readme_oncoplot": render_readme_oncoplot,
     "package_mark": render_package_mark,
     "interactive_snapshot": render_interactive_snapshot,
     "comparison_table": render_comparison_table,
     "lasso_scatter": render_lasso_scatter,
     "multimodal_panel": render_multimodal_panel,
 }
-
-CONFIG_BACKED_ONCOPLOT_RENDERERS = {
-    render_aml_basic,
-    render_aml_metadata,
-    render_brca_compact_complex,
-    render_readme_oncoplot,
-}
-
 
 def _configured_runs() -> dict[str, dict[str, Any]]:
     defaults = GALLERY_CONFIG.get("default_params", {})
@@ -1191,7 +638,7 @@ def render_preset(name: str, out_dir: Optional[Path] = None, style: str = "clean
     out_dir.mkdir(parents=True, exist_ok=True)
     preset = GALLERY_PRESETS[name]
     output_path = out_dir / preset.output_name
-    if preset.renderer in CONFIG_BACKED_ONCOPLOT_RENDERERS:
+    if preset.renderer is render_oncoplot:
         preset.renderer(output_path, params=preset.params, run_name=name)
     else:
         preset.renderer(output_path, params=preset.params)

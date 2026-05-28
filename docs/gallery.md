@@ -7,8 +7,11 @@ untouched.
 Runtime choices live in `python_refactor_goal_sources/config.yaml` under the
 `gallery_params` block. The script loads that YAML once, merges `default_params`
 into named `plot_runs`, skips runs with `run: false`, and dispatches through a
-small renderer registry. Input filenames are also declared there under
-`gallery_params.input_files`; the loader functions read the TSV/JSON files from
+small renderer registry. Oncoplot-style presets use the generic
+`renderer: oncoplot` path and keep public `oncoplot()` params under
+`params.oncoplot`, including table sources, titles, subplot labels, legends, and
+layout options. Input filenames are also declared there under
+`gallery_params.input_files`; custom renderers read the TSV/JSON files from
 those configured names.
 
 ## Render The Clean Gallery
@@ -107,14 +110,21 @@ gallery_params:
   plot_runs:
     brca_large:
       run: true
-      renderer: brca_large
+      renderer: oncoplot
       style: clean
       output_name: gen.goal_plot_1.png
       goal_plot: goal_plot_1.png
       expected_size: [3600, 1800]
       params:
-        genes: [PIK3CA, TP53, CDH1]
-        metadata_cols: [PR_status, ER_status]
+        oncoplot:
+          data: {path: syntheitic_goal_data/brca_mutations.tsv, sep: "\t"}
+          gene_col: gene
+          sample_col: sample
+          mutation_type_col: mutation_type
+          include_genes: [PIK3CA, TP53, CDH1]
+          options:
+            width: 3600
+            height: 1800
 ```
 
 Generated outputs keep the numbered naming convention:
