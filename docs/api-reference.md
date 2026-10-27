@@ -382,3 +382,7 @@ assert_palette_is_sensible(palette, mutations["mutation_type"])
 See [empty rows, cell states, and external row summaries](examples/cell-states.md) for
 `preserve_empty_genes`, `cell_states`, `cell_state_palette`, `gene_denominators`, `row_summaries`, including explicit denominator rules
 and a runnable synthetic example for both rendering backends.
+
+## Source dictionaries and cohort filtering
+
+See [metadata dictionaries](examples/metadata-dictionary.md): options.metadata_styles controls source-scoped labels/layout; top-level metadata_filters and metadata_filter_mode explicitly select an analysis cohort while retaining supplied reference denominators.

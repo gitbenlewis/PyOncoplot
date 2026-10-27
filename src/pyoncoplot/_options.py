@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
+from copy import deepcopy
+from numbers import Number
 import math
 from collections.abc import Mapping
 from typing import Any, Callable, Literal, Optional, Sequence
@@ -149,7 +151,42 @@ class OncoplotOptions:
     metadata_legend_order: Optional[Sequence[str]] = None
     metadata_legend_alignment: Mapping[str, Literal["top", "center"]] = field(default_factory=dict)
 
+    metadata_styles: Mapping[str, Mapping[str, Any]] = field(default_factory=dict)
+
     def __post_init__(self) -> None:
+        if not isinstance(self.metadata_styles, Mapping):
+            raise ValueError("metadata_styles must be a mapping by original source column.")
+        for source, style in self.metadata_styles.items():
+            if not isinstance(source, str) or not isinstance(style, Mapping) or set(style) - {"legend", "labels"}:
+                raise ValueError("metadata_styles accepts source mappings containing legend and labels only.")
+            labels = style.get("labels", {})
+            if not isinstance(labels, Mapping) or any(not isinstance(k, str) or not isinstance(v, str) for k, v in labels.items()):
+                raise ValueError("metadata_styles labels must map original string values to strings.")
+            legend = style.get("legend", {})
+            if not isinstance(legend, Mapping) or set(legend) - {"ncol", "nrow", "alignment"}:
+                raise ValueError("metadata_styles legend accepts ncol, nrow, alignment only.")
+            for key in ("ncol", "nrow"):
+                if key in legend and (isinstance(legend[key], bool) or not isinstance(legend[key], int) or legend[key] < 1):
+                    raise ValueError("metadata_styles legend counts must be positive integers.")
+            if "alignment" in legend and legend["alignment"] not in ("top", "center"):
+                raise ValueError("metadata_styles legend alignment must be top or center.")
+        # Reject nonfinite scalar geometry before allocating backend artists.
+        numeric = {f.name for f in fields(self) if isinstance(f.default, (int, float))
+                   and not isinstance(f.default, bool)}
+        numeric.update({"font_size_legend_text", "font_size_legend_title",
+                        "font_size_metadata_legend_text", "font_size_metadata_legend_title",
+                        "font_size_pathway", "tmb_y_label_angle", "gene_bar_scale_n_breaks",
+                        "legend_label_max_chars", "legend_title_max_chars"})
+        for name in numeric:
+            value = getattr(self, name)
+            if value is not None and (isinstance(value, bool) or not isinstance(value, Number)
+                                      or not math.isfinite(value)):
+                raise ValueError(f"{name} must be a finite number.")
+            if name.startswith("font_size_") and value is not None and value < 0:
+                raise ValueError(f"{name} must be >= 0.")
+        for name in ("tile_height", "tile_width"):
+            if getattr(self, name) <= 0:
+                raise ValueError(f"{name} must be > 0.")
         if self.metadata_legend_order is not None:
             order = self.metadata_legend_order
             if (isinstance(order, (str, bytes)) or not isinstance(order, Sequence)
@@ -308,6 +345,8 @@ class OncoplotOptions:
                 }
             except (TypeError, ValueError) as exc:
                 raise ValueError("legend_offsets x/y values must be numeric.") from exc
+        if any(not math.isfinite(value) for offsets in normalized_offsets.values() for value in offsets.values()):
+            raise ValueError("legend_offsets x/y values must be finite.")
         self.legend_offsets = normalized_offsets
         if self.gene_bar_width_ratio >= 0.95:
             raise ValueError("gene_bar_width_ratio must be less than 0.95.")
@@ -329,24 +368,40 @@ class OncoplotOptions:
             raise ValueError("gene_bar_scale_n_breaks must be >= 1 when supplied.")
         if self.gene_bar_scale_breaks is not None:
             try:
-                [float(value) for value in self.gene_bar_scale_breaks]
+                values = [float(value) for value in self.gene_bar_scale_breaks]
+                if not all(math.isfinite(value) for value in values):
+                    raise ValueError("gene_bar_scale_breaks must be finite.")
             except (TypeError, ValueError) as exc:
                 raise ValueError("gene_bar_scale_breaks must be a sequence of numeric values.") from exc
+
+
+def _copy_option_value(value):
+    """Materialize arbitrary Mapping containers before copying nested values."""
+    if isinstance(value, Mapping):
+        return {deepcopy(key): _copy_option_value(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_copy_option_value(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_copy_option_value(item) for item in value)
+    return deepcopy(value)
 
 
 def coerce_options(options: Optional[OncoplotOptions | Mapping[str, Any]]) -> OncoplotOptions:
     if options is None:
         return OncoplotOptions()
     if isinstance(options, Mapping):
-        return OncoplotOptions(**dict(options))
+        return OncoplotOptions(**_copy_option_value(options))
     if not isinstance(options, OncoplotOptions):
         raise TypeError("options must be an OncoplotOptions instance, a mapping, or None.")
-    return options
+    # Rendering consumes the base contract. Subclass-only state remains with the
+    # caller; never forward extra dataclass fields to the base constructor.
+    return OncoplotOptions(**{f.name: _copy_option_value(getattr(options, f.name))
+                              for f in fields(OncoplotOptions)})
 
 
 def validate_metadata_legend_columns(options: OncoplotOptions, columns: Sequence[str]) -> None:
     """Validate source names even when legends are hidden or the backend rejects mappings."""
-    for name in ("metadata_legend_ncol", "metadata_legend_nrow", "metadata_legend_alignment", "metadata_legend_order"):
+    for name in ("metadata_styles", "metadata_legend_ncol", "metadata_legend_nrow", "metadata_legend_alignment", "metadata_legend_order"):
         value = getattr(options, name)
         if isinstance(value, Mapping) or (name == "metadata_legend_order" and value is not None):
             unknown = set(value) - set(columns)

@@ -115,7 +115,10 @@ def _legend_title(value: object, options: OncoplotOptions) -> str:
     return options.prettify_function(text) if options.prettify_legend_titles else text
 
 
-def _legend_entry_label(value: object, options: OncoplotOptions) -> str:
+def _legend_entry_label(value: object, options: OncoplotOptions, source: Optional[str] = None) -> str:
+    labels = options.metadata_styles.get(source, {}).get("labels", {})
+    if str(value) in labels:
+        return _truncate_text(labels[str(value)], options.legend_label_max_chars)
     return _truncate_text(_legend_label(value, options), options.legend_label_max_chars)
 
 
@@ -1184,7 +1187,7 @@ def _draw_metadata(
                     color="#333333",
                 )
         handles = [
-            Patch(color=color, label=_legend_entry_label(level, options))
+            Patch(color=color, label=_legend_entry_label(level, options, column))
             for level, color in column_palette.items()
         ]
         if values.isna().any():
@@ -1557,6 +1560,9 @@ def _add_compact_legends(figure, mutation_handles, tmb_handles, metadata_legends
             rows = options.metadata_legend_nrow
             columns = columns.get(source) if isinstance(columns, Mapping) else columns
             rows = rows.get(source) if isinstance(rows, Mapping) else rows
+            style = options.metadata_styles.get(source, {}).get("legend", {})
+            columns = style.get("ncol", columns)
+            rows = style.get("nrow", rows)
             explicit = source is not None and (rows is not None or columns is not None)
             ncol = len(handles)
             if explicit:
@@ -1596,7 +1602,9 @@ def _add_compact_legends(figure, mutation_handles, tmb_handles, metadata_legends
                             if artist in figure.axes)
         numeric_x = right - numeric_width + horizontal_gap
         for artist, box, x, source in shelf:
-            aligned_y = y + (height - box.height) * (1 if options.metadata_legend_alignment.get(source) == "top" else .5)
+            alignment = options.metadata_styles.get(source, {}).get("legend", {}).get(
+                "alignment", options.metadata_legend_alignment.get(source))
+            aligned_y = y + (height - box.height) * (1 if alignment == "top" else .5)
             if artist in figure.axes:
                 pos = artist.get_position()
                 artist.set_position([pos.x0 + (numeric_x if options.metadata_legend_order is None else x) - box.x0,
@@ -1645,6 +1653,7 @@ def _finish_compact_layout(figure, axes, sample_axis, legend_top, options):
     # Explicit rotation can require more height. Iterate the shared panel
     # minimums together, retaining the original single pass for automatic labels.
     for _ in range(4 if options.tmb_y_label_angle is not None else 1):
+        geometry_changed = False
         if "tmb" in axes:
             ax = axes["tmb"]
             grid = ax.get_subplotspec().get_gridspec()
@@ -1666,6 +1675,7 @@ def _finish_compact_layout(figure, axes, sample_axis, legend_top, options):
                 if ax.bbox.height >= needed:
                     break
                 weights = list(grid.get_height_ratios())
+                geometry_changed = True
                 weights[index] *= needed / ax.bbox.height * 1.005
                 grid.set_height_ratios(weights)
                 figure.subplots_adjust()
@@ -1690,9 +1700,13 @@ def _finish_compact_layout(figure, axes, sample_axis, legend_top, options):
                 if growth <= 1:
                     break
                 weights = list(grid.get_height_ratios())
+                geometry_changed = True
                 weights[index] *= growth * 1.03
                 grid.set_height_ratios(weights)
                 figure.subplots_adjust()
+
+        if not geometry_changed:
+            break
 
     # Adjacent panels can have labels extending beyond their axes even with
     # zero requested buffer. Reserve only the measured missing clearance.
@@ -1766,6 +1780,10 @@ def render_matplotlib_oncoplot(
         raise NotImplementedError("metadata_legend_ncol/nrow mappings require compact_layout=True.")
     if not options.compact_layout and (options.metadata_legend_order is not None or options.metadata_legend_alignment):
         raise NotImplementedError("metadata_legend_order/alignment require compact_layout=True.")
+    if not options.compact_layout and any(style.get("legend") for style in options.metadata_styles.values()):
+        raise NotImplementedError("metadata_styles legend requires compact_layout=True.")
+    if options.compact_layout and (prepared.variant_value_col is not None or prepared.variant_value_cols):
+        raise NotImplementedError("compact_layout currently supports categorical main grids, not variant-value colorbars.")
     draw_gene_bar = merged["draw_gene_bar"]
     draw_tmb_bar = merged["draw_tmb_bar"]
     from ._cell_states import configure_summary_rendering
@@ -1798,184 +1816,196 @@ def render_matplotlib_oncoplot(
     rows = [(name, weight * (options.metadata_height_ratio / .18) if name == "metadata" else weight)
             for name, weight in rows]
 
+    if options.compact_layout:
+        if options.legend_offsets:
+            raise ValueError("compact_layout cannot be combined with manual legend_offsets.")
+        if (options.show_metadata_legends and draw_metadata and options.metadata_legend_position != "bottom") or (
+            options.show_legend and options.mutation_legend_position == "right"
+        ):
+            raise ValueError("compact_layout requires bottom legend positions (or hidden legends).")
+
     fig_width = max(8, options.width / 120)
     fig_height = options.height / 120 if options.compact_layout else max(5, options.height / 120)
     figure = plt.figure(figsize=(fig_width, fig_height), constrained_layout=False)
-    ncols = 2 if draw_gene_bar else 1
-    width_ratios = [1 - options.gene_bar_width_ratio, options.gene_bar_width_ratio] if draw_gene_bar else [1]
-    grid = GridSpec(
-        len(rows),
-        ncols,
-        figure=figure,
-        height_ratios=[weight for _name, weight in rows],
-        width_ratios=width_ratios,
-        hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
-        wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
-    )
-
-    axes = {}
-    for row_index, (name, _weight) in enumerate(rows):
-        axes[name] = figure.add_subplot(grid[row_index, 0], label=name)
-        if name == "main" and draw_gene_bar:
-            axes["gene_bar"] = figure.add_subplot(grid[row_index, 1], label="gene_bar")
-
-    tmb_handles = []
-    mutation_legend_visible = _main_grid_has_mutation_rows(prepared) or draw_gene_bar
-    if draw_tmb_bar and "tmb" in axes:
-        tmb_handles = _draw_tmb(
-            axes["tmb"],
-            prepared,
-            palette,
-            tmb_palette,
-            options,
-            mutation_legend_visible=mutation_legend_visible,
+    try:
+        ncols = 2 if draw_gene_bar else 1
+        width_ratios = [1 - options.gene_bar_width_ratio, options.gene_bar_width_ratio] if draw_gene_bar else [1]
+        grid = GridSpec(
+            len(rows),
+            ncols,
+            figure=figure,
+            height_ratios=[weight for _name, weight in rows],
+            width_ratios=width_ratios,
+            hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
+            wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
         )
-    metadata_legends = []
-    if draw_metadata and "metadata" in axes:
-        metadata_legends = _draw_metadata(axes["metadata"], prepared, options, metadata_palette=metadata_palette)
-    variant_value_legends = _draw_main(axes["main"], prepared, palette, variant_value_palette, options)
-    _draw_cell_states(axes["main"], prepared, options)
-    sample_axis = axes["main"]
-    if options.show_sample_ids and options.sample_id_position == "bottom" and draw_metadata and options.metadata_position == "bottom":
-        axes["main"].set_xticks([])
-        axes["main"].set_xlabel("")
-        sample_axis = axes["metadata"]
-        sample_axis.set_xticks(np.arange(len(prepared.samples)) + 0.5)
-        sample_axis.set_xticklabels(prepared.samples, rotation=options.sample_id_angle, fontsize=options.font_size_samples)
-        sample_axis.set_xlabel(options.x_label if options.show_x_label else "", fontsize=options.font_size_x_label)
-        for label in sample_axis.get_xticklabels():
-            label.update(_font_kwargs(options.sample_font_style))
-    sample_axis.tick_params(axis="x", pad=options.sample_id_padding)
 
-    if draw_gene_bar and "gene_bar" in axes:
-        _draw_gene_bar(axes["gene_bar"], prepared, palette, options)
-        if draw_metadata and options.metadata_position == "bottom" and options.show_gene_bar_axis:
-            axes["gene_bar"].xaxis.tick_top()
-            axes["gene_bar"].xaxis.set_label_position("top")
-    if options.main_subplot_title is not None:
-        axes["main"].set_title(options.main_subplot_title, fontsize=options.font_size_subplot_title)
-    if options.tmb_subplot_title is not None and "tmb" in axes:
-        axes["tmb"].set_title(options.tmb_subplot_title, fontsize=options.font_size_subplot_title)
-    if options.metadata_subplot_title is not None and "metadata" in axes:
-        axes["metadata"].set_title(options.metadata_subplot_title, fontsize=options.font_size_subplot_title)
-    if options.gene_bar_subplot_title is not None and "gene_bar" in axes:
-        axes["gene_bar"].set_title(options.gene_bar_subplot_title, fontsize=options.font_size_subplot_title)
-    if options.title_text is not None:
-        figure.suptitle(options.title_text, fontsize=options.font_size_title)
+        axes = {}
+        for row_index, (name, _weight) in enumerate(rows):
+            axes[name] = figure.add_subplot(grid[row_index, 0], label=name)
+            if name == "main" and draw_gene_bar:
+                axes["gene_bar"] = figure.add_subplot(grid[row_index, 1], label="gene_bar")
 
-    mutation_handles = []
-    if (
-        options.show_legend
-        and options.mutation_legend_position != "none"
-        and (_main_grid_has_mutation_rows(prepared) or draw_gene_bar)
-    ):
-        mutation_handles = [
-            Patch(color=palette.get(name, options.unspecified_mutation_color), label=_legend_entry_label(name, options))
-            for name in _mutation_levels(prepared, palette)
-        ]
-    if options.show_legend and options.mutation_legend_position != "none" and prepared.cell_states is not None:
-        from ._cell_states import matplotlib_state_style
-        mutation_handles.extend(
-            Patch(**matplotlib_state_style(prepared, state, options), label=options.legend_label_overrides.get(f"Cell state: {state}", f"Cell state: {state}"))
-            for state in pd.unique(prepared.cell_states.State)
-        )
-    has_bottom_mutation_legend = bool((mutation_handles or tmb_handles) and options.mutation_legend_position == "bottom")
-    has_bottom_metadata_legend = _metadata_has_bottom_legends(metadata_legends, options)
-    if has_bottom_mutation_legend and has_bottom_metadata_legend:
-        bottom_margin = 0.26
-    elif has_bottom_metadata_legend:
-        bottom_margin = 0.20
-    elif has_bottom_mutation_legend:
-        bottom_margin = 0.18
-    else:
-        bottom_margin = 0.08
-    has_right_legend = bool(
-        ((mutation_handles or tmb_handles) and options.mutation_legend_position == "right")
-        or _metadata_has_right_legends(metadata_legends, options)
-    )
-    variant_colorbar_active = bool(variant_value_legends)
-    if variant_colorbar_active:
+        tmb_handles = []
+        mutation_legend_visible = _main_grid_has_mutation_rows(prepared) or draw_gene_bar
+        if draw_tmb_bar and "tmb" in axes:
+            tmb_handles = _draw_tmb(
+                axes["tmb"],
+                prepared,
+                palette,
+                tmb_palette,
+                options,
+                mutation_legend_visible=mutation_legend_visible,
+            )
+        metadata_legends = []
+        if draw_metadata and "metadata" in axes:
+            metadata_legends = _draw_metadata(axes["metadata"], prepared, options, metadata_palette=metadata_palette)
+        variant_value_legends = _draw_main(axes["main"], prepared, palette, variant_value_palette, options)
+        _draw_cell_states(axes["main"], prepared, options)
+        sample_axis = axes["main"]
+        if options.show_sample_ids and options.sample_id_position == "bottom" and draw_metadata and options.metadata_position == "bottom":
+            axes["main"].set_xticks([])
+            axes["main"].set_xlabel("")
+            sample_axis = axes["metadata"]
+            sample_axis.set_xticks(np.arange(len(prepared.samples)) + 0.5)
+            sample_axis.set_xticklabels(prepared.samples, rotation=options.sample_id_angle, fontsize=options.font_size_samples)
+            sample_axis.set_xlabel(options.x_label if options.show_x_label else "", fontsize=options.font_size_x_label)
+            for label in sample_axis.get_xticklabels():
+                label.update(_font_kwargs(options.sample_font_style))
+        sample_axis.tick_params(axis="x", pad=options.sample_id_padding)
+
+        if draw_gene_bar and "gene_bar" in axes:
+            _draw_gene_bar(axes["gene_bar"], prepared, palette, options)
+            if draw_metadata and options.metadata_position == "bottom" and options.show_gene_bar_axis:
+                axes["gene_bar"].xaxis.tick_top()
+                axes["gene_bar"].xaxis.set_label_position("top")
+        if options.main_subplot_title is not None:
+            axes["main"].set_title(options.main_subplot_title, fontsize=options.font_size_subplot_title)
+        if options.tmb_subplot_title is not None and "tmb" in axes:
+            axes["tmb"].set_title(options.tmb_subplot_title, fontsize=options.font_size_subplot_title)
+        if options.metadata_subplot_title is not None and "metadata" in axes:
+            axes["metadata"].set_title(options.metadata_subplot_title, fontsize=options.font_size_subplot_title)
+        if options.gene_bar_subplot_title is not None and "gene_bar" in axes:
+            axes["gene_bar"].set_title(options.gene_bar_subplot_title, fontsize=options.font_size_subplot_title)
+        if options.title_text is not None:
+            figure.suptitle(options.title_text, fontsize=options.font_size_title)
+
+        mutation_handles = []
+        if (
+            options.show_legend
+            and options.mutation_legend_position != "none"
+            and (_main_grid_has_mutation_rows(prepared) or draw_gene_bar)
+        ):
+            mutation_handles = [
+                Patch(color=palette.get(name, options.unspecified_mutation_color), label=_legend_entry_label(name, options))
+                for name in _mutation_levels(prepared, palette)
+            ]
+        if options.show_legend and options.mutation_legend_position != "none" and prepared.cell_states is not None:
+            from ._cell_states import matplotlib_state_style
+            mutation_handles.extend(
+                Patch(**matplotlib_state_style(prepared, state, options), label=options.legend_label_overrides.get(f"Cell state: {state}", f"Cell state: {state}"))
+                for state in pd.unique(prepared.cell_states.State)
+            )
+        has_bottom_mutation_legend = bool((mutation_handles or tmb_handles) and options.mutation_legend_position == "bottom")
+        has_bottom_metadata_legend = _metadata_has_bottom_legends(metadata_legends, options)
         if has_bottom_mutation_legend and has_bottom_metadata_legend:
-            bottom_margin = max(bottom_margin, 0.34)
-        elif has_bottom_mutation_legend or has_bottom_metadata_legend:
-            bottom_margin = max(bottom_margin, 0.26)
+            bottom_margin = 0.26
+        elif has_bottom_metadata_legend:
+            bottom_margin = 0.20
+        elif has_bottom_mutation_legend:
+            bottom_margin = 0.18
         else:
-            bottom_margin = max(bottom_margin, 0.16)
-    mutation_legend_key = f"mutation:{prepared.mutation_type_col}" if prepared.mutation_type_col is not None else "mutation"
-    tmb_legend_key = f"tmb:{prepared.tmb_type_col}" if prepared.tmb_type_col is not None else "tmb"
-    legend_top = 0.0
-    if options.compact_layout:
-        if variant_value_legends:
-            raise NotImplementedError("compact_layout currently supports categorical main grids, not variant-value colorbars.")
-        # Pack against final matrix bounds, never the default GridSpec position.
+            bottom_margin = 0.08
+        has_right_legend = bool(
+            ((mutation_handles or tmb_handles) and options.mutation_legend_position == "right")
+            or _metadata_has_right_legends(metadata_legends, options)
+        )
+        variant_colorbar_active = bool(variant_value_legends)
+        if variant_colorbar_active:
+            if has_bottom_mutation_legend and has_bottom_metadata_legend:
+                bottom_margin = max(bottom_margin, 0.34)
+            elif has_bottom_mutation_legend or has_bottom_metadata_legend:
+                bottom_margin = max(bottom_margin, 0.26)
+            else:
+                bottom_margin = max(bottom_margin, 0.16)
+        mutation_legend_key = f"mutation:{prepared.mutation_type_col}" if prepared.mutation_type_col is not None else "mutation"
+        tmb_legend_key = f"tmb:{prepared.tmb_type_col}" if prepared.tmb_type_col is not None else "tmb"
+        legend_top = 0.0
+        if options.compact_layout:
+            if variant_value_legends:
+                raise NotImplementedError("compact_layout currently supports categorical main grids, not variant-value colorbars.")
+            # Pack against final matrix bounds, never the default GridSpec position.
+            figure.subplots_adjust(
+                left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
+                right=.98,
+            )
+            main_position = axes["main"].get_position()
+            legend_top = _add_compact_legends(
+                figure, mutation_handles, tmb_handles, metadata_legends, options,
+                (main_position.x0, main_position.x1),
+            )
+        else:
+            _add_static_legends(
+                figure,
+                mutation_handles,
+                tmb_handles,
+                metadata_legends,
+                options,
+                mutation_legend_key=mutation_legend_key,
+                tmb_legend_key=tmb_legend_key,
+            )
         figure.subplots_adjust(
             left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
-            right=.98,
+            right=0.70 if has_right_legend else 0.98,
+            top=0.86 if options.title_text is not None else 0.90 if any(
+                title is not None
+                for title in (
+                    options.main_subplot_title,
+                    options.tmb_subplot_title,
+                    options.gene_bar_subplot_title,
+                    options.metadata_subplot_title,
+                )
+            ) else 0.92,
+            bottom=bottom_margin,
+            hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
+            wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
         )
-        main_position = axes["main"].get_position()
-        legend_top = _add_compact_legends(
-            figure, mutation_handles, tmb_handles, metadata_legends, options,
-            (main_position.x0, main_position.x1),
-        )
-    else:
-        _add_static_legends(
-            figure,
-            mutation_handles,
-            tmb_handles,
-            metadata_legends,
-            options,
-            mutation_legend_key=mutation_legend_key,
-            tmb_legend_key=tmb_legend_key,
-        )
-    figure.subplots_adjust(
-        left=_left_margin_for_metadata(prepared, options, draw_metadata=draw_metadata, fig_width=fig_width),
-        right=0.70 if has_right_legend else 0.98,
-        top=0.86 if options.title_text is not None else 0.90 if any(
-            title is not None
-            for title in (
-                options.main_subplot_title,
-                options.tmb_subplot_title,
-                options.gene_bar_subplot_title,
-                options.metadata_subplot_title,
+        if draw_gene_bar and "gene_bar" in axes:
+            main_position = axes["main"].get_position()
+            gene_bar_position = axes["gene_bar"].get_position()
+            axes["gene_bar"].set_position(
+                [gene_bar_position.x0, main_position.y0, gene_bar_position.width, main_position.height]
             )
-        ) else 0.92,
-        bottom=bottom_margin,
-        hspace=max(0.02, min(0.6, max(options.buffer_tmb, options.buffer_metadata))),
-        wspace=max(0.01, min(0.4, options.buffer_gene_bar)),
-    )
-    if draw_gene_bar and "gene_bar" in axes:
-        main_position = axes["main"].get_position()
-        gene_bar_position = axes["gene_bar"].get_position()
-        axes["gene_bar"].set_position(
-            [gene_bar_position.x0, main_position.y0, gene_bar_position.width, main_position.height]
-        )
-    if variant_value_legends:
-        large_figure = options.width >= 1600 or options.height >= 1200
-        variant_fontsize = options.font_size_legend_text or _legend_font_size(
-            10 if large_figure else 8,
-            options.font_size_genes,
-            scale=1.2 if large_figure else 0.75,
-        )
-        variant_title_fontsize = options.font_size_legend_title or variant_fontsize + (4 if large_figure else 1)
-        _add_bottom_variant_value_colorbars(
-            figure,
-            variant_value_legends,
-            options,
-            variant_fontsize,
-            variant_title_fontsize,
-            has_bottom_legend=has_bottom_mutation_legend,
-            has_bottom_metadata_legend=has_bottom_metadata_legend,
-        )
-    # Preserve explicit newlines without automatic wrapping.
-    for ax in axes.values():
-        for text in (ax.xaxis.label, ax.yaxis.label, ax.title):
-            text.set_wrap(False)
-    if figure._suptitle is not None:
-        figure._suptitle.set_wrap(False)
-    if options.compact_layout:
-        _finish_compact_layout(figure, axes, sample_axis, legend_top, options)
-    elif options.title_text is not None:
-        figure.canvas.draw()
-        title_bbox = figure._suptitle.get_window_extent(figure.canvas.get_renderer()).transformed(figure.transFigure.inverted())
-        figure.subplots_adjust(top=title_bbox.y0 - options.title_gap_points / 72 / figure.get_figheight())
-    return figure
+        if variant_value_legends:
+            large_figure = options.width >= 1600 or options.height >= 1200
+            variant_fontsize = options.font_size_legend_text or _legend_font_size(
+                10 if large_figure else 8,
+                options.font_size_genes,
+                scale=1.2 if large_figure else 0.75,
+            )
+            variant_title_fontsize = options.font_size_legend_title or variant_fontsize + (4 if large_figure else 1)
+            _add_bottom_variant_value_colorbars(
+                figure,
+                variant_value_legends,
+                options,
+                variant_fontsize,
+                variant_title_fontsize,
+                has_bottom_legend=has_bottom_mutation_legend,
+                has_bottom_metadata_legend=has_bottom_metadata_legend,
+            )
+        # Preserve explicit newlines without automatic wrapping.
+        for ax in axes.values():
+            for text in (ax.xaxis.label, ax.yaxis.label, ax.title):
+                text.set_wrap(False)
+        if figure._suptitle is not None:
+            figure._suptitle.set_wrap(False)
+        if options.compact_layout:
+            _finish_compact_layout(figure, axes, sample_axis, legend_top, options)
+        elif options.title_text is not None:
+            figure.canvas.draw()
+            title_bbox = figure._suptitle.get_window_extent(figure.canvas.get_renderer()).transformed(figure.transFigure.inverted())
+            figure.subplots_adjust(top=title_bbox.y0 - options.title_gap_points / 72 / figure.get_figheight())
+        return figure
+    except BaseException:
+        plt.close(figure)
+        raise

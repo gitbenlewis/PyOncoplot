@@ -73,6 +73,17 @@ The generic oncoplot renderer reads `params.oncoplot` from config and passes it
 to the public API. Keep runtime choices such as genes, metadata tracks, legend
 controls, expected dimensions, output names, and save DPI in YAML.
 
+## Compact redraw regression
+
+The public `docs/examples/legend_order_alignment.py` example was measured against
+PR16 (`47467f3`) using the same Agg canvas, dimensions and options. Automatic
+TMB-label rotation remains 11 draws; explicit 0 degrees falls from 17 to 13,
+and 90 degrees from 18 to 14. Axes positions and legend bounds were identical
+(maximum absolute difference 0 in the comparison). The solver now stops its
+outer pass when neither metadata nor TMB geometry changed. This is a redraw
+count result, not a wall-clock speed claim; fonts/backends may affect counts.
+Tests retain geometry/export coverage and bound redraw counts for this example.
+
 ## Documentation Changes
 
 Docs are Markdown-first. Keep examples runnable from the repository root unless

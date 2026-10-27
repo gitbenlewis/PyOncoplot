@@ -76,3 +76,7 @@ result.save("oncoplot.png", dpi=120)
 | [Gallery](gallery.md) | deterministic local examples |
 | [Legend columns and rotation](examples/legend-columns-rotation.md) | compact categorical columns and histogram labels |
 | [Troubleshooting](troubleshooting.md) | common errors and fixes |
+
+## Source dictionaries and cohort filtering
+
+See [metadata dictionaries](examples/metadata-dictionary.md): options.metadata_styles controls source-scoped labels/layout; top-level metadata_filters and metadata_filter_mode explicitly select an analysis cohort while retaining supplied reference denominators.

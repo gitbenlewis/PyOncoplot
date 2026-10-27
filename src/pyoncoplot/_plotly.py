@@ -203,7 +203,10 @@ def _truncate_text(text: str, max_chars: Optional[int]) -> str:
     return f"{text[: max_chars - 3]}..."
 
 
-def _legend_entry_label(value: object, options: OncoplotOptions) -> str:
+def _legend_entry_label(value: object, options: OncoplotOptions, source: Optional[str] = None) -> str:
+    labels = options.metadata_styles.get(source, {}).get("labels", {})
+    if str(value) in labels:
+        return _truncate_text(labels[str(value)], options.legend_label_max_chars)
     return _truncate_text(_legend_label(value, options), options.legend_label_max_chars)
 
 
@@ -1311,7 +1314,7 @@ def _add_metadata_strip(
 
         if not is_numeric and options.show_metadata_legends:
             for level, color in level_map.items():
-                display_level = _legend_entry_label(level, options)
+                display_level = _legend_entry_label(level, options, col_name)
                 fig.add_trace(
                     go.Scatter(
                         x=[None],
@@ -1789,6 +1792,8 @@ def render_plotly_oncoplot(
     variant_value_palette = merged["variant_value_palette"]
     options = coerce_options(merged["options"])
     validate_metadata_legend_columns(options, prepared.metadata_cols or [])
+    if any(style.get("legend") for style in options.metadata_styles.values()):
+        raise NotImplementedError("metadata_styles legend requires backend='matplotlib' and compact_layout=True.")
     if any(isinstance(value, Mapping) for value in
            (options.metadata_legend_ncol, options.metadata_legend_nrow)):
         raise NotImplementedError("metadata_legend_ncol/nrow mappings require backend='matplotlib' and compact_layout=True.")

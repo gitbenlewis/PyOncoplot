@@ -118,7 +118,7 @@ def test_unsupported_layouts_are_explicit(renderer, kwargs):
 
 
 def test_options_appended_and_defaults_unchanged():
-    assert [f.name for f in fields(OncoplotOptions)][107:] == ["metadata_legend_order", "metadata_legend_alignment"]
+    assert [f.name for f in fields(OncoplotOptions)][107:109] == ["metadata_legend_order", "metadata_legend_alignment"]
     assert OncoplotOptions().metadata_legend_order is None
     assert OncoplotOptions().metadata_legend_alignment == {}
 

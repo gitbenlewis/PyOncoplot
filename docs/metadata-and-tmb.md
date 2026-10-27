@@ -216,3 +216,7 @@ oncoplot(
     options=OncoplotOptions(log10_transform_tmb=False),
 )
 ```
+
+## Source dictionaries and cohort filtering
+
+See [metadata dictionaries](examples/metadata-dictionary.md): options.metadata_styles controls source-scoped labels/layout; top-level metadata_filters and metadata_filter_mode explicitly select an analysis cohort while retaining supplied reference denominators.

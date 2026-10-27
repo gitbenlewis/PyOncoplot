@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import math
 from pathlib import Path
 from typing import Any, Mapping, Optional, Union
 
@@ -19,6 +20,8 @@ from ._result import OncoplotResult
 
 
 ONCOPLOT_PARAM_KEYS = {
+    "metadata_filters",
+    "metadata_filter_mode",
     "row_summaries",
     "gene_denominators",
     "cell_state_palette",
@@ -78,6 +81,8 @@ ONCOPLOT_PARAM_KEYS = {
 }
 
 ONCOPLOT_DEFAULTS: dict[str, Any] = {
+    "metadata_filters": None,
+    "metadata_filter_mode": None,
     "row_summaries": None,
     "gene_denominators": None,
     "cell_state_palette": None,
@@ -252,7 +257,7 @@ def oncoplot(
                 offset_value = float(merged[offset_name])
             except (TypeError, ValueError) as exc:
                 raise ValueError(f"{offset_name} must be numeric when supplied.") from exc
-            if offset_value < 0:
+            if not math.isfinite(offset_value) or offset_value < 0:
                 raise ValueError(f"{offset_name} must be >= 0.")
             setattr(options, offset_name, offset_value)
 
@@ -272,6 +277,8 @@ def oncoplot(
         top_n=merged["top_n"],
         return_extra_genes_if_tied=merged["return_extra_genes_if_tied"],
         metadata=merged["metadata"],
+        metadata_filters=merged["metadata_filters"],
+        metadata_filter_mode=merged["metadata_filter_mode"],
         metadata_sample_col=merged["metadata_sample_col"],
         metadata_cols=merged["metadata_cols"],
         metadata_require_mutations=merged["metadata_require_mutations"],
@@ -341,22 +348,28 @@ def oncoplot(
         prepared_data=prepared,
         copy_on_click=copy_on_click,
     )
-    save = merged["save"]
-    if save is not None:
-        if not isinstance(save, Mapping):
-            raise TypeError("save must be a mapping with a 'path' entry.")
-        save_kwargs = dict(save)
-        path = save_kwargs.pop("path", None)
-        if path is None:
-            raise ValueError("save must include a 'path' entry.")
-        if backend == "matplotlib" and "dpi" in save_kwargs:
-            try:
-                dpi = float(save_kwargs["dpi"])
-            except (TypeError, ValueError) as exc:
-                raise ValueError("save dpi must be numeric when supplied.") from exc
-            if dpi <= 0:
-                raise ValueError("save dpi must be > 0.")
-            figure.set_size_inches(float(options.width) / dpi, float(options.height) / dpi, forward=True)
-            save_kwargs.setdefault("bbox_inches", None)
-        result.save(path, **save_kwargs)
+    try:
+        save = merged["save"]
+        if save is not None:
+            if not isinstance(save, Mapping):
+                raise TypeError("save must be a mapping with a 'path' entry.")
+            save_kwargs = dict(save)
+            path = save_kwargs.pop("path", None)
+            if path is None:
+                raise ValueError("save must include a 'path' entry.")
+            if backend == "matplotlib" and "dpi" in save_kwargs:
+                try:
+                    dpi = float(save_kwargs["dpi"])
+                except (TypeError, ValueError) as exc:
+                    raise ValueError("save dpi must be numeric when supplied.") from exc
+                if not math.isfinite(dpi) or dpi <= 0:
+                    raise ValueError("save dpi must be > 0.")
+                figure.set_size_inches(float(options.width) / dpi, float(options.height) / dpi, forward=True)
+                save_kwargs.setdefault("bbox_inches", None)
+            result.save(path, **save_kwargs)
+    except BaseException:
+        if backend == "matplotlib":
+            import matplotlib.pyplot as plt
+            plt.close(figure)
+        raise
     return result

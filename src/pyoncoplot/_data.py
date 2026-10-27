@@ -1297,9 +1297,17 @@ def prepare_oncoplot_data(
     gene_denominators: Optional[Mapping[str, float]] = None,
     row_summaries: Optional[pd.DataFrame] = None,
     verbose: bool = False,
+    metadata_filters: Optional[Mapping[str, Mapping[str, Any]]] = None,
+    metadata_filter_mode: Optional[str] = None,
 ) -> PreparedOncoplotData:
     """Validate and transform mutation-level data into oncoplot-ready tables."""
 
+    if metadata_filters is not None and not isinstance(metadata_filters, Mapping):
+        raise ValueError("metadata_filters must be a mapping by original source column.")
+    if metadata_filter_mode not in (None, "analysis_cohort"):
+        raise ValueError("metadata_filter_mode must be analysis_cohort or None; display-only is unsupported.")
+    if metadata_filters and metadata_filter_mode != "analysis_cohort":
+        raise ValueError("Nonempty metadata_filters require metadata_filter_mode='analysis_cohort'.")
     tooltip_was_generated = tooltip_col is None
     validation_tooltip_col = sample_col if tooltip_was_generated else tooltip_col
     metadata_sample_col = metadata_sample_col or sample_col
@@ -1454,8 +1462,31 @@ def prepare_oncoplot_data(
     if sample_filters_active:
         states = states[states["Sample"].isin(passing_sample_ids)].copy()
 
+    filter_metadata = metadata
     if metadata is not None and metadata_require_mutations:
         metadata = metadata[metadata[metadata_sample_col].isin(pd.unique(data[sample_col]))].copy()
+
+    # Match the existing pre-ranking analysis population before missing:error.
+    # Previously excluded metadata/TMB-only identifiers must not veto a cohort.
+    from ._metadata_filters import metadata_filter_samples
+    candidates = set(data[sample_col]) if metadata_filters else set()
+    if metadata_filters and metadata is not None:
+        candidates.update(metadata[metadata_sample_col])
+    if metadata_filters and prepare_tmb and tmb_data is not None:
+        custom_ids = set(_custom_tmb_sample_ids(tmb_data, sample_col))
+        if mutation_filters_active or sample_filters_active:
+            custom_ids &= candidates
+        candidates.update(custom_ids)
+    if metadata_filters:
+        candidates.update(states["Sample"])
+    eligible_metadata_samples = metadata_filter_samples(
+        filter_metadata, metadata_sample_col, sorted(candidates), metadata_filters)
+    if eligible_metadata_samples is not None:
+        data = data[data[sample_col].isin(eligible_metadata_samples)].copy()
+        metadata = metadata[metadata[metadata_sample_col].isin(eligible_metadata_samples)].copy()
+        states = states[states["Sample"].isin(eligible_metadata_samples)].copy()
+        if sample_order is not None:
+            sample_order = [s for s in sample_order if str(s) in eligible_metadata_samples]
 
     if preserve_empty_genes:
         if include_genes is None or isinstance(include_genes, (str, bytes)) or len(include_genes) == 0:
@@ -1517,6 +1548,8 @@ def prepare_oncoplot_data(
     samples_with_custom_tmb = (
         _custom_tmb_sample_ids(tmb_data, sample_col) if prepare_tmb and tmb_data is not None else []
     )
+    if eligible_metadata_samples is not None:
+        samples_with_custom_tmb = [s for s in samples_with_custom_tmb if s in eligible_metadata_samples]
     if mutation_filters_active or sample_filters_active:
         eligible_custom_tmb_samples = set(samples_with_any_mutations) | set(samples_with_metadata)
         samples_with_custom_tmb = [

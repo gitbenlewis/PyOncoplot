@@ -16,6 +16,8 @@ result = oncoplot(
 )
 ```
 
+Options instances/mappings are copied and revalidated on each call. All numeric geometry must be finite. See [source dictionaries and cohort filters](examples/metadata-dictionary.md) for precedence and scientific scope.
+
 ## Size and Layout
 
 | Option | Default | Meaning |
@@ -318,3 +320,28 @@ weights only when measured text clearance requires it; rotated multiline labels
 may impose a physical minimum. No manual coordinates or dataset presets are used.
 
 See [the public synthetic example](examples/legend-order-alignment.md).
+
+
+## Compact publication and source dictionaries
+
+All controls below are Matplotlib-only except global/source labels. Nested legend counts and alignment require compact layout. Numeric colorbars ignore row/column counts. Source dictionaries override legacy settings independently; original data/color/order are unchanged. See [dictionary schemas](examples/metadata-dictionary.md).
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `compact_layout` | `False` | Measured bottom layout; bottom/hidden legends, no offsets or variant colorbars |
+| `sample_id_padding` | `4.0` | Sample labels, points |
+| `title_gap_points` | `12.0` | Title clearance, points |
+| `legend_gap_points` | `6.0` | Legend clearance, points |
+| `tile_edgecolor` | `white` | Tile edges |
+| `row_separator_color` | `#666666` | Row separators |
+| `tmb_bar_color` | `None` | Histogram override |
+| `tmb_bar_width` | `1.0` | Sample units in (0,1] |
+| `tmb_tick_interval` | `None` | Positive integer interval |
+| `tmb_y_label` | `None` | Histogram label |
+| `gene_bar_label_format` | `percent` | percent/count/count_percent |
+| `metadata_track_heights` | `{}` | Original source to positive height |
+| `metadata_track_spacing` | `0.0` | Track spacing |
+| `metadata_legend_order` | `None` | None legacy numeric anchoring; [] mixed input order |
+| `metadata_legend_alignment` | `{}` | Original source to top/center; default center |
+| `legend_label_overrides` | `{}` | Global category label fallback; both backends |
+| `metadata_styles` | `{}` | Source labels both backends; legend compact Matplotlib only |
